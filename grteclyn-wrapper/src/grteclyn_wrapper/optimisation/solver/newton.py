@@ -69,6 +69,7 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
         return (np.asarray(u) if gpu else u), info
 
     for it in range(max_iter):
+        fresh = need_jac
         if need_jac:
             jac = jacobian(u)
             jac_evals += 1
@@ -102,6 +103,10 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
                 break
             t *= 0.5
         else:
+            if not fresh:
+                # a chord step on a reused Jacobian: refresh before stalling
+                need_jac = True
+                continue
             return done(u, {"converged": False, "iters": it,
                             "res_scaled_inf": history[-1],
                             "res_history": history,

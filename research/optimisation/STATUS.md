@@ -17,15 +17,32 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28 evening, step 5 open on a flagged J row; joint bill+stability CMA-ES runs on the cards)
+## Now (2026-10-28 night: the joint search moves to the drainhole; step 5 open on a flagged J row)
 
-**Running now: the first JOINT optimizations** — `cmas-0012` (card 0) and `cmas-0025` (card 1), CMA-ES over
-(m, q₁, q₂, q₃) at 150×30, 400 evaluations, score = X + gate penalties + λη₀ from the radial screen on each
-candidate's J = 0 twin (~10 s per evaluation; launched ~15:50 UTC, ETA ~17:10 UTC / 20:10 MSK; fam_b_0003
-queued for a freed card). Engines: scipy Nelder–Mead was the first pass; **CMA-ES (`--engine cma`) since the
-same evening** — the NM simplex collapsed into one basin by ~eval 150 in both first runs, CMA-ES is
-population-based and escapes; the `cma` package was already a wrapper dependency. The gradient (implicit
-differentiation, dX/dknobs) is still not wired — the step-6 convergence item.
+**Headline (symmetric family, joint bill + stability CMA-ES, done 2026-10-28): the best clean points confirmed
+radially stable need 45.4 % / 43.1 % / 24.9 % less exotic matter than the classical wormhole at v_e 0.27 / 0.50
+/ 0.85** (X 1.63372 / 1.49461 / 1.09759 against V = 0 2.99352 / 2.62527 / 1.46184; frontier −47.8 / −45.6 /
+−27.0 %). The bill-only Nelder–Mead pass had −32.0 / −35.4 / −26.2 %. The [Step 6 record](#step-6-record-2026-10-28)
+has the runs, the screen verdicts and the v_e 0.50 best clean (−43.7 %) whose stability is still open.
+
+**Running now: the same search on the DRAINHOLE family** (decided 2026-10-28 evening). No family-(b) wormhole
+has ever survived a GRTeclyn evolution — the spinning campaign dropped them on 10-15, every hold dying at its
+far-side positive-mass puncture at t ≈ 23 — while the spinning paper's drainhole models D30 / D51 / D90 all have
+surviving V = 0 evolutions. So the winners that can reach step 9 come from the drainhole: members
+fam_a_r1_0005 (D30), fam_a_r1_0012 (D51; the paper's own D51 member fam_a_log_0017 sits on the log-stretch map,
+r1_0012 is the same model to 0.2 % in v_e on the arctan map the screen was calibrated on) and fam_a_r1_0031
+(D90). Gates passed first: the classical drainhole at J = 0 gives λη₀ 0.38969 / 0.39038 (published 0.390), and
+the pure kink m 0.3 at J = 0 has no unstable radial mode at X 2.356 / 2.485 against the classical 4.89835
+(−52 / −49 %). Classical spinning bills: D51 X 3.39986, D90 0.59955; a 16-eval smoke on D51 already reached
+X 1.60617 clean and stable (−52.8 %). At D90 the start shape (0.3, 1.5, 4.5, 0) costs instead: X 0.91286
+against 0.59955 (+52 %). Live: `cmasd-0012` (card 0, launched 18:08 UTC, 400 evals, ETA ≈ 1 h, ≈ 19:15 UTC /
+22:15 MSK), `cmasd-0005` (card 1: a D90 smoke, then D30's 400 evals); D90's production follows
+on the first freed card. Options on all three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
+at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search stalled; bisection does not lift
+it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
+(stalled points come out ABOVE-GATE on E19, so nothing loose reaches the clean class).
+Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
+into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
 
 **The 4-knob bare-field optimizer is live and paying** (`optimize_potential.py`, Nelder–Mead over (m, q₁, q₂, q₃)
 at pinned J and R_e, gate penalties on every point, nearest-solved-seed continuation, 150×30 on the cards): the
@@ -289,6 +306,31 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     launched 2026-10-28 ~15:50 UTC.
 - [ ] **7. Extend the hand-off.** New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
   bare-field table round-trips bit-compatibly.
+  - [ ] **The bare-field pipeline, end to end** (feasibility study 2026-10-28: the code is ~4–5 days, the hard
+    part is a 3D run that survives; it added three items this plan lacked — the export, the evolution baseline
+    and the stability verdict of the best clean row):
+    - [x] *Export.* `optimize_potential.py` saves each best slot's solved fields (spinning and J = 0 twin) with
+      nodes, map, σ, ψ₋, the potential's coefficients and the classical bill as `<tsv>_<slot>.npz` (default;
+      `--no-save`), so a winner needs no re-solve to reach a table.
+    - [x] *Table.* `python -m grteclyn_wrapper.optimisation.handoff <npz> --out <table>` (`optimisation/
+      handoff.py`; the published `backgrounds.py` is untouched) writes SPINBG_V1 with B as a 7th column after the
+      six published ones and a `potential_coeffs` header line (a_k = c_k (4π)^{k/2} / 8π for V(φ) = Σ a_k φ^k,
+      ÷λ² under `--rescale`); the published `read_spinbg` reads it back as is. Round-trip on the D51 smoke winner:
+      R_e and J carried exactly, V(φ₋) = −8e-18, B from 0.52 at the throat to 1 at both ends. The bilinear
+      midpoint check in f is 5.8e-6 / 1.4e-6 / 3.6e-7 at 1025×65 / 2049×129 / 4097×257 (order 2, against the
+      1e-7 bilinear gate); the C++ default is the C2 cubic spline (order 4), whose error is still to be measured
+      before a production table is cut.
+    - [ ] *C++* (in progress 2026-10-28): the 7th column B, `potential_coeffs` into a generalised
+      `PhantomDecayPotential` (mass term + coefficients, so the four hard-coded sites only change their
+      constructor arguments), B² on the spatial metric in the initial data, the default path bitwise unchanged,
+      a new binary beside the old ones. The t = 0 check and any evolution wait for the go.
+    - [x] *Baseline.* Moving the search to the drainhole (above) means the V = 0 evolution baseline already
+      exists for each target member (the spinning paper's D30 / D51 / D90); a family-(b) winner would first need
+      a fresh V = 0 fam_b hold past t ≈ 23 (1–2 GPU days, never retried after the 10-17 numerics fixes).
+    - Risks for step 9: the kink's steep part sits near the far-side puncture (≈ 2–3 cells per e-fold at
+      dx 0.0625, inferred); the shape polynomial can turn negative outside the two vacua (fam_b_0012's best clean
+      has Q < 0 for ψ ≳ 0.48, checked), so the evolved field must stay between them; ψ₋ and σ must reach the table
+      exactly as solved (the export carries both).
   - [ ] **The plan's Split card overstates the compiled matter classes** (repo check, 2026-10-28): "the matter
     classes are already compiled, only example-level wiring is new" is true only for the bare-field winner.
     The layered (χ) and winding winners need a NEW combined C++ matter class — the phantom with its own potential
@@ -398,10 +440,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. **The bare-field campaign continues** (decided 2026-10-28: the potential-only profile needs no new C++ beyond
-   the small step-7 fix, so it explores while steps 4–5 wait): the (m, q₁, q₂, q₃) search together at the three
-   spins — the q₃ fan showed two independent dials, so rays are not enough; a derivative-free optimizer over the
-   shape at pinned J and R_e, gates on every accepted point, on the cards.
+1. **The drainhole joint searches** (live, Now): D51 / D30 / D90 at 400 evaluations each; then screen every
+   best clean point the loop could not certify, measure the cubic-spline table error, and cut the first
+   production table from the best stable drainhole winner for the step-7 C++ path (t = 0 check on the go).
+   The open v_e 0.50 symmetric best clean (−43.7 %) needs the screen at a finer grid or the looser stall cut.
 2. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
    classical member unstable at 1.182, all kink/winner backgrounds show no unstable radial mode up to nx 300 —
    the step-6 record has the table): next the rotating 2D eigenproblem calibrated on the published spinning
@@ -577,6 +619,41 @@ member's pinned R_e):
 - Scope: radial (m = 0) sector at J = 0. The rotating 2D eigenproblem and non-radial sectors are step 6's next
   rungs; published spinning results say rotation slows this mode, so the static rate is the conservative screen.
 - The static bill falls further than the spinning one: X(J = 0) π → 1.674 at the v_e 0.85 winner knobs (−46.7 %).
+
+**The joint bill + stability runs, symmetric family** (CMA-ES, `--stability`, 400 evaluations, 150×30, the
+score X + gate penalties + λη₀ of each candidate's J = 0 twin; jobs `cmas-0012` / `cmas-0025` launched 15:50 UTC,
+`cmas-0003` 16:54 UTC, all ended at maxfev; TSVs `runs/optimisation/opt/fam_b_*_opt4s_150x30.tsv`):
+
+- **fam_b_0003 (v_e 0.27): best clean X 1.63372 at m 0.855, q (3.232, 3.776, −0.256), λ = 0 in the loop —
+  −45.4 %** (frontier 1.56340, −47.8 %). The bill-only pass had −32.0 %: CMA-ES went to stiffer shapes (m ≈ 0.85,
+  q₁ ≈ 3) the simplex never reached.
+- **fam_b_0012 (v_e 0.50): best clean X 1.47714 at m 0.962, q (3.739, 0.922, −0.828), −43.7 %, stability open**:
+  its twin failed in the loop, and the screen's walk-in stalls at 1.5e-11 on the way. The second-best clean,
+  **X 1.49461 at m 0.864, q (4.606, 0.559, −0.806), −43.1 %, is screened stable** (no matched unstable mode,
+  X_J0 1.64488); the loop's best stable clean 1.57073 (−40.2 %) screens stable too. Frontier 1.42697 (−45.6 %).
+- **fam_b_0025 (v_e 0.85): best clean X 1.09759 at m 0.425, q (2.438, 4.267, 0.445), −24.9 %, screened stable**
+  (X_J0 1.73041; its twin had failed in the loop); the loop's stable clean 1.11361 (−23.8 %) screens stable.
+  Frontier 1.06752 (−27.0 %) — the bill-only pass reached −26.2 % clean here, in exactly the region where the loop's
+  twins failed, so the failure penalty steered CMA-ES away from it.
+- **No solved point in any of the three runs has a matched unstable mode.** The stability term never bit; what
+  the loop lacked was verdicts: 20 % (v_e 0.50) and 29 % (v_e 0.85) of the evaluations got none, concentrated at
+  the lowest bills. The standalone screen (`screen-cmas`, 7 targets) shows both causes: route failures (two
+  J0-FAIL points walk in from V = 0 and screen stable) and Newton stalls just above the 1e-11 cut (1.0e-11,
+  1.5e-11, 2.4e-10, "line search stalled").
+- **The fixes, in place for the drainhole runs:** the twin branch takes its own stall cut (`--twin-stall-ok`,
+  default 1e-10; the twin only feeds the radial screen, whose two-grid match tolerates far larger background
+  errors), a twin that fails from the nearest J = 0 seed is retried by spinning the evaluation's own solve down
+  in J at fixed knobs, a J0-FAIL line now prints its residual and reason, and the run ends with the twin route
+  counts. The screen's first continuation leg bisects toward its start (it could not before: the drainhole kink
+  walk-in failed at m 0.1 for that reason alone). Newton (`solver/newton.py`) refreshes the Jacobian before
+  declaring a line-search stall on a chord step (the stall exits were on reused Jacobians; converged paths are
+  unchanged; solver-core tests pass).
+- **The drainhole gates** (`gate-*` jobs, 150×30, screen nx 150/200): classical λη₀ 0.389691 (fam_a_log_0017) and
+  0.390376 (fam_a_r1_0005) against the published 0.390; X_J0 4.89835 for the classical static drainhole
+  (π·1.559, the asymmetry's price at J = 0); pure kink at J = 0 no unstable radial mode at m 0.1 (X_J0 3.14827,
+  −35.7 %) and m 0.3 (2.35567 on fam_a_r1_0012, 2.35655 on fam_a_log_0017, 2.48504 on fam_a_r1_0005). D90
+  (J 138.2) does not walk J to 0 at V = 0 (the first 0.5 % step stalls at 2e-5), so its J = 0 root is seeded from
+  the static member, the problem's own exact background scaled to the R_e pin (`static_seed`).
 
 ## GPU notes
 

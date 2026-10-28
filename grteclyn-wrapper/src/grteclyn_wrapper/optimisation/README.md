@@ -12,6 +12,7 @@ what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](.
 | `matter_equations.py` | the matter problem: the field forms (the imposed rows and the unimposed monitors, through the step-4 layer field chi and the step-5 winding field zeta) and `MatterCollocationProblem`, with the J, R_e and area pins |
 | `potentials.py` | scalar potentials in the solver's normalization; every one is a kink ψ²(ψ − ψ₋)²Q(ψ) |
 | `exoticity.py` | the bill X = \|VIQ\|/R_e, the throat, NEC along rays, the tidal tensor at the throat |
+| `handoff.py` | a saved solve (optimize_potential.py .npz) as the evolution's background table: SPINBG_V1 plus the 7th column B and the `potential_coeffs` header line |
 | `solver/newton.py` | damped Newton: equilibrated dense LU, Armijo backtracking, chord steps; on the host, or the whole solve on the card when the Jacobian arrives there |
 | `solver/jacobian.py` | the exact dense Jacobian of a jitted residual: `jax.jacfwd`, or `chunked_jacfwd` in column blocks |
 | `solver/device.py` | where jax runs: CPU by default, a CUDA card on request, float64, the XLA thread cap |
@@ -23,7 +24,9 @@ Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisa
 - `cloud_solve.py`: the step-4 layer-field ladders (the mini-boson-star cloud);
 - `winding_solve.py`: the step-5 winding-field ladders (spin carried by the matter phase);
 - `check_chi_star.py`: the step-4 J = 0 cross-check against the published dressed star;
-- `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) Nelder–Mead search at pinned J and R_e;
+- `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) search at pinned J and R_e (Nelder–Mead or
+  CMA-ES; `--stability` adds each candidate's J = 0 radial growth rate to the score); it saves each best point's
+  solved fields as .npz, which `python -m grteclyn_wrapper.optimisation.handoff` turns into a 7-column table;
 - `stability_screen.py`: the radial stability column — re-solves each potential at J = 0 on the member's R_e pin
   and runs `stability_radial.growth_rate` on the flattened 1D background;
 - the gates: `validate_matter_v0.py` (V = 0 against the published solver), `check_matter_pins.py`, `check_tidal.py`,

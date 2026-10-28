@@ -68,6 +68,11 @@ def main() -> int:
     ap.add_argument("--nx", type=int, default=None)
     ap.add_argument("--ny", type=int, default=None)
     ap.add_argument("--screen-nx", default="100,150,200")
+    ap.add_argument("--stall-ok", type=float, default=STALL_OK,
+                    help="accept a Newton stall at or below this scaled "
+                         "residual (default: the step-1 gate); the twin "
+                         "only feeds the radial screen, whose two-grid "
+                         "match tolerates far larger background errors")
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD")
     ap.add_argument("--jac-chunk", type=int, default=None)
     ap.add_argument("--out", default=None)
@@ -140,8 +145,9 @@ def main() -> int:
             u, info = newton(p2.residual, p2.jacobian, u0, tol=TOL)
         except Exception as err:
             return None, f"newton raised: {err}"
-        if not info["converged"] and info["res_scaled_inf"] > STALL_OK:
-            return None, f"newton {info['res_scaled_inf']:.1e}"
+        if not info["converged"] and info["res_scaled_inf"] > args.stall_ok:
+            return None, (f"newton {info['res_scaled_inf']:.1e} "
+                          f"({info.get('reason', '?')})")
         F, W, Nf, B, PSI = (np.asarray(a) for a in p2.fields(u))
         omega, psim = p2.unpack(u)[-2:]
         tt = p2.throat(u)
@@ -150,6 +156,7 @@ def main() -> int:
         nxt = {"F": F, "W": W, "N": Nf, "B": B, "PSI": PSI,
                "omega": omega, "psim": psim,
                "sigma": tt["sigma"], "xi_t": tt["xi_t"], "p2": p2,
+               "newton": info["res_scaled_inf"],
                "e19": float(np.max(np.abs(diag["E19"][mask]))) / d2,
                "e_c": float(np.max(np.abs(diag["E_c"][mask]))),
                "X": exotic_x(1.0, p2.map, p2.sx, p2.sy, p2.Dx,
@@ -159,10 +166,11 @@ def main() -> int:
                        else PolynomialPotential.kink_q(m, float(psim), q))}
         return nxt, None
 
-    def chain_to(points, prev, what):
-        """Continuation along points (5-vectors m,q1,q2,q3,J),
-        bisecting a stalled leg toward the last solved point."""
-        xlast = None
+    def chain_to(points, prev, what, xstart):
+        """Continuation along points (5-vectors m,q1,q2,q3,J) from prev,
+        solved at xstart, bisecting a stalled leg toward the last solved
+        point (the first leg toward xstart)."""
+        xlast = np.asarray(xstart, float)
         for xk in points:
             pending, splits = [xk], 0
             while pending:
@@ -170,7 +178,7 @@ def main() -> int:
                 nxt, err = solve_at(xt[:4], float(xt[4]), prev)
                 if nxt is None:
                     splits += 1
-                    if splits > 6 or xlast is None:
+                    if splits > 6:
                         print(f"  {what} FAILED at "
                               f"({', '.join(f'{v:g}' for v in xt)}): {err}",
                               flush=True)
@@ -184,7 +192,7 @@ def main() -> int:
     # J walks to 0 at V = 0 (the knob vector carries J as its 5th slot)
     jchain = [np.array([0.0, 0, 0, 0, Jk])
               for Jk in (J0, 2 * J0 / 3, J0 / 3, 0.0)]
-    base = chain_to(jchain, prev, "J walk")
+    base = chain_to(jchain, prev, "J walk", jchain[0])
     if base is None:
         return 1
     print(f"J = 0 base: sigma {base['sigma']:.8f}  R_e {base['R_e']:.8f}  "
@@ -204,7 +212,8 @@ def main() -> int:
                if np.any(x[1:]) else 0)
         kchain += [np.concatenate([[m0], x[1:] * k / n_q, [0.0]])
                    for k in range(1, n_q + 1)]
-        tgt = chain_to(kchain, base, f"{label} walk-in") if kchain else base
+        tgt = (chain_to(kchain, base, f"{label} walk-in", np.zeros(5))
+               if kchain else base)
         if tgt is None:
             continue
 
@@ -240,7 +249,8 @@ def main() -> int:
                    else "UNSTABLE")
         print(f"[{label}] lam*eta0 {lam:.6f}  lam*R_e "
               f"{(lam or 0.0) * tgt['R_e'] / tgt['sigma']:.6f}  X_J0 "
-              f"{tgt['X']:.8e}  E19 {tgt['e19']:.1e}  flat1d {flat:.1e}  "
+              f"{tgt['X']:.8e}  newton {tgt['newton']:.1e}  "
+              f"E19 {tgt['e19']:.1e}  flat1d {flat:.1e}  "
               f"{verdict}  [{time.time() - t0:.0f}s]", flush=True)
         qv = "\t".join(f"{v:.6g}" for v in x[1:])
         with out.open("a") as fh:

@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import json
 import math
 import pathlib
 import sys
@@ -78,6 +79,16 @@ CLEAN_GATE = 1e-8
 CEILING = 1e-6
 #: knob scales for the nearest-seed metric and the initial simplex
 SCALES = np.array([0.1, 0.3, 0.3, 0.3])
+FIELDS = ("F", "W", "N", "B", "PSI")
+SAVE_CONVENTIONS = (
+    "F, W, N, B, PSI on the collocation nodes of the pinned problem (sx "
+    "radial xi, sy = cos 2 theta) in grid units (eta0 = 1): ds^2 = -e^F "
+    "dt^2 + B^2 e^-F [e^nu (deta^2 + h dtheta^2) + h sin^2 theta (dphi - "
+    "W dt)^2], nu = N sin^2 theta, h = eta^2 + 1, eta = radial_map(sx).  "
+    "Physical lengths are sigma times the grid's; W and omega scale as "
+    "1/sigma.  psi = sqrt(4 pi) phi, cal V = 8 pi V, potential_coeffs "
+    "ascending in psi for the physical cal V (the rows use sigma^2 cal "
+    "V); psim = psi(-inf).")
 
 
 def min_q(q) -> float:
@@ -110,9 +121,10 @@ def main() -> int:
                     help="cma population (default 4 + 3 ln n = 8)")
     ap.add_argument("--stability", action="store_true",
                     help="score stability too: every evaluation also "
-                         "solves the knobs at J = 0 (its own "
-                         "continuation cache), runs the gated radial "
-                         "screen on the twin and pays stab-weight * "
+                         "solves the knobs at J = 0 (from its own "
+                         "continuation cache, else by spinning the "
+                         "evaluation's solve down in J), runs the gated "
+                         "radial screen on the twin and pays stab-weight * "
                          "lam*eta0 (decided 2026-10-28: one score in "
                          "the loop, two axes on the frontier)")
     ap.add_argument("--stab-weight", type=float, default=1.0,
@@ -121,9 +133,23 @@ def main() -> int:
     ap.add_argument("--stab-nx", type=int, default=150,
                     help="screen grid inside the loop (its internal "
                          "0.7-coarse match grid comes free)")
+    ap.add_argument("--stall-ok", type=float, default=STALL_OK,
+                    help="the bill solve's Newton stall cut (default: the "
+                         "step-1 gate); the drainhole (gamma = -pi) floors "
+                         "at 1e-11 to 2e-10 on stiff shapes, a line-search "
+                         "stall bisection does not lift, and the identity "
+                         "monitors gate every accepted solve regardless")
+    ap.add_argument("--twin-stall-ok", type=float, default=1e-10,
+                    help="the twin branch's Newton stall cut (the bill "
+                         "solve keeps the step-1 gate 1e-11): stiff J = 0 "
+                         "shapes stall at 1e-11 to 1e-10 at 150x30, and "
+                         "the twin only feeds the radial screen, whose "
+                         "two-grid match tolerates far larger background "
+                         "errors")
     ap.add_argument("--stab-fail-pen", type=float, default=0.25,
-                    help="penalty when the J = 0 twin will not solve: "
-                         "stability uncertifiable, not disqualifying")
+                    help="penalty when the J = 0 twin solves by neither "
+                         "route: stability uncertifiable, not "
+                         "disqualifying")
     ap.add_argument("--maxfev", type=int, default=200)
     ap.add_argument("--fatol", type=float, default=2e-5,
                     help="X tolerance of the simplex stop")
@@ -132,6 +158,9 @@ def main() -> int:
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD")
     ap.add_argument("--jac-chunk", type=int, default=None)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--no-save", action="store_true",
+                    help="skip the .npz of each best slot's solved fields "
+                         "(written next to the TSV by default)")
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
     x0 = np.array([float(v) for v in args.x0.split(",")])
@@ -185,8 +214,10 @@ def main() -> int:
 
     def solve_at(x, prev, jval=None):
         """One pinned solve at knob vector x, continued from prev, at
-        the member's J (or ``jval`` -- the stability twin runs J = 0)."""
+        the member's J (or ``jval`` -- the stability twin's branch, which
+        takes the twin's stall cut)."""
         t0 = time.time()
+        stall_ok = args.stall_ok if jval is None else args.twin_stall_ok
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
         pot = (None if m == 0.0
                else (lambda pm, m=m, q=q: PolynomialPotential.kink_q(
@@ -205,9 +236,10 @@ def main() -> int:
         except Exception as err:
             return {"verdict": "FAILED", "err": str(err),
                     "secs": time.time() - t0}, None
-        if not info["converged"] and info["res_scaled_inf"] > STALL_OK:
+        if not info["converged"] and info["res_scaled_inf"] > stall_ok:
             return {"verdict": "FAILED",
-                    "err": f"newton {info['res_scaled_inf']:.1e}",
+                    "err": f"newton {info['res_scaled_inf']:.1e}, "
+                           f"{info.get('reason', '?')}",
                     "secs": time.time() - t0}, None
         F, W, Nf, B, PSI = (np.asarray(a) for a in p2.fields(u))
         omega, psim = p2.unpack(u)[-2:]
@@ -229,6 +261,7 @@ def main() -> int:
         nxt = {"F": F, "W": W, "N": Nf, "B": B, "PSI": PSI,
                "omega": omega, "psim": psim,
                "sigma": tt["sigma"], "xi_t": tt["xi_t"]}
+        state.setdefault("nodes", (np.asarray(p2.sx), np.asarray(p2.sy)))
         return row, nxt
 
     def record(x, row):
@@ -241,7 +274,8 @@ def main() -> int:
             lam = row.get("lam")
             stab_col = (f"\t{lam:.8f}" if lam is not None else "\tnan")
             stab_tag = (f"  lam {lam:.4f}" if lam is not None
-                        else "  J0-FAIL" if row.get("j0_fail") else "")
+                        else f"  J0-FAIL ({row['j0_fail']})"
+                        if row.get("j0_fail") else "")
         if row["verdict"] == "FAILED":
             print(f"  [{state['nfev']}] {tag}: NEWTON FAILED "
                   f"({row['err']})  [{row['secs']:.0f}s]", flush=True)
@@ -268,18 +302,63 @@ def main() -> int:
     worst = [0.0]
     state["solved_j0"] = {}
     state["best_stable"] = None
+    state["twins"] = {"direct": 0, "spun down": 0, "failed": 0}
     sx_all, _ = lobatto(nx)
 
-    def stab_at(x, key):
-        """The J = 0 twin's growth rate: one continued solve on the
-        J = 0 cache, flatten, screen.  None means the twin failed."""
+    def static_seed():
+        """The J = 0, V = 0 root from the problem's own background (f_bg,
+        psi_prof: the exact static member at gamma on the arctan map,
+        B = 1, nu = omega = 0), scaled to the R_e pin."""
+        p0 = MatterCollocationProblem(
+            eta0=1.0, gamma=sol.gamma, radial_map=grid, nx=nx, ny=ny,
+            prescribe=("J", 0.0), pin=("R_e", th["R_e"]))
+        F = np.asarray(p0.f_bg) * np.ones((1, ny + 1))
+        zero, one = np.zeros_like(F), np.ones_like(F)
+        psim_s = -math.pi * math.hypot(1.0, sol.gamma / (2.0 * math.pi))
+        ts = throat(1.0, p0.map, p0.sx, p0.sy, p0.Dx, F, zero, one)
+        return {"F": F, "W": zero, "N": zero, "B": one,
+                "PSI": psim_s * np.asarray(p0.psi_prof), "omega": 0.0,
+                "psim": psim_s, "sigma": th["R_e"] / ts["R_e"],
+                "xi_t": float(p0.map.xi_of_eta(ts["eta_throat"]))}
+
+    def spin_down(x, spin, cap=3):
+        """The J = 0 twin by continuation in J at fixed knobs, from the
+        spinning solve at x (J in thirds, a stalled leg bisected toward
+        the last solved J, cap splits per leg): the route that does not
+        depend on how far the nearest J = 0 seed sits in knob space."""
+        prev, jlast = spin, J0
+        for Jk in (2 * J0 / 3, J0 / 3, 0.0):
+            pending, splits = [Jk], 0
+            while pending:
+                jt = pending[-1]
+                row, nxt = solve_at(x, prev, jval=jt)
+                if nxt is None:
+                    splits += 1
+                    if splits > cap:
+                        return None, f"spun down to J {jt:.3g}: {row['err']}"
+                    pending.append((jlast + jt) / 2.0)
+                    continue
+                prev, jlast = nxt, jt
+                pending.pop()
+        return prev, None
+
+    def stab_at(x, key, spin):
+        """The J = 0 twin's growth rate: a continued solve from the
+        nearest J = 0 cache entry, else spin_down from the spinning solve
+        at x; flatten, screen.  Returns (lam, None), or (None, why) when
+        both routes failed."""
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
         near = min(state["solved_j0"],
                    key=lambda s: float(np.sum(np.abs(
                        (np.array(s) - np.array(key)) / SCALES))))
-        jrow, jnxt = solve_at(x, state["solved_j0"][near], jval=0.0)
+        _, jnxt = solve_at(x, state["solved_j0"][near], jval=0.0)
+        route = "direct"
         if jnxt is None:
-            return None
+            (jnxt, why), route = spin_down(x, spin), "spun down"
+            if jnxt is None:
+                state["twins"]["failed"] += 1
+                return None, why
+        state["twins"][route] += 1
         state["solved_j0"][key] = jnxt
         pot = (None if m == 0.0 else
                PolynomialPotential.kink_q(m, float(jnxt["psim"]), q))
@@ -289,7 +368,40 @@ def main() -> int:
             psi0=jnxt["PSI"].mean(axis=1), potential=pot)
         o = growth_rate(eta0=1.0, nx=args.stab_nx, background=bg,
                         radial_map=grid)
-        return 0.0 if o.get("stable") else float(o["lam"])
+        return (0.0 if o.get("stable") else float(o["lam"])), None
+
+    def save_solution(slot):
+        """The slot's solved fields and what rebuilds them physically:
+        the collocation nodes, the map, sigma, the potential's
+        coefficients, and the J = 0 twin's fields when it solved."""
+        _, key, row = state[slot]
+        spin = state["solved"][key]
+        twin = state["solved_j0"].get(key)
+        m, q = float(key[0]), [float(v) for v in key[1:]]
+        pot = PolynomialPotential.kink_q(m, float(spin["psim"]), tuple(q))
+        arrays = {k: np.asarray(spin[k]) for k in FIELDS}
+        if twin is not None:
+            arrays.update({f"j0_{k}": np.asarray(twin[k]) for k in FIELDS})
+        scal = ("omega", "psim", "sigma", "xi_t")
+        meta = {
+            "member": name, "slot": slot, "nx": nx, "ny": ny,
+            "member_eta0": sol.eta0, "gamma": sol.gamma,
+            "radial_map": {"class": type(grid).__name__,
+                           **dataclasses.asdict(grid)},
+            "J": J0, "R_e": th["R_e"], "m": m, "q": q,
+            "potential_coeffs": [float(c) for c in pot.coeffs],
+            **{k: float(spin[k]) for k in scal},
+            "X": row["X"], "X_v0": x_v0, "E19": row["e19"],
+            "E_c": row["e_c"],
+            "verdict": row["verdict"], "lam_eta0": row.get("lam"),
+            "j0": (None if twin is None
+                   else {k: float(twin[k]) for k in scal}),
+            "conventions": SAVE_CONVENTIONS,
+        }
+        path = out.with_name(f"{out.stem}_{slot}.npz")
+        np.savez(path, sx=state["nodes"][0], sy=state["nodes"][1],
+                 meta=json.dumps(meta, default=float), **arrays)
+        return path
 
     def objective(x):
         state["nfev"] += 1
@@ -310,9 +422,8 @@ def main() -> int:
         row, nxt = solve_at(x, seed)
         lam = None
         if nxt is not None and args.stability:
-            lam = stab_at(x, key)
+            lam, row["j0_fail"] = stab_at(x, key, nxt)
             row["lam"] = lam
-            row["j0_fail"] = lam is None
         record(x, row)
         if nxt is None:
             return worst[0] + 1.0
@@ -368,6 +479,14 @@ def main() -> int:
                 pending.pop()
         return prev, row
 
+    row_v0, _ = solve_at(np.zeros(4), prev0)
+    x_v0 = row_v0.get("X")
+    if x_v0 is None:
+        print(f"classical (V = 0) FAILED: {row_v0['err']}", flush=True)
+        return 1
+    print(f"classical (V = 0): X {x_v0:.8e}  E19 {row_v0['e19']:.1e}  "
+          f"E_c {row_v0['e_c']:.1e}", flush=True)
+
     prev, row = walk(chain, prev0)
     if prev is None:
         return 1
@@ -378,18 +497,20 @@ def main() -> int:
     if args.stability:
         # the J = 0 branch: J down in thirds at V = 0, then the same
         # knob chain -- its cache seeds every twin solve in the loop
-        jprev = prev0
-        for Jk in (2 * J0 / 3, J0 / 3, 0.0):
-            _, jprev_new = solve_at(np.zeros(4), jprev, jval=Jk)
-            if jprev_new is None:
-                print(f"J walk FAILED at J {Jk:g}", flush=True)
+        jprev, why = spin_down(np.zeros(4), prev0, cap=6)
+        if jprev is None:
+            print(f"J walk failed ({why}); J = 0 from the static member",
+                  flush=True)
+            _, jprev = solve_at(np.zeros(4), static_seed(), jval=0.0)
+            if jprev is None:
+                print("J = 0 static seed FAILED", flush=True)
                 return 1
-            jprev = jprev_new
+        print(f"J = 0 base: sigma {jprev['sigma']:.8f}", flush=True)
         jprev, _ = walk(chain, jprev, jval=0.0, what="J0 walk-in")
         if jprev is None:
             return 1
         state["solved_j0"][tuple(np.round(x0, 10))] = jprev
-        lam0 = stab_at(x0, tuple(np.round(x0, 10)))
+        lam0, _ = stab_at(x0, tuple(np.round(x0, 10)), prev)
         print(f"J0 walk-in done: lam*eta0 at x0 "
               f"{lam0 if lam0 is not None else float('nan'):.6f}",
               flush=True)
@@ -431,10 +552,19 @@ def main() -> int:
             xb, key, row = state[slot]
             stab = (f"  lam {row['lam']:.4f}"
                     if row.get("lam") is not None else "")
-            print(f"{label}: X {xb:.8e} at m {key[0]:g} "
+            print(f"{label}: X {xb:.8e} ({100 * (xb / x_v0 - 1):+.1f} % "
+                  f"vs V = 0) at m {key[0]:g} "
                   f"q ({', '.join(f'{v:g}' for v in key[1:])})  "
                   f"E19 {row['e19']:.1e}  E_c {row['e_c']:.1e}{stab}",
                   flush=True)
+    if args.stability:
+        tw = state["twins"]
+        print(f"J = 0 twins: {tw['direct']} direct, {tw['spun down']} "
+              f"spun down, {tw['failed']} failed", flush=True)
+    if not args.no_save:
+        for slot, _ in slots:
+            if state[slot] is not None:
+                print(f"saved {slot}: {save_solution(slot)}", flush=True)
     return 0
 
 
