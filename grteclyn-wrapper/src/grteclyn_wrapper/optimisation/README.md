@@ -23,10 +23,15 @@ Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisa
 - `cloud_solve.py`: the step-4 layer-field ladders (the mini-boson-star cloud);
 - `winding_solve.py`: the step-5 winding-field ladders (spin carried by the matter phase);
 - `check_chi_star.py`: the step-4 J = 0 cross-check against the published dressed star;
+- `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) Nelder–Mead search at pinned J and R_e;
+- `stability_screen.py`: the radial stability column — re-solves each potential at J = 0 on the member's R_e pin
+  and runs `stability_radial.growth_rate` on the flattened 1D background;
 - the gates: `validate_matter_v0.py` (V = 0 against the published solver), `check_matter_pins.py`, `check_tidal.py`,
-  `check_matter_n_row.py`;
+  `check_matter_n_row.py`, `check_growth_rate.py` (the drainhole rate 0.390 for the stability screen);
 - `diagnose_matter_v0.py`;
-- `derive_matter_equations.py`: the symbolic proof that the forms are Einstein + KG.
+- `derive_matter_equations.py`: the symbolic proof that the forms are Einstein + KG;
+- `derive_radial_perturbation.py`: the symbolic derivation and transcription check of the radial perturbation rows
+  (`optimisation/stability_radial.py`).
 
 Tests: `grteclyn-wrapper/tests/optimisation/`.
 

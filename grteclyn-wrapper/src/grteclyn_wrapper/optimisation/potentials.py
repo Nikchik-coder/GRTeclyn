@@ -51,6 +51,14 @@ class PolynomialPotential:
             out = out * psi + k * self.coeffs[k]
         return out
 
+    def d2V(self, psi):
+        """cal V''(psi), the radial stability screen's V2 column."""
+        out = 0.0 * psi
+        n = len(self.coeffs)
+        for k in range(n - 1, 1, -1):
+            out = out * psi + k * (k - 1) * self.coeffs[k]
+        return out
+
     def dV_over(self, psi):
         """cal V'(psi) / psi without the division:
         sum_{k >= 2} k coeffs[k] psi^{k-2}.  The winding and layer KG

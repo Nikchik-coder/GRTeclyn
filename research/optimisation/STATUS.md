@@ -25,12 +25,17 @@ first two 200-eval runs finished 14:52 UTC — **fam_b_0012 (v_e 0.50) best clea
 q (2.173, 2.414, 0.386)** (E19 6.7e-10, E_c 3.8e-10; frontier 1.67230 at m 0.576) and fam_b_0003 (v_e 0.27) best
 clean X 2.03471 at m 0.397, q (2.202, 2.867, −0.002) (frontier 1.98056 at m 0.448) — both past every step-3
 scan/ray frontier at their spin, found by the optimizer alone. The third start (fam_b_0025, x0 0.3, 1.5, 4.5, 0)
-runs on a card (`opt4-0025-150b`; the first start died on a marginal walk-in stall, the walk-in bisects now).
-**The stability screen's first rung is built and GATED** (`stability_radial.py` +
-`derive_radial_perturbation.py` + `check_growth_rate.py`: the 1D radial m = 0 pencil in a zero-shift conformal
-gauge regular through the throat; derivation λ-structure PASS, 50-digit transcription PASS at 3.8e-16, and the
-drainhole gate **PASS: λη₀ = 0.389823 vs the published 0.390** at nx 200, grid-converged — the step-6 sub-item has
-the gauge-mode finding that forced two-grid eigenvalue selection). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
+finished at **X 1.07875, −26.2 %** (`opt4-0025-150b`; the first start died on a marginal walk-in stall, the
+walk-in bisects now) — three-spin summary −32.0 / −35.4 / −26.2 % clean vs V = 0.
+**The radial stability screen is built, gated and RUN on the backgrounds** (`stability_radial.py` +
+`derive_radial_perturbation.py` + `check_growth_rate.py` + `stability_screen.py`; derivation λ-structure PASS,
+50-digit transcription PASS at 3.8e-16, drainhole gate **PASS: λη₀ = 0.389823 vs the published 0.390**,
+grid-converged — the step-6 sub-item has the gauge-mode finding that forced two-grid eigenvalue selection).
+**First science from it ([table](#step-6-record-2026-10-28)): the classical V = 0 member is radially unstable at
+the known λη₀ = 1.182 on this same pipeline, and every potential background — pure kink m 0.3 / 0.5 and all three
+optimizer winners — has NO unstable radial mode that survives the grid-change test up to nx 300.** The potential
+that cuts the exotic bill also removes the classical radial instability (J = 0, radial sector only; the rotating
+2D eigenproblem is still ahead). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
 derived and machine-checked (span rank 9, forms 2.6e-51, the N-row identity with winding at k = 1–3), the solver
 carries it (ζ = Z/sin^kθ regular chart, the J row = flux + matter, `pin_zeta` amplitude continuation, the
 frozen-metric linear-mode seeding — the fixed-ω_z and gaussian-seeded routes both demonstrably fail), 19 tests
@@ -245,9 +250,17 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     fails on the vector, and gauge modes satisfy the constraint monitors too; a (1−ξ²)-basis buys nothing. What
     junk cannot do is hold its eigenvalue under a grid change: the physical λ² repeats to ≤ 1e-4 between grids
     while every spurious value moves by factors, so `growth_rate` selects by TWO-GRID MATCHING (match_frac 0.7,
-    match_tol 5e-2, λ² floor 1e-3) and the tt/tη monitors are reported at the pollution level (~5e-2), not
-    round-off — the verdict rests on eigenvalue convergence plus the published-rate calibration. Next: run it on
-    the solved kink/optimizer backgrounds (V ≠ 0 enters through V0/V1/V2), then the rotating 2D problem.
+    match_tol 5e-2, λ² window (1e-3, 25) — above the cap the junk spectrum is dense enough to match by accident,
+    the pigeonhole lesson of the first win50 pass) and the tt/tη monitors are reported at the pollution level
+    (~5e-2), not round-off — the verdict rests on eigenvalue convergence plus the published-rate calibration.
+    **Run on the backgrounds** (`stability_screen.py`, same day): each potential re-solved at J = 0 on the
+    member's R_e pin (the J-chain walks J → 0 at V = 0, then the knobs walk in; the J = 0 solution is spherical
+    to ≤ 5e-12 and the classical limit gives X = π exactly), 1D jets by barycentric interpolation, screen ladder
+    nx 100–300. Result: the [step-6 record table](#step-6-record-2026-10-28) — classical unstable at 1.182,
+    every kink/winner background clean. Caveat: the winner J = 0 solves sit at E19 1.7e-6–8.1e-6 (the stiff-shape
+    floor at 150×30, the step-3 floor noise); the kink rows are clean at ≤ 1.1e-9. A λ² ≈ 6.69 value shows up at
+    nx 200 on every potential background regardless of mass and scale and never matches — a grid artifact, gone
+    at nx 300. Next: the rotating 2D eigenproblem, calibrated on the published spinning rates.
   - [ ] The score with stability in it: whether the search objective combines the exotic bill and the growth rate
     into one number (a weighted penalty) or keeps them as the two-axis Pareto frontier — decide once the
     growth-rate solver exists (raised 2026-10-28); the frontier is the paper's product either way.
@@ -366,10 +379,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
    the small step-7 fix, so it explores while steps 4–5 wait): the (m, q₁, q₂, q₃) search together at the three
    spins — the q₃ fan showed two independent dials, so rays are not enough; a derivative-free optimizer over the
    shape at pinned J and R_e, gates on every accepted point, on the cards.
-2. **The stability screen's first rung is gated** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS; the step-6
-   sub-item has the spec and the gauge-mode finding): next run it on the static (J = 0) kink and
-   optimizer-winner backgrounds as the first stability column of the potential search; the rotating 2D
-   eigenproblem after.
+2. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
+   classical member unstable at 1.182, all kink/winner backgrounds show no unstable radial mode up to nx 300 —
+   the step-6 record has the table): next the rotating 2D eigenproblem calibrated on the published spinning
+   rates, and the non-radial static sectors.
 3. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
    no J row — the scratch `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation
    (J row's `j_matter` integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the
@@ -506,9 +519,41 @@ jobs `opt4-*-150`, TSVs in `runs/optimisation/opt/`):
   digit); the stop was maxfev, not fatol, so the basins are converged for the knob noise level, not starved.
 - Scattered NEWTON FAILED and PASS/FRONTIER flips between near-identical points along the collapsed simplex are
   the known near-gate floor noise (step-3 record); the penalty (worst+1) just steers the simplex around them.
-- fam_b_0025 (v_e 0.85, x0 the fan's (1.5, 4.5)): the first start died in the walk-in at (0.3, 0.9, 2.7, 0),
-  Newton stalled 1.8e-11 — the straight-line chain hits the stiff-spin terrain the fan skirted. The walk-in
-  bisects toward the last solved point now (capped at 6 splits); rerun `opt4-0025-150b` in flight.
+- **fam_b_0025 (v_e 0.85): best clean X 1.07875 at m 0.527, q (1.460, 4.327, 0.037)** (E19 2.7e-9, E_c 5.1e-10;
+  frontier 1.07863). V = 0 is 1.46184, so **−26.2 %** against step 3's −20.6 % — the largest relative gain of the
+  three spins. Its first start died in the walk-in at (0.3, 0.9, 2.7, 0), Newton stalled 1.8e-11 — the
+  straight-line chain hits the stiff-spin terrain the fan skirted; the walk-in bisects toward the last solved
+  point now (capped at 6 splits) and the rerun walked in clean.
+- The three-spin optimizer summary vs the classical (V = 0) member: **−32.0 % / −35.4 % / −26.2 %** clean at
+  v_e 0.27 / 0.50 / 0.85 (step 3 scans/rays: −27.3 / −26.9 / −20.6).
+
+**The radial stability column** (same day, `stability_screen.py` at 150×30 solves, screen ladder nx 100–300,
+TSVs packed into `results/optimisation/stability/`; λη₀ is in grid units = the physical λη₀, λ·R_e uses the
+member's pinned R_e):
+
+| member (pin) | target | X at J = 0 | λη₀ | verdict |
+|---|---|---|---|---|
+| fam_b_0003 | V = 0 (classical) | π (exact) | 1.18197 | UNSTABLE |
+| fam_b_0003 | kink m 0.3 | 2.50448 | — | no unstable radial mode |
+| fam_b_0003 | kink m 0.5 | 2.25182 | — | no unstable radial mode |
+| fam_b_0003 | winner (0.397, 2.20, 2.87, −0.00) | 2.10131 | — | no unstable radial mode |
+| fam_b_0012 | V = 0 | π | 1.18219 | UNSTABLE |
+| fam_b_0012 | kink m 0.5 | 2.19546 | — | no unstable radial mode |
+| fam_b_0012 | winner (0.538, 2.17, 2.41, 0.39) | 1.89452 | — | no unstable radial mode |
+| fam_b_0025 | V = 0 | π | 1.18192 | UNSTABLE |
+| fam_b_0025 | kink m 0.5 | 1.94055 | — | no unstable radial mode |
+| fam_b_0025 | winner (0.527, 1.46, 4.33, 0.04) | 1.67438 | — | no unstable radial mode |
+
+- The classical rate is the symmetric-Ellis 1.182 on every member (the J = 0 classical member is the same
+  solution; its reappearance at 5 digits across three independently pinned solves is the bridge's own gate), and
+  X = π at J = 0 is the classical bill in closed form — both came out of the pipeline unasked.
+- **Every potential background kills the matched unstable mode up to nx 300.** The radial instability of the
+  classical wormhole is the massless phantom's free throat scale; the kink potential pins the field between its
+  vacua and the soft direction is gone. Less exotic AND radially stable — the frontier's two axes improve
+  together at J = 0.
+- Scope: radial (m = 0) sector at J = 0. The rotating 2D eigenproblem and non-radial sectors are step 6's next
+  rungs; published spinning results say rotation slows this mode, so the static rate is the conservative screen.
+- The static bill falls further than the spinning one: X(J = 0) π → 1.674 at the v_e 0.85 winner knobs (−46.7 %).
 
 ## GPU notes
 

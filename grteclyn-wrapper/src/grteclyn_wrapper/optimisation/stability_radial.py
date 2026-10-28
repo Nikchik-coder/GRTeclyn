@@ -207,26 +207,30 @@ def _pencil_lam2(*, eta0, nx, background, radial_map, want_mode=None):
 
 def growth_rate(*, eta0: float, nx: int, background, radial_map=None,
                 match_frac: float = 0.7, match_tol: float = 0.05,
-                lam2_min: float = 1e-3, n_report: int = 5):
+                lam2_min: float = 1e-3, lam2_max: float = 25.0,
+                n_report: int = 5):
     """The largest radial growth rate of a static background.
 
     ``background(eta)`` returns the dict radial_coefficients needs
     (F0_0..psi0_2 plus V0, V1, V2) at the given eta nodes.  Solves the
     pencil K u = -lam^2 M u on nx+1 Lobatto nodes under the arctan map
     (or ``radial_map``) AND on the coarser ``match_frac``-grid, keeps
-    the real lam^2 > lam2_min values that agree between the two grids
-    to ``match_tol`` relative (gauge junk cannot hold an eigenvalue
-    still under a grid change -- the module docstring has why mode
-    shape cannot be the filter) and returns the largest, with the
-    unimposed E_tt and E_teta residuals of its (gauge-polluted) mode
-    relative to the row's own coefficient scale."""
+    the real lam^2 in (lam2_min, lam2_max) that agree between the two
+    grids to ``match_tol`` relative (gauge junk cannot hold an
+    eigenvalue still under a grid change -- the module docstring has why
+    mode shape cannot be the filter; above lam2_max the junk spectrum is
+    dense enough to match by accident, and physical radial rates sit at
+    O(1)/eta0^2, so the window is in grid units eta0 = 1) and returns
+    the largest, with the unimposed E_tt and E_teta residuals of its
+    (gauge-polluted) mode relative to the row's own coefficient
+    scale."""
     nx2 = max(20, int(round(match_frac * nx)))
     lam2_f, _ = _pencil_lam2(eta0=eta0, nx=nx, background=background,
                              radial_map=radial_map)
     lam2_c, _ = _pencil_lam2(eta0=eta0, nx=nx2, background=background,
                              radial_map=radial_map)
     matched = [v for v in lam2_f
-               if v > lam2_min
+               if lam2_min < v < lam2_max
                and any(abs(v - w) <= match_tol * max(v, w)
                        for w in lam2_c)]
     if not matched:
