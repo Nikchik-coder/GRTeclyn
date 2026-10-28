@@ -13,16 +13,17 @@ element is B^3 e^{-3f/2 + nu} h sin theta, so nu drops out and
 
     VIQ = -(1/2) int d eta int d mu  B e^{-f/2} h psi_eta^2,   mu = cos theta,
 
-which at B = 1, psi_eta = D/h is observables.exotic_matter's
--(D^2/2) int d eta/h int d mu e^{-f/2}.  The throat is the minimum of the
+which at B = 1, psi_eta = D/h is the spinning package's
+observables.exotic_matter, -(D^2/2) int d eta/h int d mu e^{-f/2}.  The
+throat is the minimum of the
 eta = const area 2 pi h int d mu B^2 e^{-f + nu/2}, and R_e = B e^{-f/2}
 sqrt(h) on its equator (observables._throat's R_eq at B = 1, which
 places the minimum by golden section, to about 1e-8).
 
 Fields are node arrays on the solver's tensor Chebyshev-Lobatto grid,
-evaluated off the nodes by spectral.cheb_eval (which returns the node
-value on an exact hit, so a throat on the xi = 0 node is safe).  numpy
-only.
+evaluated off the nodes by spinning_wormhole.spectral.cheb_eval (which
+returns the node value on an exact hit, so a throat on the xi = 0 node is
+safe).  numpy only.
 """
 
 from __future__ import annotations
@@ -31,7 +32,7 @@ import math
 
 import numpy as np
 
-from .spectral import cheb_eval
+from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval
 
 __all__ = ["bill", "throat", "nec_rays", "exotic_x", "tidal"]
 

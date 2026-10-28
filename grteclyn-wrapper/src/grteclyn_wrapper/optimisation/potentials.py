@@ -2,7 +2,7 @@
 
 Two normalizations meet here.  The evolution code (ExoticScalarField with
 PhantomDecayPotential) works with phi and V_evo(phi); the background
-solver works in the CKK normalization of conventions.py,
+solver works in the CKK normalization of spinning_wormhole/conventions.py,
 
     psi = sqrt(4 pi) phi,        cal V(psi) = 8 pi V_evo(phi),
 

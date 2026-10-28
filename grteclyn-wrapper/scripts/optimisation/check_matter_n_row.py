@@ -27,7 +27,7 @@ varying from run to run).  E_Nr's error falls with its truncation to
 round-off.
 
     grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/check_matter_n_row.py
+        grteclyn-wrapper/scripts/optimisation/check_matter_n_row.py
 
 numpy and sympy only, about a minute; the largest dense operator is
 3052 x 3052 (108 x 27).
@@ -41,15 +41,15 @@ import sys
 import numpy as np
 import sympy as sp
 
-from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
-    MATTER_JET_NAMES,
-    matter_residual_forms,
-    row_matrix,
-)
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
     ArctanMap,
     LogStretchMap,
     lobatto,
+)
+from grteclyn_wrapper.optimisation.matter_equations import (
+    MATTER_JET_NAMES,
+    matter_residual_forms,
+    row_matrix,
 )
 
 GRIDS = ((48, 12), (60, 15), (72, 18), (84, 21), (96, 24), (108, 27),

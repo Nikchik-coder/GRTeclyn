@@ -53,7 +53,7 @@ Run on the cluster node (the workstation venv has no JAX), capped:
     grteclyn-wrapper/scripts/ops/capped_job.sh start validate-v0 \
         --threads 4 --mem 16 --timeout 3600 -- \
         grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/validate_matter_v0.py \
+        grteclyn-wrapper/scripts/optimisation/validate_matter_v0.py \
         results/spinningwormhole/solutions/<dir>/<file>.json [...]
 """
 
@@ -69,17 +69,17 @@ import numpy as np
 from grteclyn_wrapper.analysis.spinning_wormhole.equations import (
     CollocationProblem,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.exoticity import exotic_x
-from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
-    MatterCollocationProblem,
-    matter_residual_forms,
-    row_matrix,
-)
-from grteclyn_wrapper.analysis.spinning_wormhole.newton import newton
 from grteclyn_wrapper.analysis.spinning_wormhole.observables import (
     exotic_matter,
 )
 from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+from grteclyn_wrapper.optimisation.exoticity import exotic_x
+from grteclyn_wrapper.optimisation.matter_equations import (
+    MatterCollocationProblem,
+    matter_residual_forms,
+    row_matrix,
+)
+from grteclyn_wrapper.optimisation.solver.newton import newton
 
 GATES = {"fields": 1e-10, "B": 1e-10, "psi_minus": 1e-9, "monitors": 1e-8,
          "newton": 1e-11}

@@ -55,7 +55,7 @@ container, CLAUDE.md "Environment"):
     grteclyn-wrapper/scripts/ops/capped_job.sh start derive-matter \
         --threads 4 --mem 4 --timeout 2400 -- \
         grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/derive_matter_equations.py
+        grteclyn-wrapper/scripts/optimisation/derive_matter_equations.py
 """
 
 from __future__ import annotations
@@ -456,7 +456,7 @@ PREFACTORS = {
 def stage_forms() -> bool:
     """matter_residual_forms against the derived rows, 50 digits, on the
     generic test fields under the arctan and log-stretch maps."""
-    from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+    from grteclyn_wrapper.optimisation.matter_equations import (
         matter_residual_forms,
     )
 
@@ -551,7 +551,7 @@ def stage_v0forms() -> bool:
     from grteclyn_wrapper.analysis.spinning_wormhole.equations import (
         residual_forms,
     )
-    from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+    from grteclyn_wrapper.optimisation.matter_equations import (
         MATTER_JET_NAMES,
         matter_residual_forms,
     )
@@ -595,7 +595,7 @@ def stage_v0forms() -> bool:
 def stage_nrow() -> bool:
     """(1 - y) E_Nr == E_N - (2/h) E19 + E_B / B in generic jets, for any
     map, potential values and B."""
-    from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+    from grteclyn_wrapper.optimisation.matter_equations import (
         MATTER_JET_NAMES,
         matter_residual_forms,
     )

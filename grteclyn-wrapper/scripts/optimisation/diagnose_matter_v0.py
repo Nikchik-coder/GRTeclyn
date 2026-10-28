@@ -18,7 +18,7 @@ shrinks with the grid is truncation of the elliptic N row.
     grteclyn-wrapper/scripts/ops/capped_job.sh start diag-v0 \
         --threads 4 --mem 40 --timeout 3600 -- \
         grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/diagnose_matter_v0.py \
+        grteclyn-wrapper/scripts/optimisation/diagnose_matter_v0.py \
         results/spinningwormhole/solutions/<leg>/<member>.json [--nx 96 --ny 24]
 """
 
@@ -34,11 +34,12 @@ import numpy as np
 from grteclyn_wrapper.analysis.spinning_wormhole.equations import (
     CollocationProblem,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
-    MatterCollocationProblem, matter_residual_forms,
-)
-from grteclyn_wrapper.analysis.spinning_wormhole.newton import newton
 from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+from grteclyn_wrapper.optimisation.matter_equations import (
+    MatterCollocationProblem,
+    matter_residual_forms,
+)
+from grteclyn_wrapper.optimisation.solver.newton import newton
 
 C_GATE = 0.05
 

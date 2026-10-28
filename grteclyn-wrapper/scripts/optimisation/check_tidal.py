@@ -20,7 +20,7 @@ Three parts, hardest gate first:
 Numpy only; seconds.  Run from the repo root:
 
     grteclyn-wrapper/.venv/bin/python \\
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/check_tidal.py \\
+        grteclyn-wrapper/scripts/optimisation/check_tidal.py \\
         [results/spinningwormhole/solutions/fam_b/fam_b_0003.json]
 """
 
@@ -31,12 +31,12 @@ import sys
 
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole.exoticity import throat, tidal
 from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
     ArctanMap,
     lobatto,
 )
+from grteclyn_wrapper.optimisation.exoticity import throat, tidal
 
 TOL = 1e-12
 

@@ -2,21 +2,43 @@
 
 Started 2026-10-27 on branch `feature/optimisation`. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md); its ten steps are the checklist below.
-Code: `grteclyn-wrapper/src/grteclyn_wrapper/analysis/spinning_wormhole/` (`matter_equations.py`, `potentials.py`,
-`exoticity.py`) and `grteclyn-wrapper/scripts/analysis/spinning_wormhole/` (`derive_matter_equations.py`,
-`check_matter_n_row.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `check_tidal.py`, `diagnose_matter_v0.py`,
-`first_matter_solve.py`). Test set: the spinning solver's 200 saved solutions,
-`results/spinningwormhole/solutions/`.
-Runs: CPU only, on the H100 test node (JAX is in the node's venv, not the workstation's), through
-`grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
+Code (its own package since 2026-10-28; layout and rules in its
+[README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md)):
+`grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` (`matter_equations.py`, `potentials.py`, `exoticity.py`, and
+`solver/`: Newton, the Jacobians, the jax device) and `grteclyn-wrapper/scripts/optimisation/` (`pipeline.py` +
+`pipeline.toml`, `first_matter_solve.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `check_tidal.py`,
+`check_matter_n_row.py`, `diagnose_matter_v0.py`, `derive_matter_equations.py`); tests in
+`grteclyn-wrapper/tests/optimisation/`. It reads the published spinning package, which never imports it.
+Test set: the spinning solver's 200 saved solutions, `results/spinningwormhole/solutions/`.
+Runs: on the H100 test node (JAX is in the node's venv, not the workstation's), CPU by default and on a card with the
+go, through `grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
 Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the N-row fix), then step 2's pins and
-bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27).
+bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
+package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-27)
+## Now (2026-10-28)
 
-**Nothing is running.** The runs the stop cut short were finished later the same day (by 16:20 UTC): the J pin and
-the bill on all 200 members, the size pins on all 5, the tidal observable with its closed-form gates, and the first
-V ≠ 0 solves (all below).
+**Nothing is running** (everything stopped on the word, ~06:05 UTC / 09:05 MSK; both cards verified clear). The
+solver now runs on the GPU ([GPU notes](#gpu-notes): port done and verified 2026-10-28), and the campaign has an
+entry point: `grteclyn-wrapper/scripts/optimisation/pipeline.py plan | list | run <stage> [--gpu N]`, with the
+stages in `pipeline.toml` beside it. The campaign's code moved out of `analysis/spinning_wormhole/` into the
+`optimisation` package (2026-10-28), with the GPU port inside it (`solver/`); the spinning package is back at its
+published state. Checked on CPU against the code before the move: every moved script prints the same output, and
+the 48×12 ladder keeps its digits (X 2.75525806, σ 1.0013837069 at m = 0.1).
+
+**The three-spin first-V ladders, 150×30 on the cards** (a full five-mass ladder took ~40 s against 7 min for
+120×25 on CPU; per-pass 5–7 s):
+- fam_b_0003 (v_e 0.27): X 2.99352 → 2.17547 at m = 0.5 (−27 %); E19/D² m 0.1/0.2/0.3/0.5 =
+  1.2e-6 / 7.6e-8 / 1.4e-9 PASS / 3.2e-9 PASS.
+- fam_b_0012 (v_e 0.50): X 2.62527 → 1.93361 (−26 %); E19 1.2e-6 / 3.5e-8 / 9.3e-10 PASS / 2.7e-7.
+- fam_b_0025 (v_e 0.85), stopped mid-ladder after m = 0.2: X 1.46184 → 1.37131 (m 0.1) → 1.29815 (m 0.2, −11 %);
+  E19 8.9e-7 / 8.4e-8. The bill falls with the kink mass at every spin measured; the relative fall shrinks
+  with spin.
+- The m = 0.1 rung misses the 1e-8 gate at every grid so far (8.6e-6 at 120×25 CPU, 1.2e-6 at 150×30); the 180×36
+  rung (`first-v-0003-180`) was launched and stopped on the word after its clean m = 0 solve (E19 1.1e-10).
+
+The 120×25 CPU ladder (fam_b_0003, `first-v-0003-120`, 7 min): X converges to 6 digits against 96×20
+(m = 0.1: X 2.75597558), E19 at m = 0.1 still 8.6e-6; m = 0.5 ticked up (2.9e-8 → 6.8e-8), floor-like.
 
 Step 1 is done: 186 of 200 members pass every gate, and the other 14 were accepted on 2026-10-27 (below). Step 2 is
 done except the observables skipped for now (transit time and blueshift, decided 2026-10-27): the J pin, the bill,
@@ -45,7 +67,7 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
   - [x] Settle which discrete N is right: the constraint N.
   - [x] V = 0 record sweep over the 200 members: 186 pass, 14 accepted (below).
   - [x] Near-extremal E19 floor and the reference-side misses accepted (2026-10-27).
-  - [ ] Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
+  - [x] The solver on the node's H100 (go given 2026-10-28; [GPU notes](#gpu-notes)).
 - [x] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
   the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat
   (transit time and blueshift skipped for now, 2026-10-27; the tidal acceleration stays).
@@ -166,30 +188,34 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. The m = 0.1 kink to the monitor gate on about 120×25, and the first-V ladder at two more spins.
+1. Finish `first-v-0025-150` (stopped after m = 0.2) and the 180×36 rung for the m = 0.1 gate
+   (`pipeline.py run <stage> --gpu N`; each is about a minute on a card).
 2. Step 3 proper: scan Q(ψ) beyond the pure kink at three spins, same gates and pins.
-3. Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
 
 ## GPU notes
 
-The step-1 solver can run on the node's H100. Nothing starts on the card without the go.
-- **CPU only today**, three ways: the wrapper's `spinning-solver` extra pulls the CPU-only `jax`; the solver sets
-  `jax_platforms` from `JAX_PLATFORMS`, default `cpu`; `capped_job.sh` exports `JAX_PLATFORMS=cpu` unless given
-  `--gpu`.
-- **Where the time goes.** One Newton pass from a saved member, compilation included, on four CPU threads (the
-  record sweep, 2026-10-27): 1 s at 48×12, 3 s at 72×18, 7 s at 96×20, 15 s at 108×28; the block solve of the large
-  grids, 19 s at 144×30, 64 s at 162×42 (the morning sweep measured about 4× more). Outside compilation the cost is the
-  dense Jacobian (`jax.jacfwd`) and its LU (scipy, on the host). The Jacobian is about 5(n_x+1)(n_y+1) square: 2 GB
-  at 108×28, 4 GB at 144×30, 10 GB at 162×42. What overflows on the two largest grids is the unchunked `jacfwd`,
-  whose intermediates carry every column at once.
-- **The port.** A CUDA build of JAX in the node's venv; `newton.py`'s `lu_factor`/`lu_solve` moved to
-  `jax.scipy.linalg`, so the Jacobian stays on the card; the Jacobian built in chunks of columns (chunking alone
-  would also let the CPU solve the large grids, at an estimated few minutes per pass). Jobs then run through
-  `capped_job.sh --gpu`, after `nvidia-smi`, since the card is shared.
-- **Expected, to be measured.** The H100 is fast in float64, which the solver needs, so a pass on the large grids
-  should drop to seconds, and the 30 large-grid members get full Newton solves. The small grids gain
-  little, since compilation dominates them, until candidates are batched (the plan's Split card, step 6). It speeds
-  up the sweep and the ladders.
+**Ported 2026-10-28** (the go that morning). Nothing starts on a card without the go; the cards are shared, so
+`nvidia-smi` before every launch (`pipeline.py run --gpu N` checks and refuses a busy card without `--force`).
+- **The port, as landed** (in `optimisation/solver/` since the move, 2026-10-28). `newton.py` picks its backend
+  from the first Jacobian: a CUDA-resident jax array keeps equilibration, LU and solve on the card
+  (`jax.scipy.linalg`, cusolver in float64); anything else runs the old numpy + scipy path untouched, and the
+  returned solution is numpy either way. The Jacobian can be built in column blocks (`jacobian.chunked_jacfwd`: one
+  jit, `lax.map` over blocks, same values as `jacfwd`) — `WH_JAC_CHUNK` sets the block, default 1024 on gpu and
+  unchunked on cpu; chunking is what fits the card (and would also let the CPU reach the grids the unchunked
+  `jacfwd` OOMs). `MatterCollocationProblem` reads it through `jacobian.dense_jacobian`; the spinning package's
+  V = 0 `CollocationProblem`, the validation reference, keeps its published CPU `jacfwd`. `first_matter_solve.py`
+  takes `--gpu CARD` and `--jac-chunk` (`device.select_device`), which also sets
+  `XLA_PYTHON_CLIENT_PREALLOCATE=false` so a solve takes only what it uses on a shared card.
+- **Verified 2026-10-28**: at 48×12 the GPU run reproduces the CPU ladder digit for digit (X 2.75525806,
+  σ 1.0013837069, E19 1.8e-3), Newton at round-off; the CPU chunked path (`WH_JAC_CHUNK=256`) likewise. GPU jobs
+  run with a 220 GB address-space cap: CUDA's virtual reservations need the headroom, the resident set stays small.
+- **Where the time went on CPU** (the record sweep, 2026-10-27): 1 s at 48×12 to 15 s at 108×28 per pass, four
+  threads; the dense Jacobian (`jax.jacfwd`) plus its host LU dominated, and the unchunked `jacfwd`'s intermediates
+  OOM'd 40 GB at 108×28. **Measured on the card** (2026-10-28): a full Newton solve at 150×30 (n ≈ 23.4k,
+  7–12 iterations) runs in 4–7 s; a five-mass ladder in ~40 s wall, against 7 min for the 120×25 ladder on four CPU
+  threads — roughly 25× on the grids that matter.
+- The small grids still gain little (compilation dominates) until candidates are batched (the plan's Split card,
+  step 6).
 
 ## Step 2: design notes (coded, record above)
 
@@ -210,6 +236,10 @@ The step-1 solver can run on the node's H100. Nothing starts on the card without
 
 ## Rules for this campaign
 
+- The campaign's code lives in the wrapper: importable code in `grteclyn_wrapper/optimisation/`, runnable scripts in
+  `grteclyn-wrapper/scripts/optimisation/`, tests in `grteclyn-wrapper/tests/optimisation/`. None under `research/`
+  (decided 2026-10-28), and nothing outside the package imports it: `develop` ships without it
+  (`tests/optimisation/test_layout.py` holds both dependency rules).
 - Code reaches the node only through git: commit, push to the fork, then `git pull myfork feature/optimisation` on
   the node. Never scp. Commands go over ssh as a `bash -s` heredoc, because the gateway runs a bare command without a
   shell.

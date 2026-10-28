@@ -15,7 +15,7 @@ the fields.
     grteclyn-wrapper/scripts/ops/capped_job.sh start pins-v0 \\
         --threads 4 --mem 40 --timeout 3600 -- \\
         grteclyn-wrapper/.venv/bin/python \\
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/check_matter_pins.py \\
+        grteclyn-wrapper/scripts/optimisation/check_matter_pins.py \\
         results/spinningwormhole/solutions/<dir>/<file>.json [...]
 """
 
@@ -29,12 +29,12 @@ import time
 
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole.exoticity import throat
-from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+from grteclyn_wrapper.optimisation.exoticity import throat
+from grteclyn_wrapper.optimisation.matter_equations import (
     MatterCollocationProblem,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.newton import newton
-from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+from grteclyn_wrapper.optimisation.solver.newton import newton
 
 SIGMA_KICK = 1e-3
 TOL = 1e-14

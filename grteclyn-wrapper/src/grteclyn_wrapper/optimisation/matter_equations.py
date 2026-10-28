@@ -1,6 +1,7 @@
 """Field equations of the campaign-M matter background solver.
 
-The generalization of equations.py to a self-gravitating exotic scalar
+The generalization of the spinning solver's equations.py
+(analysis/spinning_wormhole) to a self-gravitating exotic scalar
 WITH a potential.  A potential sources R^t_t + R^phi_phi = -2 cal V,
 which the three-function Kleihaus-Kunz ansatz cannot carry (its
 rho = sqrt(h) sin theta solves the rho equation identically only at
@@ -10,24 +11,24 @@ cal V = 0), so a fourth metric function joins:
                                    + h sin^2 theta (d phi - omega dt)^2],
     h = eta^2 + eta0^2,      B == 1 and the old ansatz at cal V = 0,
 
-with the exotic scalar of conventions.py (psi = sqrt(4 pi) phi,
-cal V = 8 pi V_evo; R_ab = -2 psi_a psi_b - cal V g_ab,
-box psi = cal V'/2).  nu couples to every equation through e^{nu - f}
-once cal V != 0, so N = nu / sin^2 theta joins the Newton unknowns --
+with the exotic scalar of spinning_wormhole/conventions.py
+(psi = sqrt(4 pi) phi, cal V = 8 pi V_evo; R_ab = -2 psi_a psi_b
+- cal V g_ab, box psi = cal V'/2).  nu couples to every equation through
+e^{nu - f} once cal V != 0, so N = nu / sin^2 theta joins the Newton unknowns --
 unlike the V = 0 solver, where (f, omega) close by themselves and N is
 recovered from the constraints afterwards.
 
 The five imposed rows and the two first-order monitors are derived and
 machine-checked by
-scripts/analysis/spinning_wormhole/derive_matter_equations.py: the mixed
+scripts/optimisation/derive_matter_equations.py: the mixed
 combinations (f: E^t_t + omega E^t_phi; nu: -E^t_t + 2 omega E^t_phi
 - 3 E^phi_phi + E^eta_eta + E^theta_theta; w: E^t_phi; B: the rho
 equation; psi: KG; c13: E^eta_theta; c19: E^eta_eta - E^theta_theta) are
 proved EQUIVALENT to the Einstein + KG set -- rank 7 both ways at exact
 rational points -- and the forms below are checked against them to 50
 digits on generic test fields (stage `forms`).  At cal V = 0, B = 1 they
-reduce symbolically to equations.residual_forms, so the matter solver
-contains the published V = 0 solver exactly.
+reduce symbolically to spinning_wormhole.equations.residual_forms, so
+the matter solver contains the published V = 0 solver exactly.
 
 Newton imposes E_Nr, not the nu row's E_N: (1 - y) E_Nr = E_N - (2/h)
 E19 + E_B / B holds identically (stage `nrow`), so the imposed five with
@@ -228,9 +229,9 @@ class MatterCollocationProblem:
     so every grid correction carries zero Dirichlet data at xi = +-1.
 
     ``prescribe`` picks the rotation parameter exactly as in
-    equations.CollocationProblem: ("omega_inf", value) or ("J", value),
-    the latter bordering the system with the flux row (the conserved flux
-    of the twist equation now carries B^3).
+    spinning_wormhole.equations.CollocationProblem: ("omega_inf", value)
+    or ("J", value), the latter bordering the system with the flux row (the
+    conserved flux of the twist equation now carries B^3).
 
     The elliptic system leaves exactly one global constant undetermined
     (the D^2 mismatch of the V = 0 solver), so the scalar boundary value
@@ -241,8 +242,9 @@ class MatterCollocationProblem:
 
     The potential is a potentials.PolynomialPotential (solver
     normalization); the default ZERO gives the pure V = 0 system, whose
-    converged solutions must match equations.CollocationProblem's -- the
-    step-1 gate of the campaign brief.  It may instead be a callable
+    converged solutions must match the spinning package's
+    equations.CollocationProblem -- the step-1 gate of the campaign brief.
+    It may instead be a callable
     psi_minus -> PolynomialPotential: a kink's vacuum must sit at the
     bordered psi(-inf) exactly (V and V' vanish there, or the end is not
     flat), so the potential rides on that unknown.  Holding psi_minus
@@ -270,27 +272,24 @@ class MatterCollocationProblem:
                  prescribe: tuple[str, float] = ("omega_inf", 0.0),
                  psi_minus: float | None = None,
                  pin: tuple[str, float] | None = None):
-        import os
+        # thread cap, platform and float64 BEFORE the first jax import
+        from .solver.device import configure_jax
+        from .solver.jacobian import dense_jacobian
 
-        # Modest thread pool BEFORE the first jax import (see
-        # equations.CollocationProblem: the container advertises 128 CPUs
-        # but is quota-capped, and XLA's default pool busts ulimit -v).
-        os.environ.setdefault(
-            "XLA_FLAGS",
-            "--xla_cpu_multi_thread_eigen=false "
-            "intra_op_parallelism_threads=8")
-
-        import jax
-
-        jax.config.update("jax_platforms",
-                          os.environ.get("JAX_PLATFORMS", "cpu"))
-        jax.config.update("jax_enable_x64", True)
+        jax = configure_jax()
         import jax.numpy as jnp
         import numpy as np
 
-        from .backgrounds import slow_rotation_omega
+        from grteclyn_wrapper.analysis.spinning_wormhole.backgrounds import (
+            slow_rotation_omega,
+        )
+        from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
+            ArctanMap,
+            cheb_eval,
+            lobatto,
+        )
+
         from .potentials import ZERO
-        from .spectral import ArctanMap, cheb_eval, lobatto
 
         if nx % 2:
             raise ValueError("nx must be even (the J flux row and the E19 "
@@ -349,7 +348,9 @@ class MatterCollocationProblem:
 
         # Throat quadrature for the pins: Chebyshev coefficients in xi
         # (a = Cx @ A) and Gauss-Legendre in mu from the y nodes.
-        from .spectral import cheb_coeffs
+        from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
+            cheb_coeffs,
+        )
 
         self.Cx = cheb_coeffs(np.eye(nx + 1), axis=0)
         self.w_g = w_g
@@ -358,7 +359,9 @@ class MatterCollocationProblem:
         self._jax = jax
         self._jnp = jnp
         self._jit_residual = jax.jit(self._residual)
-        self._jit_jacobian = jax.jit(jax.jacfwd(self._residual, argnums=0))
+        # jacfwd, or column blocks when WH_JAC_CHUNK > 0 (the default on
+        # gpu): solver/jacobian.py
+        self._jit_jacobian = dense_jacobian(self._residual, self.n_unknowns)
 
     # -- packing --------------------------------------------------------------
 
@@ -531,7 +534,7 @@ class MatterCollocationProblem:
     def j_flux(self, F, B, W_x, column: int | None = None):
         """J on one xi column: -(1/8) int (1-mu^2) B^3 h^2 e^{-2f} w_eta
         dmu, the conserved flux of the matter twist equation (B == 1
-        reduces to the V = 0 flux of conventions.py)."""
+        reduces to the V = 0 flux of spinning_wormhole/conventions.py)."""
         jnp = self._jnp
         i = self.mid if column is None else column
         if column is None:

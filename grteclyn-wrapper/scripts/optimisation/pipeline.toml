@@ -1,0 +1,57 @@
+# Campaign M solver pipeline -- the runnable stages, one place.
+#
+#   pipeline.py plan          the ten steps and what is next (from STATUS.md)
+#   pipeline.py list          these stages and their live state
+#   pipeline.py run <stage>   launch one through capped_job.sh (CPU)
+#   pipeline.py run <stage> --gpu N    the same solve on CUDA card N
+#
+# A stage is one capped job; its name is the job name (runs/capped_jobs/<name>).
+# The record of what ran and what it showed lives in STATUS.md, not here.
+
+[campaign]
+name = "M (minimal exotic wormhole search)"
+branch = "feature/optimisation"
+status = "research/optimisation/STATUS.md"
+python = "grteclyn-wrapper/.venv/bin/python"
+runner = "grteclyn-wrapper/scripts/ops/capped_job.sh"
+
+[defaults]
+threads = 4
+mem_gb = 120        # host address-space cap (ulimit -v)
+gpu_mem_gb = 220    # with --gpu: CUDA's virtual reservations need headroom;
+                    # the solve itself lives on the card
+timeout_s = 7200
+
+# -- step 3 entry: the first-V mass ladders ---------------------------------
+
+[[stage]]
+name = "first-v-0003-150"
+step = "3-entry"
+title = "fam_b_0003 (v_e 0.27) kink ladder at 150x30: the m = 0.1 gate chase"
+script = "grteclyn-wrapper/scripts/optimisation/first_matter_solve.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "first-v-0012-150"
+step = "3-entry"
+title = "fam_b_0012 (v_e 0.50) kink ladder at 150x30: second spin"
+script = "grteclyn-wrapper/scripts/optimisation/first_matter_solve.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "first-v-0025-150"
+step = "3-entry"
+title = "fam_b_0025 (v_e 0.85) kink ladder at 150x30: third spin"
+script = "grteclyn-wrapper/scripts/optimisation/first_matter_solve.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "first-v-0003-180"
+step = "3-entry"
+title = "fam_b_0003 kink ladder at 180x36: the small-m monitor-gate rung"
+script = "grteclyn-wrapper/scripts/optimisation/first_matter_solve.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--nx", "180", "--ny", "36"]

@@ -37,7 +37,7 @@ masses' shifts are checked for ~ m^2 scaling.  Run through capped_job.sh
     grteclyn-wrapper/scripts/ops/capped_job.sh start first-v \\
         --threads 4 --mem 40 --timeout 3600 -- \\
         grteclyn-wrapper/.venv/bin/python \\
-        grteclyn-wrapper/scripts/analysis/spinning_wormhole/first_matter_solve.py \\
+        grteclyn-wrapper/scripts/optimisation/first_matter_solve.py \\
         results/spinningwormhole/solutions/fam_b/fam_b_0003.json
 """
 
@@ -51,19 +51,20 @@ import time
 
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole.exoticity import (
+from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
+from grteclyn_wrapper.optimisation.exoticity import (
     exotic_x,
     throat,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+from grteclyn_wrapper.optimisation.matter_equations import (
     MatterCollocationProblem,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.newton import newton
-from grteclyn_wrapper.analysis.spinning_wormhole.potentials import (
+from grteclyn_wrapper.optimisation.potentials import (
     PolynomialPotential,
 )
-from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
+from grteclyn_wrapper.optimisation.solver.device import select_device
+from grteclyn_wrapper.optimisation.solver.newton import newton
 
 TOL = 1e-14
 C_GATE = 0.05
@@ -78,7 +79,15 @@ def main() -> int:
     ap.add_argument("--nx", type=int, default=None,
                     help="re-solve on this grid from the interpolated member")
     ap.add_argument("--ny", type=int, default=None)
+    ap.add_argument("--gpu", type=int, default=None, metavar="CARD",
+                    help="solve on this CUDA card (cards are shared: check "
+                         "nvidia-smi first); default CPU")
+    ap.add_argument("--jac-chunk", type=int, default=None,
+                    help="Jacobian column block size (sets WH_JAC_CHUNK; "
+                         "default: 1024 on gpu, unchunked on cpu)")
     args = ap.parse_args()
+    # before the first jax import (the problem constructor)
+    select_device(args.gpu, args.jac_chunk)
     masses = [float(m) for m in args.masses.split(",")]
 
     sol = Solution.load(args.solution)
