@@ -6,8 +6,8 @@ Code (its own package since 2026-10-28; layout and rules in its
 [README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md)):
 `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` (`matter_equations.py`, `potentials.py`, `exoticity.py`, and
 `solver/`: Newton, the Jacobians, the jax device) and `grteclyn-wrapper/scripts/optimisation/` (`pipeline.py` +
-`pipeline.toml`, `first_matter_solve.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `check_tidal.py`,
-`check_matter_n_row.py`, `diagnose_matter_v0.py`, `derive_matter_equations.py`); tests in
+`pipeline.toml`, `first_matter_solve.py`, `scan_potential.py`, `validate_matter_v0.py`, `check_matter_pins.py`,
+`check_tidal.py`, `check_matter_n_row.py`, `diagnose_matter_v0.py`, `derive_matter_equations.py`); tests in
 `grteclyn-wrapper/tests/optimisation/`. It reads the published spinning package, which never imports it.
 Test set: the spinning solver's 200 saved solutions, `results/spinningwormhole/solutions/`.
 Runs: on the H100 test node (JAX is in the node's venv, not the workstation's), CPU by default and on a card with the
@@ -16,9 +16,15 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28, after the morning's GPU pass)
+## Now (2026-10-28, after the step-3 scans)
 
-**Nothing is running** (the morning's two stages finished ~06:30–06:35 UTC / 09:30–09:35 MSK; both cards clear). The
+**Nothing is running** (the six step-3 scans finished ~06:55 UTC / 09:55 MSK; both cards verified clear). **Step 3's
+first-pass answer: the landscape is NOT flat.** The shape scan (Q = 1 + q₁u + q₂u², `potentials.kink_q`,
+`scan_potential.py`, 5×5 box at kink mass 0.3, J and R_e pinned, 150×30 on the cards) lowers the bill monotonically
+toward +q₁, +q₂ at all three spins — best clean PASS: −21.8 % / −21.5 % / −16.4 % against the V = 0 member — and
+the slope still points outside the box, so the shape knob is not exhausted. The γ scan walks to the drainhole's −π
+and the bill RISES monotonically, ≈ +42 % at γ = −π at all three spins (a nearly spin-independent relative
+penalty); asymmetry costs, it never pays ([Step 3 record](#step-3-record-2026-10-28)). The
 solver now runs on the GPU ([GPU notes](#gpu-notes): port done and verified 2026-10-28), and the campaign has an
 entry point: `grteclyn-wrapper/scripts/optimisation/pipeline.py plan | list | run <stage> [--gpu N]`, with the
 stages in `pipeline.toml` beside it. The campaign's code moved out of `analysis/spinning_wormhole/` into the
@@ -100,9 +106,11 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     round-off. The axis transit needs a Cartesian chart and waits with the transit time.
   - [ ] Transit time and blueshift: skipped for now (decided 2026-10-27); the transit time needs a choice of stations
     first.
-- [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
+- [x] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
   end-mass asymmetry γ gets the same scan. Done when the bill-vs-potential curve exists at three spins; a flat
-  landscape shifts the weight to layers and angular structure.
+  landscape shifts the weight to layers and angular structure. **Done 2026-10-28 as a first pass: the curves exist
+  at the three spins and the landscape is not flat** ([record](#step-3-record-2026-10-28)); the best shape sits on
+  the scanned box's +q₁,+q₂ edge, so the knob's true optimum waits for step 6's optimizer (or a wider box).
 - [ ] **4. Normal-matter layer.** A second, canonical scalar χ; the J = 0 limit cross-checked against the Bondi
   paper's dressed star; 2–3 radial layers with free signs; a double throat allowed as a measured lineage. Done when
   the identity gates pass with two fields and the layered bill beats or matches step 3 at matched R_e and J.
@@ -195,11 +203,37 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Step 3 proper: scan Q(ψ) beyond the pure kink at three spins, same gates and pins. (The 2026-10-28 GPU pass
-   closed the two queued rungs: the fam_b_0025 ladder is complete and the 180×36 rung ran whole — the m = 0.1
-   gate stays resolution-limited, see Now.)
-2. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before the scan quotes
+1. Widen the shape box past its +q₁,+q₂ edge (the scans are monotone into the corner at every spin), or pull
+   step 6's optimizer forward for this one knob; same gates and pins, stages in `pipeline.toml`.
+2. Step 4: the normal-matter layer (the second canonical scalar χ, the J = 0 dressed-star cross-check).
+3. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes
    m ≤ 0.1 members.
+
+## Step 3 record (2026-10-28)
+
+All six scans through `pipeline.py run <stage> --gpu N` (capped jobs of the same names; TSVs in the node's
+`runs/optimisation/scans/fam_b_00{03,12,25}_{shape,gamma}_150x30.tsv`), at 150×30, kink mass 0.3 (the gate-clean
+anchor), J and R_e pinned per member, each point a full Newton solve continued from its nearest solved neighbour,
+the step-1/2 gates on every row.
+
+- **Shape scan** (Q = 1 + q₁u + q₂u², u = ψ/ψ₋, q₁, q₂ ∈ {−0.6, −0.3, 0, 0.3, 0.6}; (−0.6, −0.6) inadmissible,
+  min Q < 0): X falls monotonically toward +q₁, +q₂ at every spin. Against pure kink m 0.3 → best clean PASS →
+  box corner (+0.6, +0.6):
+  - fam_b_0003 (v_e 0.27): 2.41053 → 2.34007 at (+0.6, +0.3) → 2.32622 (corner, E19 2.9e-7); V = 0 X 2.99352,
+    so −21.8 % PASS / −22.3 % corner. One stall at (+0.6, −0.3), Newton 1.8e-11.
+  - fam_b_0012 (v_e 0.50): 2.13174 → 2.06052 at the corner itself, PASS; V = 0 2.62527, so −21.5 %.
+  - fam_b_0025 (v_e 0.85): 1.24120 → 1.22177 at (+0.6, 0) → 1.21174 (corner, E19 2.9e-7); V = 0 1.46184,
+    so −16.4 % PASS / −17.1 % corner.
+  - The X surface is smooth across neighbours (steps ~1e-2, far above any monitor noise); the scattered
+    ABOVE-GATE rows (E19 up to ~1e-6 at min Q 0.1 points) are the small-m-style resolution tail, worst where Q
+    nearly touches zero and the barrier deforms hardest.
+- **γ scan** (pure kink m 0.3, γ from 0 to −π in π/8 steps, same pins): X rises monotonically at every spin —
+  2.41053 → 3.42888 (v_e 0.27), 2.13174 → 3.03551 (v_e 0.50), 1.24120 → 1.76892 (v_e 0.85) at γ = −π: +42 % at
+  all three spins, nearly spin-independent, with σ falling to ≈ 0.52–0.54 (the pinned throat compresses the
+  solution). End-mass asymmetry buys nothing anywhere on the walk.
+- Mechanics: `scan_potential.py` accepts a line-search stall at ≤ 1e-11 as a solve (the step-1 Newton gate;
+  2026-10-28, the m-anchor chain stalled at 1.1e-14 against tol 1e-14). argparse needs the `--q2=-0.3,0` form for
+  leading-dash lists (so the `pipeline.toml` stages use it).
 
 ## GPU notes
 

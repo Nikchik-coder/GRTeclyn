@@ -91,5 +91,27 @@ class PolynomialPotential:
         return cls((0.0, 0.0, lam * psi_minus**2, -2.0 * lam * psi_minus,
                     lam))
 
+    @classmethod
+    def kink_q(cls, m: float, psi_minus: float,
+               q: tuple[float, ...] = ()) -> "PolynomialPotential":
+        """The kink times a shape factor, campaign step 3's scan family:
+
+            cal V = lam psi^2 (psi - psi_minus)^2 Q(psi),
+            Q = 1 + sum_k q[k] u^{k+1},   u = psi / psi_minus in [0, 1],
+
+        lam = m^2 / psi_minus^2.  Q(0) = 1 keeps cal V''(0) = 2 m^2, and
+        both vacua stay degenerate for any q (double zeros); the
+        psi_minus well stays a minimum only while Q > 0 on the kink, so
+        a scan checks min Q before solving.  q = () is ``kink``."""
+        lam = m * m / (psi_minus * psi_minus)
+        base = (0.0, 0.0, lam * psi_minus**2, -2.0 * lam * psi_minus, lam)
+        shape = (1.0,) + tuple(qk / psi_minus ** (k + 1)
+                               for k, qk in enumerate(q))
+        out = [0.0] * (len(base) + len(shape) - 1)
+        for i, b in enumerate(base):
+            for j, c in enumerate(shape):
+                out[i + j] += b * c
+        return cls(tuple(out))
+
 
 ZERO = PolynomialPotential(())

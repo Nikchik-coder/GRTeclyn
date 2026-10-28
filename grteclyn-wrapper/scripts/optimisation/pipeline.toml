@@ -55,3 +55,65 @@ title = "fam_b_0003 kink ladder at 180x36: the small-m monitor-gate rung"
 script = "grteclyn-wrapper/scripts/optimisation/first_matter_solve.py"
 args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
         "--nx", "180", "--ny", "36"]
+
+# -- step 3: the shape and gamma scans at three spins ------------------------
+# Q = 1 + q1 u + q2 u^2 in u = psi/psi_minus (potentials.kink_q) at the
+# pure-kink anchor mass 0.3, which passes the monitor gate at 150x30 at
+# all three spins (2026-10-28); gamma walks to the drainhole's -pi.
+
+[[stage]]
+name = "q-scan-0003-150"
+step = "3"
+title = "fam_b_0003 (v_e 0.27) shape scan at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--mass", "0.3", "--q1=-0.6,-0.3,0,0.3,0.6",
+        "--q2=-0.6,-0.3,0,0.3,0.6", "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-scan-0012-150"
+step = "3"
+title = "fam_b_0012 (v_e 0.50) shape scan at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--mass", "0.3", "--q1=-0.6,-0.3,0,0.3,0.6",
+        "--q2=-0.6,-0.3,0,0.3,0.6", "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-scan-0025-150"
+step = "3"
+title = "fam_b_0025 (v_e 0.85) shape scan at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--mass", "0.3", "--q1=-0.6,-0.3,0,0.3,0.6",
+        "--q2=-0.6,-0.3,0,0.3,0.6", "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "gamma-scan-0003-150"
+step = "3"
+title = "fam_b_0003 gamma scan to -pi at the pure kink m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--mass", "0.3",
+        "--gammas=-0.3927,-0.7854,-1.1781,-1.5708,-1.9635,-2.3562,-2.7489,-3.1416",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "gamma-scan-0012-150"
+step = "3"
+title = "fam_b_0012 gamma scan to -pi at the pure kink m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--mass", "0.3",
+        "--gammas=-0.3927,-0.7854,-1.1781,-1.5708,-1.9635,-2.3562,-2.7489,-3.1416",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "gamma-scan-0025-150"
+step = "3"
+title = "fam_b_0025 gamma scan to -pi at the pure kink m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--mass", "0.3",
+        "--gammas=-0.3927,-0.7854,-1.1781,-1.5708,-1.9635,-2.3562,-2.7489,-3.1416",
+        "--nx", "150", "--ny", "30"]
