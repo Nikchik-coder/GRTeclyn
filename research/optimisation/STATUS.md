@@ -130,8 +130,15 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     boson-star style at prescribed ω_χ, and the radial node count of X is the layer count). 𝒰 must be even in X
     (`PolynomialPotential.solitonic` is the dressed-star form). chi=None is the five-field system bit for bit
     (`test_chi_layer.py`: the six-field residual with a zero cloud embeds the five-field one exactly; pytest 15).
-  - [ ] J = 0 cross-check against the Bondi dressed star (`analysis/bondi_dipole` + `grtresna/profiles/
-    boson_star_ode.py` are the 1D machinery; conventions map to settle: χ vs their φ normalization, ω_χ units).
+  - [x] J = 0 cross-check against the Bondi dressed star (`check_chi_star.py`, 2026-10-28, job `chi-star`): the
+    published ultraweak canonical sextic star (ω 0.550, φ_c 1.9695e-2, 𝒰 by `from_evolution`; the map X = √(4π)φ₀,
+    ω_χ = ω, e^{f/2} = α, B = ψ_c²α at ν = 0) threaded by a micro-throat. Newton 1e-15 from the 1D seed at η₀ 0.2
+    and 0.1 (200×8), spherical to 7e-14 (max|N|, X anisotropy 4e-16), X at the throat = √4π φ_c to 4 digits, and
+    the φ₀ / α / ψ_c² profile errors converge toward the 1D star at the η₀² rate (×4.0 / ×6.3 / ×3.8; the honest
+    gate — at finite η₀ the geometries differ by the throat itself, O(η₀²), and the η-chart vs isotropic-r
+    identification is exact only through r = (η + √h)/2). E_c 2.4e-11; E19/D² 2.3e-5 at η₀ 0.2 is the phantom's
+    near-throat layer at center-grid Chebyshev spacing (160× down from nx 120 → 200: truncation, not structure) —
+    composites with η₀ ≪ the map scale need the map matched to the throat.
   - [ ] First cloud solves on a spinning member (seeded X at prescribed ω_χ), the identity gates, then the layered
     bill at matched R_e and J against step 3.
 - [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
@@ -223,9 +230,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Step 4, continued: the J = 0 dressed-star cross-check, then the first seeded cloud solves and the layered bill
-   (the two-field equations and solver landed 2026-10-28, machine-checked; see the step-4 checklist). (The ray
-   walks closed the widen-the-box item: every ray ran to the solver/grid limit with X still falling.)
+1. Step 4, continued: the first seeded cloud solves on a spinning member and the layered bill at matched R_e and J
+   (the two-field equations, solver and the J = 0 dressed-star cross-check all landed 2026-10-28; see the step-4
+   checklist). (The ray walks closed the widen-the-box item: every ray ran to the solver/grid limit with X still
+   falling.)
 2. The shape knob's true bottom needs more than rays: a finer grid for the frontier (the monitors there are the
    resolution tail) and/or step 6's optimizer with the m, q₁, q₂ knobs together.
 3. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes
