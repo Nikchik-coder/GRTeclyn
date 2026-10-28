@@ -3,10 +3,20 @@
 
 The step-3 scans showed the shape family is at least two-dimensional
 (the q3 fan broke the far-well-mass collapse), so rays are not enough:
-this walks all four knobs together with derivative-free Nelder-Mead,
-at pinned J and R_e on one member, every evaluation a full Newton solve
+this walks all four knobs together with a derivative-free engine, at
+pinned J and R_e on one member, every evaluation a full Newton solve
 with the step-1/2 gates.  cal V = lam psi^2 (psi - psi_minus)^2 Q(psi),
 Q = 1 + q1 u + q2 u^2 + q3 u^3, u = psi/psi_minus, lam = m^2/psi_minus^2.
+
+Engines (--engine): nm is scipy Nelder-Mead (the 2026-10-28 first pass;
+a simplex collapses into one basin and stops improving past ~150
+evals), cma is CMA-ES (the cma package): population-based, adapts the
+step covariance, tolerates the FAILED/FRONTIER penalty cliffs, and can
+leave a basin, so it is the engine for fresh starts and bigger budgets.
+Both share the same objective, penalties, nearest-solved-seed
+continuation cache and TSV.  The gradient path (implicit
+differentiation of the bill through the solved state, the step-6
+convergence item) is not wired yet: nothing here uses dX/dknobs.
 
 The objective is the bill X = |VIQ|/R_e, with penalties instead of
 constraints: an inadmissible point (min Q <= 0 on the kink, or m outside
@@ -45,7 +55,10 @@ import time
 import numpy as np
 
 from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
+from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
+    lobatto,
+    tail_ratio,
+)
 from grteclyn_wrapper.optimisation.exoticity import exotic_x, throat
 from grteclyn_wrapper.optimisation.matter_equations import (
     MatterCollocationProblem,
@@ -53,6 +66,10 @@ from grteclyn_wrapper.optimisation.matter_equations import (
 from grteclyn_wrapper.optimisation.potentials import PolynomialPotential
 from grteclyn_wrapper.optimisation.solver.device import select_device
 from grteclyn_wrapper.optimisation.solver.newton import newton
+from grteclyn_wrapper.optimisation.stability_radial import (
+    growth_rate,
+    static_background,
+)
 
 TOL = 1e-14
 STALL_OK = 1e-11
@@ -81,6 +98,32 @@ def main() -> int:
                     help="smallest kink mass the grid resolves (m = 0.1 "
                          "misses the gate below 240x48, step-2 record)")
     ap.add_argument("--m-max", type=float, default=1.2)
+    ap.add_argument("--engine", choices=["nm", "cma"], default="nm",
+                    help="nm: scipy Nelder-Mead (one basin, the first "
+                         "pass); cma: CMA-ES (population-based, escapes "
+                         "a collapsed simplex, the better engine for "
+                         "fresh starts)")
+    ap.add_argument("--sigma0", type=float, default=1.0,
+                    help="cma: global step multiplier on the per-knob "
+                         "SCALES")
+    ap.add_argument("--popsize", type=int, default=None,
+                    help="cma population (default 4 + 3 ln n = 8)")
+    ap.add_argument("--stability", action="store_true",
+                    help="score stability too: every evaluation also "
+                         "solves the knobs at J = 0 (its own "
+                         "continuation cache), runs the gated radial "
+                         "screen on the twin and pays stab-weight * "
+                         "lam*eta0 (decided 2026-10-28: one score in "
+                         "the loop, two axes on the frontier)")
+    ap.add_argument("--stab-weight", type=float, default=1.0,
+                    help="price of the growth rate (classical lam*eta0 "
+                         "is 1.18 against X ~ 2-3)")
+    ap.add_argument("--stab-nx", type=int, default=150,
+                    help="screen grid inside the loop (its internal "
+                         "0.7-coarse match grid comes free)")
+    ap.add_argument("--stab-fail-pen", type=float, default=0.25,
+                    help="penalty when the J = 0 twin will not solve: "
+                         "stability uncertifiable, not disqualifying")
     ap.add_argument("--maxfev", type=int, default=200)
     ap.add_argument("--fatol", type=float, default=2e-5,
                     help="X tolerance of the simplex stop")
@@ -101,13 +144,15 @@ def main() -> int:
     ny = args.ny or sol.ny
     name = args.solution.rsplit("/", 1)[-1]
     stem = name.rsplit(".", 1)[0]
-    out = pathlib.Path(args.out or f"runs/optimisation/opt/"
-                                   f"{stem}_opt4_{nx}x{ny}.tsv")
+    out = pathlib.Path(args.out or f"runs/optimisation/opt/{stem}_opt4"
+                                   f"{'s' if args.stability else ''}_"
+                                   f"{nx}x{ny}.tsv")
     out.parent.mkdir(parents=True, exist_ok=True)
     if not out.exists():
         out.write_text(
             "member\tnx\tny\tmass\tq1\tq2\tq3\tnewton\titers\tX\tsigma\t"
-            "psi_minus\tR_e\tE19\tE_c\ttails\tminQ\tverdict\n")
+            "psi_minus\tR_e\tE19\tE_c\ttails\tminQ\tverdict"
+            + ("\tlam_eta0\n" if args.stability else "\n"))
 
     # the member holding J on its own grid, and its measured throat
     p1 = MatterCollocationProblem(
@@ -138,8 +183,9 @@ def main() -> int:
     state = {"solved": {}, "nfev": 0,
              "best_clean": None, "best_frontier": None}
 
-    def solve_at(x, prev):
-        """One pinned solve at knob vector x, continued from prev."""
+    def solve_at(x, prev, jval=None):
+        """One pinned solve at knob vector x, continued from prev, at
+        the member's J (or ``jval`` -- the stability twin runs J = 0)."""
         t0 = time.time()
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
         pot = (None if m == 0.0
@@ -147,7 +193,8 @@ def main() -> int:
                    m, pm, q)))
         p2 = MatterCollocationProblem(
             eta0=1.0, gamma=sol.gamma, radial_map=grid, nx=nx, ny=ny,
-            prescribe=("J", J0), pin=("R_e", th["R_e"]), potential=pot)
+            prescribe=("J", J0 if jval is None else jval),
+            pin=("R_e", th["R_e"]), potential=pot)
         u0 = p2.pack(prev["F"] - p2.f_bg, prev["W"] - prev["omega"] * p2.q,
                      prev["N"], prev["B"] - 1.0,
                      prev["PSI"] - prev["psim"] * p2.psi_prof,
@@ -188,29 +235,61 @@ def main() -> int:
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
         tag = f"m {m:.4f} q ({', '.join(f'{v:+.3f}' for v in q)})"
         qvals = "\t".join(f"{v:.6g}" for v in q)
+        stab_col = ""
+        stab_tag = ""
+        if args.stability:
+            lam = row.get("lam")
+            stab_col = (f"\t{lam:.8f}" if lam is not None else "\tnan")
+            stab_tag = (f"  lam {lam:.4f}" if lam is not None
+                        else "  J0-FAIL" if row.get("j0_fail") else "")
         if row["verdict"] == "FAILED":
             print(f"  [{state['nfev']}] {tag}: NEWTON FAILED "
                   f"({row['err']})  [{row['secs']:.0f}s]", flush=True)
             line = (f"{name}\t{nx}\t{ny}\t{m:.6g}\t{qvals}\tnan\tnan\tnan\t"
                     f"nan\tnan\tnan\tnan\tnan\tnan\t{min_q(q):.3f}\t"
-                    f"FAILED\n")
+                    f"FAILED{stab_col}\n")
         else:
             print(f"  [{state['nfev']}] {tag}: newton {row['newton']:.1e} "
                   f"({row['iters']} it)  X {row['X']:.8e}  "
                   f"sigma {row['sigma']:.8f}  E19 {row['e19']:.1e}  "
                   f"E_c {row['e_c']:.1e}  tails {row['tails']:.1e}  "
-                  f"{row['verdict']}  [{row['secs']:.0f}s]", flush=True)
+                  f"{row['verdict']}{stab_tag}  [{row['secs']:.0f}s]",
+                  flush=True)
             line = (f"{name}\t{nx}\t{ny}\t{m:.6g}\t{qvals}\t"
                     f"{row['newton']:.3e}\t{row['iters']}\t"
                     f"{row['X']:.10e}\t{row['sigma']:.10f}\t"
                     f"{row['psim']:.10f}\t{row['R_e']:.10f}\t"
                     f"{row['e19']:.3e}\t{row['e_c']:.3e}\t"
                     f"{row['tails']:.3e}\t{min_q(q):.3f}\t"
-                    f"{row['verdict']}\n")
+                    f"{row['verdict']}{stab_col}\n")
         with out.open("a") as fh:
             fh.write(line)
 
     worst = [0.0]
+    state["solved_j0"] = {}
+    state["best_stable"] = None
+    sx_all, _ = lobatto(nx)
+
+    def stab_at(x, key):
+        """The J = 0 twin's growth rate: one continued solve on the
+        J = 0 cache, flatten, screen.  None means the twin failed."""
+        m, q = float(x[0]), tuple(float(v) for v in x[1:])
+        near = min(state["solved_j0"],
+                   key=lambda s: float(np.sum(np.abs(
+                       (np.array(s) - np.array(key)) / SCALES))))
+        jrow, jnxt = solve_at(x, state["solved_j0"][near], jval=0.0)
+        if jnxt is None:
+            return None
+        state["solved_j0"][key] = jnxt
+        pot = (None if m == 0.0 else
+               PolynomialPotential.kink_q(m, float(jnxt["psim"]), q))
+        bg = static_background(
+            sx=sx_all, radial_map=grid,
+            F0=jnxt["F"].mean(axis=1), P0=jnxt["B"].mean(axis=1),
+            psi0=jnxt["PSI"].mean(axis=1), potential=pot)
+        o = growth_rate(eta0=1.0, nx=args.stab_nx, background=bg,
+                        radial_map=grid)
+        return 0.0 if o.get("stable") else float(o["lam"])
 
     def objective(x):
         state["nfev"] += 1
@@ -229,6 +308,11 @@ def main() -> int:
                            (np.array(s) - np.array(key)) / SCALES))))
             seed = state["solved"][near]
         row, nxt = solve_at(x, seed)
+        lam = None
+        if nxt is not None and args.stability:
+            lam = stab_at(x, key)
+            row["lam"] = lam
+            row["j0_fail"] = lam is None
         record(x, row)
         if nxt is None:
             return worst[0] + 1.0
@@ -236,15 +320,22 @@ def main() -> int:
         mon_pen = (0.0 if row["verdict"] == "PASS"
                    else 0.1 if row["verdict"] == "FRONTIER" else 1.0)
         val = row["X"] + mon_pen
+        if args.stability:
+            val += (args.stab_fail_pen if lam is None
+                    else args.stab_weight * lam)
         worst[0] = max(worst[0], val)
         for slot, ok in (("best_clean", row["verdict"] == "PASS"),
-                         ("best_frontier", row["verdict"] != "ABOVE-GATE")):
+                         ("best_frontier", row["verdict"] != "ABOVE-GATE"),
+                         ("best_stable", args.stability and lam == 0.0
+                          and row["verdict"] == "PASS")):
             if ok and (state[slot] is None or row["X"] < state[slot][0]):
                 state[slot] = (row["X"], key, dict(row))
         return val
 
-    # the walk-in: m in thirds, then the shape in 0.3 steps
-    prev = prev0
+    # the walk-in: m in thirds, then the shape in 0.3 steps.  A leg that
+    # stalls gets bisected toward the last solved point (the stiff-spin
+    # straight line stalls marginally where the step-3 fan got through
+    # on another route); capped so a true wall still stops the run
     m0 = float(x0[0])
     chain = [np.array([mk, 0, 0, 0]) for mk in
              (0.0, m0 / 3.0, 2 * m0 / 3.0, m0)]
@@ -252,53 +343,98 @@ def main() -> int:
               if np.any(x0[1:]) else 1)
     chain += [np.concatenate([[m0], x0[1:] * k / n_q])
               for k in range(1, n_q + 1)]
-    # a leg that stalls gets bisected toward the last solved point (the
-    # stiff-spin straight line stalls marginally where the step-3 fan got
-    # through on another route); capped so a true wall still stops the run
-    xlast = chain[0] * 0.0
-    for xk in chain:
-        pending, splits = [xk], 0
-        while pending:
-            xt = pending[-1]
-            row, nxt = solve_at(xt, prev)
-            if nxt is None:
-                splits += 1
-                if splits > 6:
-                    print(f"walk-in FAILED at "
+
+    def walk(chain, prev, jval=None, what="walk-in"):
+        xlast, row = chain[0] * 0.0, None
+        for xk in chain:
+            pending, splits = [xk], 0
+            while pending:
+                xt = pending[-1]
+                row, nxt = solve_at(xt, prev, jval=jval)
+                if nxt is None:
+                    splits += 1
+                    if splits > 6:
+                        print(f"{what} FAILED at "
+                              f"({', '.join(f'{v:g}' for v in xt)}): "
+                              f"{row['err']} (after {splits - 1} splits)",
+                              flush=True)
+                        return None, None
+                    print(f"  {what} stall at "
                           f"({', '.join(f'{v:g}' for v in xt)}): "
-                          f"{row['err']} (after {splits - 1} splits)",
-                          flush=True)
-                    return 1
-                print(f"  walk-in stall at "
-                      f"({', '.join(f'{v:g}' for v in xt)}): {row['err']}; "
-                      f"bisecting", flush=True)
-                pending.append((xlast + xt) / 2.0)
-                continue
-            prev, xlast = nxt, xt
-            pending.pop()
+                          f"{row['err']}; bisecting", flush=True)
+                    pending.append((xlast + xt) / 2.0)
+                    continue
+                prev, xlast = nxt, xt
+                pending.pop()
+        return prev, row
+
+    prev, row = walk(chain, prev0)
+    if prev is None:
+        return 1
     state["solved"][tuple(np.round(x0, 10))] = prev
     print(f"walk-in done: X {row['X']:.8e} at x0", flush=True)
     worst[0] = row["X"] + 1.0
 
-    from scipy.optimize import minimize
+    if args.stability:
+        # the J = 0 branch: J down in thirds at V = 0, then the same
+        # knob chain -- its cache seeds every twin solve in the loop
+        jprev = prev0
+        for Jk in (2 * J0 / 3, J0 / 3, 0.0):
+            _, jprev_new = solve_at(np.zeros(4), jprev, jval=Jk)
+            if jprev_new is None:
+                print(f"J walk FAILED at J {Jk:g}", flush=True)
+                return 1
+            jprev = jprev_new
+        jprev, _ = walk(chain, jprev, jval=0.0, what="J0 walk-in")
+        if jprev is None:
+            return 1
+        state["solved_j0"][tuple(np.round(x0, 10))] = jprev
+        lam0 = stab_at(x0, tuple(np.round(x0, 10)))
+        print(f"J0 walk-in done: lam*eta0 at x0 "
+              f"{lam0 if lam0 is not None else float('nan'):.6f}",
+              flush=True)
 
-    simplex = np.vstack([x0] + [x0 + SCALES[i] * np.eye(4)[i]
-                                for i in range(4)])
-    res = minimize(objective, x0, method="Nelder-Mead",
-                   options={"maxfev": args.maxfev, "fatol": args.fatol,
-                            "xatol": 1e-3, "initial_simplex": simplex,
-                            "adaptive": True})
-    print(f"\nsimplex stopped: {res.message} after {state['nfev']} "
-          f"evaluations", flush=True)
-    for slot, label in (("best_clean", "best clean (<= 1e-8)"),
-                        ("best_frontier", "best frontier (<= 1e-6)")):
+    if args.engine == "cma":
+        import cma
+
+        es = cma.CMAEvolutionStrategy(
+            list(x0), args.sigma0,
+            {"CMA_stds": list(SCALES),
+             "bounds": [[args.m_min, None, None, None],
+                        [args.m_max, None, None, None]],
+             "popsize": args.popsize, "maxfevals": args.maxfev,
+             "tolfun": args.fatol, "verbose": -9, "seed": 7})
+        while not es.stop() and state["nfev"] < args.maxfev:
+            xs = es.ask()
+            es.tell(xs, [objective(np.asarray(xv)) for xv in xs])
+        print(f"\ncma stopped: {dict(es.stop()) or 'maxfev'} after "
+              f"{state['nfev']} evaluations", flush=True)
+    else:
+        from scipy.optimize import minimize
+
+        simplex = np.vstack([x0] + [x0 + SCALES[i] * np.eye(4)[i]
+                                    for i in range(4)])
+        res = minimize(objective, x0, method="Nelder-Mead",
+                       options={"maxfev": args.maxfev, "fatol": args.fatol,
+                                "xatol": 1e-3, "initial_simplex": simplex,
+                                "adaptive": True})
+        print(f"\nsimplex stopped: {res.message} after {state['nfev']} "
+              f"evaluations", flush=True)
+    slots = [("best_clean", "best clean (<= 1e-8)"),
+             ("best_frontier", "best frontier (<= 1e-6)")]
+    if args.stability:
+        slots.append(("best_stable", "best stable clean (lam = 0)"))
+    for slot, label in slots:
         if state[slot] is None:
             print(f"{label}: none", flush=True)
         else:
             xb, key, row = state[slot]
+            stab = (f"  lam {row['lam']:.4f}"
+                    if row.get("lam") is not None else "")
             print(f"{label}: X {xb:.8e} at m {key[0]:g} "
                   f"q ({', '.join(f'{v:g}' for v in key[1:])})  "
-                  f"E19 {row['e19']:.1e}  E_c {row['e_c']:.1e}", flush=True)
+                  f"E19 {row['e19']:.1e}  E_c {row['e_c']:.1e}{stab}",
+                  flush=True)
     return 0
 
 

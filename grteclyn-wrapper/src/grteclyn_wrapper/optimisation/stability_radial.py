@@ -45,7 +45,8 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["radial_coefficients", "radial_rows", "growth_rate"]
+__all__ = ["radial_coefficients", "radial_rows", "growth_rate",
+           "cheb_interp", "static_background"]
 
 #: the perturbation jets each row reads
 JETS = tuple(f"{f}_{k}" for f in ("dF", "dP", "dpsi") for k in (0, 1, 2))
@@ -132,6 +133,59 @@ def radial_rows(*, eta, eta0, bg, pert, V0, V1, V2, lam2):
                              V0=V0, V1=V1, V2=V2, lam2=lam2)
     return {label: sum(c[jet] * pert[jet] for jet in JETS)
             for label, c in co.items()}
+
+
+def cheb_interp(sx, vals, x):
+    """Barycentric interpolation from Lobatto nodes sx to x."""
+    n = sx.size
+    w = np.ones(n)
+    w[1::2] = -1.0
+    w[0] *= 0.5
+    w[-1] *= 0.5
+    diff = np.asarray(x, float)[:, None] - sx[None, :]
+    hit = np.abs(diff) < 1e-14
+    diff = np.where(hit, 1.0, diff)
+    ratio = w / diff
+    out = (ratio @ vals) / ratio.sum(axis=1)
+    rows = hit.any(axis=1)
+    if rows.any():
+        out[rows] = vals[hit.argmax(axis=1)[rows]]
+    return out
+
+
+def static_background(*, sx, radial_map, F0, P0, psi0, potential=None):
+    """The screen's ``background(eta)`` from a static solution's 1D node
+    values on the Lobatto grid ``sx`` under ``radial_map`` (a J = 0
+    solve of the 2D ansatz is the 1D chart: F0 = f, P0 = B, psi0 = psi).
+    Jets by spectral differentiation, barycentric interpolation in xi to
+    the requested nodes, the potential evaluated exactly at the
+    interpolated psi (V2 = potential.d2V)."""
+    from grteclyn_wrapper.analysis.spinning_wormhole.spectral import lobatto
+
+    _, Dx = lobatto(sx.size - 1)
+    deta = radial_map.deta(sx)
+    d2eta = radial_map.d2eta(sx)
+    inv1 = np.where(np.isfinite(deta), 1.0 / deta, 0.0)
+    inv2 = np.where(np.isfinite(deta), 1.0 / deta**2, 0.0)
+    curv = np.where(np.isfinite(deta), d2eta / deta**3, 0.0)
+    Dxx = Dx @ Dx
+    jets = {}
+    for nm, arr in (("F0", F0), ("P0", P0), ("psi0", psi0)):
+        jets[f"{nm}_0"] = np.asarray(arr, float)
+        jets[f"{nm}_1"] = inv1 * (Dx @ arr)
+        jets[f"{nm}_2"] = inv2 * (Dxx @ arr) - curv * (Dx @ arr)
+
+    def background(eta):
+        xi = radial_map.xi_of_eta(eta)
+        bg = {k: cheb_interp(sx, v, xi) for k, v in jets.items()}
+        psi = bg["psi0_0"]
+        z = np.zeros_like(psi)
+        bg["V0"] = potential.V(psi) if potential is not None else z
+        bg["V1"] = potential.dV(psi) if potential is not None else z
+        bg["V2"] = potential.d2V(psi) if potential is not None else z
+        return bg
+
+    return background
 
 
 def _pencil_lam2(*, eta0, nx, background, radial_map, want_mode=None):

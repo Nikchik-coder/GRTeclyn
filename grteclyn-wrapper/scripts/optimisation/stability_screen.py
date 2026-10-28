@@ -49,29 +49,14 @@ from grteclyn_wrapper.optimisation.matter_equations import (
 from grteclyn_wrapper.optimisation.potentials import PolynomialPotential
 from grteclyn_wrapper.optimisation.solver.device import select_device
 from grteclyn_wrapper.optimisation.solver.newton import newton
-from grteclyn_wrapper.optimisation.stability_radial import growth_rate
+from grteclyn_wrapper.optimisation.stability_radial import (
+    growth_rate,
+    static_background,
+)
 
 TOL = 1e-14
 STALL_OK = 1e-11
 C_GATE = 0.05
-
-
-def cheb_interp(sx: np.ndarray, vals: np.ndarray, x: np.ndarray):
-    """Barycentric interpolation from Lobatto nodes sx to x."""
-    n = sx.size
-    w = np.ones(n)
-    w[1::2] = -1.0
-    w[0] *= 0.5
-    w[-1] *= 0.5
-    diff = np.asarray(x, float)[:, None] - sx[None, :]
-    hit = np.abs(diff) < 1e-14
-    diff = np.where(hit, 1.0, diff)
-    ratio = w / diff
-    out = (ratio @ vals) / ratio.sum(axis=1)
-    rows = hit.any(axis=1)
-    if rows.any():
-        out[rows] = vals[hit.argmax(axis=1)[rows]]
-    return out
 
 
 def main() -> int:
@@ -206,13 +191,7 @@ def main() -> int:
           f"X {base['X']:.8e}  E19 {base['e19']:.1e}", flush=True)
 
     screen_nx = [int(v) for v in args.screen_nx.split(",")]
-    sx_all, Dx = lobatto(nx)
-    deta_all = grid.deta(sx_all)
-    d2eta_all = grid.d2eta(sx_all)
-    inv1 = np.where(np.isfinite(deta_all), 1.0 / deta_all, 0.0)
-    inv2 = np.where(np.isfinite(deta_all), 1.0 / deta_all**2, 0.0)
-    curv = np.where(np.isfinite(deta_all), d2eta_all / deta_all**3, 0.0)
-    Dxx = Dx @ Dx
+    sx_all, _ = lobatto(nx)
 
     for label, x in targets:
         t0 = time.time()
@@ -236,22 +215,9 @@ def main() -> int:
         flat = max(flat, float(np.max(np.abs(Nf))),
                    float(np.max(np.abs(W))), abs(float(tgt["omega"])))
         F0d, B0d, PSI0d = (a.mean(axis=1) for a in (F, B, PSI))
-        jets = {}
-        for nm, arr in (("F0", F0d), ("P0", B0d), ("psi0", PSI0d)):
-            jets[f"{nm}_0"] = arr
-            jets[f"{nm}_1"] = inv1 * (Dx @ arr)
-            jets[f"{nm}_2"] = inv2 * (Dxx @ arr) - curv * (Dx @ arr)
-        pot = tgt["pot"]
-
-        def background(eta, jets=jets, pot=pot):
-            xi = grid.xi_of_eta(eta)
-            bg = {k: cheb_interp(sx_all, v, xi) for k, v in jets.items()}
-            psi = bg["psi0_0"]
-            z = np.zeros_like(psi)
-            bg["V0"] = pot.V(psi) if pot is not None else z
-            bg["V1"] = pot.dV(psi) if pot is not None else z
-            bg["V2"] = pot.d2V(psi) if pot is not None else z
-            return bg
+        background = static_background(sx=sx_all, radial_map=grid,
+                                       F0=F0d, P0=B0d, psi0=PSI0d,
+                                       potential=tgt["pot"])
 
         lam = drift = ttr = ter = None
         for snx in screen_nx:

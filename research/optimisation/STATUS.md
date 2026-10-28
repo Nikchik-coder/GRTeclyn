@@ -17,7 +17,15 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28 evening, step 5 open on a flagged J row; bare-field optimizer + stability screen running)
+## Now (2026-10-28 evening, step 5 open on a flagged J row; joint bill+stability CMA-ES runs on the cards)
+
+**Running now: the first JOINT optimizations** — `cmas-0012` (card 0) and `cmas-0025` (card 1), CMA-ES over
+(m, q₁, q₂, q₃) at 150×30, 400 evaluations, score = X + gate penalties + λη₀ from the radial screen on each
+candidate's J = 0 twin (~10 s per evaluation; launched ~15:50 UTC, ETA ~17:10 UTC / 20:10 MSK; fam_b_0003
+queued for a freed card). Engines: scipy Nelder–Mead was the first pass; **CMA-ES (`--engine cma`) since the
+same evening** — the NM simplex collapsed into one basin by ~eval 150 in both first runs, CMA-ES is
+population-based and escapes; the `cma` package was already a wrapper dependency. The gradient (implicit
+differentiation, dX/dknobs) is still not wired — the step-6 convergence item.
 
 **The 4-knob bare-field optimizer is live and paying** (`optimize_potential.py`, Nelder–Mead over (m, q₁, q₂, q₃)
 at pinned J and R_e, gate penalties on every point, nearest-solved-seed continuation, 150×30 on the cards): the
@@ -223,10 +231,20 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
   rate in the loop, the traversability bounds and stability as inequality constraints, the batched GPU search as an
   option. Products: the Pareto frontier of bill against instability rate and spin, and the design chart. Done when
   the frontier is stationary under more budget, every member passes a grid-change re-solve, and the chart is filled.
-  - [~] **The 4-knob shape optimizer runs** (2026-10-28, `optimize_potential.py`: Nelder–Mead over
+  - [~] **The 4-knob shape optimizer runs** (2026-10-28, `optimize_potential.py`: scipy Nelder–Mead over
     (m, q₁, q₂, q₃), bounds m ∈ [0.15, 1.2], gate penalties — inadmissible/Newton-failed worst+1, frontier +0.1,
     above-gate +1 — nearest-solved-seed continuation with a walk-in chain, TSV per run in `runs/optimisation/opt/`).
     First 200-eval results in the [step 6 record](#step-6-record-2026-10-28).
+    **Who turns which knobs** (stated 2026-10-28, after the question came up): the spacetime fields on the grid
+    are turned by Newton on the jax Jacobian (the inner loop, one wormhole per recipe); the recipe knobs
+    (m, q₁, q₂, q₃) were turned by hand in the step-3 scans/rays and are turned by a third-party engine since
+    the optimizer landed — scipy Nelder–Mead in the first pass, and **CMA-ES (`--engine cma`, the `cma` package,
+    already a wrapper dependency) since the same evening**: population-based, adapts its step covariance,
+    tolerates the penalty cliffs and can leave a basin, where the NM simplex collapsed into one basin by ~eval
+    150 in both first runs. What is still NOT wired is the gradient: nothing computes dX/dknobs. That is this
+    step's convergence item — implicit differentiation of the bill through the solved state (one adjoint solve
+    on the existing LU per knob set), feeding a gradient engine; CMA-ES is the derivative-free fallback the
+    plan named.
   - [ ] **The m = 0 growth-rate solver — the pre-GPU stability screen** (decided 2026-10-28: the first
     infrastructure piece after step 5's winding brick; today nothing in steps 1–4 checks stability before a GPU
     run, so the frontier has no second axis and the cards would judge unscreened candidates). Linearize the
@@ -261,9 +279,14 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     floor at 150×30, the step-3 floor noise); the kink rows are clean at ≤ 1.1e-9. A λ² ≈ 6.69 value shows up at
     nx 200 on every potential background regardless of mass and scale and never matches — a grid artifact, gone
     at nx 300. Next: the rotating 2D eigenproblem, calibrated on the published spinning rates.
-  - [ ] The score with stability in it: whether the search objective combines the exotic bill and the growth rate
-    into one number (a weighted penalty) or keeps them as the two-axis Pareto frontier — decide once the
-    growth-rate solver exists (raised 2026-10-28); the frontier is the paper's product either way.
+  - [x] The score with stability in it — **decided 2026-10-28: one score in the loop, two axes on the frontier.**
+    `optimize_potential.py --stability` solves every candidate's J = 0 twin on its own continuation cache, runs
+    the gated radial screen on it (`--stab-nx` 150, the internal 0.7-coarse match grid comes free) and pays
+    `--stab-weight` (default 1.0) × λη₀ in the objective — the classical rate 1.18 against X ~ 2–3, so
+    reintroducing the instability costs like a third of the bill; a twin that will not solve pays a flat 0.25
+    (uncertifiable, not disqualifying). The TSV gains the lam_eta0 column (`_opt4s_` files); the frontier still
+    reports bill and rate as two axes. First joint runs: `cmas-0012` / `cmas-0025` (CMA-ES, 400 evals, 150×30),
+    launched 2026-10-28 ~15:50 UTC.
 - [ ] **7. Extend the hand-off.** New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
   bare-field table round-trips bit-compatibly.
   - [ ] **The plan's Split card overstates the compiled matter classes** (repo check, 2026-10-28): "the matter
