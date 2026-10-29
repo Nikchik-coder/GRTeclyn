@@ -65,10 +65,11 @@ at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search
 it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
 (stalled points come out ABOVE-GATE on E19, so nothing loose reaches the clean class).
 
-**3D hand-off validation live 2026-10-29 07:33 UTC:** the no-checkpoint matter-table t = 0 runs are
-`D51_X1p606_t0_N096` (card 0, t 0.31/1, 45.6 u/h, ETA 0.02 h / 10:35 MSK) and
-`D51_X1p606_t0_N128` (card 1, t 0.03/1, 17.7 u/h, ETA 0.06 h / 10:37 MSK); N192 and the six-column V = 0
-regression follow. Scratch: these runs use 1.4 / 2.8 GB plus the 47 MB cache, 469 GB free.
+**3D hand-off validation live 2026-10-29 07:36 UTC, no checkpoints:** `D51_X1p606_t0_N096` finished at
+t 1.013 (exit 0); `D51_X1p606_t0_N128` is on card 1 at t 0.47/1, 17.8 u/h, ETA 0.03 h / 10:38 MSK;
+`D51_X1p606_t0_N192` is on card 0 at t 0.01/1, 3.4 u/h, ETA 0.29 h / 10:54 MSK. The six-column V = 0
+regression follows. Scratch: 4.2 / 2.8 / 5.6 GB plus the 47 MB cache, 468 GB free; the three finished
+plotfiles of N96 are retained for the contract analysis.
 Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
 into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
 
