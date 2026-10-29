@@ -14,15 +14,17 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 
 ## Live
 
-None. Card 0 and 1 idle. Scratch: 47 MB cache, 482 GB free.
+**D21 milder grid-checks**, 150×30 → 180×36 → 210×42, four PASS points each
+(the X 1.785 champion already failed). `grid-d21-a` card 0, `grid-d21-b` card 1,
+~61 GB each. ETA ~20 min, ~16:15 MSK. Scratch: 47 MB cache, 482 GB free.
 
 **Last finished:** D21 `grid-d21-npz` (card 0, 2026-10-29 12:18 UTC, exit 1).
-From the search dump: 150×30 already E19 1.3e-5 (search row was 1e-10), 180×36
-E19 1.1e-4, 210×42 Newton stalled. Not cleared.
+Champion not cleared.
 
 ## Planned (nothing launches without the go)
 
-D21 champ not cleared. D51 X 1.606 triplet stays written, not launched.
+After these checks: ask before 3+1. D51 X 1.606 triplet stays written, not
+launched.
 
 ## Main results
 
@@ -70,7 +72,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 champ not cleared; D51 3+1 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 milder checks `grid-d21-a/b`; D51 3+1 parked.
 - [ ] 10. Publish.
 
 ## Rules
