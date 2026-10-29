@@ -52,24 +52,22 @@ to 3e-6 while E19/E_c flip between 1e-5 and 3e-4; the lower D51 frontier X 1.505
 on the first finer grid, so neither is cleared. This is the floor-decision branch: quote/evolve D51 X 1.606
 only if the agreed criterion is grid-converged X plus a bounded numerical floor rather than absolute E19 < 1e-8.
 
-**C++ hand-off audit (2026-10-29): core wired, launch contract not ready.** The frozen matter binary's patch
-is byte-for-byte the committed source change; NPZ → seven-column table units/signs, B → χ/B², and the potential
-at all four RHS/constraint sites agree. The 2049×129 C2 table interpolation error is ≤ 2.4e-11 in f and
-≤ 9.4e-12 in ν/B on the D30/D51 files; potential/ADM regressions pass (11 tests). Two blockers remain before a
-t = 0 run: `analysis/spinning_wormhole/adm.py::table_gamma` ignores B, so `t0_checks.py` would compare against
-the wrong metric; and preflight does not refuse a seven-column/potential table paired with an old binary.
-After those, generate D51's table with `phantom_mass = 0`, run the three-resolution t = 0 contract and the
-V = 0 regression, then ask for the short evolution go. Options on all
-three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
-at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search stalled; bisection does not lift
-it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
-(stalled points come out ABOVE-GATE on E19, so nothing loose reaches the clean class).
+**C++ hand-off audit (2026-10-29): the direct matter path is wired; one derived-field defect was found and
+fixed.** NPZ → seven-column table units/signs, B → χ/B², and the potential at all four direct RHS/constraint
+sites agree. The 2049×129 C2 table interpolation error is ≤ 2.4e-11 in f and ≤ 9.4e-12 in ν/B; the B-aware
+ADM/t=0 checks and old-binary preflight refusal are in. The first three-resolution run exposed that
+`ConstraintsWithMatter::compute_mf` default-constructed its derived-field matter object, so plotfile `Ham`
+silently omitted the polynomial although preflight and `constraint_norms.dat` used it. This exactly gave
+`Ham = -16 pi V` while momentum converged at fourth order. Derived-field setup now retains the configured
+matter object; a corrected diagnostic binary is built and the fixed-grid repeat is next. The short smoke stays
+blocked until that repeat passes.
 
-**3D hand-off validation live 2026-10-29 07:40 UTC, no checkpoints:** `D51_X1p606_t0_N096` and
-`D51_X1p606_t0_N128` finished at t 1.013 / 1.000 (exit 0); `D51_X1p606_t0_N192` is on card 0 at t 0.13/1,
-4.4 u/h, ETA 0.20 h / 10:52 MSK. The six-column `D51_V0_matterbin_t0_N128` regression is on card 1 at
-t 0.01/1, ≈ 14 u/h, ETA 0.07 h / 10:44 MSK. Scratch: 4.2 / 5.6 / 8.0 / 2.8 GB plus the 47 MB cache,
-458 GB free; finished plotfiles are retained for the contract analysis.
+**3D hand-off validation finished 2026-10-29 07:50 UTC, no checkpoints:** D51 N 96 / 128 / 192 reached
+t 1.013 / 1.000 / 1.000 (exit 0); the six-column V = 0 N 128 control reached t 1.000 and reproduces its archived
+norms. Throat transfer improves with resolution (equatorial −2.6e-4 → −5.2e-5; polar −4.9e-4 → −1.2e-4),
+momentum is fourth order, M agrees with the table to ≤ 1.2e-5 and J to ≤ 1.2e-6. The old plotfile Hamiltonian
+column is invalid by the derived-field defect above. Scratch retains 2 plotfiles/run or fewer: 31 GB used,
+451 GB free; no other folders except the 47 MB cache.
 Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
 into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
 

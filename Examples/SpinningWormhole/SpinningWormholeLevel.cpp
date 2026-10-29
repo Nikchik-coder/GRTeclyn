@@ -109,7 +109,8 @@ void SpinningWormholeLevel::variableSetUp()
                                     simParams().potential_coeffs);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
     ConstraintsWithMatter<
-        ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
+        ExoticScalarField<PhantomDecayPotential>>::set_up(state_index,
+                                                          exotic_scalar);
     Weyl4WithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(
         state_index);
 }

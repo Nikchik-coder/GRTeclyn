@@ -97,9 +97,25 @@ ConstraintsWithMatter<matter_t>::operator()(
 }
 
 template <class matter_t>
+matter_t &ConstraintsWithMatter<matter_t>::derived_matter()
+{
+    static matter_t matter;
+    return matter;
+}
+
+template <class matter_t>
 void ConstraintsWithMatter<matter_t>::set_up(int a_state_index,
                                              bool a_calc_mom_norm)
 {
+    set_up(a_state_index, matter_t(), a_calc_mom_norm);
+}
+
+template <class matter_t>
+void ConstraintsWithMatter<matter_t>::set_up(int a_state_index,
+                                             const matter_t &a_matter,
+                                             bool a_calc_mom_norm)
+{
+    derived_matter() = a_matter;
 
     int num_ghosts = 2;
 
@@ -142,8 +158,8 @@ void ConstraintsWithMatter<matter_t>::compute_mf(
 
     pp.load("center", center, center);
 
-    ConstraintsWithMatter<matter_t> my_matter_constraints(dx, G_Newton, iham, imom,
-                                                          center, time);
+    ConstraintsWithMatter<matter_t> my_matter_constraints(
+        derived_matter(), dx, G_Newton, iham, imom, center, time);
 
     amrex::ParallelFor(
         out_mf, out_mf.nGrowVect(),

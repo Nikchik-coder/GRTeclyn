@@ -53,6 +53,8 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
                const amrex::Array4<amrex::Real const> &state) const;
 
     static void set_up(int a_state_index, bool a_calc_mom_norm = false);
+    static void set_up(int a_state_index, const matter_t &a_matter,
+                       bool a_calc_mom_norm = false);
 
     // Has signature of DeriveFuncMF so that it can be stored in the derive_lst
     static void compute_mf(amrex::MultiFab &out_mf, int dcomp, int ncomp,
@@ -62,6 +64,8 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
                            int /*level*/);
 
   protected:
+    static matter_t &derived_matter();
+
     matter_t my_matter;     //!< The matter object, e.g. a scalar field
     amrex::Real m_G_Newton; //!< Newton's constant, set to one by default.
     amrex::Real m_dx;
