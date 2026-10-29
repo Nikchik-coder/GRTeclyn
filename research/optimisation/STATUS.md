@@ -8,23 +8,27 @@ Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
-Remaining work is the **D21 3+1 triplet** (Azad comparison). The table is written. D51
+Remaining work is the **D21 3+1 triplet** (Azad comparison), now running. D51
 evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 2D-solver work, and extra matter recipes. Evolutions wait for the go.
 
 ## Live
 
-None. Both cards idle. Scratch: 47 MB cache, 476 GB free.
+D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
+`main3d_matter_16460fb0`. Scratch: 11.5 GB in the three run dirs, 461 GB free.
 
-**Last finished:** `grid-d21-e140` (card 0, 2026-10-29 13:05 UTC, exit 0). The
-210×42 solve is PASS again at X **1.8287958015**. Table and the L 64 triplet
-are written, not launched.
+| run | card | t | speed | ETA |
+|---|---|---|---|---|
+| `D21_X1p829_L64_N096_ml3_spdrv0_t150` | 0 (with N 128) | ~1.3 | 41 u/h | ~3.6 h, ~19:50 MSK |
+| `D21_X1p829_L64_N128_ml3_spdrv0_t150` | 0 | 0.07 | 10 u/h, just started | ~15 h, ~07:25 MSK 30 Oct |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | ~0.14 | 4.9 u/h | ~30 h, ~22:40 MSK 30 Oct |
+
+Card 0 ~35 GB, card 1 ~60 GB. Consumers up; N 192 MOTS is 150 steps. t = 0
+Ham L2 is 4.3e-3 / 3.0e-3 / 2.2e-3 (N 96 / 128 / 192). N 96 throat R_eq 4.063.
 
 ## Planned (nothing launches without the go)
 
-D21 triplet `D21_X1p829_L64_N{096,128,192}_ml3_spdrv0_t150`. Same outer boundary
-as spinning D51: Sommerfeld on the deviation from the background, sponge 24–32,
-drive off. Checkpoints off. D51 X 1.606 triplet stays written, not launched.
+D51 X 1.606 triplet stays written, not launched.
 
 ## Main results
 
@@ -75,7 +79,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet written, not launched; D51 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet live; D51 parked.
 - [ ] 10. Publish.
 
 ## Rules
