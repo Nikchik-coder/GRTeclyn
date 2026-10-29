@@ -14,17 +14,20 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 
 ## Live
 
-None. Card 0 and 1 idle. Scratch: 47 MB cache, 482 GB free.
+**D21 grid-check** `grid-d21`, card 0 (~61 GB), 150×30 → 180×36 → 210×42,
+`--stall-ok 1e-9`. Point champ m 1.17085, q (0.76188, 0.350503, 0.205706).
+Same recipe as D51 smoke. ETA ~15 min, ~15:22 MSK. Card 1 idle. Scratch: 47 MB
+cache, 482 GB free.
 
 **Last finished:** D21 CMA-ES `cmasd-0002` (card 0, 2026-10-29 11:51 UTC, exit 0).
 400 evals, 158 accepted (83 PASS). Best clean = best stable: **X 1.78482942**
 (−61.6 % vs $V = 0$, −27.0 % vs the $m = 0.3$ kink) at m 1.171,
-q (0.762, 0.351, 0.206), lam = 0. Not grid-checked.
+q (0.762, 0.351, 0.206), lam = 0. Grid-check running.
 
 ## Planned (nothing launches without the go)
 
-**Next:** grid-check the D21 winner X 1.78483 (150×30 → 180×36 → 210×42), then
-ask before any 3+1. D51 X 1.606 triplet stays written, not launched.
+**After this check:** ask before any 3+1. D51 X 1.606 triplet stays written, not
+launched.
 
 ## Main results
 
@@ -71,7 +74,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 winner not grid-checked; D51 3+1 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 grid-check `grid-d21`; D51 3+1 parked.
 - [ ] 10. Publish.
 
 ## Rules

@@ -10,8 +10,9 @@ solve at pinned J and R_e, grid 150x30, from the packed TSVs:
   by the bill's shift against the pure kink, X/X_kink - 1 in percent.
   The bill falls toward +q1, +q2 at every spin and keeps falling along
   every ray; a grey cross is a point with no solution (Newton), the
-  black circle the best clean point (all monitors inside the 1e-8
-  gate).
+  black circle the best clean point of the m = 0.3 scan (all monitors
+  inside the 1e-8 gate), the gold square the screened CMA-ES champion
+  (mass and q3 free; its (q1, q2) is overlaid on this slice).
 - (d) every walk down the landscape on one axis, the far-well mass
   m_- = m sqrt(1 + q1 + q2) (the curvature of the psi_minus well): the
   pure-kink mass ladders (dots, q = 0, m_- = m) and the open ray walks
@@ -22,18 +23,21 @@ solve at pinned J and R_e, grid 150x30, from the packed TSVs:
   drainhole's -pi at the pure kink m 0.3 -- a ~ +42 % penalty, nearly
   spin-independent.
 - (f) the summary by design: X against v_e for the V = 0 member, the
-  pure kink m 0.3, and the best clean shape over the box plus the open
+  pure kink m 0.3, the best clean shape over the box plus the open
   ray walks (q-rays stages; every ray ended on Newton or the monitor
-  limit with X still falling, so these are frontier values at this
-  grid, not the landscape's bottom).
+  limit with X still falling, so those are frontier values at this
+  grid, not the landscape's bottom), and the screened CMA-ES PASS
+  points (STATUS: 1.63372 / 1.49461 / 1.09759; the 0.50 loop-best
+  PASS 1.477 is an open twin and is not plotted).
 
 Colours are red / green / blue by spin (the keys above (a)-(c) name
 them); ``--colors C1,C2,C3`` redraws in another scheme.
 
     python -m grteclyn_wrapper.visualisation.optimisation.plot_potential_scans
 
-Reads ``results/optimisation/scans/*.tsv`` and
-``results/optimisation/ladders_150x30.tsv``; writes
+Reads ``results/optimisation/scans/*.tsv``,
+``results/optimisation/ladders_150x30.tsv``, and the packed CMA-ES
+opt4s TSVs under ``results/optimisation/opt/``; writes
 ``results/optimisation/figures/potential_scans`` (PNG + PDF).
 """
 
@@ -56,6 +60,8 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 
 REPO = pathlib.Path(__file__).resolve().parents[5]
 SCANS = REPO / "results" / "optimisation" / "scans"
+OPT = REPO / "results" / "optimisation" / "opt"
+RUNS_OPT = REPO / "runs" / "optimisation" / "opt"
 LADDERS = REPO / "results" / "optimisation" / "ladders_150x30.tsv"
 OUT = REPO / "results" / "optimisation" / "figures" / "potential_scans"
 RGB = ("#d62728", "#2ca02c", "#1f77b4")
@@ -64,6 +70,14 @@ MEMBERS = (("fam_b_0003", 0.27), ("fam_b_0012", 0.50), ("fam_b_0025", 0.85))
 MASS = 0.3
 GRID = "150x30"
 TIGHT = dict(handlelength=1.5, handletextpad=0.35, columnspacing=0.5)
+# Screened CMA-ES PASS X from research/optimisation/STATUS.md (150x30).
+# fam_b_0012's loop-best PASS (1.477) is an open twin; the quoted row
+# is the milder PASS that grid-checks.
+QUOTED_CMA_X = {
+    "fam_b_0003": 1.63372,
+    "fam_b_0012": 1.49461,
+    "fam_b_0025": 1.09759,
+}
 
 
 def read(path: pathlib.Path) -> list[dict]:
@@ -120,6 +134,34 @@ def rays(member: str) -> list[dict]:
     return out
 
 
+def cma(member: str) -> dict:
+    """The member's screened CMA-ES PASS champion (STATUS X, with q)."""
+    name = f"{member}_opt4s_{GRID}.tsv"
+    path = next((root / name for root in (OPT, RUNS_OPT)
+                 if (root / name).is_file()), None)
+    if path is None:
+        raise FileNotFoundError(
+            f"no search TSV {name} under {OPT} or {RUNS_OPT}")
+    rows = []
+    with open(path) as fh:
+        for raw in csv.DictReader(
+                (ln for ln in fh if not ln.startswith("#")), delimiter="\t"):
+            try:
+                x = float(raw["X"])
+            except (TypeError, ValueError):
+                continue
+            if raw.get("verdict") != "PASS" or math.isnan(x):
+                continue
+            rows.append({"X": x, "q1": float(raw["q1"]),
+                         "q2": float(raw["q2"]), "q3": float(raw["q3"]),
+                         "mass": float(raw["mass"])})
+    if not rows:
+        raise ValueError(f"{path} has no PASS evaluations")
+    pick = min(rows, key=lambda r: abs(r["X"] - QUOTED_CMA_X[member]))
+    return {"X": pick["X"], "q": (pick["q1"], pick["q2"]),
+            "mass": pick["mass"], "q3": pick["q3"]}
+
+
 def ladders() -> dict[str, dict]:
     rows = read(LADDERS)
     out: dict[str, dict] = {}
@@ -131,12 +173,14 @@ def ladders() -> dict[str, dict]:
     return out
 
 
-def draw(shapes, gammas, lads, rayss, colours):
+def draw(shapes, gammas, lads, rayss, cmas, colours):
     style.prd(8.0)
     fig, axes = plt.subplots(2, 3, figsize=(7.05, 3.6), layout="constrained")
     top, (ax_d, ax_e, ax_f) = axes
     dot = dict(ls="none", marker="o", ms=4.5, mfc="black", mec="black",
                zorder=6, clip_on=False)
+    champ = dict(ls="none", marker="s", ms=4.5, mfc=style.GOLD, mec="black",
+                 mew=0.5, zorder=7, clip_on=False)
     rule = dict(color=style.FAINT, lw=0.6, zorder=0)
 
     def line(color, ls="-", lw=1.3, **kw):
@@ -153,7 +197,7 @@ def draw(shapes, gammas, lads, rayss, colours):
     cmap = plt.get_cmap("RdBu")
     cross = dict(ls="none", marker="x", ms=3.2, mec="#9a9a96", mew=0.9)
     mesh = None
-    for ax, (member, ve), s, c in zip(top, MEMBERS, shapes, colours):
+    for ax, (member, ve), s, cm, c in zip(top, MEMBERS, shapes, cmas, colours):
         qs = np.array(list(s["pts"]))
         mesh = ax.scatter(qs[:, 0], qs[:, 1], c=list(s["pts"].values()),
                           s=13, marker="s", cmap=cmap, vmin=-vmax,
@@ -162,6 +206,7 @@ def draw(shapes, gammas, lads, rayss, colours):
             f = np.array(s["failed"])
             ax.plot(f[:, 0], f[:, 1], **cross)
         ax.plot([s["best"][1][0]], [s["best"][1][1]], **dot)
+        ax.plot([cm["q"][0]], [cm["q"][1]], **champ)
         ax.set(xlim=(-1.1, 7.9), ylim=(-1.1, 7.9), xticks=(0, 2, 4, 6),
                yticks=(0, 2, 4, 6), xlabel="$q_1$", aspect="equal")
         style.legend_top(ax, [key(line(c), f"$v_e = {ve:.2f}$")], **TIGHT)
@@ -205,16 +250,20 @@ def draw(shapes, gammas, lads, rayss, colours):
         ("best shape", dict(ls="none", marker="o", ms=3.4, mfc="white",
                             mec=style.INK, mew=0.8),
          [s["best"][0] for s in shapes]),
+        ("CMA-ES", dict(color=style.GOLD, ls="-", lw=1.3, marker="s",
+                        ms=3.4, mfc=style.GOLD, mec="black", mew=0.5),
+         [cm["X"] for cm in cmas]),
     )
     for label, fmt, x in designs:
         ax_f.plot(ve, x, **fmt)
-    ax_f.set(xlim=(0.2, 0.92), ylim=(1.0, 3.2), xlabel="$v_e$")
+    ax_f.set(xlim=(0.2, 0.92), ylim=(0.9, 3.2), xlabel="$v_e$")
     style.legend_top(ax_f, [key(fmt, label) for label, fmt, _ in designs],
-                     ncol=3, borderpad=0.4, **TIGHT)
+                     ncol=2, borderpad=0.4, **TIGHT)
 
     fig.legend(*zip(*[key(dot, "best clean point"),
+                      key(champ, "CMA-ES"),
                       key(cross, "no solution (Newton stop)")]),
-               loc="outside upper center", ncol=2, frameon=False,
+               loc="outside upper center", ncol=3, frameon=False,
                fontsize=7.0, handlelength=1.2, columnspacing=1.8)
     style.tag_keys(fig, list(top) + [ax_d, ax_e, ax_f],
                    ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"], row="last")
@@ -238,12 +287,15 @@ def main(argv=None) -> int:
     gammas = [gamma(m) for m, _ in MEMBERS]
     lads = ladders()
     rayss = [rays(m) for m, _ in MEMBERS]
-    fig = draw(shapes, gammas, lads, rayss, colours)
+    cmas = [cma(m) for m, _ in MEMBERS]
+    fig = draw(shapes, gammas, lads, rayss, cmas, colours)
     problems = style.label_audit(fig)
     png = style.save(fig, args.out)
-    for (member, ve), s in zip(MEMBERS, shapes):
+    for (member, ve), s, cm in zip(MEMBERS, shapes, cmas):
         print(f"{member} (v_e {ve:g}): kink X {s['kink']:.6f}, best clean "
-              f"{s['best'][0]:.6f} at q = {s['best'][1]}")
+              f"{s['best'][0]:.6f} at q = {s['best'][1]}; CMA-ES "
+              f"{cm['X']:.6f} at m = {cm['mass']:.3f}, q = {cm['q']}, "
+              f"q3 = {cm['q3']:.3f}")
     print(f"label audit: {'clean' if not problems else problems}")
     print(f"wrote {png}")
     return 1 if problems else 0
