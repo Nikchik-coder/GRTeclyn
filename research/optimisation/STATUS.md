@@ -14,12 +14,11 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 
 ## Live
 
-**D21 CMA-ES** `cmasd-0001`, card 0, 150×30, `--stability`, maxfev 400, timeout
+**D21 CMA-ES** `cmasd-0002`, card 0, 150×30, `--stability`, maxfev 400, timeout
 4 h. Member `fam_a_r1_0000` (`v_e` 0.212, J 1.014; paper D21 is 0.210 / J 1),
-x0 0.3, 2.4, 2.4, 0, q ∈ [−2, 8]. ABOVE-GATE is infeasible (floor 10³). Restart
-of `cmasd-0000` (stopped at 136 evals, 7 accepted: CMA had left the box).
-Continuation from V = 0; ETA ~2 h, ~15:05 MSK. Card 1 idle. Scratch: 47 MB
-cache, 482 GB free.
+x0 0.3, 0, 0, 0 (pure kink), q ∈ [−2, 8]. ABOVE-GATE infeasible. Restart of
+`cmasd-0001` (stopped at 79 evals; that start was the shape-scan point).
+ETA ~2 h, ~15:35 MSK. Card 1 idle. Scratch: 47 MB cache, 482 GB free.
 
 **Last finished:** `D51_X1p606_smoke_t005` (card 0, 2026-10-29 08:12 UTC, exit 0,
 no checkpoints, no NaN). t 5.01 at 20.0 u/h.
@@ -46,7 +45,7 @@ screened number. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Fami
 holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets.
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,
-D90 0.59955. D21 search live (restart `cmasd-0001`, q bounded).
+D90 0.59955. D21 search live (`cmasd-0002`, pure kink start).
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
@@ -73,7 +72,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 search `cmasd-0001`; D51 3+1 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 search `cmasd-0002`; D51 3+1 parked.
 - [ ] 10. Publish.
 
 ## Rules

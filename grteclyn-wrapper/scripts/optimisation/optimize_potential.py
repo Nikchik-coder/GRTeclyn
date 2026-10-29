@@ -44,7 +44,7 @@ Run through capped_job.sh; solver jobs take a card by default
         grteclyn-wrapper/.venv/bin/python \\
         grteclyn-wrapper/scripts/optimisation/optimize_potential.py \\
         results/spinningwormhole/solutions/fam_b/fam_b_0003.json \\
-        --nx 150 --ny 30 --x0 0.3,2.4,2.4,0 --gpu 0
+        --nx 150 --ny 30 --x0 0.3,0,0,0 --gpu 0
 """
 
 from __future__ import annotations
@@ -123,9 +123,10 @@ def monitor_overflow(row: dict) -> float:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("solution", help=".npz / .json path of a V = 0 member")
-    ap.add_argument("--x0", default="0.3,2.4,2.4,0",
-                    help="start (m, q1, q2, q3); the step-3 best clean "
-                         "shape of the member is the right start")
+    ap.add_argument("--x0", default="0.3,0,0,0",
+                    help="start (m, q1, q2, q3); the pure kink at the "
+                         "mass this grid resolves (2026-10-29: not the "
+                         "shape-scan best point)")
     ap.add_argument("--m-min", type=float, default=0.15,
                     help="smallest kink mass the grid resolves (m = 0.1 "
                          "misses the gate below 240x48, step-2 record)")
