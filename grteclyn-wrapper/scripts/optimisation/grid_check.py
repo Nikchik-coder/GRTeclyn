@@ -7,7 +7,9 @@ solve's round-off floor (E19 stalls while X holds).  Each point walks in once
 on the first grid (m in thirds, then the shape in 0.3 steps, a stalled leg
 bisected toward the last solved point, capped), then every finer grid starts
 from the previous grid's solution, spectrally interpolated onto its nodes, so
-a finer grid costs one Newton solve.  Every grid pins the same R_e, the one
+a finer grid costs one Newton solve.  ``--from-npz`` skips that continuation
+and starts from a search dump on the first grid, which is the check of the
+point the optimizer actually stored.  Every grid pins the same R_e, the one
 the member holds on the first grid -- the optimizer's pin when the first grid
 is its own -- so the first row reproduces the search's X and the rows differ
 by resolution alone.
@@ -68,6 +70,9 @@ def main() -> int:
     ap.add_argument("--save-dir", default=None,
                     help="save each solved nonzero point as an evolution "
                          "handoff NPZ in this directory")
+    ap.add_argument("--from-npz", default=None,
+                    help="search dump to start from (one --points entry); "
+                         "skips continuation from V = 0")
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
 
@@ -231,11 +236,44 @@ def main() -> int:
                      **{k: np.asarray(row[k]) for k in FIELDS})
             print(f"    saved {path}", flush=True)
 
+    def load_npz(path):
+        z = np.load(path, allow_pickle=True)
+        meta = json.loads(str(z["meta"]))
+        row = {k: np.asarray(z[k]) for k in FIELDS}
+        row.update({k: float(meta[k])
+                    for k in ("omega", "psim", "sigma", "xi_t")})
+        row["sx"] = np.asarray(z["sx"])
+        row["sy"] = np.asarray(z["sy"])
+        x = np.array([float(meta["m"]), *[float(v) for v in meta["q"]]])
+        return x, row
+
     v0, err = solve_at(np.zeros(4), prev0, nx0, ny0)
     if v0 is None:
         print(f"classical (V = 0) FAILED: {err}", flush=True)
         return 1
     report("v0", np.zeros(4), nx0, ny0, v0, None)
+
+    if args.from_npz:
+        if len(points) != 1:
+            print("--from-npz takes one --points entry", flush=True)
+            return 1
+        label, _ = points[0]
+        x, seed = load_npz(args.from_npz)
+        print(f"  from {args.from_npz}: m {x[0]:.6g} q "
+              f"({x[1]:.6g}, {x[2]:.6g}, {x[3]:.6g})", flush=True)
+        row, err = solve_at(x, seed, nx0, ny0)
+        if row is None:
+            print(f"  [{label}] {nx0}x{ny0}: {err}", flush=True)
+            return 1
+        report(label, x, nx0, ny0, row, None)
+        for nx, ny in grids[1:]:
+            nxt, err = solve_at(x, prolong(row, nx, ny), nx, ny)
+            if nxt is None:
+                print(f"  [{label}] {nx}x{ny}: {err}", flush=True)
+                return 1
+            report(label, x, nx, ny, nxt, row["X"])
+            row = nxt
+        return 0
 
     for label, x in points:
         m0 = float(x[0])

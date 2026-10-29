@@ -16,15 +16,13 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 
 None. Card 0 and 1 idle. Scratch: 47 MB cache, 482 GB free.
 
-**Last finished:** D21 grid-check `grid-d21` (card 0, 2026-10-29 12:09 UTC, exit 0).
-X holds at 1.78483 (dX −2e-6 / −8e-7) but E19 is ABOVE-GATE and rises
-(4e-5 → 3e-5 → 2e-4). Walk-in at 150×30 already E19 4e-5; the search row was
-PASS 1e-10. Not cleared.
+**Last finished:** D21 `grid-d21-npz` (card 0, 2026-10-29 12:18 UTC, exit 1).
+From the search dump: 150×30 already E19 1.3e-5 (search row was 1e-10), 180×36
+E19 1.1e-4, 210×42 Newton stalled. Not cleared.
 
 ## Planned (nothing launches without the go)
 
-D21 champ not cleared (walk-in identities). D51 X 1.606 triplet stays written,
-not launched.
+D21 champ not cleared. D51 X 1.606 triplet stays written, not launched.
 
 ## Main results
 
@@ -44,8 +42,8 @@ holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,
 D90 0.59955. D21 CMA-ES (pure kink start, 400 evals): search X **1.78482942** (−61.6 % vs
-$V = 0$) at m 1.171, q (0.762, 0.351, 0.206), lam = 0. Grid-check (walk-in):
-X holds, E19 ABOVE-GATE and rising (4e-5 → 2e-4); not cleared.
+$V = 0$) at m 1.171, q (0.762, 0.351, 0.206), lam = 0. From the search dump:
+150×30 E19 1.3e-5, 210×42 stalled; not cleared.
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
