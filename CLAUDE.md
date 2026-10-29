@@ -292,7 +292,8 @@ Learned on the spinning paper's submission (2026-10-21):
 - **Commit subjects at most 72 characters**, blank line, then the body; detail goes
   in the body and the state in `research/merger/STATUS.md` (the `commit-msg` hook enforces it;
   install with `python3 grteclyn-wrapper/scripts/ops/check_commit_msg.py --install-hook`).
-- No `Co-Authored-By: Claude` trailers.
+- No agent co-author trailers (`Co-authored-by: Claude`, `Co-authored-by: Cursor`,
+  anthropic.com, cursoragent@cursor.com). The `commit-msg` hook strips them.
 - No machine identity in tracked files (user, host, home paths): the `pre-commit`
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
