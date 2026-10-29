@@ -26,9 +26,26 @@ Binary `main3d_matter_9c16a55b_2026-10-29.ex`.
 
 ## Planned (nothing launches without the go)
 
-1. A D51 X 1.606 hold long enough to compare with classical D51 (~t 70–100).
-2. Three-resolution verdict on that winner.
-3. No other tables: D30 X 1.693 and D51 X 1.505 did not clear the finer grid.
+**D51 X 1.606 3+1 triplet**, the spinning 0.2c / D51 recipe (templates written,
+not launched). L 64, max_level 3, σ 0.1, min_chi 1e-8, drive off, farfix keys,
+stop 150, plot every t = 1.0 (interval 75 / 100 / 150). Same table as the t = 5
+smoke. Binary `main3d_matter_9c16a55b_2026-10-29.ex`. Profile `hold` (not the
+smoke profile: need MOTS + ψ4 + throat spheres). `--subdir convergence`. N 192
+adds `--mots-spectral-steps 150`. Checkpoints off unless asked. Do not start
+from the t = 0 templates (`shift_advec_coeff = 1`, missing farfix).
+
+```
+LAUNCH=grteclyn-wrapper/scripts/campaigns/optimisation/launch_evolution.sh
+BIN=runs/spinning_wormhole/bin/main3d_matter_9c16a55b_2026-10-29.ex
+# N 96 / 128: --template params_D51_X1p606_L64_N096_ml3_spdrv0_t150.txt
+#             --name D51_X1p606_L64_N096_ml3_spdrv0_t150 --gpu N --profile hold
+#             --zoom 32 --center 32 32 32 --subdir convergence --binary $BIN
+# N 192: same, plus --consume-args with the hold flags and --mots-spectral-steps 150
+```
+
+Classical D51 comparison is the packed spinning run (N 128 died inflating at
+t 100, trust 95). No other tables: D30 X 1.693 and D51 X 1.505 did not clear
+the finer grid.
 
 ## Main results
 
