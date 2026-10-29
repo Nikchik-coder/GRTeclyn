@@ -19,12 +19,16 @@ differentiation of the bill through the solved state, the step-6
 convergence item) is not wired yet: nothing here uses dX/dknobs.
 
 The objective is the bill X = |VIQ|/R_e, with penalties instead of
-constraints: an inadmissible point (min Q <= 0 on the kink, or m outside
-[--m-min, --m-max]) or a Newton failure scores worst-so-far + 1 without
-solving twice; a solved point whose monitors sit between the 1e-8 gate
-and the 1e-6 ceiling counts as frontier and pays +0.1 so the simplex
-prefers clean ground but can cross a noisy ridge; above 1e-6 it pays
-+1.  Every evaluation continues Newton from the NEAREST solved point
+constraints: an inadmissible point (min Q <= 0 on the kink, m outside
+[--m-min, --m-max], or any q outside [--q-min, --q-max]) or a Newton
+failure scores DEATH + 10 (DEATH = 1e3) without solving twice; a
+solved point whose unused-constraint residual (E19, E_c) sits between
+the 1e-8 gate and the 1e-6 ceiling counts as frontier and pays +0.1
+so the search prefers clean ground but can cross a noisy ridge;
+above 1e-6 is infeasible (DEATH + log10(residual/1e-6)), so CMA
+cannot rank cheaper rejected points over each other and walk q3 off
+the box (2026-10-29: X+1 did that on the drainholes).  Every
+evaluation continues Newton from the NEAREST solved point
 (L1 in scaled knob units), the cache growing as the simplex moves; rows
 append to the scan-format TSV (--out; default under
 runs/optimisation/opt/).  The walk-in to --x0 runs the ladder's anchor
@@ -77,6 +81,11 @@ STALL_OK = 1e-11
 C_GATE = 0.05
 CLEAN_GATE = 1e-8
 CEILING = 1e-6
+# 2026-10-29: X+1 ranked cheaper ABOVE-GATE over each other and walked
+# q3 to 17 on drainholes (3 accepted in 400).  Any accepted X (~1-5)
+# beats this floor; log10(residual/CEILING) ranks the rejected toward
+# the 1e-6 ceiling.
+DEATH = 1e3
 #: knob scales for the nearest-seed metric and the initial simplex
 SCALES = np.array([0.1, 0.3, 0.3, 0.3])
 FIELDS = ("F", "W", "N", "B", "PSI")
@@ -99,16 +108,34 @@ def min_q(q) -> float:
     return float(np.min(acc))
 
 
+def death(extra: float = 0.0) -> float:
+    return DEATH + extra
+
+
+def monitor_overflow(row: dict) -> float:
+    try:
+        mon = max(float(row["e19"]), float(row["e_c"]))
+    except (KeyError, TypeError, ValueError):
+        return 10.0
+    return math.log10(max(mon / CEILING, 1.0))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("solution", help=".npz / .json path of a V = 0 member")
     ap.add_argument("--x0", default="0.3,2.4,2.4,0",
                     help="start (m, q1, q2, q3); the step-3 best clean "
-                         "shape of the member is the right seed")
+                         "shape of the member is the right start")
     ap.add_argument("--m-min", type=float, default=0.15,
                     help="smallest kink mass the grid resolves (m = 0.1 "
                          "misses the gate below 240x48, step-2 record)")
     ap.add_argument("--m-max", type=float, default=1.2)
+    ap.add_argument("--q-min", type=float, default=-2.0,
+                    help="lower bound on each of q1, q2, q3 (the step-3 "
+                         "shape box, with room for a mild negative q3)")
+    ap.add_argument("--q-max", type=float, default=8.0,
+                    help="upper bound on each of q1, q2, q3 (the step-3 "
+                         "shape box; D51's rejected basin sat at q3 ~ 17)")
     ap.add_argument("--m-step", type=float, default=SCALES[0],
                     help="the mass knob's scale (CMA step, simplex edge, "
                          "seed metric); m is physical, its stiffness is "
@@ -171,6 +198,10 @@ def main() -> int:
     x0 = np.array([float(v) for v in args.x0.split(",")])
     scales = np.array([args.m_step, *SCALES[1:]])
     assert x0.size == 4, "--x0 takes m,q1,q2,q3"
+    assert args.q_min < args.q_max, "--q-min must be < --q-max"
+    if not (args.m_min <= x0[0] <= args.m_max) or np.any(
+            (x0[1:] < args.q_min) | (x0[1:] > args.q_max)):
+        ap.error("--x0 sits outside the m or q bounds")
 
     sol = Solution.load(args.solution)
     J0 = float(sol.meta["prescribed"]["J"])
@@ -305,7 +336,6 @@ def main() -> int:
         with out.open("a") as fh:
             fh.write(line)
 
-    worst = [0.0]
     state["solved_j0"] = {}
     state["best_stable"] = None
     state["twins"] = {"direct": 0, "spun down": 0, "failed": 0}
@@ -412,11 +442,13 @@ def main() -> int:
     def objective(x):
         state["nfev"] += 1
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
-        if not (args.m_min <= m <= args.m_max) or min_q(q) <= 0.0:
+        if (not (args.m_min <= m <= args.m_max)
+                or any(not (args.q_min <= qk <= args.q_max) for qk in q)
+                or min_q(q) <= 0.0):
             print(f"  [{state['nfev']}] m {m:.4f} q "
                   f"({', '.join(f'{v:+.3f}' for v in q)}): inadmissible",
                   flush=True)
-            return worst[0] + 1.0
+            return death(10.0)
         key = tuple(np.round(np.asarray(x, float), 10))
         if not state["solved"]:
             seed = prev0
@@ -432,15 +464,15 @@ def main() -> int:
             row["lam"] = lam
         record(x, row)
         if nxt is None:
-            return worst[0] + 1.0
+            return death(10.0)
         state["solved"][key] = nxt
-        mon_pen = (0.0 if row["verdict"] == "PASS"
-                   else 0.1 if row["verdict"] == "FRONTIER" else 1.0)
+        if row["verdict"] == "ABOVE-GATE":
+            return death(monitor_overflow(row))
+        mon_pen = 0.0 if row["verdict"] == "PASS" else 0.1
         val = row["X"] + mon_pen
         if args.stability:
             val += (args.stab_fail_pen if lam is None
                     else args.stab_weight * lam)
-        worst[0] = max(worst[0], val)
         for slot, ok in (("best_clean", row["verdict"] == "PASS"),
                          ("best_frontier", row["verdict"] != "ABOVE-GATE"),
                          ("best_stable", args.stability and lam == 0.0
@@ -498,7 +530,6 @@ def main() -> int:
         return 1
     state["solved"][tuple(np.round(x0, 10))] = prev
     print(f"walk-in done: X {row['X']:.8e} at x0", flush=True)
-    worst[0] = row["X"] + 1.0
 
     if args.stability:
         # the J = 0 branch: J down in thirds at V = 0, then the same
@@ -527,8 +558,8 @@ def main() -> int:
         es = cma.CMAEvolutionStrategy(
             list(x0), args.sigma0,
             {"CMA_stds": list(scales),
-             "bounds": [[args.m_min, None, None, None],
-                        [args.m_max, None, None, None]],
+             "bounds": [[args.m_min, args.q_min, args.q_min, args.q_min],
+                        [args.m_max, args.q_max, args.q_max, args.q_max]],
              "popsize": args.popsize, "maxfevals": args.maxfev,
              "tolfun": args.fatol, "verbose": -9, "seed": 7})
         while not es.stop() and state["nfev"] < args.maxfev:
