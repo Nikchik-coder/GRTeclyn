@@ -40,9 +40,9 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 EXAMPLE="${REPO}/Examples/SpinningWormhole"
-BIN_DIR="${REPO}/runs/spinning_wormhole/bin"
-LOG_DIR="${REPO}/runs/spinning_wormhole/logs"
-MANIFEST="${REPO}/results/spinningwormhole/binaries.tsv"
+BIN_DIR="${SWH_BINARY_DIR:-${REPO}/runs/spinning_wormhole/bin}"
+LOG_DIR="${SWH_BUILD_LOG_DIR:-${REPO}/runs/spinning_wormhole/logs}"
+MANIFEST="${SWH_BINARY_MANIFEST:-${REPO}/results/spinningwormhole/binaries.tsv}"
 AMREX="$(cd -- "${REPO}/../amrex" 2>/dev/null && pwd || true)"
 FLAGS="${SWH_BUILD_FLAGS:-USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90}"
 BUILD_SUB="tmp_build_dir/pin"          # relative to the example; gitignored
@@ -88,7 +88,7 @@ echo "[build] source   : ${commit}$( [[ -n "${dirty_list}" ]] && echo " + uncomm
 echo "[build] amrex    : ${amrex_version}"
 echo "[build] flags    : ${FLAGS}"
 echo "[build] objects  : Examples/SpinningWormhole/${BUILD_SUB}$( (( CLEAN )) && echo " (wiped first)")"
-echo "[build] output   : runs/spinning_wormhole/bin/${NAME}"
+echo "[build] output   : ${DEST#"${REPO}"/}"
 [[ -e "${DEST}" ]] && { echo "[build] ${NAME} already exists -- nothing to do (delete it to rebuild)" >&2; exit 1; }
 (( DRYRUN )) && { echo "[build] dry run -- nothing built."; exit 0; }
 
@@ -155,9 +155,9 @@ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
   "${NAME}" "${sha:0:16}" "${version}" "${amrex_version}" "$(date -u +%FT%TZ)" \
   "${FLAGS}" "${nvcc_version}" "build_binary.sh" "${NOTE}" >> "${MANIFEST}"
 
-echo "[build] done in ~${minutes} min: runs/spinning_wormhole/bin/${NAME}"
+echo "[build] done in ~${minutes} min: ${DEST#"${REPO}"/}"
 echo "[build] sha256   : ${sha}"
-echo "[build] manifest : results/spinningwormhole/binaries.tsv (commit it)"
-echo "[build] launch with: --binary runs/spinning_wormhole/bin/${NAME}"
+echo "[build] manifest : ${MANIFEST#"${REPO}"/} (commit it)"
+echo "[build] launch with: --binary ${DEST#"${REPO}"/}"
 exit
 }

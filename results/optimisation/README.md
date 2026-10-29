@@ -6,6 +6,7 @@ clean checkout on CPU; no run output is involved.
 
 | path | what | rebuild |
 |---|---|---|
+| `binaries.tsv` | Campaign M GRTeclyn evolution builds and provenance | `grteclyn-wrapper/scripts/campaigns/optimisation/build_binary.sh` |
 | `fcurve/f_curve.tsv` | one row per solution of both spin families (200 saved solutions + 2 synthesized static anchors): the Ford–Roman compliance factor fhat, its normalizations, gates | `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/quantum_budget/measure_f.py` |
 | `fcurve/measurement.json` | the measurement's configuration and provenance | written by the same script |
 | `figures/f_curve.png` | log10 F at a 1 m throat against v_e | `.../plot_f_curve.py` |

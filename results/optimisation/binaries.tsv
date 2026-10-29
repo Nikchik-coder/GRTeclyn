@@ -1,0 +1,7 @@
+# GRTeclyn builds used by the optimisation campaign, one row per binary.
+file	sha256_16	grteclyn_commit	amrex	built_utc	flags	nvcc	builder	note
+# The first matter build added the .spinbg B column and potential_coeffs contract. Source: 6c7ac156 plus main3d_matter_6c7ac156-dirty_2026-10-28.patch.
+main3d_matter_6c7ac156-dirty_2026-10-28.ex	bd72232146caab9d	6c7ac156-dirty	26.02-12-gd7da5045	2026-10-28T18:19:18Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	Initial matter hand-off build
+main3d_matterfix_3545e55f-dirty_2026-10-29.ex	f47129e3a830525b	3545e55f-dirty	26.02-12-gd7da5045	2026-10-29T07:46:15Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	Derived constraints retain table potential
+main3d_matter_9c16a55b_2026-10-29.ex	0cee6451b73317a0	9c16a55b	26.02-12-gd7da5045	2026-10-29T07:53:51Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	First D51 smoke evolution
+main3d_matter_16460fb0_2026-10-29.ex	e43c6b0d1388d5f2	16460fb0	26.02-12-gd7da5045	2026-10-29T08:02:27Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	Optimisation D51 matter evolution; derived constraints fixed
