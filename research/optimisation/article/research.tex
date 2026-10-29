@@ -61,7 +61,7 @@
 
 \raggedbottom
 
-\title{Confining potentials reduce the exotic matter of rotating Ellis--Bronnikov wormholes}
+\title{Suppressing radial instability while minimizing exotic matter in rotating Ellis--Bronnikov wormholes}
 
 \author{Nikita M. Shirokov}
 \email{shirokov.nm@phystech.edu}
@@ -240,7 +240,14 @@ D21 & 1.829 & 4.645 & $-61\%$ \\
 \subsection{\texorpdfstring{Reduction of $X$ at fixed throat and spin}{Reduction of X at fixed throat and spin}}
 \label{sec:results:X}
 
-We ran the CMA-ES search over $(m,q_1,q_2,q_3)$ on the symmetric family ($\gamma=0$) at three rotation rates ($v_e=0.27, 0.50, 0.85$) and on the asymmetric drainhole family ($\gamma=-\pi$) at $v_e=0.21$ (Table~\ref{tab:models}). Every reported minimum was verified by re-solving on a finer grid. Table~\ref{tab:X} compares the resulting exotic-matter integral $X$ against the classical massless phantom ($\mathcal{V}=0$) of the exact same throat radius $R_e$ and spin $J$. 
+We ran the CMA-ES search over $(m,q_1,q_2,q_3)$ on the symmetric family ($\gamma=0$) at three rotation rates ($v_e=0.27, 0.50, 0.85$) and on the asymmetric drainhole family ($\gamma=-\pi$) at $v_e=0.21$ (Table~\ref{tab:models}). Every reported minimum was verified by re-solving on a finer grid. Table~\ref{tab:X} compares the resulting exotic-matter integral $X$ against the classical massless phantom ($\mathcal{V}=0$) of the exact same throat radius $R_e$ and spin $J$. Figure~\ref{fig:exotic} places those minima on the massless families of Ref.~\cite{shirokov2026s}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{exotic_spin.pdf}
+\caption{Exotic-matter bill $X$ relative to each family's static member, against equatorial rotation $v_e$. Curves: massless phantom ($\mathcal{V}=0$). Squares: CMA-ES minima (filled: drainhole; open: symmetric). The confined solutions lie below the massless families at every spin tested.}
+\label{fig:exotic}
+\end{figure} 
 
 Confining the phantom field at the throat substantially reduces the exoticity bill at every spin tested: by $45\%$, $43\%$, and $25\%$ along the symmetric sequence S27--S85, and by $61\%$ on the slowly rotating drainhole D21. Across all winners, the optimizer selects $m>0$ and positive barrier shaping ($q_1,q_2>0$), steepening the potential walls to localize $\partial_\eta\psi$ near the throat and depressing $B$ below unity in the interior while leavingboth asymptotic ends flat ($B\to 1$). The relative reduction is largest at slow and moderate spins, where the unpinned $\mathcal{V}=0$ field is most diffuse, and complements the rotational reduction at high spin.
 
