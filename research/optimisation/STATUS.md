@@ -8,22 +8,23 @@ Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
-Remaining work is a **D21 table then its 3+1 triplet** (Azad comparison). D51
+Remaining work is the **D21 3+1 triplet** (Azad comparison). The table is written. D51
 evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 2D-solver work, and extra matter recipes. Evolutions wait for the go.
 
 ## Live
 
-None. Both cards idle. Scratch: 47 MB cache, 482 GB free.
+None. Both cards idle. Scratch: 47 MB cache, 476 GB free.
 
-**Last finished:** `grid-d21-a` and `grid-d21-b` (2026-10-29 12:58 UTC, exit 0).
-Cleared: e140 X **1.8287958015** (PASS on 180 and 210, X frozen) and e5
-X **2.3579280305** (PASS on all three grids). Champion X 1.785 still not cleared.
+**Last finished:** `grid-d21-e140` (card 0, 2026-10-29 13:05 UTC, exit 0). The
+210×42 solve is PASS again at X **1.8287958015**. Table and the L 64 triplet
+are written, not launched.
 
 ## Planned (nothing launches without the go)
 
-Ask before a D21 table at e140, then its 3+1. D51 X 1.606 triplet stays written,
-not launched.
+D21 triplet `D21_X1p829_L64_N{096,128,192}_ml3_spdrv0_t150`. Same outer boundary
+as spinning D51: Sommerfeld on the deviation from the background, sponge 24–32,
+drive off. Checkpoints off. D51 X 1.606 triplet stays written, not launched.
 
 ## Main results
 
@@ -43,9 +44,11 @@ holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,
 D90 0.59955. D21 CMA-ES (pure kink start, 400 evals): search-best X 1.78483 (−61.6 %) did
-not clear. Cleared on the finer grids: e140 X **1.8287958015** (−60.6 % vs
-$V = 0$) at m 1.023, q (0.672, 0.048, 0.310); e5 X **2.3579280305** (−49.2 %)
-at m 0.355, q (0.037, 0.082, −0.458).
+not clear. Winner after the finer-grid check: e140 X **1.8287958015** (−60.6 %
+vs $V = 0$) at m 1.023, q (0.672, 0.048, 0.310), 210×42 PASS, E19 1.6e-10.
+Also clean: e5 X 2.357928 (−49.2 %). A new CMA best is kept only after it is
+re-solved on the next finer grid; the 1e-8 cutoff on the search grid does not
+do this (the failed 1.785 was already 1e-10 there).
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
@@ -72,13 +75,15 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 e140 cleared, 3+1 not launched; D51 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet written, not launched; D51 parked.
 - [ ] 10. Publish.
 
 ## Rules
 
 - Evolutions: nothing starts without the go; `nvidia-smi` first; no checkpoints
   unless asked; frames are never deleted.
+- CMA-ES: a point becomes the best only after a re-solve on the next finer
+  grid. The search-grid residual alone does not clear it.
 - Solver jobs (if any) go through `capped_job.sh`. Code reaches the node through
   git (`myfork`, branch `feature/optimisation`).
 - `develop` does not import this package.
