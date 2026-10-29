@@ -14,17 +14,16 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 
 ## Live
 
-**D21 milder grid-checks**, 150×30 → 180×36 → 210×42, four PASS points each
-(the X 1.785 champion already failed). `grid-d21-a` card 0, `grid-d21-b` card 1,
-~61 GB each. ETA ~20 min, ~16:15 MSK. Scratch: 47 MB cache, 482 GB free.
+None. Both cards idle. Scratch: 47 MB cache, 482 GB free.
 
-**Last finished:** D21 `grid-d21-npz` (card 0, 2026-10-29 12:18 UTC, exit 1).
-Champion not cleared.
+**Last finished:** `grid-d21-a` and `grid-d21-b` (2026-10-29 12:58 UTC, exit 0).
+Cleared: e140 X **1.8287958015** (PASS on 180 and 210, X frozen) and e5
+X **2.3579280305** (PASS on all three grids). Champion X 1.785 still not cleared.
 
 ## Planned (nothing launches without the go)
 
-After these checks: ask before 3+1. D51 X 1.606 triplet stays written, not
-launched.
+Ask before a D21 table at e140, then its 3+1. D51 X 1.606 triplet stays written,
+not launched.
 
 ## Main results
 
@@ -43,9 +42,10 @@ screened number. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Fami
 holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets.
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,
-D90 0.59955. D21 CMA-ES (pure kink start, 400 evals): search X **1.78482942** (−61.6 % vs
-$V = 0$) at m 1.171, q (0.762, 0.351, 0.206), lam = 0. From the search dump:
-150×30 E19 1.3e-5, 210×42 stalled; not cleared.
+D90 0.59955. D21 CMA-ES (pure kink start, 400 evals): search-best X 1.78483 (−61.6 %) did
+not clear. Cleared on the finer grids: e140 X **1.8287958015** (−60.6 % vs
+$V = 0$) at m 1.023, q (0.672, 0.048, 0.310); e5 X **2.3579280305** (−49.2 %)
+at m 0.355, q (0.037, 0.082, −0.458).
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
@@ -72,7 +72,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 milder checks `grid-d21-a/b`; D51 3+1 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 e140 cleared, 3+1 not launched; D51 parked.
 - [ ] 10. Publish.
 
 ## Rules
