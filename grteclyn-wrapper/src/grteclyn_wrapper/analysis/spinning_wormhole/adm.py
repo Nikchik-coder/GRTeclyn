@@ -165,9 +165,10 @@ def table_gamma(header: dict, body: np.ndarray, X, Y, Z) -> dict[str, np.ndarray
     bilinear interpolation in (x, |mu|), and
 
         gamma_ij = a delta_ij + c p_i p_j,   p = (-y, x, 0),
-        a = e^{-f} Omega^2 e^{nu},  c = -e^{-f} Omega^2 nu_bar S(nu) / r^2,
+        a = B^2 e^{-f} Omega^2 e^{nu},
+        c = -B^2 e^{-f} Omega^2 nu_bar S(nu) / r^2,
 
-    S(u) = expm1(u) / u, regular on the axis."""
+    S(u) = expm1(u) / u, regular on the axis.  Six-column tables have B = 1."""
     eta0 = float(header["eta0"])
     r = np.sqrt(X * X + Y * Y + Z * Z)
     eta = r - eta0**2 / (4 * r)
@@ -186,11 +187,13 @@ def table_gamma(header: dict, body: np.ndarray, X, Y, Z) -> dict[str, np.ndarray
         return ((1 - tm) * ((1 - tx) * v[im, ix] + tx * v[im, ix + 1])
                 + tm * ((1 - tx) * v[im + 1, ix] + tx * v[im + 1, ix + 1]))
 
+    names = tuple(header.get("component_names", ()))
     f, nu_bar = bilinear(0), bilinear(1)
+    B = bilinear(names.index("B")) if "B" in names else 1.0
     sin2 = (X * X + Y * Y) / (r * r)
     u = nu_bar * sin2
     s_u = np.where(np.abs(u) > 1e-12, np.expm1(u) / np.where(u == 0, 1, u), 1.0)
-    base = np.exp(-f) * omega2
+    base = B * B * np.exp(-f) * omega2
     a = base * np.exp(u)
     c = -base * nu_bar * s_u / (r * r)
     p = (-Y, X, np.zeros_like(X))

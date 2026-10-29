@@ -17,7 +17,7 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28 night: the joint search moves to the drainhole; step 5 open on a flagged J row)
+## Now (2026-10-29 morning: drainhole grid check done; evolution hand-off not yet cleared)
 
 **Headline (symmetric family, joint bill + stability CMA-ES, done 2026-10-28): the best clean points confirmed
 radially stable need 45.4 % / 43.1 % / 24.9 % less exotic matter than the classical wormhole at v_e 0.27 / 0.50
@@ -25,7 +25,8 @@ radially stable need 45.4 % / 43.1 % / 24.9 % less exotic matter than the classi
 −27.0 %). The bill-only Nelder–Mead pass had −32.0 / −35.4 / −26.2 %. The [Step 6 record](#step-6-record-2026-10-28)
 has the runs, the screen verdicts and the v_e 0.50 best clean (−43.7 %) whose stability is still open.
 
-**Running now: the same search on the DRAINHOLE family** (decided 2026-10-28 evening). No family-(b) wormhole
+**The drainhole searches finished 2026-10-28** (D30 19:58 UTC, D51 20:09 UTC, both exit 0); the grid check
+of their top points finished 2026-10-29 07:18 UTC (below). Why this family: no family-(b) wormhole
 has ever survived a GRTeclyn evolution — the spinning campaign dropped them on 10-15, every hold dying at its
 far-side positive-mass puncture at t ≈ 23 — while the spinning paper's drainhole models D30 / D51 / D90 all have
 surviving V = 0 evolutions. So the winners that can reach step 9 come from the drainhole: members
@@ -39,14 +40,35 @@ against 0.59955 (+52 %), and its 8-eval smoke had every point far above the gate
 kink's stiffness is m·R_e, not m** — m is physical, and the [0.15, 1.2] range was tuned on members with R_e
 ≈ 1–1.9, where the symmetric winners sat at m·R_e ≈ 0.8–1.1. D30 / D51 (R_e 4.27 / 5.26) still reach that band
 (m·R_e ≥ 0.64 / 0.79) and run as launched; D90 (R_e 23.8, where m 0.3 means m·R_e ≈ 7) reruns with m, its bounds
-and its CMA step scaled by 1/R_e (`--m-step`, x0 m 0.04, bounds [0.012, 0.1]). Live: `cmasd-0012` (card 0,
-launched 18:08 UTC, 400 evals at ~3.3 per minute, ETA ≈ 2 h, ≈ 20:10 UTC / 23:10 MSK), `cmasd-0005` (card 1,
-D30's 400 evals from 18:20 UTC, similar ETA); D90's scaled rerun is queued, not launched (decided 2026-10-28:
-the two live searches run first). Options on all
+and its CMA step scaled by 1/R_e (`--m-step`, x0 m 0.04, bounds [0.012, 0.1]). **Finished:** D30
+(`cmasd-0005`) best clean X 1.69273 at m 1.184, q (1.787, 1.209, −0.605), −61.3 % vs classical 4.37565,
+λη₀ = 0, the only PASS in 400 evals; frontier X 1.64843 (−62.3 %). D51 (`cmasd-0012`) no clean point;
+best frontier X 1.50546 at m 0.816, q (2.312, 4.522, 3.621), −55.7 % vs 3.39986, E19 6.7e-8, λη₀ = 0;
+the 16-eval smoke remains its only clean point (X 1.60617, −52.8 %). D90's scaled rerun is still queued.
+**Grid check result:** the bill is stable but the identities sit on the dense-solve floor, not a falling
+truncation tail. D51's smoke clean is the evolution candidate: X 1.6061738698 is unchanged to 4e-15 over
+150×30 → 180×36 → 210×42 while E19 is 6.2e-9 → 3.5e-8 → 2.8e-8. Other points that reached all grids hold X
+to 3e-6 while E19/E_c flip between 1e-5 and 3e-4; the lower D51 frontier X 1.505 and D30 clean X 1.693 stalled
+on the first finer grid, so neither is cleared. This is the floor-decision branch: quote/evolve D51 X 1.606
+only if the agreed criterion is grid-converged X plus a bounded numerical floor rather than absolute E19 < 1e-8.
+
+**C++ hand-off audit (2026-10-29): core wired, launch contract not ready.** The frozen matter binary's patch
+is byte-for-byte the committed source change; NPZ → seven-column table units/signs, B → χ/B², and the potential
+at all four RHS/constraint sites agree. The 2049×129 C2 table interpolation error is ≤ 2.4e-11 in f and
+≤ 9.4e-12 in ν/B on the D30/D51 files; potential/ADM regressions pass (11 tests). Two blockers remain before a
+t = 0 run: `analysis/spinning_wormhole/adm.py::table_gamma` ignores B, so `t0_checks.py` would compare against
+the wrong metric; and preflight does not refuse a seven-column/potential table paired with an old binary.
+After those, generate D51's table with `phantom_mass = 0`, run the three-resolution t = 0 contract and the
+V = 0 regression, then ask for the short evolution go. Options on all
 three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
 at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search stalled; bisection does not lift
 it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
 (stalled points come out ABOVE-GATE on E19, so nothing loose reaches the clean class).
+
+**3D hand-off validation live 2026-10-29 07:33 UTC:** the no-checkpoint matter-table t = 0 runs are
+`D51_X1p606_t0_N096` (card 0, t 0.31/1, 45.6 u/h, ETA 0.02 h / 10:35 MSK) and
+`D51_X1p606_t0_N128` (card 1, t 0.03/1, 17.7 u/h, ETA 0.06 h / 10:37 MSK); N192 and the six-column V = 0
+regression follow. Scratch: these runs use 1.4 / 2.8 GB plus the 47 MB cache, 469 GB free.
 Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
 into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
 
@@ -454,28 +476,15 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. **The drainhole joint searches** (live, Now): D51 and D30 at 400 evaluations each, D90's scaled rerun
-   queued. **Their 150×30 bills are not yet proven physics** (decided 2026-10-28, the plan below agreed): the
-   classical drainhole solves clean there (E19 1.3e-10 – 5.3e-10) and one kink point does (3.3e-10, X 1.606),
-   but most kink points sit at E19 1e-7 – 1e-5 — the unimposed equations see the numerics, and on this family
-   it is not yet shown that X converges regardless (it did on the symmetric family: 9 digits across three
-   grids while E19 floor-flipped). A point solved in two runs agrees to 8 digits (X 1.82148203 / 1.82148206),
-   which is reproducibility, not resolution. The plan, once the searches end:
-   1. Re-solve the top ~5 points per member on 150×30 → 180×36 → 210×42 with `grid_check.py` (one walk-in on
-      the first grid, then each finer grid seeded by spectral interpolation, the same R_e pin on all), ~20–30
-      min per member on a card.
-   2. E19 falls with the grid → under-resolution (the suspected cause: the far side's e^{−f} → e^{π} makes the
-      field ~5× heavier there, an estimate): rerun a ~150-eval search at 180×36 from the winners, or give the
-      radial map more nodes on the far side.
-   3. E19 stalls while X holds → the round-off floor: the floor decision (item 6), gating the drainhole
-      winners on grid-converged X and a falling E19 trend rather than the absolute 1e-8.
-   Also open: the v_e 0.50 symmetric best clean (−43.7 %) needs the screen at a finer grid or the looser stall
-   cut.
-2. **Smoke tests of the optimizer's solutions in GRTeclyn, later** (decided 2026-10-28: the searches run first).
-   The C++ side is updated and built (step 7, `main3d_matter_6c7ac156-dirty_2026-10-28.ex`, never run), so a
-   winner's saved .npz → `optimisation.handoff` table → this binary is the whole path. First measure the
-   cubic-spline table error, then a t = 0 check of a drainhole winner against its own V = 0 member (the paper's
-   D30 / D51 / D90), then short evolutions — every GPU start-up on the go.
+1. **Make the bare-field evolution hand-off safe.** Extend `adm.table_gamma` / `t0_checks.py` to include B and
+   make preflight refuse a seven-column/potential table on an old binary. Then generate the D51 X 1.606 table
+   (2049×129 is already interpolation-clean), run the three-resolution t = 0 contract and the V = 0 regression.
+   Every binary start-up, including preflight-only, waits for the go.
+2. **Decide the drainhole floor criterion.** The grid check selects the round-off-floor branch: X holds while
+   the identities fluctuate. Accept D51 X 1.606 on grid-converged X plus the bounded floor, or require a solver
+   change before quoting it. D30 X 1.693 and D51 X 1.505 did not solve on the first finer grid and stay uncleared.
+   D90's scaled rerun remains queued. Also open: the v_e 0.50 symmetric best clean (−43.7 %) needs the screen at
+   a finer grid or the looser stall cut.
 3. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
    classical member unstable at 1.182, all kink/winner backgrounds show no unstable radial mode up to nx 300 —
    the step-6 record has the table): next the rotating 2D eigenproblem calibrated on the published spinning

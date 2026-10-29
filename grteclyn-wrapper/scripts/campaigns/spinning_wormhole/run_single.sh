@@ -127,7 +127,7 @@ EXAMPLE_DIR="${REPO_ROOT}/Examples/SpinningWormhole"
 # this campaign's facts live in preflight_campaign.json beside this script.
 CAMPAIGNS_LIB="$(cd -- "${SELF_DIR}/../lib" && pwd)"
 PREFLIGHT_PY="${CAMPAIGNS_LIB}/preflight.py"
-PREFLIGHT_CFG="${SELF_DIR}/preflight_campaign.json"
+PREFLIGHT_CFG="${SWH_PREFLIGHT_CONFIG:-${SELF_DIR}/preflight_campaign.json}"
 # The campaign's frame fields (SWH_FRAMES_FULL, from frames_default.txt): the
 # default below and what the preflight holds every launch to.  Stops here if
 # the list is missing.

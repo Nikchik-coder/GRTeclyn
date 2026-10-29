@@ -29,6 +29,9 @@ THE CAMPAIGN CONFIG (--campaign-config, or $CAMPAIGN_PREFLIGHT_CONFIG):
                             (the campaign's physics has no mirror there)
     required_file_keys      params keys whose value must be an existing file;
                             a missing key or path is refused
+    header_binary_requirements
+                            file-header regexes that require a marker string in
+                            the binary (for backward-compatible table extensions)
     probe_param_caps        {trigger_key: {cap_key: value, ...}}: when the
                             params hold trigger_key = 1/true (and the run is
                             not a restart), the 0-step probes get these
@@ -157,13 +160,15 @@ RUN_PATH_RE = re.compile(r"(?!)")
 MIRROR_KEYS: list[str] = []
 FORBID_REFLECTION_AXES: list[int] = []
 REQUIRED_FILE_KEYS: list[str] = []
+HEADER_BINARY_REQUIREMENTS: list[dict[str, str]] = []
 PROBE_PARAM_CAPS: dict[str, dict[str, str]] = {}
 
 
 def apply_campaign_config(path: str | os.PathLike) -> dict:
     """Load --campaign-config and set the campaign facts above."""
     global CAMPAIGN, ENV_PREFIX, ALLOW_FILE, FRAMES_FILE, SEED_KEY_RE, RUN_PATH_RE
-    global MIRROR_KEYS, FORBID_REFLECTION_AXES, REQUIRED_FILE_KEYS, PROBE_PARAM_CAPS
+    global MIRROR_KEYS, FORBID_REFLECTION_AXES, REQUIRED_FILE_KEYS
+    global HEADER_BINARY_REQUIREMENTS, PROBE_PARAM_CAPS
     cfg_path = pathlib.Path(path).resolve()
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
     CAMPAIGN = cfg["name"]
@@ -173,6 +178,10 @@ def apply_campaign_config(path: str | os.PathLike) -> dict:
     MIRROR_KEYS = [str(k) for k in cfg.get("mirror_keys", [])]
     FORBID_REFLECTION_AXES = [int(i) for i in cfg.get("forbid_reflection_axes", [])]
     REQUIRED_FILE_KEYS = [str(k) for k in cfg.get("required_file_keys", [])]
+    HEADER_BINARY_REQUIREMENTS = [
+        {str(k): str(v) for k, v in requirement.items()}
+        for requirement in cfg.get("header_binary_requirements", [])
+    ]
     PROBE_PARAM_CAPS = {str(t): {str(k): str(v) for k, v in caps.items()}
                         for t, caps in cfg.get("probe_param_caps", {}).items()}
     ALLOW_FILE = (cfg_path.parent / cfg["allow_file"]).resolve()
@@ -682,6 +691,47 @@ def static_check(exe: pathlib.Path, keys: list[str]) -> list[str]:
     return missing
 
 
+def header_binary_requirements_check(
+    params: dict[str, str], exe: pathlib.Path, exe_name: str | None = None
+) -> tuple[list[str], list[dict[str, object]]]:
+    """Refuse an extended input table when the binary lacks its reader."""
+    errors: list[str] = []
+    summary: list[dict[str, object]] = []
+    for requirement in HEADER_BINARY_REQUIREMENTS:
+        key = requirement["file_key"]
+        raw = params.get(key, "").strip().strip('"')
+        path = pathlib.Path(raw)
+        if not raw or not path.is_file():
+            continue  # required_files_check reports the actionable file error
+        lines: list[str] = []
+        with path.open("rb") as fh:
+            for _ in range(256):
+                line = fh.readline()
+                if not line:
+                    break
+                text = line.decode("ascii", errors="replace").rstrip()
+                lines.append(text)
+                if text == "END_HEADER":
+                    break
+        triggered = re.search(requirement["header_regex"], "\n".join(lines)) is not None
+        marker = requirement["binary_marker"]
+        supported = marker not in static_check(exe, [marker])
+        summary.append({
+            "file_key": key,
+            "file": raw,
+            "triggered": triggered,
+            "binary_marker": marker,
+            "supported": supported,
+        })
+        if triggered and not supported:
+            description = requirement.get("description", "extended input table")
+            errors.append(
+                f"{key} is {description}, but {exe_name or pathlib.Path(exe).name} "
+                f"does not contain its required {marker!r} reader marker: use a compatible binary"
+            )
+    return errors, summary
+
+
 # ---------------------------------------------------------------- 2./3. probes
 def load_allow() -> dict[str, tuple[tuple[str, str] | None, str]]:
     """key -> (condition, why) from the campaign's allow file.  A line is
@@ -1080,7 +1130,10 @@ def main(argv: list[str]) -> int:
     report["required_files"] = dict(r_sum, errors=r_err)
     if REQUIRED_FILE_KEYS and not r_err:
         print("[preflight] files  : " + "  ".join(f"{k} = {v}" for k, v in r_sum["files"].items()))
-    errors = errors + r_err
+    h_err, h_sum = header_binary_requirements_check(
+        params, exe, a.exe_name or exe.name)
+    report["header_binary_requirements"] = {"checks": h_sum, "errors": h_err}
+    errors = errors + r_err + h_err
     s_err, s_warn, s_sum = symmetry_check(params)
     report["symmetry"] = dict(s_sum, errors=s_err, warnings=s_warn)
     if s_sum["reflect"]:

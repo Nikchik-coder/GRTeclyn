@@ -64,8 +64,10 @@ def table_ray_minima(path: str) -> tuple[float, float, float]:
     x = np.linspace(header["x_min"], header["x_max"], header["n_x"])[1:-1]
     sqrt_h = np.sqrt((eta0 * np.tan(0.5 * math.pi * x)) ** 2 + eta0**2)
     f = body[:, 1:-1, 0]
-    r_eq = float(np.min(np.exp(-0.5 * f[0]) * sqrt_h))
-    r_pol = float(np.min(np.exp(-0.5 * f[-1]) * sqrt_h))
+    names = tuple(header.get("component_names", ()))
+    B = body[:, 1:-1, names.index("B")] if "B" in names else np.ones_like(f)
+    r_eq = float(np.min(B[0] * np.exp(-0.5 * f[0]) * sqrt_h))
+    r_pol = float(np.min(B[-1] * np.exp(-0.5 * f[-1]) * sqrt_h))
     return r_eq, r_pol, eta0
 
 

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import json
 import math
 import pathlib
 import sys
@@ -64,6 +65,9 @@ def main() -> int:
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD")
     ap.add_argument("--jac-chunk", type=int, default=None)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--save-dir", default=None,
+                    help="save each solved nonzero point as an evolution "
+                         "handoff NPZ in this directory")
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
 
@@ -200,6 +204,32 @@ def main() -> int:
                      f"{row['X']:.12e}\t{row['sigma']:.12f}\t"
                      f"{row['e19']:.3e}\t{row['e_c']:.3e}\t"
                      f"{row['verdict']}\n")
+        if args.save_dir and x[0] != 0.0:
+            save_dir = pathlib.Path(args.save_dir)
+            save_dir.mkdir(parents=True, exist_ok=True)
+            pot = PolynomialPotential.kink_q(
+                float(x[0]), float(row["psim"]),
+                tuple(float(v) for v in x[1:]))
+            meta = {
+                "member": name, "slot": f"{label}_{nx}x{ny}",
+                "nx": nx, "ny": ny, "member_eta0": sol.eta0,
+                "gamma": sol.gamma,
+                "radial_map": {"class": type(grid).__name__,
+                               **dataclasses.asdict(grid)},
+                "J": J0, "R_e": th["R_e"], "m": float(x[0]),
+                "q": [float(v) for v in x[1:]],
+                "potential_coeffs": [float(c) for c in pot.coeffs],
+                **{k: float(row[k])
+                   for k in ("omega", "psim", "sigma", "xi_t")},
+                "X": row["X"], "X_v0": None, "E19": row["e19"],
+                "E_c": row["e_c"], "verdict": row["verdict"],
+                "lam_eta0": 0.0,
+            }
+            path = save_dir / f"{stem}_{label}_{nx}x{ny}.npz"
+            np.savez(path, sx=row["sx"], sy=row["sy"],
+                     meta=json.dumps(meta, default=float),
+                     **{k: np.asarray(row[k]) for k in FIELDS})
+            print(f"    saved {path}", flush=True)
 
     v0, err = solve_at(np.zeros(4), prev0, nx0, ny0)
     if v0 is None:

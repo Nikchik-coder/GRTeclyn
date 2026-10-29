@@ -88,6 +88,20 @@ def test_table_metric_keeps_phi_phi_and_radial_parts():
     assert abs(x @ m @ x - base * math.exp(0.3 * rho2 / r2) * r2) <= 1e-10 * r2
 
 
+def test_matter_table_B_scales_the_spatial_metric():
+    header, body = _static_table(2.0, 0.0)
+    X, Y, Z = np.array([3.0]), np.array([4.0]), np.array([5.0])
+    old = adm.table_gamma(header, body, X, Y, Z)
+    header["component_names"] = (
+        "f", "nu_bar", "omega", "domega_deta",
+        "domega_dtheta_over_sintheta", "phi", "B",
+    )
+    matter = np.concatenate((body, np.full((*body.shape[:2], 1), 0.5)), axis=2)
+    new = adm.table_gamma(header, matter, X, Y, Z)
+    for name in old:
+        np.testing.assert_allclose(new[name], 0.25 * old[name], rtol=0, atol=0)
+
+
 def test_angular_momentum_is_the_same_on_every_sphere():
     """Bowen-York spin on the drainhole's conformal factor: J(R) = S."""
     lower, X, Y, Z = _grid(0.5)

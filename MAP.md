@@ -14,7 +14,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | wormhole dynamics | [`research/wormholedynamics/`](research/wormholedynamics/) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) | — | published |
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
-| optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | — (CPU, reads the spinning solutions) | active: [`STATUS.md`](research/optimisation/STATUS.md) |
+| optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | `runs/optimisation/` (`evolution/` for GRTeclyn runs) | active: [`STATUS.md`](research/optimisation/STATUS.md) |
 
 ## The merger campaign: where to look
 

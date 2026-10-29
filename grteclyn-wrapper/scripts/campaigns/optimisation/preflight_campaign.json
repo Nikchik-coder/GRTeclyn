@@ -1,0 +1,20 @@
+{
+  "name": "optimisation evolution",
+  "env_prefix": "SWH",
+  "run_root": "optimisation/evolution",
+  "seed_key_regex": "^spinning_(seed|kick)_amplitude$",
+  "mirror_keys": ["center", "extraction_center"],
+  "forbid_reflection_axes": [0, 1],
+  "required_file_keys": ["spinning_background_file"],
+  "header_binary_requirements": [
+    {
+      "file_key": "spinning_background_file",
+      "header_regex": "(?m)^(?:num_components\\s+7\\s*$|potential_coeffs\\s+)",
+      "binary_marker": "potential_coeffs",
+      "description": "a seven-column/potential matter table"
+    }
+  ],
+  "probe_param_caps": {},
+  "allow_file": "../spinning_wormhole/preflight_allow.txt",
+  "frames_file": "../spinning_wormhole/frames_default.txt"
+}

@@ -105,7 +105,7 @@ DEFAULT_BINARY='runs/spinning_wormhole/bin/main3d_smoke_bfb65e8e_2026-10-10.ex'
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
-CAMPAIGN="${REPO}/runs/spinning_wormhole"
+CAMPAIGN="${SWH_CAMPAIGN_DIR:-${REPO}/runs/spinning_wormhole}"
 TEMPLATES="${CAMPAIGN}/templates"
 
 TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3 SUBDIR=""
