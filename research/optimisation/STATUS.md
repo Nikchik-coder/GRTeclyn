@@ -15,16 +15,15 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 ## Live
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
-`main3d_matter_16460fb0`. Scratch: 11.5 GB in the three run dirs, 461 GB free.
+`main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 440 GB free.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D21_X1p829_L64_N096_ml3_spdrv0_t150` | 0 (with N 128) | ~1.3 | 41 u/h | ~3.6 h, ~19:50 MSK |
-| `D21_X1p829_L64_N128_ml3_spdrv0_t150` | 0 | 0.07 | 10 u/h, just started | ~15 h, ~07:25 MSK 30 Oct |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | ~0.14 | 4.9 u/h | ~30 h, ~22:40 MSK 30 Oct |
+| `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
+| `D21_X1p829_L64_N128_ml3_spdrv0_t150` | 0 | 46 | 20 u/h | ~5.2 h, ~01:56 MSK 30 Oct |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 23 | 5.0 u/h | ~26 h, ~22:15 MSK 30 Oct |
 
-Card 0 ~35 GB, card 1 ~60 GB. Consumers up; N 192 MOTS is 150 steps. t = 0
-Ham L2 is 4.3e-3 / 3.0e-3 / 2.2e-3 (N 96 / 128 / 192). N 96 throat R_eq 4.063.
+N 96: R_eq 4.063→3.108 (−24%); MOTS R 4.034→3.489, growth τ~9 at t=50–70 then the MOTS rate died while R_eq kept falling. N 128 is now alone on card 0.
 
 ## Planned (nothing launches without the go)
 
