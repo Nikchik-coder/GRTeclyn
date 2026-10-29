@@ -1,7 +1,9 @@
 # Campaign M (minimal exotic wormhole search): status
 
 Started 2026-10-27 on branch `feature/optimisation`. Plan:
-[`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md); its ten steps are the checklist below.
+[`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md)
+(2026-10-29: remaining work is 3+1 GRTeclyn evolutions only; the rotating 2D
+eigenproblem, further 2D-solver work, and extra matter recipes are dropped).
 Code (its own package since 2026-10-28; layout and rules in its
 [README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md)):
 `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` (`matter_equations.py`, `potentials.py`, `exoticity.py`, and
@@ -17,7 +19,7 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-29 morning: drainhole grid check done; evolution hand-off not yet cleared)
+## Now (2026-10-29: D51 t=5 finished; remaining work is 3+1 only)
 
 **Headline (symmetric family, joint bill + stability CMA-ES, done 2026-10-28): the best clean points confirmed
 radially stable need 45.4 % / 43.1 % / 24.9 % less exotic matter than the classical wormhole at v_e 0.27 / 0.50
@@ -69,12 +71,16 @@ momentum is fourth order, M agrees with the table to ≤ 1.2e-5 and J to ≤ 1.2
 column is invalid by the derived-field defect above. Scratch retains 2 plotfiles/run or fewer: 31 GB used,
 451 GB free; no other folders except the 47 MB cache.
 
-**First evolution live 2026-10-29 07:56 UTC, no checkpoints:** `D51_X1p606_smoke_t005` on card 0,
-t 0.17/5 at 20.0 u/h, ETA 0.24 h / 11:10 MSK. Full preflight passed, the evolution and consumer are alive,
-and the consumer is processing frame 0. Scratch: 46 GB in validation/smoke plotfiles (≤ 2 per run) plus the
-47 MB cache, 437 GB free.
-Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
-into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
+**D51 t=5 smoke finished 2026-10-29 08:12 UTC, exit 0, no checkpoints, no NaN:**
+`D51_X1p606_smoke_t005` on card 0, t 5.01 at 20.0 u/h. After startup Ham/Mom
++0.007 % / +0.047 %, throat +3e-6, max |K| 3.0e-4. t = 5 is too short to claim
+physical stability (classical D51 inflates ~t 70–100). 98 frames + 98 slice-cache
+npz kept. Scratch: plotfiles wiped, 47 MB cache, 482 GB free. Cards idle.
+
+**Remaining work (2026-10-29): 3+1 GRTeclyn evolutions of the cleared bare-field
+tables.** Dropped: the rotating 2D eigenproblem, further 2D-solver development,
+normal-matter layers, winding, and the other open matter knobs. Not wired and
+not remaining: implicit dX/dknobs.
 
 **The 4-knob bare-field optimizer is live and paying** (`optimize_potential.py`, Nelder–Mead over (m, q₁, q₂, q₃)
 at pinned J and R_e, gate penalties on every point, nearest-solved-seed continuation, 150×30 on the cards): the
@@ -92,7 +98,7 @@ grid-converged — the step-6 sub-item has the gauge-mode finding that forced tw
 the known λη₀ = 1.182 on this same pipeline, and every potential background — pure kink m 0.3 / 0.5 and all three
 optimizer winners — has NO unstable radial mode that survives the grid-change test up to nx 300.** The potential
 that cuts the exotic bill also removes the classical radial instability (J = 0, radial sector only; the rotating
-2D eigenproblem is still ahead). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
+2D eigenproblem was dropped 2026-10-29). **Step 5's winding brick is in** (parked, not remaining work): the winding field Λ = Z e^{i(ω_z t + kφ)}
 derived and machine-checked (span rank 9, forms 2.6e-51, the N-row identity with winding at k = 1–3), the solver
 carries it (ζ = Z/sin^kθ regular chart, the J row = flux + matter, `pin_zeta` amplitude continuation, the
 frozen-metric linear-mode seeding — the fixed-ω_z and gaussian-seeded routes both demonstrably fail), 19 tests
@@ -200,14 +206,15 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     stretch −γ_L²v²η₀²/h², ≤ 2e-13), the γ ≠ 0 static drainhole against separately-derived class formulas
     (≤ 3e-13), and on a rotating member the exact identities (boost-invariant E_rad, reflection zeros) to
     round-off. The axis transit needs a Cartesian chart and waits with the transit time.
-  - [ ] Transit time and blueshift: skipped for now (decided 2026-10-27); the transit time needs a choice of stations
+  - [x] Transit time and blueshift: skipped (2026-10-27); not remaining work. The transit time needs a choice of stations
     first.
 - [x] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
   end-mass asymmetry γ gets the same scan. Done when the bill-vs-potential curve exists at three spins; a flat
   landscape shifts the weight to layers and angular structure. **Done 2026-10-28 as a first pass: the curves exist
   at the three spins and the landscape is not flat** ([record](#step-3-record-2026-10-28)); the best shape sits on
   the scanned box's +q₁,+q₂ edge, so the knob's true optimum waits for step 6's optimizer (or a wider box).
-- [ ] **4. Normal-matter layer.** A second, canonical scalar χ; the J = 0 limit cross-checked against the Bondi
+- [x] **4. Normal-matter layer.** **DROPPED 2026-10-29** (first cloud solves already ran; no further layers).
+  A second, canonical scalar χ; the J = 0 limit cross-checked against the Bondi
   paper's dressed star; 2–3 radial layers with free signs; a double throat allowed as a measured lineage. Done when
   the identity gates pass with two fields and the layered bill beats or matches step 3 at matched R_e and J.
   - [x] Two-field system derived and machine-checked (2026-10-28). χ = X e^{iω_χ t}, a canonical complex scalar
@@ -235,10 +242,9 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     `cloud_solve.py`; [record](#step-4-record-2026-10-28)): the cloud holds at every amplitude tried, the bill has
     an optimum in the cloud amplitude, the clean gain on the pure kink is −1.63 % (PASS), and the layered bill
     passes step 3's best clean by −0.27 % — on the monitor floor, so frontier class until the floor decision.
-  - [ ] Layers proper: multi-node clouds (the radial node count of X is the layer count), the sign freedom, a
-    double throat as a measured lineage; and the floor decision that certifies or demotes the layered frontier
-    rows.
-- [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
+  - [x] **DROPPED 2026-10-29:** layers proper (multi-node clouds, sign freedom, other spins). Not remaining work.
+- [x] **5. Winding field and angular freedom.** **DROPPED 2026-10-29** (the open defect stays parked; not remaining
+  work). The winding complex field, θ-dependent profiles with a hard ℓ cap and
   a gradient penalty, a counter-rotating pair at pinned J, the exotic-free corridor lineage. Done when all four
   knobs optimize together and a Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
   - [x] Winding system derived and machine-checked (2026-10-28). Λ = Z e^{i(ω_z t + kφ)}, a canonical complex
@@ -260,7 +266,7 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     unimposed gate on the J bookkeeping. Tests: the zero-cloud embedding (round-off exact; the larger jit graph
     reassociates by a ulp), the identity with a cloud on a grid holding the axis node, the half-line quadrature —
     19 pass.
-  - [ ] First k = 1 clouds on fam_b_0003 — **converge, but an open defect stands** ([record](#step-5-record-2026-10-28)):
+  - [x] First k = 1 clouds on fam_b_0003 — **converge, but an open defect stands** (parked, dropped 2026-10-29; [record](#step-5-record-2026-10-28)):
     fixed-ω_z Newton always falls to the trivial branch, so the amplitude is pinned instead (`pin_zeta`:
     ζ(mid, equator) = A borders ω_z as the eigenvalue) and the first rung is seeded exactly by the frozen-metric
     linear mode — at ζ = 0 the Jacobian's z block decouples into L(ω) = L0 + ωL1 + ω²L2, a quadratic eigenproblem
@@ -274,9 +280,9 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     written, not yet run (scratch `winding_debug2.py`): re-solve the amp-0.005 cloud with ω∞ prescribed — no J
     row, no pins — and see whether E19 heals; plus dump where E19 and the j_matter integrand live on the pinned
     solution. NOTHING from step 5 is quotable until this closes.
-  - [ ] θ-dependent profiles (the ℓ cap and gradient penalty), the counter-rotating pair at pinned J, the
-    exotic-free corridor lineage.
-- [ ] **6. Converge the search.** Gradients by implicit differentiation (CMA-ES as the fallback), the m = 0 growth
+  - [x] **DROPPED 2026-10-29:** θ-dependent profiles, counter-rotating pair, exotic-free corridor. Not remaining work.
+- [x] **6. Converge the search.** Bare-field CMA-ES + radial screen done. **DROPPED 2026-10-29:** implicit
+  dX/dknobs, the rotating 2D eigenproblem, further search budget. Gradients by implicit differentiation (CMA-ES as the fallback), the m = 0 growth
   rate in the loop, the traversability bounds and stability as inequality constraints, the batched GPU search as an
   option. Products: the Pareto frontier of bill against instability rate and spin, and the design chart. Done when
   the frontier is stationary under more budget, every member passes a grid-change re-solve, and the chart is filled.
@@ -294,7 +300,8 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     step's convergence item — implicit differentiation of the bill through the solved state (one adjoint solve
     on the existing LU per knob set), feeding a gradient engine; CMA-ES is the derivative-free fallback the
     plan named.
-  - [ ] **The m = 0 growth-rate solver — the pre-GPU stability screen** (decided 2026-10-28: the first
+  - [x] **The m = 0 growth-rate solver — the pre-GPU stability screen** (1D radial done; rotating 2D **DROPPED
+    2026-10-29**). (decided 2026-10-28: the first
     infrastructure piece after step 5's winding brick; today nothing in steps 1–4 checks stability before a GPU
     run, so the frontier has no second axis and the cards would judge unscreened candidates). Linearize the
     evolution equations about a solved background in the axisymmetric m = 0 sector: a generalized eigenproblem,
@@ -327,7 +334,7 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     every kink/winner background clean. Caveat: the winner J = 0 solves sit at E19 1.7e-6–8.1e-6 (the stiff-shape
     floor at 150×30, the step-3 floor noise); the kink rows are clean at ≤ 1.1e-9. A λ² ≈ 6.69 value shows up at
     nx 200 on every potential background regardless of mass and scale and never matches — a grid artifact, gone
-    at nx 300. Next: the rotating 2D eigenproblem, calibrated on the published spinning rates.
+    at nx 300. The rotating 2D eigenproblem was dropped 2026-10-29; 3+1 is the remaining verdict.
   - [x] The score with stability in it — **decided 2026-10-28: one score in the loop, two axes on the frontier.**
     `optimize_potential.py --stability` solves every candidate's J = 0 twin on its own continuation cache, runs
     the gated radial screen on it (`--stab-nx` 150, the internal 0.7-coarse match grid comes free) and pays
@@ -336,9 +343,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     (uncertifiable, not disqualifying). The TSV gains the lam_eta0 column (`_opt4s_` files); the frontier still
     reports bill and rate as two axes. First joint runs: `cmas-0012` / `cmas-0025` (CMA-ES, 400 evals, 150×30),
     launched 2026-10-28 ~15:50 UTC.
-- [ ] **7. Extend the hand-off.** New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
+- [x] **7. Extend the hand-off.** Bare-field path done (7th column B + potential_coeffs). Extra-field columns
+  **DROPPED 2026-10-29**. New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
   bare-field table round-trips bit-compatibly.
-  - [ ] **The bare-field pipeline, end to end** (feasibility study 2026-10-28: the code is ~4–5 days, the hard
+  - [x] **The bare-field pipeline, end to end** (D51 t = 5 evolved 2026-10-29). (feasibility study 2026-10-28: the code is ~4–5 days, the hard
     part is a 3D run that survives; it added three items this plan lacked — the export, the evolution baseline
     and the stability verdict of the best clean row):
     - [x] *Export.* `optimize_potential.py` saves each best slot's solved fields (spinning and J = 0 twin) with
@@ -371,7 +379,8 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
       dx 0.0625, inferred); the shape polynomial can turn negative outside the two vacua (fam_b_0012's best clean
       has Q < 0 for ψ ≳ 0.48, checked), so the evolved field must stay between them; ψ₋ and σ must reach the table
       exactly as solved (the export carries both).
-  - [ ] **The plan's Split card overstates the compiled matter classes** (repo check, 2026-10-28): "the matter
+  - [x] **The plan's Split card overstates the compiled matter classes** (repo check, 2026-10-28; layered/winding
+    C++ **DROPPED 2026-10-29**): "the matter
     classes are already compiled, only example-level wiring is new" is true only for the bare-field winner.
     The layered (χ) and winding winners need a NEW combined C++ matter class — the phantom with its own potential
     plus one or two canonical complex scalars in separate state slots, stress-energy summed (no new physics,
@@ -384,7 +393,7 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     `ComplexExoticScalarField` is unused and phantom-signed while the winding field is canonical; `RadialRecipe`
     picks one matter model per run. The initial data must also set the clouds' time derivatives from ω_χ and
     ω_z + kω.
-  - [ ] **The C++ fix plan** (2026-10-28; all of it before the step-9 evolutions, no new physics, smallest first):
+  - [x] **The C++ fix plan** (2026-10-28; bare-field item done; layered/winding **DROPPED 2026-10-29**):
     1. *Bare-field winner (small).* A ~30-line polynomial kink-potential header for `ExoticScalarField`
        (coefficients from the solver via 𝒱 = 8πV, ψ = √(4π)φ); B as a 7th table column, with B² scaling γ_ij and
        K_ij in `SpinningWormholeInitialData`. That is steps 7–8 for this winner, whole. Check: a V = 0, B = 1
@@ -398,11 +407,13 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
        derivative set by ω_z + kω. Checks: with zero cloud it reproduces step 1 exactly, and the cloud alone
        matches the Bondi star run through `ComplexScalarField`. Building and the t = 0 checks need no card; any
        test evolution waits for the go.
-- [ ] **8. Wire the multi-field example.** A `SpinningWormhole` variant on the matter classes — which are NOT
+- [x] **8. Wire the multi-field example.** Bare-field path done (D51 evolved). Multi-field **DROPPED 2026-10-29**.
+  A `SpinningWormhole` variant on the matter classes — which are NOT
   already compiled for the layered and winding winners (the step-7 finding and fix plan above; the plan's Split
   card said otherwise and is corrected by it) — with the t = 0 contract check. Done when the check passes and a
   bare-KK table evolves identically through the new path.
-- [ ] **9. Evolve the winners** on the GPU, under the standing launch rules (nothing starts without the go). Done
+- [ ] **9. Evolve the winners** on the GPU, under the standing launch rules (nothing starts without the go).
+  **This is the remaining work.** D51 X 1.606 t = 5 smoke finished 2026-10-29. Done
   when each frontier member has a three-resolution verdict.
 - [ ] **10. Publish by the outcome tree.** The minimal-exoticity landscape (the Pareto frontier and the design chart)
   and the dynamics of the optimal designs; or, if every knob crawls back to KK, the rigidity result.
@@ -480,31 +491,14 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. **Make the bare-field evolution hand-off safe.** Extend `adm.table_gamma` / `t0_checks.py` to include B and
-   make preflight refuse a seven-column/potential table on an old binary. Then generate the D51 X 1.606 table
-   (2049×129 is already interpolation-clean), run the three-resolution t = 0 contract and the V = 0 regression.
-   Every binary start-up, including preflight-only, waits for the go.
-2. **Decide the drainhole floor criterion.** The grid check selects the round-off-floor branch: X holds while
-   the identities fluctuate. Accept D51 X 1.606 on grid-converged X plus the bounded floor, or require a solver
-   change before quoting it. D30 X 1.693 and D51 X 1.505 did not solve on the first finer grid and stay uncleared.
-   D90's scaled rerun remains queued. Also open: the v_e 0.50 symmetric best clean (−43.7 %) needs the screen at
-   a finer grid or the looser stall cut.
-3. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
-   classical member unstable at 1.182, all kink/winner backgrounds show no unstable radial mode up to nx 300 —
-   the step-6 record has the table): next the rotating 2D eigenproblem calibrated on the published spinning
-   rates, and the non-radial static sectors.
-4. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
-   no J row — the scratch `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation
-   (J row's `j_matter` integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the
-   twist source in Chebyshev coefficient space or damp the outer nodes), then rerun the 48×12 → 96×20 → 150×30
-   ladder and demand E19 falls with the grid. Nothing from step 5 is quotable before that.
-5. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
-   other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
-   from the raw star seed on the stiff shape).
-6. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
-   members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
-   near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
-   to 9 digits across three grids.
+**3+1 GRTeclyn evolutions only** (2026-10-29). Dropped, not queued: rotating 2D eigenproblem, further 2D-solver
+work, D90 search, floor-criterion solver changes, normal-matter layers, winding, and the other open matter knobs.
+Every start waits for the go.
+
+1. A D51 X 1.606 hold long enough to compare with classical D51 (inflates ~t 70–100). The t = 5 smoke finished;
+   it is too short to claim physical stability.
+2. Three-resolution verdict on that winner.
+3. No other tables: D30 X 1.693 and D51 X 1.505 did not clear the finer grid.
 
 ## Step 3 record (2026-10-28)
 
@@ -661,8 +655,8 @@ member's pinned R_e):
   classical wormhole is the massless phantom's free throat scale; the kink potential pins the field between its
   vacua and the soft direction is gone. Less exotic AND radially stable — the frontier's two axes improve
   together at J = 0.
-- Scope: radial (m = 0) sector at J = 0. The rotating 2D eigenproblem and non-radial sectors are step 6's next
-  rungs; published spinning results say rotation slows this mode, so the static rate is the conservative screen.
+- Scope: radial (m = 0) sector at J = 0. The rotating 2D eigenproblem was dropped 2026-10-29; 3+1 is the remaining
+  verdict. Published spinning results say rotation slows this mode, so the static rate is the conservative screen.
 - The static bill falls further than the spinning one: X(J = 0) π → 1.674 at the v_e 0.85 winner knobs (−46.7 %).
 
 **The joint bill + stability runs, symmetric family** (CMA-ES, `--stability`, 400 evaluations, 150×30, the

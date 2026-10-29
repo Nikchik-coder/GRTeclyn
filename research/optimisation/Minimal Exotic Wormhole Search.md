@@ -4,7 +4,11 @@ Campaign M — matter architectures for rotating wormholes
 
 The AI designs the matter recipe — layered fields, sculpted potentials, spin — that holds a wormhole open with the least exotic matter. Every recipe that balances Einstein's equations is a new metric; the cluster then evolves it.
 
-Everything known about rotating wormholes uses the simplest possible recipe: one massless exotic field, spread evenly, nothing else. Each restriction is a door. Spin alone already cut the exotic bill a hundredfold in the computed families [Spin26], and the dressed phantom star showed that layering with a sculpted potential survives nonlinear evolution [Bondi26]. This campaign opens all the doors at once, at fixed throat size and spin so the optimizer cannot cheat toward a black hole — and restricts itself to matter the GPU code already evolves, so every optimum goes straight to 3+1.
+Everything known about rotating wormholes uses the simplest possible recipe: one massless exotic field, spread evenly, nothing else. Each restriction is a door. Spin alone already cut the exotic bill a hundredfold in the computed families [Spin26], and the dressed phantom star showed that layering with a sculpted potential survives nonlinear evolution [Bondi26]. This campaign opened those doors at fixed throat size and spin so the optimizer cannot cheat toward a black hole.
+
+## Scope now (2026-10-29)
+
+The 2D search is closed. Remaining work is **3+1 GRTeclyn evolutions** of the already-cleared bare-field tables (D51 X = 1.606 first). Dropped from this plan, not to be implemented: the rotating 2D stability eigenproblem, further 2D-solver development, and every extra matter recipe still open below (normal-matter layers, winding, equatorial focusing, onions, counter-rotating layers, exotic-free corridor, double throat, charge). Historical records of what already ran stay; nothing from those dropped knobs is queued. Every evolution waits for the go.
 
 Posed in full, the search is a constrained optimization: minimize the exotic bill over exact solutions at fixed throat size and spin, under the traversability bounds Morris and Thorne wrote down as prose [MT88]. Its product grows from a curve into a design chart: what a wormhole of a given throat size, tidal tolerance and transit time costs in exotic matter, every cell a solved metric.
 
@@ -135,31 +139,31 @@ Queued for GPU**0**
 - Knob 1**Potential sculpting**
 
   A mass and sextic terms on the phantom stop it spreading: the exotic band squeezes into a thin shell at the throat, where it actually works. The dressed-star result already proved the mechanism survives evolution.
-- Knob 2**Normal-matter layers**
+- Knob 2**Normal-matter layers** — dropped 2026-10-29
 
   A canonical field around or inside the exotic core. Ordinary gravity does part of the structural work free of charge; the phantom pays only for the flare-out nothing else can supply. Which layer goes where is the optimizer's call.
-- Knob 3**Spin in the matter**
+- Knob 3**Spin in the matter** — dropped 2026-10-29
 
   A winding complex field carries angular momentum in the matter phase instead of pure frame dragging — centrifugal support that violates nothing.
-- Knob 4**Equatorial focusing**
+- Knob 4**Equatorial focusing** — dropped 2026-10-29
 
   Rotation flattens the throat, so the exotic matter may only be needed in an equatorial ring, not a full shell. Angle-dependent exotic profiles are completely untouched territory.
-- Knob 2+**Multilayer onions — a measured question**
+- Knob 2+**Multilayer onions — a measured question** — dropped 2026-10-29
 
   One exotic band at the throat is forced by theorem; every extra exotic shell starts in debt and must earn its place. Two mechanisms can pay for it: a long near-cylindrical neck held by marginal normal matter with only a tiny exotic pinch at the minimum, and normal layers stiffening stability like a composite. The ansatz carries 2–3 radial layers with free signs and amplitudes — a layer the physics rejects dies by its amplitude going to zero, a thickness floor keeps the ringing trap closed, and "how many layers does the optimal wormhole have?" becomes a result, not an assumption.
-- Knob 3+**Counter-rotating layers**
+- Knob 3+**Counter-rotating layers** — dropped 2026-10-29
 
   Total J is pinned, but two layers rotating oppositely let the optimizer shape where the frame dragging sits — support where it helps, without growing the ergoregion where it hurts. One lineage of its own.
-- Knob 4+**An exotic-free corridor — a lineage of its own**
+- Knob 4+**An exotic-free corridor — a lineage of its own** — dropped 2026-10-29
 
   One optional constraint: no NEC violation along the travel path, so the passenger never touches the exotic region. It needs confinement and angular structure together, since the massless phantom violates the NEC all along every radial ray; the natural candidate is an exotic equatorial ring around a clean polar corridor. Visser's 1989 polyhedral wormholes [V89b] are the thin-shell precedent: exotic matter on the edges, none on the faces a traveler crosses. The measured question: does the comfort cost extra, and how much?
-- Knob 5**Throat shape — pin the size, free the form**
+- Knob 5**Throat shape — pin the size, free the form** — dropped 2026-10-29
 
   The size pin moves from the equatorial radius R_e to what passage depends on: the throat's proper area (areal radius R_A = √(A/4π)), or its smallest circumferential radius, what fits through the door — for the oblate throats of the spinning families, the polar R_pol. Both are already columns of the spinning solutions table. The shape — oblate, prolate, how flattened — then becomes a free design variable. Rotation already flattens it (R_pol < R_A < R_e in every member of that table); now the optimizer asks which shape is cheapest at a fixed size. It costs one changed constraint row.
-- Knob 5+**Double throat — a measured question**
+- Knob 5+**Double throat — a measured question** — dropped 2026-10-29
 
   Two minimal surfaces each pay the NEC toll, so the prior says a double throat loses; but the ansatz admits one, and "one throat is optimal" is itself a result. The throat finder then tracks every minimum of the area, and the size pin applies to the narrowest.
-- Knob 6**Dials already half-built**
+- Knob 6**Dials already half-built** — γ scan done; charge dropped 2026-10-29
 
   The end-mass asymmetry γ: the solver already carries it (the drainhole family is γ = −π, the symmetric one γ = 0), so "is an unequal wormhole cheaper than a symmetric one?" costs only search time. Charge Q joins when a Maxwell brick lands; none is in the code yet.
 - Objective**Minimize the bill, pin the throat**
@@ -171,7 +175,7 @@ Queued for GPU**0**
 - Discipline**Accepted only on unimposed identities**
 
   Smarr, flux equality, full Einstein rebuild, grid change — plus three regression limits: potential → 0 reproduces the KK family, layer → 0 reproduces the bare throat, J = 0 cross-checks the dressed-star machinery.
-- Split**CPU searches, GPU certifies**
+- Split**CPU searches, GPU certifies** — 2D search closed 2026-10-29; GPU side is 3+1 only
 
   Every candidate is a seconds-long 2D spectral solve on CPU. The C++ never sees the search: it receives only the winners, as extended background tables — and the matter classes it needs are already compiled (phantom with potential, canonical partner fields, winding complex). Only example-level wiring is new. That split is the conservative version; the aggressive one runs the search itself on a GPU. The 2D solver is JAX, so candidates batch (vmap over candidates, batched dense LU), and one card could solve thousands of search-grid wormholes per minute while the others run the 3+1 certification: a GPU wormhole design engine whose every output is an exact solution with a dynamics certificate behind it. The throughput is to be measured, not assumed: dense LU suits the search grids, but the largest saved grids are already too big for a dense Jacobian (`validate_matter_v0.py` solves them block by block, which only V = 0 allows). Like any GPU start-up, it waits for the go.
 - Outcomes**Both endings deliver the headline**
@@ -209,32 +213,32 @@ Queued for GPU**0**
    The end-mass asymmetry γ (Knob 6), which the solver already carries, gets the same scan at the same spins.
 
    *done when: the bill-vs-potential curve exists at three spins · decision: a flat landscape here raises the weight on layers and angular structure*
-4. **Add the normal-matter layer**
+4. **Add the normal-matter layer** — **dropped 2026-10-29** (first cloud solves already ran; no further layers)
 
    Second canonical scalar χ in the solver; the J = 0 limit cross-checked against the 1D dressed-star machinery from the Bondi paper — the published object becomes the test case. Then layered optimization: core/envelope orderings, widths, amplitudes — generalized to 2–3 radial layers with free signs, so onion structures and neck-plus-pinch designs are reachable; a rejected layer dies by its amplitude going to zero, and a thickness floor keeps the ringing trap closed. A double throat (Knob 5+) is reachable here too; the throat finder tracks every minimum of the area, so a second throat is measured rather than missed.
 
-   *done when: identity gates pass with two fields and the layered bill beats or matches step 3 at matched R_e, J*
-5. **Winding field and angular freedom**
+   *dropped: not remaining work*
+5. **Winding field and angular freedom** — **dropped 2026-10-29** (open defect parked; not to be resumed)
 
    The winding complex brick, and θ-dependent scalar profiles in a widened ansatz — spin carried by matter, and exotic rings instead of shells. The θ-ansatz carries its hard ℓ-cap and the objective its gradient penalty from day one, so the optimizer cannot sharpen a ring past what the basis resolves. A counter-rotating layer pair at pinned total J joins as its own lineage, shaping where the frame dragging sits without changing the global spin. The exotic-free corridor (Knob 4+) joins as a lineage once rings exist: the NEC margin along the travel path becomes a constraint.
 
-   *done when: all four knobs optimize together and a Gibbs-driven Newton failure is demonstrably reported as a resolution verdict, not a physics one*
-6. **Converge the search**
+   *dropped: not remaining work*
+6. **Converge the search** — bare-field CMA-ES done; rotating 2D eigenproblem **dropped 2026-10-29**
 
    Gradients by implicit differentiation at the converged solution (one linear solve on the factored Jacobian, never unrolled Newton), CMA-ES on standby as the derivative-free fallback. The m = 0 growth rate joins the loop as a CPU-side observable, so the archive becomes the campaign's central object: the Pareto frontier of exotic bill vs instability rate vs spin. The traversability bounds and stability enter as inequality constraints, and the same archive fills the design chart. The batched GPU search (the Split card) is this step's option for volume, measured against the CPU loop before it replaces it.
 
    *done when: the frontier is stationary under further budget, each member passes a grid-change re-solve, and the design chart is filled over its declared ranges*
-7. **Extend the hand-off**
+7. **Extend the hand-off** — bare-field path done; extra-field columns **dropped 2026-10-29**
 
    The background-table format grows columns for the new fields and momenta; the C++ table loader reads them.
 
-   *done when: a bare-field table round-trips bit-compatibly through the extended format*
-8. **Wire the multi-field example**
+   *bare-field done; layered/winding tables not remaining work*
+8. **Wire the multi-field example** — bare-field path done (D51 evolved); multi-field **dropped 2026-10-29**
 
    A variant of the spinning-wormhole example mapping the extended table into the compiled matter classes, with the t = 0 cross-code consistency check in the profile-contract style.
 
-   *done when: the contract check passes and a bare-KK table evolves identically through the new path*
-9. **Evolve the winners**
+   *bare-field done; multi-field not remaining work*
+9. **Evolve the winners** — **the remaining work**
 
    The frontier recipes go to the cluster under the standing launch discipline — triplet, MOTS, gravitational-wave extraction, operator go. The question each run answers: did saving exotic matter cost the stability that spin bought?
 

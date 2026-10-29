@@ -1,7 +1,8 @@
 # `grteclyn_wrapper.optimisation`: campaign M's solver
 
 Exact rotating Ellis–Bronnikov wormholes held open by an exotic scalar **with a potential**, and the search for the
-design that needs the least exotic matter at a fixed throat size and spin. Plan:
+design that needs the least exotic matter at a fixed throat size and spin. Remaining work (2026-10-29) is 3+1
+GRTeclyn evolutions of the cleared bare-field tables; further 2D-solver and extra-matter knobs are dropped. Plan:
 [`research/optimisation/Minimal Exotic Wormhole Search.md`](../../../../research/optimisation/Minimal%20Exotic%20Wormhole%20Search.md);
 what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](../../../../research/optimisation/STATUS.md).
 
