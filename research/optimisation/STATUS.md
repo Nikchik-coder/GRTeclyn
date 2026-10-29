@@ -59,8 +59,8 @@ ADM/t=0 checks and old-binary preflight refusal are in. The first three-resoluti
 `ConstraintsWithMatter::compute_mf` default-constructed its derived-field matter object, so plotfile `Ham`
 silently omitted the polynomial although preflight and `constraint_norms.dat` used it. This exactly gave
 `Ham = -16 pi V` while momentum converged at fourth order. Derived-field setup now retains the configured
-matter object; a corrected diagnostic binary is built and the fixed-grid repeat is next. The short smoke stays
-blocked until that repeat passes.
+matter object. The corrected N 96 / 128 / 192 repeat converges at fourth order in every Hamiltonian and
+momentum shell. Clean binary `main3d_matter_9c16a55b_2026-10-29.ex` carries the fix.
 
 **3D hand-off validation finished 2026-10-29 07:50 UTC, no checkpoints:** D51 N 96 / 128 / 192 reached
 t 1.013 / 1.000 / 1.000 (exit 0); the six-column V = 0 N 128 control reached t 1.000 and reproduces its archived
@@ -68,6 +68,11 @@ norms. Throat transfer improves with resolution (equatorial −2.6e-4 → −5.2
 momentum is fourth order, M agrees with the table to ≤ 1.2e-5 and J to ≤ 1.2e-6. The old plotfile Hamiltonian
 column is invalid by the derived-field defect above. Scratch retains 2 plotfiles/run or fewer: 31 GB used,
 451 GB free; no other folders except the 47 MB cache.
+
+**First evolution live 2026-10-29 07:56 UTC, no checkpoints:** `D51_X1p606_smoke_t005` on card 0,
+t 0.17/5 at 20.0 u/h, ETA 0.24 h / 11:10 MSK. Full preflight passed, the evolution and consumer are alive,
+and the consumer is processing frame 0. Scratch: 46 GB in validation/smoke plotfiles (≤ 2 per run) plus the
+47 MB cache, 437 GB free.
 Engines: Nelder–Mead was the first pass, CMA-ES (`--engine cma`) since the same evening (the simplex collapsed
 into one basin by ~eval 150); the gradient (implicit differentiation, dX/dknobs) is still not wired.
 
