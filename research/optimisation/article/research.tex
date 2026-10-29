@@ -1,0 +1,419 @@
+\documentclass[twocolumn,floatfix,aps,prd,superscriptaddress,nofootinbib]{revtex4-2}
+
+% Engine guard: glyphtounicode and \pdfgentounicode are pdfTeX primitives.
+% Under LuaLaTeX/XeLaTeX they are undefined and the run aborts in the preamble.
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\else
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}
+  \setsansfont{Latin Modern Sans}
+  \setmonofont{Latin Modern Mono}
+\fi
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{placeins}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+
+% Half-page figure* strips must ride at the top of a text page, not own a
+% float page of their own (the binary paper's Fig. 2 lesson).
+\AtBeginDocument{%
+  \renewcommand{\dbltopfraction}{0.92}%
+  \renewcommand{\dblfloatpagefraction}{0.55}%
+  \renewcommand{\textfraction}{0.1}%
+  \setcounter{dbltopnumber}{2}%
+}
+
+\makeatletter
+\newcommand{\packfloatpages}{%
+  \setlength{\@fptop}{0pt}%
+  \setlength{\@fpsep}{12pt}%
+  \setlength{\@fpbot}{0pt plus 1fil}%
+  \setlength{\@dblfptop}{0pt}%
+  \setlength{\@dblfpsep}{12pt}%
+  \setlength{\@dblfpbot}{0pt plus 1fil}%
+}
+\makeatother
+
+\graphicspath{{figures/}{../../../results/optimisation/figures/}}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+\urlstyle{same}
+\emergencystretch=2em
+
+\begin{document}
+
+\raggedbottom
+
+\title{Sculpted potentials reduce the exotic matter of rotating Ellis--Bronnikov wormholes}
+
+\author{Nikita M. Shirokov}
+\email{shirokov.nm@phystech.edu}
+\affiliation{\textit{Moscow Institute of Physics and Technology, Moscow, Russia}}
+\author{Ilya Nachevsky}
+\email{ommnammashivaya@gmail.com}
+\affiliation{\textit{Higher School of Economics, Moscow, Russia}}
+\date{\today}
+
+\begin{abstract}
+Sculpting the potential of the phantom scalar reduces the exotic matter a rotating Ellis--Bronnikov throat needs. The phantom is the field of reversed kinetic term that holds the wormhole open. We present an automated search at fixed throat radius and spin. An optimizer proposes the self-interaction. A spectral Newton solver, with Jacobians from automatic differentiation, constructs the stationary metric. Identities the solver never uses test every candidate. We find a $61\%$ reduction on a slowly rotating massive wormhole, relative to the massless phantom of the same throat and spin. The search is over a four-parameter potential at two values of the end-mass asymmetry.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+A static traversable wormhole requires matter that violates the null energy condition (NEC)~\cite{morris_thorne1988,visser1995}. The Ellis--Bronnikov throat is the textbook example~\cite{ellis1973,bronnikov1973}. It is held open by a massless phantom scalar, a field with reversed kinetic term, and it is unstable~\cite{gonzalez2009lin,gonzalez2009,shirokov2026,shirokov2026s}. How little exotic matter a throat can need is an old question. Visser, Kar and Dadhich showed that the volume-integral quantifier can be made arbitrarily small by thinning the violation toward a shell~\cite{visser2003}. That construction is not a field theory, and it cannot be evolved~\cite{fewster2005}. Rotation is a field-theoretic alternative. Along the spinning families of Kleihaus and Kunz~\cite{kleihaus_kunz2014,chew2016}, the exotic-matter integral per throat radius falls a hundredfold by the fastest spin~\cite{shirokov2026s}. Those families use one massless phantom with no potential. This paper asks whether a self-interaction can reduce the integral further at fixed throat size and spin. The resulting solution must still solve Einstein's equations as a field theory that three-dimensional evolution can test.
+
+The standard route in this literature is geometry-first. One prescribes a shape function or a metric and reads $T_{\mu\nu}=G_{\mu\nu}/8\pi$~\cite{kuhfittig2008,helmerich2024warpfactory}. Most such metrics have no local matter realization. None of them come with nonlinear dynamics. We reverse that order (Fig.~\ref{fig:search}). The optimizer proposes a potential $\mathcal{V}(\psi)$ for the phantom scalar $\psi$. A spectral Newton solver constructs the stationary rotating wormhole at fixed equatorial throat radius $R_e$ and angular momentum $J$. Two Einstein identities the solver never uses, and the decay of the highest Chebyshev coefficients, test every candidate. To our knowledge this is the first automated minimization of exotic matter over rotating field-theoretic wormhole solutions.
+
+Section~\ref{sec:model} gives the matter model, the potential family and the exotic-matter integral $X$. Section~\ref{sec:opt} is the search: the Newton solver, with Jacobians from JAX~\cite{jax2018}, and the covariance-matrix adaptation evolution strategy (CMA-ES)~\cite{hansen01}. Section~\ref{sec:setup} is the interpolation onto the adaptive-mesh-refinement (AMR) grid, the evolution scheme, and the criteria. Section~\ref{sec:results} reports the minima. Section~\ref{sec:conclusions} is the conclusions. Appendix~\ref{app:checks} records the $\mathcal{V}=0$ limit and the radial growth-rate test; Appendix~\ref{app:conv} the D21 evolution. We use $G=c=1$. Following Ref.~\cite{shirokov2026s}, the drainhole family has throat parameter $\eta_0=2$ and end-mass asymmetry $\gamma=-\pi$, so the static member has mass $1$.
+
+\section{The matter model}
+\label{sec:model}
+
+The matter is Einstein gravity coupled to a phantom scalar with a potential $\mathcal{V}(\psi)$,
+\begin{equation}
+S=\frac{1}{16\pi}\int d^4x\,\sqrt{-g}\left(R+2\,g^{\mu\nu}\partial_\mu\psi\,\partial_\nu\psi+2\,\mathcal{V}(\psi)\right),
+\label{eq:action}
+\end{equation}
+the action of Refs.~\cite{kleihaus_kunz2014,chew2016,shirokov2026s} plus the potential term. The reversed kinetic sign is the choice that lets the stress tensor violate the NEC, which a static throat requires~\cite{morris_thorne1988}. The potential does not change that sign: it cancels between the energy density and the radial pressure, so the NEC combination still tracks the gradient of $\psi$. Varying with respect to the metric and to $\psi$ gives
+\begin{equation}
+R_{\mu\nu}=-2\,\partial_\mu\psi\,\partial_\nu\psi-\mathcal{V}\,g_{\mu\nu},\qquad
+\Box\psi=\tfrac12\mathcal{V}'(\psi).
+\label{eq:fieldeqs}
+\end{equation}
+At $\mathcal{V}=0$ these are Eqs.~(2)--(3) of Ref.~\cite{chew2016}, and $\psi$ has the closed-form $\arctan$ profile of that work. A potential sources $R^t{}_t+R^\varphi{}_\varphi$, which the three-function Kleihaus--Kunz ansatz cannot carry, so a fourth metric function $B$ joins,
+\begin{equation}
+\begin{split}
+ds^2&=-e^{f}dt^2+B^2e^{-f}\Big[e^{\nu}\left(d\eta^2+h\,d\theta^2\right)\\
+&\quad+h\sin^2\!\theta\left(d\varphi-\omega\,dt\right)^2\Big],
+\end{split}
+\label{eq:metric}
+\end{equation}
+with $h=\eta^2+\eta_0^2$ and $B=1$ when $\mathcal{V}=0$. The unknowns $f$, $\omega$, $\nu$, $B$ and $\psi$ are functions of $\eta$ and $\theta$. Asymptotically $f\to0$ at $\eta\to+\infty$ and $f\to\gamma$ at $\eta\to-\infty$, so $\gamma$ labels the family: $\gamma=0$ is the symmetric family of Refs.~\cite{kleihaus_kunz2014,chew2016}, and $\gamma=-\pi$ is the drainhole family evolved in Ref.~\cite{shirokov2026s}.
+
+Flat ends require degenerate vacua of $\mathcal{V}$ at both scalar boundary values, $\psi(+\infty)=0$ and $\psi(-\infty)=\psi_-$. Every potential in the search interpolates those two vacua,
+\begin{equation}
+\mathcal{V}(\psi)=\frac{m^2}{\psi_-^2}\,\psi^2(\psi-\psi_-)^2\,Q(\psi),
+\label{eq:kink}
+\end{equation}
+with $Q=1+q_1 u+q_2 u^2+q_3 u^3$ and $u=\psi/\psi_-$ between the vacua. The four search parameters are $(m,q_1,q_2,q_3)$. The mass $m$ sets $\mathcal{V}''(0)=2m^2$; $Q>0$ between the vacua keeps the vacuum at $\psi_-$ a minimum. At $m=0$ one recovers the massless phantom of Ref.~\cite{shirokov2026s}.
+
+The objective is the exotic-matter integral of Ref.~\cite{shirokov2026s}, the volume-integral quantifier of Ref.~\cite{visser2003} per equatorial throat radius,
+\begin{equation}
+X=\frac{1}{R_e}\left|\int(\rho+p_\eta)\,dV\right|.
+\label{eq:X}
+\end{equation}
+Here $\rho$ is the energy density and $p_\eta$ is the radial pressure. The potential cancels in $\rho+p_\eta$, so $X$ measures the gradient of $\psi$. If $R_e$ is not held fixed, the search slides toward a black hole. Two extra equations therefore hold $R_e$ and $J$ at the values of the $\mathcal{V}=0$ member, and $X$ is compared at equal throat and equal spin.
+
+\section{Optimization}
+\label{sec:opt}
+
+The solver constructs one wormhole per potential. CMA-ES then varies the four parameters of Eq.~\eqref{eq:kink} to reduce $X$ (Fig.~\ref{fig:search}).
+
+\begin{figure*}[t]
+\centering
+\resizebox{0.94\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  stagebox/.style={draw, rounded corners=1pt, align=center,
+               text width=28mm, minimum height=10mm, inner sep=1.5pt},
+  classic/.style={stagebox, draw=black!55, dashed},
+  ours/.style={stagebox, very thick},
+  flow/.style={-{Latex[length=1.5mm]}, thick},
+  row/.style={font=\bfseries\small, anchor=east}
+]
+\node[row] at (0,0) {Geometry-first};
+\node[classic] (g1) at (2.1,0) {\textbf{Prescribe metric}\\$g_{\mu\nu}$};
+\node[classic] (g2) at (5.8,0) {\textbf{Infer matter}\\$T_{\mu\nu}=G_{\mu\nu}/8\pi$};
+\node[classic] (g3) at (9.5,0) {\textbf{No field theory}\\matter may not exist};
+\node[classic] (g4) at (13.2,0) {\textbf{Frozen slice}\\survival unknown};
+\draw[flow, draw=black!60] (g1)--(g2);
+\draw[flow, draw=black!60] (g2)--(g3);
+\draw[flow, draw=black!60] (g3)--(g4);
+
+\node[row] at (0,-1.55) {Matter-first};
+\node[ours] (m1) at (2.1,-1.55) {\textbf{Propose potential}\\$\mathcal{V}(\psi)$};
+\node[ours] (m2) at (5.8,-1.55) {\textbf{Solve + test}\\Einstein--scalar};
+\node[ours] (m3) at (9.5,-1.55) {\textbf{Evolve}\\full $3{+}1$ dynamics};
+\node[ours] (m4) at (13.2,-1.55) {\textbf{Keep}\\$X$ and the growth rate};
+\draw[flow] (m1)--(m2);
+\draw[flow] (m2)--(m3);
+\draw[flow] (m3)--(m4);
+\end{tikzpicture}}
+\caption{Geometry-first versus matter-first search. Dashed: prescribe a metric and infer its stress-energy. Solid: propose a phantom potential, solve the Einstein and Klein--Gordon equations, evolve the solution, and keep only candidates that pass the identity checks. The search of this paper is the solid path.}
+\label{fig:search}
+\end{figure*}
+
+\subsection{Spectral Newton solver}
+\label{sec:opt:solver}
+
+The compactified radius $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both ends to $x=\pm1$. The five functions are expanded in Chebyshev polynomials of $x$ and even cosine modes of $\theta$, on a tensor Lobatto grid. Damped Newton solves the five elliptic equations for $f$, $\omega$, $N=\nu/\sin^2\theta$, $B$ and $\psi$ until the residual sits at round-off. Two extra equations hold $J$ and $R_e$. Here $N$ is the regularized combination that remains finite on the axis. The Jacobian is the dense derivative of the residual, obtained by forward-mode automatic differentiation in JAX~\cite{jax2018} and factored by LU. On large grids the derivative is taken in column blocks. Every converged solution is tested against two first-order Einstein identities the Newton iteration never uses, and against the decay of the highest Chebyshev coefficients. At $\mathcal{V}=0$ the system reduces to the published spinning solver of Ref.~\cite{shirokov2026s} (Appendix~\ref{app:checks}).
+
+\subsection{CMA-ES}
+\label{sec:opt:cma}
+
+The search is CMA-ES~\cite{hansen01} over $(m,q_1,q_2,q_3)$. Each trial is one Newton solve, taking the nearest already-solved potential as the initial guess. The objective is $X$. A candidate whose unused Einstein residuals exceed a threshold is rejected, not ranked. On the symmetric family the $J=0$ radial growth rate is added to the objective. A new minimum is kept only after a re-solve on the next finer grid. Figure~\ref{fig:cma} shows the D21 search.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{cma_progress_d21.png}
+\caption{$X$ against CMA-ES evaluation for D21. Red: accepted; grey: rejected. Dashed: $\mathcal{V}=0$.}
+\label{fig:cma}
+\end{figure}
+
+\section{Numerical setup}
+\label{sec:setup}
+
+\subsection{Interpolation onto the grid}
+\label{sec:setup:id}
+
+The stationary metric~\eqref{eq:metric} is interpolated onto the Cartesian AMR grid through the isotropic radius $r$, $\eta=r-\eta_0^2/4r$, as in Ref.~\cite{shirokov2026s}. The $\eta\to-\infty$ asymptotic region compactifies to the puncture $r=0$. The spatial metric $\gamma_{ij}$, the lapse $\alpha$ and the shift $\beta^i$ are read from the tables, as is the scalar field. The extrinsic curvature $K_{ij}$ follows from the stationary shift, and the scalar's conjugate momentum vanishes.
+
+\subsection{Evolution scheme}
+\label{sec:setup:scheme}
+
+Evolution uses \texttt{GRTeclyn}~\cite{grteclyn,amrex,grchombo} with the scheme of Refs.~\cite{shirokov2026,shirokov2026s}: the conformal and covariant Z4 (CCZ4) formulation~\cite{alic2012}, $1{+}\log$ slicing~\cite{bona1995}, Gamma-driver shift~\cite{alcubierre2003gauge}, fourth-order stencils, fourth-order Runge--Kutta time integration with $\Delta t=0.02\,\Delta x$, and Kreiss--Oliger dissipation. Three nested refinement levels sit on the throat. Appendix~\ref{app:conv} shows the D21 resolution study.
+
+\subsection{Criteria}
+\label{sec:setup:criteria}
+
+A point counts as a minimum of $X$ if four tests pass. The Newton residual sits at round-off. The two Einstein identities the solver never uses sit below the search threshold in a neighborhood of the throat. A re-solve on the next finer grid agrees. The $J=0$ radial growth rate, matched on two grids, finds no unstable mode (Appendix~\ref{app:checks}). The claim that a potential reduces exotic matter is falsified if $X$ is not below the $\mathcal{V}=0$ member at the same $R_e$ and $J$, or if any of those tests fail.
+
+\section{Results}
+\label{sec:results}
+
+\begin{table}[t]
+\caption{Search members: family, equatorial rotation velocity $v_e$, and the four parameters of Eq.~\eqref{eq:kink}. Family (a) is the drainhole ($\gamma=-\pi$), family (b) the symmetric wormhole ($\gamma=0$). Model D$n$ has $v_e\approx n/100$; S$n$ likewise. Table~\ref{tab:X} gives $X$.}
+\label{tab:models}
+\scriptsize
+\begin{ruledtabular}
+\begin{tabular}{llll}
+model & family & $v_e$ & $(m,q_1,q_2,q_3)$ \\
+\hline
+S27 & (b) & 0.27 & $(0.855,\,3.23,\,3.78,\,-0.256)$ \\
+S50 & (b) & 0.50 & $(0.864,\,4.61,\,0.559,\,-0.806)$ \\
+S85 & (b) & 0.85 & $(0.425,\,2.44,\,4.27,\,0.445)$ \\
+D21 & (a) & 0.21 & $(1.023,\,0.672,\,0.048,\,0.310)$ \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Exotic-matter integral $X$ of the models of Table~\ref{tab:models}, against the massless phantom ($\mathcal{V}=0$) of the same throat and spin. Every point passed the four tests of Sec.~\ref{sec:setup:criteria}. The largest reduction is on D21.}
+\label{tab:X}
+\scriptsize
+\begin{ruledtabular}
+\begin{tabular}{llll}
+model & $X$ & $X_{\mathcal{V}=0}$ & $\Delta X$ \\
+\hline
+S27 & 1.634 & 2.994 & $-45\%$ \\
+S50 & 1.495 & 2.625 & $-43\%$ \\
+S85 & 1.098 & 1.462 & $-25\%$ \\
+D21 & 1.829 & 4.645 & $-61\%$ \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\subsection{\texorpdfstring{Reduction of $X$ at fixed throat and spin}{Reduction of X at fixed throat and spin}}
+\label{sec:results:X}
+
+Does a self-interaction reduce $X$ at fixed $R_e$ and $J$? We ran CMA-ES over the four parameters of Eq.~\eqref{eq:kink} on the symmetric family at three spins and on the drainhole at $v_e=0.21$ (Table~\ref{tab:models}). Every accepted point was re-solved on a finer grid. Table~\ref{tab:X} shows $X$ against the massless phantom of the same member. We find a reduction at every spin. The largest reduction is $61\%$, on the slowly rotating drainhole.
+
+\subsection{Radial stability}
+\label{sec:results:stab}
+
+Does a lower $X$ mean a faster radial instability? The $J=0$ radial growth rate, matched on two grids, finds no unstable mode on the backgrounds of Table~\ref{tab:models} (Appendix~\ref{app:checks}).
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+We find that a four-parameter potential, searched at fixed throat radius and spin, reduces the exotic-matter integral of rotating Ellis--Bronnikov wormholes relative to the massless phantom. The largest reduction is $61\%$, on the slowly rotating drainhole, with no unstable radial mode on the reported backgrounds. The search moves only through solutions of the Einstein and Klein--Gordon equations. Identities the solver never uses test every candidate. The result is scoped to one phantom, the potential family of Eq.~\eqref{eq:kink}, and the two values of $\gamma$ used in Ref.~\cite{shirokov2026s}. Three-dimensional evolutions of the drainhole solutions will test whether the linear radial result survives.
+
+\section{Reproducibility}
+\label{sec:data}
+
+The spectral solver, the CMA-ES search and the figure scripts live in the \texttt{GRTeclyn} research tree~\cite{shirokov2026code}. Each reported minimum is stored as a solved field table with the potential coefficients in the header, which is the input of the interpolation of Sec.~\ref{sec:setup:id}.
+
+\begin{acknowledgments}
+This work was supported by Gravity Frontiers
+(\url{https://www.gravityfrontiers.org/en}), which funded the underlying
+research and the development of the numerical-simulation software. The authors
+acknowledge the GRTL Collaboration for \texttt{GRChombo}, \texttt{GRTresna},
+and \texttt{GRTeclyn}.
+\end{acknowledgments}
+
+\appendix
+
+\section{Solver checks}
+\label{app:checks}
+
+At $\mathcal{V}=0$ the five-field residual reduces symbolically to the published spinning system of Ref.~\cite{shirokov2026s}, and Newton on the saved members of that work reproduces their charges and identity checks. The two first-order identities that never enter the Newton iteration are the $\eta\theta$ Einstein equation and the pointwise generalization of the $D^2$ identity of Ref.~\cite{chew2016}. A candidate is accepted only when both sit below the search threshold in a neighborhood of the throat, and a reported minimum is re-solved on a finer grid.
+
+The radial test is the $m=0$, $J=0$ growth rate of a static, spherically symmetric background in the solver's conformal chart. Three linearized equations are solved as a dense eigenproblem. Two Einstein constraints that the eigenproblem never uses are evaluated on every mode, and the physical eigenvalue is selected by matching on two grids. On the static drainhole the test returns $|\omega_I|\eta_0=0.390$, the published rate of Refs.~\cite{azad2023,azad2024}. Every background of Table~\ref{tab:models} has no unstable radial mode under this test.
+
+\section{Convergence of the D21 evolution}
+\label{app:conv}
+
+The D21 background of Table~\ref{tab:models} was evolved at three resolutions, $N=96/128/192$ on $L=64$. Rescaling constraint norms between resolutions is valid because their exact value is zero. For these spacings the expected self-convergence factors are $Q_3=1.95$ and $Q_4=2.69$. Figure~\ref{fig:conv} shows the Hamiltonian and momentum norms per refinement level, with the $N=192$ curves rescaled by $2^2$ and $2^4$, together with the throat radii, the $(\ell,m)=(2,0)$ wave and the puncture lapse.
+
+\packfloatpages
+
+\begin{figure*}[tp]
+\centering
+\includegraphics[width=0.92\textwidth]{convergence_d21.pdf}
+\caption{Convergence of the D21 evolution over $N=96/128/192$. (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint norms per refinement level; dashed and dotted, $N=192$ rescaled by $2^{2}$ and $2^{4}$. (i)--(l)~equatorial throat radius, areal radius, $\Psi_4^{20}$ at $R=14$, and the puncture lapse. Constraint norms fall with resolution; the throat holds.}
+\label{fig:conv}
+\end{figure*}
+
+\FloatBarrier
+
+\begin{thebibliography}{99}
+
+\bibitem{ellis1973}
+H.~G.~Ellis,
+\newblock ``Ether flow through a drainhole: A particle model in general relativity,''
+\newblock J.\ Math.\ Phys.\ \textbf{14}, 104 (1973).
+
+\bibitem{bronnikov1973}
+K.~A.~Bronnikov,
+\newblock ``Scalar-tensor theory and scalar charge,''
+\newblock Acta Phys.\ Polon.\ B \textbf{4}, 251 (1973).
+
+\bibitem{morris_thorne1988}
+M.~S.~Morris and K.~S.~Thorne,
+\newblock ``Wormholes in spacetime and their use for interstellar travel: A tool for teaching general relativity,''
+\newblock Am.\ J.\ Phys.\ \textbf{56}, 395 (1988).
+
+\bibitem{visser1995}
+M.~Visser,
+\newblock \emph{Lorentzian Wormholes: From Einstein to Hawking}
+\newblock (AIP Press, Woodbury, NY, 1995).
+
+\bibitem{gonzalez2009lin}
+J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
+\newblock ``Instability of wormholes supported by a ghost scalar field. I. Linear stability analysis,''
+\newblock Class.\ Quantum Grav.\ \textbf{26}, 015010 (2009).
+
+\bibitem{gonzalez2009}
+J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
+\newblock ``Instability of wormholes supported by a ghost scalar field. II. Nonlinear evolution,''
+\newblock Class.\ Quantum Grav.\ \textbf{26}, 015011 (2009).
+
+\bibitem{visser2003}
+M.~Visser, S.~Kar, and N.~Dadhich,
+\newblock ``Traversable wormholes with arbitrarily small energy condition violations,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{90}, 201102 (2003).
+
+\bibitem{fewster2005}
+C.~J.~Fewster and T.~A.~Roman,
+\newblock ``On wormholes with arbitrarily small quantities of exotic matter,''
+\newblock Phys.\ Rev.\ D \textbf{72}, 044023 (2005).
+
+\bibitem{kuhfittig2008}
+P.~K.~F.~Kuhfittig,
+\newblock ``Viable models of traversable wormholes supported by small amounts of exotic matter,''
+\newblock arXiv:0806.1194 [gr-qc] (2008).
+
+\bibitem{kleihaus_kunz2014}
+B.~Kleihaus and J.~Kunz,
+\newblock ``Rotating Ellis wormholes in four dimensions,''
+\newblock Phys.\ Rev.\ D \textbf{90}, 121503(R) (2014).
+
+\bibitem{chew2016}
+X.~Y.~Chew, B.~Kleihaus, and J.~Kunz,
+\newblock ``Geometry of spinning Ellis wormholes,''
+\newblock Phys.\ Rev.\ D \textbf{94}, 104031 (2016).
+
+\bibitem{azad2023}
+B.~Azad, J.~L.~Bl\'azquez-Salcedo, F.~S.~Khoo, and J.~Kunz,
+\newblock ``Are slowly rotating Ellis--Bronnikov wormholes stable?,''
+\newblock Phys.\ Lett.\ B \textbf{848}, 138349 (2024).
+
+\bibitem{azad2024}
+B.~Azad, J.~L.~Bl\'azquez-Salcedo, F.~S.~Khoo, and J.~Kunz,
+\newblock ``Radial perturbations of Ellis--Bronnikov wormholes in slow rotation up to second order,''
+\newblock Phys.\ Rev.\ D \textbf{109}, 124051 (2024).
+
+\bibitem{shirokov2026}
+N.~M.~Shirokov,
+\newblock ``Wormhole dynamics: nonlinear collapse and gravitational-wave emission,''
+\newblock arXiv:2604.00071 [gr-qc] (2026).
+
+\bibitem{shirokov2026s}
+N.~M.~Shirokov and I.~Nachevsky,
+\newblock ``Rotation slows the instability of Ellis--Bronnikov wormholes,''
+\newblock arXiv:2610.29941 [gr-qc] (2026).
+
+\bibitem{helmerich2024warpfactory}
+C.~Helmerich, J.~Fuchs, A.~Bobrick, L.~Sellers, B.~Melcher, and G.~Martire,
+\newblock ``Analyzing warp drive spacetimes with Warp Factory,''
+\newblock Class.\ Quantum Grav.\ \textbf{41}, 095009 (2024).
+
+\bibitem{hansen01}
+N.~Hansen and A.~Ostermeier,
+\newblock ``Completely derandomized self-adaptation in evolution strategies,''
+\newblock Evol.\ Comput.\ \textbf{9}, 159 (2001).
+
+\bibitem{jax2018}
+J.~Bradbury, R.~Frostig, P.~Hawkins, M.~J.~Johnson, C.~Leary, D.~Maclaurin, G.~Necula, A.~Paszke, J.~VanderPlas, S.~Wanderman-Milne, and Q.~Zhang,
+\newblock \texttt{JAX}: composable transformations of Python+NumPy programs,
+\newblock \url{https://github.com/jax-ml/jax} (2018).
+
+\bibitem{alic2012}
+D.~Alic, C.~Bona-Casas, C.~Bona, L.~Rezzolla, and C.~Palenzuela,
+\newblock ``Conformal and covariant formulation of the Z4 system with constraint-violation damping,''
+\newblock Phys.\ Rev.\ D \textbf{85}, 064040 (2012).
+
+\bibitem{bona1995}
+C.~Bona, J.~Mass\'o, E.~Seidel, and J.~Stela,
+\newblock ``New formalism for numerical relativity,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{75}, 600 (1995).
+
+\bibitem{alcubierre2003gauge}
+M.~Alcubierre, B.~Br\"ugmann, P.~Diener, M.~Koppitz, D.~Pollney, E.~Seidel, and T.~Takahashi,
+\newblock ``Gauge conditions for long-term numerical black hole evolutions without excision,''
+\newblock Phys.\ Rev.\ D \textbf{67}, 084023 (2003).
+
+\bibitem{grteclyn}
+GRTL Collaboration,
+\newblock \texttt{GRTeclyn},
+\newblock \url{https://github.com/GRTLCollaboration/GRTeclyn}.
+
+\bibitem{amrex}
+W.~Zhang \emph{et al.},
+\newblock ``AMReX: a framework for block-structured adaptive mesh refinement,''
+\newblock J.\ Open Source Softw.\ \textbf{4}, 1370 (2019).
+
+\bibitem{grchombo}
+T.~Andrade \emph{et al.},
+\newblock ``GRChombo: an adaptable numerical relativity code for fundamental physics,''
+\newblock J.\ Open Source Softw.\ \textbf{6}, 3703 (2021).
+
+\bibitem{shirokov2026code}
+N.~M.~Shirokov and I.~Nachevsky,
+\newblock \texttt{GRTeclyn} research fork,
+\newblock \url{https://github.com/Nikchik-coder/GRTeclyn},
+\newblock doi:\href{https://doi.org/10.5281/zenodo.23245933}{10.5281/zenodo.23245933} (2026).
+
+\end{thebibliography}
+
+\end{document}
