@@ -30,8 +30,9 @@ remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
 `opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
-A validator oversolving issue was then identified; e0374 is queued for
-recheck at the existing 1e-9 Newton acceptance tolerance (see below).
+A validator oversolving issue was then identified; `opt-d30-e0374-recheck`
+started at 22:14 MSK on card 1, using the existing 1e-9 Newton acceptance
+tolerance (see below). Expected check duration ~0.02 h, until ~22:16 MSK.
 Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
 468 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
@@ -43,6 +44,7 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
+| `opt-d30-e0374-recheck` | second / 1 | stationary three-grid check | ~0.02 h/check | ~22:16 MSK |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
 | `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
 | `opt-validate-d30` | — | 180x36 and 210x42 above gate | ended 21:43 MSK | — |
