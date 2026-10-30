@@ -11,9 +11,10 @@ The page before this compaction (the campaign diary to 2026-10-29) is
 Priority: **repair and revalidate the radial stability screen** (pending).
 The stationary extension trials are complete and archived as exploratory work;
 their small validated gain does not warrant inclusion in the paper (2026-10-30).
-No further extension runs or repeat searches in the old four-parameter family
-are planned. D0 and D30 N128 evolutions are authorized after background
-validation, with checkpoints off (2026-10-30 evening). The 2026-10-30
+No further extension runs are planned. D30 evolution authorization was withdrawn
+on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
+search is authorized, with mandatory resolution validation before accepting
+a new best. D0 continues with checkpoints off; no new D30 evolution is authorized. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
@@ -22,19 +23,20 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 
 Stationary extension tests finished at 20:18 MSK on 2026-10-30.
 D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
-Neither cleared the background gate; no 3+1 evolutions launched.
+Neither original minimum cleared the background gate; alternatives were checked next.
 D0 alternative e0211 cleared all three grids; full preflight passed and the
 N128 evolution started at 21:58 MSK on second-node card 0. Checkpoints off,
-stop t = 100. At 22:02 MSK: t = 1.13, speed 18.8 units/h, about 5.3 h
+stop t = 100. At about 22:28 MSK: t = 9.37, speed 19.1 units/h, about 4.7 h
 remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
 `opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
 D30 e0137 cleared all three grids at 22:21 MSK. Its matched N128 launch
-entered full preflight on second-node card 1 at 22:22 MSK, checkpoints off,
-stop t = 100. No stationary validation jobs remain running.
-Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
-468 GB free. Keep-last 3 active; no checkpoints. The three old
+started on second-node card 1 at 22:22 MSK, checkpoints off,
+then was explicitly aborted at t = 0.54. No D30 workers remain. Card 1 is free
+for the authorized fresh search after the resolution gate is implemented.
+Second-node scratch: D0 three plotfiles, 7.1 GB; stopped D30 one plotfile,
+2.4 GB (retained); cache 47 MB, 463 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
 frames and movies retained. Cleanup logged in
 `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-30.md`.
@@ -42,9 +44,10 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
+| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 9.37 / 100, alive | 19.1 units/h | 4.7 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
-| `D30_potential_L64_N128_ml3_spdrv0_t100` | second / 1 | preflight; stop 100 | pending | pending |
+| `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
+| D30 CMA with resolution gate | second / 1 planned | authorized; implementation pending | pending | pending |
 | `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
@@ -66,21 +69,15 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 ## Planned (nothing launches without the go)
 
-Alternative D0/D30 candidates are authorized for resolution checks and N128
-launches once cleared (2026-10-30). Checkpoints remain off for both arms.
-`select_validated_candidate.py` ranks saved candidates by X, skips the two
-already failed choices, and tests up to 30 per arm on the unchanged three
-grids/gates. Each arm stops at its first cleared background. The classical
-R_e/J matching and evolution settings below remain required.
+D30: rerun CMA-ES at the same classical R_e/J, with a mandatory new-best
+resolution gate on 150x30, 180x36 and 210x42. A coarse minimum is provisional;
+only the final two PASS grids with relative X drift <= 1e-6 may become the
+accepted best. Keep Newton acceptance 1e-9 and independent constraints 1e-8.
+Failures must feed back to the search rather than silently replace its best.
+Preserve diagnostic records and save the finest validated fields. This is
+stationary numerical clearance; physical stability remains unassessed.
+No D30 evolution is queued. D0 e0211 continues its authorized N128 evolution.
 
-D0 and D30: validate the saved search candidates on 150x30, 180x36 and
-210x42, then evolve at N128 only if the final two grids pass the independent
-constraints and their relative X difference is at most 1e-6. Use each
-classical run's packed settings (L64, three extra levels, drive off, stop 100,
-plot interval 100), full consumer diagnostics and keep-last 3. Checkpoints
-off for both, explicitly confirmed. D30 matches the classical J and R_e;
-D0 must first undergo consistent similarity scaling, including the potential,
-from the search's D21-sized throat to classical static R_e = 3.8895493987.
 D40/D46 have no saved search candidates; D51's existing export is rejected.
 The new validator reconstructs physical radii from fields and records stability
 as unassessed. It never exports a failed background or fabricates a zero rate.
@@ -133,8 +130,8 @@ E_c = 4.60e-9, relative X drift = 4.22e-15. Selected after 30 initial
 alternatives and nine further candidates; e0374's separate recheck failed.
 Exported `D30_validated_2049x129.spinbg`, matched N128 launch 22:22 MSK
 on the same matter binary and full hold profile as D0. Checkpoints off.
-The selected candidate has higher X than the search minimum; this evolution
-measures its growth rate, not that of the rejected minimum. Selected fields,
+The selected candidate has higher X than the search minimum. Its evolution
+was aborted at t = 0.54; a fresh resolution-gated search supersedes it. Selected fields,
 seed and check logs are packed under
 `results/optimisation/validation/2026-10-30-alternatives/d30/`; the first
 batch and the oversolving diagnostic are in adjacent `d30_audit/`.
