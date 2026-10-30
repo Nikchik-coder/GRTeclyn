@@ -84,7 +84,7 @@ A static traversable wormhole requires matter that violates the null energy cond
 
 However, those spinning families still rely on a free, massless phantom ($\mathcal{V}=0$). Choosing $\mathcal{V}=0$ is a matter of analytic convenience rather than physical necessity: without a potential, the scalar equation decouples, but the field itself is completely unpinned. Its gradient decays slowly as $1/r^2$ into the asymptotic regions, wasting exotic energy far from the throat where it does no work supporting the geometry, and the absence of a potential barrier leaves a soft radial mode that drives collapse. This paper asks whether adding a confining potential $\mathcal{V}(\psi)$ to the same phantom field can trap the exotic matter at the throat, reducing the required NEC violation further at fixed throat size and spin while stiffening the throat against radial instability.
 
-The standard route in the wormhole minimization literature is geometry-first: one prescribes a metric or shape function by hand and reads off $T_{\mu\nu}=G_{\mu\nu}/8\pi$~\cite{kuhfittig2008,helmerich2024warpfactory}. Most such metrics have no consistent field-theoretic matter realization, and none come with nonlinear $3{+}1$ dynamics. We reverse that order (Fig.~\ref{fig:search}). The optimizer shapes a confining potential $\mathcal{V}(\psi)$ for the phantom scalar $\psi$. For each proposed potential, a spectral Newton solver constructs the exact stationary rotating spacetime at fixed equatorial throat radius $R_e$ and angular momentum $J$. Two Einstein identities that the solver never uses, along with the spectral decay of the highest Chebyshev coefficients, gate every candidate. To our knowledge, this is the first automated minimization of exotic matter over exact, rotating, field-theoretic wormhole solutions.
+The optimization varies a confining potential $\mathcal{V}(\psi)$ for the phantom scalar $\psi$ (Fig.~\ref{fig:search}). For each proposed potential, a spectral Newton solver constructs a stationary rotating spacetime at fixed equatorial throat radius $R_e$ and angular momentum $J$. Two Einstein identities that the solver never uses determine whether a candidate passes the constraint checks; the spectral decay of the highest Chebyshev coefficients provides an additional resolution diagnostic. The exotic-matter integral and a static radial perturbation screen then supply the optimization score.
 
 Section~\ref{sec:model} defines the matter model, the confining potential family, and the exotic-matter integral $X$. Section~\ref{sec:opt} describes the search pipeline: the spectral Newton solver with JAX automatic-differentiation Jacobians~\cite{jax2018} and the covariance-matrix adaptation evolution strategy (CMA-ES)~\cite{hansen01}. Section~\ref{sec:setup} details the interpolation onto the adaptive-mesh-refinement (AMR) grid, the $3{+}1$ evolution scheme, and the acceptance criteria. Section~\ref{sec:results} reports the optimized minima, their radial stability, and the $3{+}1$ evolution of the slowly rotating drainhole. Section~\ref{sec:conclusions} summarizes our conclusions. Appendix~\ref{app:checks} records the $\mathcal{V}=0$ regression and the radial growth-rate screen, and Appendix~\ref{app:conv} presents the three-resolution convergence study of the D21 evolution. We use $G=c=1$. Following Ref.~\cite{shirokov2026s}, the drainhole family has throat parameter $\eta_0=2$ and end-mass asymmetry $\gamma=-\pi$, so the static member has unit mass.
 
@@ -135,35 +135,43 @@ The inner loop (the spectral solver) constructs an exact stationary wormhole for
 
 \begin{figure*}[t]
 \centering
-\resizebox{0.94\textwidth}{!}{%
+\resizebox{0.78\textwidth}{!}{%
 \begin{tikzpicture}[
-  font=\scriptsize,
-  stagebox/.style={draw, rounded corners=1pt, align=center,
-               text width=28mm, minimum height=10mm, inner sep=1.5pt},
-  classic/.style={stagebox, draw=black!55, dashed},
-  ours/.style={stagebox, very thick},
-  flow/.style={-{Latex[length=1.5mm]}, thick},
-  row/.style={font=\bfseries\small, anchor=east}
+  font=\small,
+  stagebox/.style={draw, rounded corners=2pt, align=center,
+    text width=40mm, minimum height=14mm, inner sep=3pt},
+  search/.style={stagebox, fill=black!5, thick},
+  followup/.style={stagebox, dashed, draw=black!65},
+  flow/.style={-{Latex[length=2mm]}, thick},
+  note/.style={font=\footnotesize, align=center, fill=white, inner sep=2pt}
 ]
-\node[row] at (0,0) {Geometry-first};
-\node[classic] (g1) at (2.1,0) {\textbf{Prescribe metric}\\$g_{\mu\nu}$};
-\node[classic] (g2) at (5.8,0) {\textbf{Infer matter}\\$T_{\mu\nu}=G_{\mu\nu}/8\pi$};
-\node[classic] (g3) at (9.5,0) {\textbf{No field theory}\\matter may not exist};
-\node[classic] (g4) at (13.2,0) {\textbf{Frozen slice}\\survival unknown};
-\draw[flow, draw=black!60] (g1)--(g2);
-\draw[flow, draw=black!60] (g2)--(g3);
-\draw[flow, draw=black!60] (g3)--(g4);
-
-\node[row] at (0,-1.55) {Matter-first};
-\node[ours] (m1) at (2.1,-1.55) {\textbf{Propose potential}\\$\mathcal{V}(\psi)$};
-\node[ours] (m2) at (5.8,-1.55) {\textbf{Solve + test}\\Einstein--scalar};
-\node[ours] (m3) at (9.5,-1.55) {\textbf{Evolve}\\full $3{+}1$ dynamics};
-\node[ours] (m4) at (13.2,-1.55) {\textbf{Keep}\\$X$ and the growth rate};
-\draw[flow] (m1)--(m2);
-\draw[flow] (m2)--(m3);
-\draw[flow] (m3)--(m4);
+\node[search] (cma) at (0,0)
+  {\textbf{CMA-ES proposals}\\$(m,q_1,q_2,q_3)$\\Parameter bounds; $Q>0$};
+\node[stagebox] (newton) at (5.3,0)
+  {\textbf{Spectral Newton solve}\\Hold $R_e$ and $J$ fixed\\JAX Jacobian; GPU LU};
+\node[stagebox] (constraints) at (10.6,0)
+  {\textbf{Einstein checks}\\Constraint residuals\\Spectral-tail diagnostic};
+\node[stagebox] (exoticity) at (10.6,-2.1)
+  {\textbf{Exoticity integral}\\$X=|\mathrm{VIQ}|/R_e$\\Measure the matter cost};
+\node[stagebox] (stability) at (5.3,-2.1)
+  {\textbf{Radial stability screen}\\Re-solve at $J=0$\\Eigenmodes on two grids};
+\node[search] (score) at (0,-2.1)
+  {\textbf{Score and penalties}\\$X$ + stability penalty\\Penalize failed checks};
+\draw[flow] (cma)--(newton);
+\draw[flow] (newton)--(constraints);
+\draw[flow] (constraints)--(exoticity);
+\draw[flow] (exoticity)--(stability);
+\draw[flow] (stability)--(score);
+\draw[flow] (score.north)--node[note, midway, right=2pt] {Update population} (cma.south);
+\node[followup] (grid) at (5.3,-3.95)
+  {\textbf{Finer-grid re-solve}\\Check constraints\\and convergence of $X$};
+\node[followup] (evolve) at (10.6,-3.95)
+  {\textbf{$3{+}1$ evolution}\\GRTeclyn\\Resolution comparison};
+\draw[flow, dashed] (score.south) |- node[note, pos=0.72, above=2pt]
+  {Selected candidates} (grid.west);
+\draw[flow, dashed] (grid)--(evolve);
 \end{tikzpicture}}
-\caption{Geometry-first versus matter-first search. Dashed: prescribe a metric and infer its stress-energy tensor $T_{\mu\nu}$. Solid: propose a confining potential $\mathcal{V}(\psi)$ for the phantom field, solve the coupled Einstein--Klein--Gordon equations at fixed $R_e$ and $J$, screen for stability, and verify the winners in full $3{+}1$ nonlinear evolution.}
+\caption{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}
 \label{fig:search}
 \end{figure*}
 
@@ -175,7 +183,7 @@ The compactified coordinate $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both asymptotic
 \subsection{CMA-ES}
 \label{sec:opt:cma}
 
-The outer optimization uses CMA-ES~\cite{hansen01} over the four potential parameters $(m,q_1,q_2,q_3)$. Each evaluation performs a full Newton solve, seeded from the nearest previously solved potential in parameter space. Candidates that violate positivity ($Q\le 0$), fail to converge, or exceed the unimposed Einstein identity thresholds are penalized and rejected rather than ranked as valid minima. To guard against trading exotic matter for fragility, each candidate's static ($J=0$) counterpart at the same pinned $R_e$ is screened for linear radial ($m=0$) instabilities, with any positive growth rate penalized in the objective. Every new best clean candidate is re-solved on a finer spectral grid before acceptance. Figure~\ref{fig:cma} illustrates the CMA-ES search trajectory for the D21 drainhole.
+The outer optimization uses CMA-ES~\cite{hansen01} over the four potential parameters $(m,q_1,q_2,q_3)$. Each evaluation performs a full Newton solve, seeded from the nearest previously solved potential in parameter space. Candidates that violate positivity ($Q\le 0$), fail to converge, or exceed the unimposed Einstein identity thresholds are penalized and rejected rather than ranked as valid minima. To guard against trading exotic matter for fragility, each candidate's static ($J=0$) counterpart at the same pinned $R_e$ is screened for linear radial ($m=0$) instabilities, with any positive growth rate penalized in the objective. Selected candidates undergo a separate finer-grid re-solve to check the constraints and convergence of $X$. Figure~\ref{fig:cma} illustrates the CMA-ES search trajectory for the D21 drainhole.
 
 \begin{figure}[t]
 \centering
