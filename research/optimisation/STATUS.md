@@ -23,11 +23,16 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 Stationary extension tests finished at 20:18 MSK on 2026-10-30.
 D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
 Neither cleared the background gate; no 3+1 evolutions launched.
-D0 alternative e0211 cleared all three grids; the N128 launch entered full
-preflight at 21:57 MSK on second-node card 0. Checkpoints off, stop t = 100.
-`opt-select-d30` continues on card 1. Speed/ETA pending the evolution start;
-the D30 scan's 2 h safety limit is 23:49 MSK (not an ETA).
-Second-node scratch clean: 47 MB retained cache, 473 GB free. The three old
+D0 alternative e0211 cleared all three grids; full preflight passed and the
+N128 evolution started at 21:58 MSK on second-node card 0. Checkpoints off,
+stop t = 100. At 22:02 MSK: t = 1.13, speed 18.8 units/h, about 5.3 h
+remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
+all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
+consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
+`opt-select-d30` continues on card 1. D30 is on candidate 17;
+the scan's 2 h safety limit is 23:49 MSK (not an ETA).
+Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
+468 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
 frames and movies retained. Cleanup logged in
 `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-30.md`.
@@ -35,9 +40,9 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | preflight; stop 100 | pending | pending |
+| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
-| `opt-select-d30` | second / 1 | candidate scan, no evolution time | ~0.015 h/candidate | full batch ~22:12 MSK, or earlier clearance |
+| `opt-select-d30` | second / 1 | candidate 17/30, no evolution time | ~0.015 h/candidate | full batch ~22:12 MSK, or earlier clearance |
 | `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
 | `opt-validate-d30` | — | 180x36 and 210x42 above gate | ended 21:43 MSK | — |
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
@@ -98,6 +103,8 @@ E_c = 2.50e-9, relative X drift = 8.66e-15. Exported as
 `D0_validated_2049x129.spinbg`; matched N128 launch at 21:57 MSK, using
 `main3d_matter_16460fb0_2026-10-29.ex`. Full hold consumer, keep-last 3,
 checkpoints off. This is background clearance only; stability is unassessed.
+Seed, selected grid fields, checks and all attempted-candidate logs are packed
+in `results/optimisation/validation/2026-10-30-alternatives/d0/`.
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
