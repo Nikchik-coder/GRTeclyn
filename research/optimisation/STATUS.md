@@ -22,8 +22,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 93.5 | 5.0 u/h | ~11.3 h, ~22:20 MSK 30 Oct |
-| `opt-d30` | 0 | walk-in | — | ~1.3 h, ~12:20 MSK |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 102.7 | 5.0 u/h | ~9.5 h, ~22:20 MSK 30 Oct |
+| `opt-d80` | 0 | walk-in | — | ~1.3 h, ~14:10 MSK |
 
 N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
@@ -32,11 +32,13 @@ N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, n
 D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
 
 D0 finished 09:06 MSK. `opt-d21-area-freej400` finished 10:46 MSK.
-Card 0 now runs `opt-d30`: D21 recipe (x0 kink, 150×30, 400 evals, q∈[-2,8], `--stability`), J and R_e held, seed 103. TSV `runs/optimisation/opt/fam_a_r1_0005_opt4s_kink_150x30.tsv`. D80/D90 held.
+`opt-d30` finished 12:17 MSK. Card 0 now runs `opt-d80`: same recipe on
+`fam_a_r1_0023` (v_e 0.791), seed 105. TSV
+`runs/optimisation/opt/fam_a_r1_0023_opt4s_kink_150x30.tsv`. D90 held.
 
 ## Planned (nothing launches without the go)
 
-D51 X 1.606 triplet stays written, not launched. D80/D90 CMA stay held.
+D51 X 1.606 triplet stays written, not launched. D90 CMA stays held.
 
 ## Main results
 
@@ -71,10 +73,13 @@ search-best clean X_A **1.78089377** (−62.0 % vs V = 0; −3.5 % vs the
 4-knob D21 walk-in) at m 0.152, q (0.790, −1.199, 2.922), J 4.125,
 $R_e/R_{\mathrm{pol}}$ 1.189, E19 1.2e-9, λη₀ = 0. Frontier X_A 1.53867
 (E19 8.2e-7). Family: 12 PASS, 146 FRONTIER. Not grid-checked.
+D30 CMA-ES (2026-10-30; kink x0, 400 evals, seed 103): search-best clean
+X **1.88040565** (−57.0 % vs V = 0) at m 0.740, q (0.607, 0.201, −0.664),
+E19 1.3e-9, λη₀ = 0. Frontier 1.84808 (E19 3.0e-9). Not grid-checked.
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
-cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
-grid). D90 search not run.
+cleared: earlier D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the
+first finer grid). D90 search not run.
 
 **Potential landscape.** Not flat. Shape + rays at m 0.3: best clean −27.3 /
 −26.9 / −20.6 % at v_e 0.27 / 0.50 / 0.85 vs V = 0; no bottom found (Newton or
