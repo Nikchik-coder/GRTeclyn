@@ -8,8 +8,7 @@ Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
-Remaining work is the **D21 3+1 triplet** (Azad comparison) plus a drainhole
-CMA-ES queue for the exotic-spin curve (D0, D30, D80, D90). D51 evolution is
+Remaining work is the **D21 3+1 triplet** (Azad comparison). D51 evolution is
 parked. Dropped 2026-10-29: rotating 2D eigenproblem, further 2D-solver work,
 and extra matter recipes. Evolutions wait for the go.
 
@@ -17,21 +16,25 @@ and extra matter recipes. Evolutions wait for the go.
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
 `main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 458 GB free.
+Card 0 is empty.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 77.6 | 5.0 u/h | ~15 h, ~22:24 MSK 30 Oct |
-| drainhole CMA D0 → D30 → D80 → D90 | 0 | D0, kink x0, seed 101 | ~1.5 h / member | ~6 h, ~14:00 MSK 30 Oct |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 84.1 | 5.0 u/h | ~13 h, ~22:25 MSK 30 Oct |
 
 N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
-CMA recipe is D21's (x0 0.3,0,0,0, 150×30, 400 evals, q∈[-2,8], `--stability`). Each member gets a fresh CMA seed so it does not replay D21's knobs. Every PASS/FRONTIER writes an npz under `runs/optimisation/opt/`; TSV + accepted + best slots pack to `results/optimisation/opt/`. D0 is `--J 0` on fam_a_r1_0000.
+## Drainhole CMA queue (card 0)
+
+D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
+
+D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held. Nothing further on card 0. Recipe is D21's (x0 0.3,0,0,0, 150×30, 400 evals, q∈[-2,8], `--stability`); each member a fresh CMA seed. PASS/FRONTIER npz under `runs/optimisation/opt/`; TSV + accepted + best slots in `results/optimisation/opt/`.
 
 ## Planned (nothing launches without the go)
 
-D51 X 1.606 triplet stays written, not launched.
+D51 X 1.606 triplet stays written, not launched. D30/D80/D90 CMA stay held.
 
 ## Main results
 
@@ -50,7 +53,12 @@ screened number. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Fami
 holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets.
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,
-D90 0.59955. D21 CMA-ES (pure kink start, 400 evals): search-best X 1.78483 (−61.6 %) did
+D90 0.59955. Classical static (D0, J = 0) X 4.89835.
+D0 CMA-ES (2026-10-30; kink x0, 400 evals, seed 101): search-best clean
+X **1.83872766** (−62.5 % vs V = 0) at m 1.199, q (0.227, 0.485, 0.275),
+E19 1.2e-10, λη₀ = 0. Frontier 1.83854 (E19 7.9e-7). Family: 91 PASS, 54
+FRONTIER (145 accepted npz). Not grid-checked.
+D21 CMA-ES (pure kink start, 400 evals): search-best X 1.78483 (−61.6 %) did
 not clear. Winner after the finer-grid check: e140 X **1.8287958015** (−60.6 %
 vs $V = 0$) at m 1.023, q (0.672, 0.048, 0.310), 210×42 PASS, E19 1.6e-10.
 Also clean: e5 X 2.357928 (−49.2 %). A new CMA best is kept only after it is
@@ -84,6 +92,12 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
 - [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet live; D51 parked.
 - [ ] 10. Publish.
+
+## Future directions
+
+- **Oblate throat and equatorial exotic rings.** Replace the equatorial pin `pin=("R_e", ...)` with the proper-area pin `pin=("area", A)` (or polar radius $R_{\mathrm{pol}}$) so oblateness $R_e/R_{\mathrm{pol}}$ is free to grow, and open $\theta$-dependent scalar profiles / equatorial focusing so the NEC violation concentrates into an oblate equatorial ring rather than a full shell.
+- **Driving $X \to 0$.** Topological censorship forbids $X = 0$ in classical GR, but $X$ can be pushed arbitrarily small toward the thin-shell limit ($m R_e \gg 1$) on finer spectral grids (bounded only by Chebyshev resolution and Ford–Roman quantum inequalities), or cut further by restoring canonical / winding partner fields ($\chi, \Lambda$) to carry mass and angular momentum while the phantom pays solely for the throat flare-out.
+- **Spin and throat-radius pins vs joint optimization.** Throat size ($R_e$ or $R_A$) must stay pinned, otherwise the optimizer trivially shrinks the throat toward a black hole. Spin $J$ is pinned to isolate the potential's gain at each $v_e$, but freeing $J$ as a fifth CMA-ES knob at fixed throat area searches the global $(J, m, q_1, q_2, q_3)$ minimum where high spin ($v_e \to 1$) and potential confinement compound.
 
 ## Rules
 
