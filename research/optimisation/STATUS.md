@@ -138,10 +138,17 @@ separate D21 search minimum is not the evolved candidate. The spin plot reads
 the same ledger. The appendix figure uses blue/light blue/black and labels
 refinement levels only once above the Hamiltonian/momentum columns. Its inputs
 are packed under `results/optimisation/campaign/` for local rebuilding.
-Both LaTeX engines build the seven-page revision. The selection/stream checker
+Both LaTeX engines build the article. The selection/stream checker
 passes for ten table entries and forty constraint-order pairs; all revised
 figure label audits pass. Tables I and II share aligned model rows, and the
 S85 label is clear of its marker and the classical curves.
+
+The readability revision explains the potential, Newton solve and CMA-ES
+search in connected prose before the technical details. Detailed residuals
+and contraction times are retained in the appendix; the main results lead
+with their physical interpretation. Tables, figures and measured values are
+unchanged. The shared writing standards now require this explanation-first
+pass and a check for numerical clutter and repetitive prose.
 
 ## Main results
 

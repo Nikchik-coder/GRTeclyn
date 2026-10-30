@@ -14,6 +14,11 @@ draft repeats the same five causes. The full reports are kept locally only (the 
 
 Strong NR papers read as plain, predictable reference documents: the novelty lives in the result, never in the prose.
 
+The readability lesson from the reviewer comment discussed on 2026-10-30 is practical: a good idea cannot be judged
+if the reader has to reconstruct its explanation from compressed prose, scattered numbers and equations. These
+standards apply regardless of how a draft was written. Authors remain responsible for understanding and checking
+every sentence; fluent wording alone is not evidence that an explanation works.
+
 ## 1. Vocabulary: the field's, not the lab's
 
 Use the term a referee already knows. Coin a word only when no standard one exists, and then define it once, in a
@@ -70,10 +75,15 @@ the campaign tooling mean nothing to a referee and never appear in a paper.
 - Treat equations as prose: number every displayed equation, punctuate it like a sentence, and define its new symbols
   in the sentence that follows (Mermin).
 - A paper with more than about 15 symbols gets a notation table.
+- Explain the purpose and operation of a method before formalizing it. For an algorithm, say what it receives,
+  what it changes, how it makes the choice, and what the output means. For a physical model, explain which
+  quantities interact and what the equations determine. An equation makes that explanation precise; it does not
+  replace it. After an important equation, state the consequence the reader should take from it.
 
 ## 3. Sentences
 
-1. One claim per sentence, in the plainest grammar available, aiming for under 30 words.
+1. Give each sentence one main job, in plain grammar. About 30 words is a useful editing prompt, not a target:
+   do not compress an explanation into jargon or split it into disconnected fragments to meet a word count.
 2. Few dashes: at most one dash pair per paragraph. Use commas, parentheses or a new sentence instead.
 3. No fragments or aphorisms ("That timing is the measurement.", "The grid—yes."). Write the declarative sentence
    they stand for.
@@ -85,6 +95,12 @@ the campaign tooling mean nothing to a referee and never appear in a paper.
    of context, content and conclusion (Mensh and Kording). A pitfall others will hit gets one labelled paragraph or
    appendix.
 7. Tense: past for what we ran ("we evolved"), present for what a figure shows ("Fig. 4 shows").
+8. Develop one idea per paragraph. Introduce the question or claim, explain the reasoning, and give the evidence
+   needed to follow it. Keep the connective sentences that tell the reader why the next step follows.
+9. Prefer familiar constructions and concrete verbs to stacked technical nouns. Vary sentence length naturally;
+   a succession of terse, information-heavy sentences can be harder to read than a longer explanation.
+10. Remove repetition that adds no reasoning or evidence. Define a term and state a qualification where they matter,
+    then refer back when needed. Do not end every paragraph with the same distinction or generic summary.
 
 ## 4. Numbers
 
@@ -94,6 +110,12 @@ the campaign tooling mean nothing to a referee and never appear in a paper.
   several numbers together belongs in a table.
 - Match precision to the error: ΔX = 3.00 ± 0.01, never 3.0016 beside it.
 - The `\clm` ledger rule (CLAUDE.md, "The paper") still applies to every number that remains.
+- Lead a results paragraph with the trend or comparison in words. Keep only the number needed to establish that
+  point in the main text; put parameter inventories, residuals, timing sequences and secondary comparisons in the
+  appropriate table or appendix. Do not recite a table row by row in prose.
+- Every number needs a role: what it measures, what it is compared with, and why that difference matters. Fewer
+  numbers must not mean missing evidence: retain the data, units, thresholds and uncertainty where readers can
+  inspect them, and link the interpretation to that location.
 
 ## 5. Order of the argument
 
@@ -196,6 +218,7 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
 | …at 81% the throat is stable to t = 150 at three resolutions. | At 81% of the extremal angular momentum the throat radius shows no growth up to t = 150, about 34 e-folding times of the static mode, at three resolutions. | Claims absence of growth, scaled to the instability's own timescale |
 | One rate, two fates: the measured rate 1/τ (left axis; τ right) against… | Inverse e-folding time 1/τ of the throat's areal radius against angular momentum as a fraction of its extremal value. | Caption opens with what is plotted |
 | ε = ±10⁻³: pushed out collapses, in inflates | Radial perturbation, \|ε\| = 10⁻³: outward leads to collapse, inward to expansion | Readable as a table entry |
+| D21 has X = 1.829, E19 = 1.6×10⁻¹⁰, Ec = 4.3×10⁻¹⁰, with contraction at t = 58.3 / 67.3 / 80.7. | The selected D21 solution reduces stationary exoticity by about 61%. Its throat later contracts, with onset moving later as the evolution grid is refined. The tables and appendix give the separate background checks and timing measurements. | Separates the physical result, numerical evidence and dynamics; preserves the detailed measurements elsewhere |
 
 ## Checklist before every submission
 
@@ -216,6 +239,12 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
 13. A reader outside the project (a colleague, or a fresh agent with no project context) reads the abstract, the
     introduction and one results section and marks every word or symbol they had to guess. Each mark is fixed before
     submission.
+14. Read the main text without the equations and tables. The question, method, main finding and interpretation
+    should still be understandable. Then check that the formal material supports that explanation.
+15. Circle every number in the main text. Keep it there only if the reader needs it to understand or assess the
+    current claim; move supporting detail to a cited table or appendix without losing its provenance.
+16. Read each paragraph aloud. Repair compressed noun phrases, unexplained logical jumps and repetitive sentence
+    patterns. The authors can explain every step and have checked every claim, including any AI-assisted wording.
 
 ## Open items on the current drafts (2026-10-20; delete each when fixed)
 
