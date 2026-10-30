@@ -21,3 +21,23 @@ contraction occurs at 58.2666667, 67.31, and 80.7, respectively.
 
 Rebuild with the wrapper Python:
 `-m grteclyn_wrapper.visualisation.optimisation.plot_convergence`.
+
+The finite-resolution comparison with the spinning paper rebuilds with
+`-m grteclyn_wrapper.visualisation.optimisation.plot_instability_curve`.
+Add `--with-history --out /tmp/d21_growth_with_history` to include the two
+radius histories beside the growth-rate plot. The article uses the compact
+single-column version, replacing its standalone CMA-ES progress figure.
+It uses N=128 for every plotted model. Classical inputs and background
+headers remain in `results/spinningwormhole/`; potential D21 uses the streams
+here and the archived e140 fields to calculate its own throat area. The
+physical area includes the saved length scale squared. The x coordinate
+therefore uses each solution's own J/A, not the search reference's spin label.
+
+`../figures/instability_curve.tsv` records all plotted rates and fitting times.
+The fit is the spinning paper's `rate_tau`: the slope of ln|dR_A/dt| while
+the radius changes by 0.2–1%. As in that figure, expansion takes precedence
+if a run first contracts and later expands through the interval. For D21,
+tau is 6.59223 without the potential and 9.49047 with it, a 30.54% lower
+measured rate at N=128. These are neither radial-eigenvalue-screen outputs
+nor continuum-extrapolated rates. The article caption records the different
+J and outer drive settings; STATUS documents the existing sponge control.

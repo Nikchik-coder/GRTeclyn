@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 from grteclyn_wrapper.visualisation.optimisation.paper_results import REPO, load_models
 from grteclyn_wrapper.visualisation.optimisation.plot_convergence import load, order_rows, PACKED
+from grteclyn_wrapper.visualisation.optimisation.plot_instability_curve import load as load_growth, FIGURES
 OUT = Path(__file__).resolve().parents[1] / "numbers.tex"
 
 def check(rows):
@@ -41,7 +42,17 @@ def check(rows):
     for a,b in zip(actual,expected):
         for k in ('p96_128','p128_192'):
             assert np.isclose(float(a[k]),b[k],rtol=1e-12)
-    print(f'Checked {len(rows)} selected candidates and {len(expected)} order pairs.')
+    points, candidate, _ = load_growth()
+    with (FIGURES/'instability_curve.tsv').open() as f:
+        growth = list(csv.DictReader(f, delimiter='\t'))
+    assert len(growth) == len(points) + 1
+    for saved, measured in zip(growth, points + [candidate]):
+        for key, value in measured.items():
+            if isinstance(value, str):
+                assert saved[key] == value, key
+            else:
+                assert np.isclose(float(saved[key]), value, rtol=1e-12, atol=0), key
+    print(f'Checked {len(rows)} selected candidates, {len(expected)} order pairs and {len(growth)} growth fits.')
     return data
 
 def generate(rows, data):
@@ -87,6 +98,11 @@ def generate(rows, data):
         g=d['geometry']; first=np.flatnonzero(g[:,1]/g[0,1]<=.99)[0]
         name={96:'Low',128:'Mid',192:'High'}[n]
         macro('clmContraction'+name,f'{g[first,0]:.1f}')
+    points, candidate, _ = load_growth()
+    reference = next(p for p in points if p['label'] == 'D21')
+    macro('clmGrowthClassicalTau',f"{reference['tau']:.2f}")
+    macro('clmGrowthPotentialTau',f"{candidate['tau']:.2f}")
+    macro('clmGrowthReduction',f"{100*(1-candidate['rate']/reference['rate']):.0f}")
     OUT.write_text('\n'.join(chunks)+'\n')
     print(OUT)
 

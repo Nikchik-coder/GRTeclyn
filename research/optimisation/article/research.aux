@@ -33,31 +33,34 @@
 \newlabel{sec:opt:solver}{{III\,A}{2}{}{section*.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}CMA-ES}{2}{section*.7}\protected@file@percent }
 \newlabel{sec:opt:cma}{{III\,B}{2}{}{section*.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:search}{{1}{3}{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates.}}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:search-regions}{{2}{3}{CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Numerical setup}{3}{section*.8}\protected@file@percent }
+\newlabel{sec:setup}{{IV}{3}{}{section*.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A}Interpolation onto the grid}{3}{section*.9}\protected@file@percent }
+\newlabel{sec:setup:id}{{IV\,A}{3}{}{section*.9}{}}
 \citation{grteclyn,amrex,grchombo}
 \citation{shirokov2026,shirokov2026s}
 \citation{alic2012}
 \citation{bona1995}
 \citation{alcubierre2003gauge}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}}{3}{figure.1}\protected@file@percent }
-\newlabel{fig:search}{{1}{3}{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability}{figure.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces D21 exoticity $X$ against recorded CMA-ES evaluation. Dark and light grey points fall below and above the constraint ceiling. The blue step tracks the best value so far, the square marks its minimum, and the inset resolves the late plateau. The search reaches $X=1.785$, while the separately selected finer-grid solution has $X=1.829$.}}{3}{figure.2}\protected@file@percent }
-\newlabel{fig:cma}{{2}{3}{D21 exoticity $X$ against recorded CMA-ES evaluation. Dark and light grey points fall below and above the constraint ceiling. The blue step tracks the best value so far, the square marks its minimum, and the inset resolves the late plateau. The search reaches $X=\clmDsearchX $, while the separately selected finer-grid solution has $X=\clmDfineX $}{figure.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Numerical setup}{3}{section*.8}\protected@file@percent }
-\newlabel{sec:setup}{{IV}{3}{}{section*.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A}Interpolation onto the grid}{3}{section*.9}\protected@file@percent }
-\newlabel{sec:setup:id}{{IV\,A}{3}{}{section*.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B}Evolution scheme}{3}{section*.10}\protected@file@percent }
-\newlabel{sec:setup:scheme}{{IV\,B}{3}{}{section*.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C}Criteria}{3}{section*.11}\protected@file@percent }
-\newlabel{sec:setup:criteria}{{IV\,C}{3}{}{section*.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates.}}{4}{figure.3}\protected@file@percent }
-\newlabel{fig:search-regions}{{3}{4}{CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates}{figure.3}{}}
+\citation{shirokov2026s}
+\citation{shirokov2026s}
+\citation{shirokov2026s}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B}Evolution scheme}{4}{section*.10}\protected@file@percent }
+\newlabel{sec:setup:scheme}{{IV\,B}{4}{}{section*.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C}Criteria}{4}{section*.11}\protected@file@percent }
+\newlabel{sec:setup:criteria}{{IV\,C}{4}{}{section*.11}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {V}Results}{4}{section*.12}\protected@file@percent }
 \newlabel{sec:results}{{V}{4}{}{section*.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A}Stationary exoticity at fixed throat and spin}{4}{section*.13}\protected@file@percent }
 \newlabel{sec:results:X}{{V\,A}{4}{}{section*.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Exoticity relative to each family's massless static member, against the reference rotation $v_e$. Black curves: massless families. Open blue markers: the search-grid candidates of Table~\ref {tab:X}. The filled diamond identifies D21$^\star $ on $210\times 42$. Most search candidates lie below their massless counterparts; D90 lies above its counterpart.}}{4}{figure.4}\protected@file@percent }
-\newlabel{fig:exotic}{{4}{4}{Exoticity relative to each family's massless static member, against the reference rotation $v_e$. Black curves: massless families. Open blue markers: the search-grid candidates of Table~\ref {tab:X}. The filled diamond identifies D21$^\star $ on $210\times 42$. Most search candidates lie below their massless counterparts; D90 lies above its counterpart}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Exoticity relative to each family's massless static member, against the reference rotation $v_e$. Black curves: massless families. Open blue markers: the search-grid candidates of Table~\ref {tab:X}. The filled diamond identifies D21$^\star $ on $210\times 42$. Most search candidates lie below their massless counterparts; D90 lies above its counterpart.}}{4}{figure.3}\protected@file@percent }
+\newlabel{fig:exotic}{{3}{4}{Exoticity relative to each family's massless static member, against the reference rotation $v_e$. Black curves: massless families. Open blue markers: the search-grid candidates of Table~\ref {tab:X}. The filled diamond identifies D21$^\star $ on $210\times 42$. Most search candidates lie below their massless counterparts; D90 lies above its counterpart}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B}Three-dimensional evolution of D21$^\star $}{4}{section*.14}\protected@file@percent }
+\newlabel{sec:results:evol}{{V\,B}{4}{}{section*.14}{}}
 \citation{shirokov2026code}
 \citation{shirokov2026s}
 \citation{chew2016}
@@ -65,8 +68,8 @@
 \newlabel{tab:models}{{I}{5}{Potential parameters of the lowest-$X$ candidates with both background-constraint residuals at most $10^{-8}$ on the $150\times 30$ search grid. D and S denote the drainhole and symmetric families. D21$^\star $ is the separately selected solution re-solved on $210\times 42$, rather than the search-grid minimum}{table.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Exoticity of the same candidates as Table~\ref {tab:models}, compared with the massless solution at the same $R_e$ and $J$. Here $\Delta X=100(X/X_{\mathcal  {V}=0}-1)$. The search-grid rows and the selected finer-grid solution are listed separately.}}{5}{table.2}\protected@file@percent }
 \newlabel{tab:X}{{II}{5}{Exoticity of the same candidates as Table~\ref {tab:models}, compared with the massless solution at the same $R_e$ and $J$. Here $\Delta X=100(X/X_{\mathcal {V}=0}-1)$. The search-grid rows and the selected finer-grid solution are listed separately}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B}Three-dimensional evolution of D21$^\star $}{5}{section*.14}\protected@file@percent }
-\newlabel{sec:results:evol}{{V\,B}{5}{}{section*.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Measured growth rates at $N=128$: classical models from Ref.~\cite  {shirokov2026s} and the potential-bearing D21$^\star $ (blue star). The dashed curve fits the classical contracting models. Classical D21 has $J=1$ and outer drive strength $1$; D21$^\star $ has $J=1.0138$ and drive strength $0$, with initial equatorial radii differing by about $0.1\%$. Over the same $0.2$--$1\%$ areal-radius decrease, D21$^\star $ has a $31\%$ lower fitted growth rate.}}{5}{figure.4}\protected@file@percent }
+\newlabel{fig:growth}{{4}{5}{Measured growth rates at $N=128$: classical models from Ref.~\cite {shirokov2026s} and the potential-bearing D21$^\star $ (blue star). The dashed curve fits the classical contracting models. Classical D21 has $J=1$ and outer drive strength $1$; D21$^\star $ has $J=1.0138$ and drive strength $0$, with initial equatorial radii differing by about $0.1\%$. Over the same $0.2$--$1\%$ areal-radius decrease, D21$^\star $ has a $\clmGrowthReduction \%$ lower fitted growth rate}{figure.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusions}{5}{section*.15}\protected@file@percent }
 \newlabel{sec:conclusions}{{VI}{5}{}{section*.15}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Reproducibility}{5}{section*.16}\protected@file@percent }
@@ -76,12 +79,12 @@
 \@writefile{toc}{\contentsline {section}{\numberline {A}Solver and stability checks}{5}{section*.18}\protected@file@percent }
 \newlabel{app:checks}{{A}{5}{}{section*.18}{}}
 \citation{azad2023,azad2024}
-\bibcite{ellis1973}{{1}{}{{}}{{}}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Resolution study of D21$^\star $ at $N=96,128,192$. Top two rows: Hamiltonian and momentum constraint norms through $t=50$; grey dashed and dotted curves multiply the finest-grid norms by $2^2$ and $2^4$. Bottom row: fractional equatorial- and areal-radius changes, the change in $r\,\mathrm  {Re}\,\Psi _4^{20}$ at $r=14$, and minimum lapse over each recorded history. Near-throat constraints scale approximately at fourth order early on; the later contraction begins at resolution-dependent times.}}{6}{figure.5}\protected@file@percent }
 \newlabel{fig:conv}{{5}{6}{Resolution study of D21$^\star $ at $N=96,128,192$. Top two rows: Hamiltonian and momentum constraint norms through $t=50$; grey dashed and dotted curves multiply the finest-grid norms by $2^2$ and $2^4$. Bottom row: fractional equatorial- and areal-radius changes, the change in $r\,\mathrm {Re}\,\Psi _4^{20}$ at $r=14$, and minimum lapse over each recorded history. Near-throat constraints scale approximately at fourth order early on; the later contraction begins at resolution-dependent times}{figure.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {B}Convergence of the D21 evolution}{6}{section*.19}\protected@file@percent }
 \newlabel{app:conv}{{B}{6}{}{section*.19}{}}
 \newlabel{eq:order}{{B1}{6}{}{equation.B.1}{}}
+\bibcite{ellis1973}{{1}{}{{}}{{}}}
 \bibcite{bronnikov1973}{{2}{}{{}}{{}}}
 \bibcite{morris_thorne1988}{{3}{}{{}}{{}}}
 \bibcite{visser1995}{{4}{}{{}}{{}}}
@@ -112,8 +115,8 @@
 \citation{REVTEX42Control}
 \citation{apsrev42Control}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Measured constraint orders from Eq.~\eqref  {eq:order}. Each cell gives $96\to 128$ / $128\to 192$ at the same time and refinement level. Norms are linearly interpolated between recorded times. The finest-level orders stay near four; the coarser levels vary with time and resolution pair.}}{7}{table.3}\protected@file@percent }
-\newlabel{tab:orders}{{III}{7}{Measured constraint orders from Eq.~\eqref {eq:order}. Each cell gives $96\to 128$ / $128\to 192$ at the same time and refinement level. Norms are linearly interpolated between recorded times. The finest-level orders stay near four; the coarser levels vary with time and resolution pair}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Constraint orders from Eq.~\eqref  {eq:order}, using linearly interpolated norms. Each cell gives $96\to 128$ / $128\to 192$ at the listed time and level. Finest-level orders stay near four; coarser levels vary.}}{7}{table.3}\protected@file@percent }
+\newlabel{tab:orders}{{III}{7}{Constraint orders from Eq.~\eqref {eq:order}, using linearly interpolated norms. Each cell gives $96\to 128$ / $128\to 192$ at the listed time and level. Finest-level orders stay near four; coarser levels vary}{table.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {}References}{7}{section*.20}\protected@file@percent }
 \newlabel{LastBibItem}{{26}{7}{}{section*.20}{}}
 \newlabel{LastPage}{{}{7}{}{}{}}

@@ -204,15 +204,6 @@ CMA-ES draws a population of trial potentials from a distribution in parameter s
 
 The score combines exoticity with penalties for failed checks. Potentials that violate $Q>0$, fail to converge, or exceed the background-constraint ceiling receive a large penalty. Smaller constraint violations receive a smaller penalty. The searches also used a radial perturbation screen of the static counterpart, described in Appendix~\ref{app:checks}. The stationary results in this paper are selected by their exoticity and background constraints according to Sec.~\ref{sec:setup:criteria}.
 
-Figure~\ref{fig:cma} shows how the best recorded exoticity decreases during the D21 search. The rapid initial reduction gives way to smaller changes as the proposals concentrate near a minimum.
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\columnwidth]{cma_progress_d21.pdf}
-\caption{D21 exoticity $X$ against recorded CMA-ES evaluation. Dark and light grey points fall below and above the constraint ceiling. The blue step tracks the best value so far, the square marks its minimum, and the inset resolves the late plateau. The search reaches $X=\clmDsearchX$, while the separately selected finer-grid solution has $X=\clmDfineX$.}
-\label{fig:cma}
-\end{figure}
-
 The searches explore different regions of potential space for the two wormhole families (Fig.~\ref{fig:search-regions}). Labels D and S denote drainhole and symmetric reference solutions; the suffix gives $100v_e$, where $v_e$ is the reference equatorial rotation velocity. Each search keeps its own reference throat size and angular momentum fixed.
 
 The parameter projections show which combinations were sampled, rather than an interpolated surface of solutions. Points can overlap even when the other two potential parameters differ. The progress curves divide each search's best value by its first candidate below the constraint ceiling, so their slopes show improvement within a search.
@@ -305,6 +296,15 @@ We evolved D21$^\star$ on three grids to examine how the dynamics change with re
 
 The throat later contracts on all three grids, with contraction starting later as resolution increases. Figure~\ref{fig:conv} shows this shift in the radius histories alongside the wave and lapse diagnostics. Thus the early constraint check and the later dynamics have different numerical behavior: the former shows decreasing error, while the contraction onset is still sensitive to grid spacing.
 
+At $N=128$, the resolution used for classical D21 in Ref.~\cite{shirokov2026s}, D21$^\star$ contracts later and has a lower measured growth rate (Fig.~\ref{fig:growth}). We fit $\ln|dR_A/dt|$ over the same $0.2$--$1\%$ areal-radius decrease. The growth time increases from $\tau=\clmGrowthClassicalTau$ to $\clmGrowthPotentialTau$, corresponding to a $\clmGrowthReduction\%$ lower rate. The caption records the differences in background and outer damping settings.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{instability_curve.pdf}
+\caption{Measured growth rates at $N=128$: classical models from Ref.~\cite{shirokov2026s} and the potential-bearing D21$^\star$ (blue star). The dashed curve fits the classical contracting models. Classical D21 has $J=1$ and outer drive strength $1$; D21$^\star$ has $J=1.0138$ and drive strength $0$, with initial equatorial radii differing by about $0.1\%$. Over the same $0.2$--$1\%$ areal-radius decrease, D21$^\star$ has a $\clmGrowthReduction\%$ lower fitted growth rate.}
+\label{fig:growth}
+\end{figure}
+
 \section{Conclusions}
 \label{sec:conclusions}
 
@@ -346,7 +346,7 @@ The radial screen examines small spherically symmetric perturbations of the stat
 A numerical eigenvalue alone does not identify a physical mode, because gauge modes can also appear in the discretized problem. A physical mode must agree between two grids and have small residuals in the linearized $tt$ and $t\eta$ Einstein constraints. On classical massless backgrounds, the calculation reproduces the published dimensionless growth rates $|\omega_I|\eta_0=0.390$ for the drainhole~\cite{azad2023,azad2024} and $1.182$ for the symmetric Ellis throat. Here $|\omega_I|$ is the exponential growth rate. The stationary candidate selection uses the background constraints specified above.
 
 \begin{table*}[t]
-\caption{Measured constraint orders from Eq.~\eqref{eq:order}. Each cell gives $96\to128$ / $128\to192$ at the same time and refinement level. Norms are linearly interpolated between recorded times. The finest-level orders stay near four; the coarser levels vary with time and resolution pair.}
+\caption{Constraint orders from Eq.~\eqref{eq:order}, using linearly interpolated norms. Each cell gives $96\to128$ / $128\to192$ at the listed time and level. Finest-level orders stay near four; coarser levels vary.}
 \label{tab:orders}
 \small
 \begin{ruledtabular}

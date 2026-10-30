@@ -47,15 +47,42 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
-**Deferred D21 control check (2026-10-30).** The classical evolution used
-J = 1 and `sponge_drive_strength = 1`; optimized D21 used J = 1.0138 and
-`sponge_drive_strength = 0`. Optimisation did not require changing the sponge
-setting. Why it was changed has not been established. Investigate later;
-the existing runs are not a matched control pair, so their onset difference
-does not establish that the potential delays collapse. Before that comparison,
-match throat size, angular momentum, numerical settings and perturbation.
-No control rerun is authorized or launched. The current paper revision updates
-the search figures, tables and D21 resolution study without that comparison.
+**D21 comparison audit (2026-10-30).** Compare the recorded evolutions at
+N = 128, the resolution used for D21 in the spinning instability figure.
+Using its same fit of ln|dR_A/dt| over a 0.2–1% radius decrease gives
+classical tau = 6.59223 (t = 39–46), potential tau = 9.49047 (t = 54–66):
+a 30.54% lower measured growth rate. The new optimisation figure shows
+this point on the classical curve; an optional second panel compares histories.
+It replaces the standalone CMA-progress figure in the article. This is a
+finite-resolution comparison, not a continuum rate or proof of an isolated
+potential effect. Later onset under refinement occurs in both models;
+that behavior alone does not invalidate comparison at the same resolution.
+
+The settings choice is now traced: commit `0f2951fa` prepared a drive-off
+D51 triplet; `0b80c60c` explicitly gave D21 the same outer-boundary setup as
+spinning D51. The classical D21 reference retained drive strength 1.
+Optimisation did not require this change. The spinning campaign's 10-18
+notes favored drive off to reduce outer-boundary disturbances.
+
+An existing controlled N96 test under `results/spinningwormhole/campaign/
+drainhole/10_sponge_test/` changes only the drive and stop time relative to
+the classical N96 reference. Through t = 55, the maximum areal-radius
+difference divided by its initial value is 7.83e-7. Its fitted tau changes
+from 7.8190406 (drive 1) to 7.8190341 (drive 0), and both reach a 1% areal-radius
+decrease at the same sampled t = 42. Thus the sponge difference does not
+explain the classical N96 growth fit; it is not a late-time validation for
+the other resolutions or the potential background.
+
+Classical D21 has J = 1, R_e = 4.05962747; the potential has J = 1.0138,
+R_e = 4.06383050, inherited from the search reference `fam_a_r1_0000`.
+Their binaries also differ (`farfix_891d817d` versus `matter_16460fb0`).
+The explicit evolution settings otherwise agree apart from output paths,
+background, checkpoint-off bookkeeping and stop time. Both have no imposed
+perturbation, so numerical errors supply the initial disturbance. A controlled
+collapse-time comparison would also fix that perturbation. For a stricter
+rate comparison, use the same binary, drive and exactly matched R_e/J.
+No new evolution is authorized or launched. Second-node scratch rechecked:
+47 MB cache only, 473 GB free; all three D21 logs have no checkpoint writes.
 
 ## Stationary extensions — 2026-10-30 (excluded from the paper)
 
@@ -124,8 +151,9 @@ CMA restarts. **32 regression tests passed** on the node.
   radial instability, every model passing all four criteria, and sustained
   throat survival are removed. The appendix uses the final N96/N128/N192
   diagnostic streams, with measured early constraint orders and later
-  resolution-dependent contraction. The classical-control comparison is
-  deferred as noted above; the stability-code repairs remain pending.
+  resolution-dependent contraction. The new N128 rate comparison is
+  descriptive; an exactly matched control remains deferred as noted above.
+  The stability-code repairs remain pending.
 
 ## Article figures and tables — 2026-10-30
 
