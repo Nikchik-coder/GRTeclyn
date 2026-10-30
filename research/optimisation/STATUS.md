@@ -15,15 +15,15 @@ evolution is parked. Dropped 2026-10-29: rotating 2D eigenproblem, further
 ## Live
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
-`main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 440 GB free.
+`main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 458 GB free. Card 0 free.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
-| `D21_X1p829_L64_N128_ml3_spdrv0_t150` | 0 | 46 | 20 u/h | ~5.2 h, ~01:56 MSK 30 Oct |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 23 | 5.0 u/h | ~26 h, ~22:15 MSK 30 Oct |
+| `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 76 | 5.0 u/h | ~15 h, ~22:18 MSK 30 Oct |
 
-N 96: R_eq 4.063→3.108 (−24%); MOTS R 4.034→3.489, growth τ~9 at t=50–70 then the MOTS rate died while R_eq kept falling. N 128 is now alone on card 0.
+N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
 ## Planned (nothing launches without the go)
 
