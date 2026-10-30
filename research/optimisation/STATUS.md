@@ -9,6 +9,16 @@ The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
 Priority: **repair and revalidate the radial stability screen** (pending).
+
+**Instability screening is NOT FIXED (2026-10-30).** The current CMA-ES
+search disables the radial screen: `--stability` is refused and new results
+record `stability = not_assessed`. The new finer-grid checks validate the
+stationary background only; they do not measure instability or establish
+dynamical stability. Earlier zero-instability labels remain withdrawn.
+The potential's sigma² scaling, unmatched-eigenmode handling and independent
+background/eigenmode constraint checks still need repair and revalidation
+before instability screening can be enabled again.
+
 The stationary extension trials are complete and archived as exploratory work;
 their small validated gain does not warrant inclusion in the paper (2026-10-30).
 No further extension runs are planned. D30 evolution authorization was withdrawn
@@ -231,6 +241,9 @@ CMA restarts. **32 regression tests passed** on the node.
   is cited in the article; both LaTeX engines build and the in-place PDF is rebuilt.
 
 ## Validation audit — 2026-10-30
+
+The findings below describe the original audit. Subsequent background-check
+changes are recorded above; they have not repaired the instability screen.
 
 - **Background equations and bill:** 27 package tests pass. The independent symbolic
   Einstein/KG transcription, V = 0 reduction and N-row identity pass. D21 e140
