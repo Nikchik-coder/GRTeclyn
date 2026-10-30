@@ -140,7 +140,9 @@ def bound_mode(state, config, pin, nx=40, ny=10):
 
 
 def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
-                max_iter=14, stall_ok=1e-9):
+                max_iter=14, stall_ok=1e-9, newton_tol=1e-14):
+    if not 0 < newton_tol <= stall_ok:
+        raise ValueError("Newton stopping tolerance must not exceed acceptance tolerance")
     from .solver.newton import newton
     kind = config.get("matter")
     frequency = cloud = None
@@ -152,7 +154,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     p = make_problem(state, config, nx, ny, pin, frequency=frequency,
                      amplitude=config.get("amplitude") if kind else None)
     u, info = newton(p.residual, p.jacobian, pack_seed(p, state, cloud, frequency),
-                     tol=1e-14, max_iter=max_iter)
+                     tol=newton_tol, max_iter=max_iter)
     residual = float(info["res_scaled_inf"])
     if not np.isfinite(residual) or residual > stall_ok:
         raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")

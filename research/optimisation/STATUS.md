@@ -29,8 +29,9 @@ stop t = 100. At 22:02 MSK: t = 1.13, speed 18.8 units/h, about 5.3 h
 remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
-`opt-select-d30` continues on card 1. D30 is on candidate 17;
-the scan's 2 h safety limit is 23:49 MSK (not an ETA).
+`opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
+A validator oversolving issue was then identified; e0374 is queued for
+recheck at the existing 1e-9 Newton acceptance tolerance (see below).
 Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
 468 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
@@ -42,7 +43,7 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
-| `opt-select-d30` | second / 1 | candidate 17/30, no evolution time | ~0.015 h/candidate | full batch ~22:12 MSK, or earlier clearance |
+| `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
 | `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
 | `opt-validate-d30` | — | 180x36 and 210x42 above gate | ended 21:43 MSK | — |
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
@@ -95,6 +96,18 @@ selects alternatives without changing the gates. Completed diagnostics,
 fields, configurations and logs are packed in
 `results/optimisation/validation/2026-10-30-d0-d30/` (under 1 MB),
 using validator commit `e5b046d5`.
+
+**Validator correction (22:14 MSK).** The validator previously demanded
+Newton residual 1e-14 before accepting a stall below 1e-9. On D30 e0374,
+those extra steps damage a field whose independent constraints already pass:
+direct interpolation gives E19/E_c = 9.84e-10/1.61e-9 at 180x36 and
+9.71e-10/2.00e-9 at 210x42, whereas the extra Newton steps raise them
+above the gate. Stop Newton at the existing accepted 1e-9 tolerance;
+the residual acceptance, independent 1e-8 constraints and 1e-6 X drift
+are unchanged. A fresh full validator run must still clear the candidate
+before any export/launch. Earlier rejected outputs remain archived as
+numerical failures of that procedure, not evidence against the potentials.
+Eight existing exploration/potential tests pass after this correction.
 
 **D0 alternative cleared (21:56 MSK).** Search e0211, ninth alternative
 checked: X = 1.841676813964, J = 0, R_e = 3.889549398712 after consistent

@@ -48,13 +48,18 @@ def main():
     pin = ("R_e", radius*scale)
     d2 = (state["psim"]*state["sigma"]/np.pi)**2
     manifest = dict(source=Path(args.seed).name, grids=grids, config=config,
-                    pin=pin, rescale=scale, stability="not_assessed")
+                    pin=pin, rescale=scale, stability="not_assessed",
+                    newton_acceptance=1e-9, independent_constraint_gate=1e-8)
     (args.out/"manifest.json").write_text(json.dumps(manifest, indent=2)+"\n")
     records = []
     for nx,ny in grids:
         started = time.monotonic()
         print(f"Solving {nx}x{ny}: J={config['J']:.12g}, R_e={pin[1]:.12g}", flush=True)
-        state, row = solve_trial(state, config, nx, ny, pin, d2, max_iter=24)
+        # Stop at the existing acceptance floor. Demanding 1e-14 first can
+        # degrade an already accurate field through an ill-conditioned step.
+        # Independent constraints still decide clearance at every resolution.
+        state, row = solve_trial(state, config, nx, ny, pin, d2, max_iter=24,
+                                 newton_tol=1e-9)
         row["seconds"] = time.monotonic()-started
         print(json.dumps(row), flush=True)
         with (args.out/"checks.jsonl").open("a") as f:
