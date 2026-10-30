@@ -189,10 +189,19 @@ The outer optimization uses CMA-ES~\cite{hansen01} over the four potential param
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{cma_progress_d21.png}
-\caption{Exotic-matter bill $X$ across CMA-ES evaluations for the D21 drainhole on the search grid. Red: accepted candidates passing the identity gates; grey: rejected candidates. Dashed line: massless phantom baseline ($\mathcal{V}=0$, $X=4.645$). The search-grid minimum ($X=1.785$) settles at $X=1.829$ ($-61\%$) upon finer-grid re-solve (Table~\ref{tab:X}).}
+\includegraphics[width=\columnwidth]{cma_progress_d21.pdf}
+\caption{Search-grid exoticity $X$ against CMA-ES evaluation for D21. Dark and light grey points lie within and above the background-constraint threshold, respectively. The blue step tracks the running minimum; the square marks its first attainment. The inset resolves the late-search plateau. The search minimum is $X=1.785$, compared with $X=1.829$ after finer-grid re-solve (Table~\ref{tab:X}).}
 \label{fig:cma}
 \end{figure}
+
+Figure~\ref{fig:search-regions} shows the sampled parameter regions and search histories for both families. Labels D and S denote drainhole and symmetric searches; the suffix gives the nominal equatorial rotation $100v_e$. The projections combine searches at different fixed angular momenta; overlapping points can differ in the two hidden potential parameters. Each history is normalized to its own first candidate satisfying the background-constraint threshold, so the curves compare progress within a search.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{potential_scans.pdf}
+\caption{CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates.}
+\label{fig:search-regions}
+\end{figure*}
 
 \section{Numerical setup}
 \label{sec:setup}
