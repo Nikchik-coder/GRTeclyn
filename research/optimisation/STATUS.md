@@ -26,15 +26,19 @@ D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
 Neither original minimum cleared the background gate; alternatives were checked next.
 D0 alternative e0211 cleared all three grids; full preflight passed and the
 N128 evolution started at 21:58 MSK on second-node card 0. Checkpoints off,
-stop t = 100. At about 22:28 MSK: t = 9.37, speed 19.1 units/h, about 4.7 h
-remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
+stop t = 100. At 22:37 MSK: t = 12.68, speed 19.3 units/h, about 4.5 h
+remaining (03:10 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
 `opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
 D30 e0137 cleared all three grids at 22:21 MSK. Its matched N128 launch
 started on second-node card 1 at 22:22 MSK, checkpoints off,
-then was explicitly aborted at t = 0.54. No D30 workers remain. Card 1 is free
-for the authorized fresh search after the resolution gate is implemented.
+then was explicitly aborted at t = 0.54. No D30 evolution workers remain. The fresh `opt-d30-resolution-cma` search
+started on card 1 at 22:37 MSK, code `6990e8d0`, 400-evaluation cap.
+Cheap checks per best and full finalist refinement; no stability penalty.
+Warm-up underway; search speed/ETA not yet measurable (4 h wall cap).
+Thirteen local tests pass; the new checker also passed the archived e0374
+on all three grids on the cluster CPU, without Newton or a dense Jacobian.
 Second-node scratch: D0 three plotfiles, 7.1 GB; stopped D30 one plotfile,
 2.4 GB (retained); cache 47 MB, 463 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
@@ -44,10 +48,10 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 9.37 / 100, alive | 19.1 units/h | 4.7 h; Oct 31 03:20 MSK |
+| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 12.68 / 100, alive | 19.3 units/h | 4.5 h; Oct 31 03:10 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
-| D30 CMA with resolution gate | second / 1 planned | authorized; code/tests in progress | pending | pending |
+| `opt-d30-resolution-cma` | second / 1 | started 22:37 MSK; max 400 evaluations | warming up | pending rate; wall cap Oct 31 02:37 MSK |
 | `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
@@ -61,10 +65,10 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R settled ~3.49, not the classical 2.52). Onset later at higher N (−1% at t=58 / 67 / 81).
 
-## Drainhole CMA queue (card 0)
+## Drainhole CMA queue
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. Drainhole queue empty.
+`opt-d90` finished 16:43 MSK. The new D30 screened rerun is live on card 1; no further searches queued.
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
