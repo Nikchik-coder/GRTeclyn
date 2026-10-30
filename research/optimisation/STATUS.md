@@ -15,15 +15,14 @@ and extra matter recipes. Evolutions wait for the go.
 ## Live
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
-`main3d_matter_16460fb0`. Scratch: 21 GB in live N192, 468 GB free.
+`main3d_matter_16460fb0`. Scratch: 21 GB in live N192, 472 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 85.6 | 5.0 u/h | ~13 h, ~22:20 MSK 30 Oct |
-| `opt-d21-area-freej400` | 0 | walk-in | — | ~1.5 h, ~10:55 MSK |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 93.0 | 5.0 u/h | ~11.5 h, ~22:25 MSK 30 Oct |
 
 N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
@@ -31,7 +30,8 @@ N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, n
 
 D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
 
-D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held. Card 0 now runs `opt-d21-area-freej400`: 400 evals, `--pin area --free-J --stability`, x0 the D21 winner (1.023, 0.672, 0.048, 0.310), $J\in[0,4.13]$, seed 113. TSV `runs/optimisation/opt/fam_a_r1_0000_opt4s_area_freeJ_150x30.tsv`.
+D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held.
+`opt-d21-area-freej400` finished 10:46 MSK (400 evals, exit 0). Card 0 free. TSV `runs/optimisation/opt/fam_a_r1_0000_opt4s_area_freeJ_150x30.tsv`.
 
 ## Planned (nothing launches without the go)
 
@@ -65,6 +65,11 @@ vs $V = 0$) at m 1.023, q (0.672, 0.048, 0.310), 210×42 PASS, E19 1.6e-10.
 Also clean: e5 X 2.357928 (−49.2 %). A new CMA best is kept only after it is
 re-solved on the next finer grid; the 1e-8 cutoff on the search grid does not
 do this (the failed 1.785 was already 1e-10 there).
+D21 area-pin + free-J CMA-ES (2026-10-30; 400 evals, seed 113, $J\in[0,4.13]$):
+search-best clean X_A **1.78089377** (−62.0 % vs V = 0; −3.5 % vs the
+4-knob D21 walk-in) at m 0.152, q (0.790, −1.199, 2.922), J 4.125,
+$R_e/R_{\mathrm{pol}}$ 1.189, E19 1.2e-9, λη₀ = 0. Frontier X_A 1.53867
+(E19 8.2e-7). Family: 12 PASS, 146 FRONTIER. Not grid-checked.
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the first finer
