@@ -21,11 +21,10 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 ## Live
 
 Stationary extension tests finished at 20:18 MSK on 2026-10-30.
-D0 and D30 stationary validation started at 21:42 MSK, 2026-10-30,
-on second-node cards 0 and 1 (`opt-validate-d0`, `opt-validate-d30`).
-Each checks 150x30, 180x36 and 210x42 before an N128 evolution is allowed.
-No 3+1 evolutions launched yet. Speed and ETA pending the first solve;
-each validation has a 2 h safety limit (23:42 MSK), not a runtime estimate.
+D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
+Neither cleared the background gate; no 3+1 evolutions launched.
+Both second-node cards are idle. D0 exited 1 after Newton stalled;
+D30 exited 2 after both finer grids failed independent constraints.
 Second-node scratch clean: 47 MB retained cache, 473 GB free. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
 frames and movies retained. Cleanup logged in
@@ -34,8 +33,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `opt-validate-d0` | second / 0 | stationary grid checks; no evolution time | first solve | pending |
-| `opt-validate-d30` | second / 1 | stationary grid checks; no evolution time | first solve | pending |
+| `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
+| `opt-validate-d30` | — | 180x36 and 210x42 above gate | ended 21:43 MSK | — |
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
 | `D21_X1p829_L64_N192_ml3_spdrv0_t150` | — | 112.2, NaN in h11 (level 3) | dead | — |
@@ -63,6 +62,22 @@ from the search's D21-sized throat to classical static R_e = 3.8895493987.
 D40/D46 have no saved search candidates; D51's existing export is rejected.
 The new validator reconstructs physical radii from fields and records stability
 as unassessed. It never exports a failed background or fabricates a zero rate.
+
+**D0/D30 validation outcome (21:43 MSK, 2026-10-30).** The conditional
+N128 launches are blocked; checkpoints remain off if subsequently cleared.
+D0 at the matched radius already fails E19 on 150x30 (7.94e-5), despite
+a Newton residual of 3.22e-13. The 180x36 solve stalls at 1.055e-9,
+above the 1e-9 Newton acceptance threshold; no 210x42 solve was attempted.
+D30 passes 150x30, then fails both finer grids: E19/E_c are
+1.65e-6/4.89e-6 at 180x36 and 1.23e-5/3.02e-6 at 210x42
+(gates 1e-8). Its tiny relative X drift (1.50e-9) does not override
+these failures. No handoff was produced for either model. These checks
+establish a failed numerical clearance, not its cause or physical stability.
+The matched templates remain unlaunched; repair/diagnose the stationary
+solutions before proposing another validation attempt. Completed diagnostics,
+fields, configurations and logs are packed in
+`results/optimisation/validation/2026-10-30-d0-d30/` (under 1 MB),
+using validator commit `e5b046d5`.
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
