@@ -31,7 +31,7 @@ def main():
     ap.add_argument("--shape-step", type=float, default=.25,
                     help="multiplicative control perturbation exp(+/- step)")
     ap.add_argument("--amplitudes", default="0.005,0.02")
-    ap.add_argument("--matter-mass", type=float, default=.3)
+    ap.add_argument("--matter-mass", type=float, default=1.)
     ap.add_argument("--quartic", type=float, default=0.)
     ap.add_argument("--gamma-offsets", default="-0.1,0.1")
     ap.add_argument("--gpu", type=int)

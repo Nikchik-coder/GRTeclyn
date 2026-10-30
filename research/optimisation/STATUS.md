@@ -19,11 +19,8 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 
 ## Live
 
-Stationary extension trials launched at 20:13 MSK on 2026-10-30:
-`opt-ext-d21` on card 0 (potential, cloud, winding, shape, asymmetry),
-`opt-ext-s0` on card 1 (cloud, winding). Both use 150×30 → 180×36,
-200 GB process caps and a 1 h timeout (21:13 MSK); ETA awaits first timings.
-These are stationary solves, with no plotfiles or evolution checkpoints.
+First extension batch finished at 20:14 MSK on 2026-10-30. Both cards idle.
+Follow-up tests are prepared below; no new evolutions.
 Second-node scratch: 21 GB leftover N192 (3 plotfiles), 47 MB cache, 455 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
@@ -55,8 +52,17 @@ controls enlarge the potential family; canonical-cloud amplitude and frequency
 are solved together. Shape/asymmetry use a fixed area. The best trial of each
 stage and its reference are re-solved on a finer grid; a gain requires passing
 independent constraints and exceeding the grid drift. Stability is not assessed.
+First fixed-area D21 shape trial: X_A 1.8410621350 → 1.8383247213
+(−0.1487%), reproduced at 150×30 and 180×36 with both constraints passing.
+The first R_e baseline stalled at 6.4e-10, before its independent constraints
+were evaluated. Follow-up accepts Newton stalls up to 1e-9 but keeps the
+1e-8 constraint gates unchanged. S0 baseline at 150×30 is ABOVE_GATE
+(E19 1.0e-5); no validated matter gain. The first low-mass cloud seeds were
+not localized under the initial filter. Follow-up checks the asymptotic tail
+beyond |xi| > 0.99 (not 0.9) and tests more compact massive clouds.
+
 Cluster regression suite: **32 passed** (11.46 s). Code `5db53c14` was pushed,
-pulled, then tested. Bounded D21/S0 trials started on both cards; outputs under
+pulled, then tested. First bounded D21/S0 trials finished; outputs under
 `runs/optimisation/extensions/{d21,s0}_20261030/`, logs in
 `runs/capped_jobs/opt-ext-{d21,s0}/log`. No stability penalty or old-family CMA
 restarts. The article cites Dzhunushaliev et al., PRD 90, 124038 (2014); both

@@ -128,7 +128,7 @@ def bound_mode(state, config, pin, nx=40, ny=10):
         mode[indices] = v
         mode = mode.reshape(nx+1, ny+1)
         peak = np.max(np.abs(mode))
-        loc = np.max(np.abs(mode[np.abs(p.sx)>.9]))/max(peak, 1e-300)
+        loc = np.max(np.abs(mode[np.abs(p.sx)>.99]))/max(peak, 1e-300)
         anchor = mode[nx//2, -1]
         if error < 1e-9 and loc < .05 and abs(anchor) > .05*peak:
             options.append((w, mode/anchor, error, loc))
@@ -140,7 +140,7 @@ def bound_mode(state, config, pin, nx=40, ny=10):
 
 
 def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
-                max_iter=14, stall_ok=1e-10):
+                max_iter=14, stall_ok=1e-9):
     from .solver.newton import newton
     kind = config.get("matter")
     frequency = cloud = None
