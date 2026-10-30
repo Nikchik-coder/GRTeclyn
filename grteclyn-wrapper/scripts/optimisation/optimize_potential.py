@@ -18,9 +18,14 @@ continuation cache and TSV.  The gradient path (implicit
 differentiation of the bill through the solved state, the step-6
 convergence item) is not wired yet: nothing here uses dX/dknobs.
 
-The objective is the bill X = |VIQ|/R_e, with penalties instead of
-constraints: an inadmissible point (min Q <= 0 on the kink, m outside
-[--m-min, --m-max], or any q outside [--q-min, --q-max]) or a Newton
+The objective is the bill per pinned radius: X = |VIQ|/R_e when the
+throat pin is R_e (the default, Fig. 3e), or X_A = |VIQ|/R_A when
+--pin area.  --free-J adds J as a fifth CMA-ES / Nelder-Mead knob at
+that fixed size; omit both flags and the walk is the published
+four-knob search at the member's J and R_e.  Penalties: an
+inadmissible point (min Q <= 0 on the kink, m outside
+[--m-min, --m-max], any q outside [--q-min, --q-max], or J outside
+[--J-min, --J-max] when --free-J) or a Newton
 failure scores DEATH + 10 (DEATH = 1e3) without solving twice; a
 solved point whose unused-constraint residual (E19, E_c) sits between
 the 1e-8 gate and the 1e-6 ceiling counts as frontier and pays +0.1
@@ -65,6 +70,7 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import (
     tail_ratio,
 )
 from grteclyn_wrapper.optimisation.exoticity import exotic_x, throat
+from grteclyn_wrapper.optimisation.knobs import bill_name, knob_vector, pin_held
 from grteclyn_wrapper.optimisation.matter_equations import (
     MatterCollocationProblem,
 )
@@ -195,7 +201,22 @@ def main() -> int:
     ap.add_argument("--jac-chunk", type=int, default=None)
     ap.add_argument("--J", type=float, default=None, dest="J_pin",
                     help="optimize at this J instead of the member's "
-                         "(0 is the static drainhole of the same family)")
+                         "(0 is the static drainhole of the same family); "
+                         "with --free-J this is only the walk-in start")
+    ap.add_argument("--pin", choices=["R_e", "area"], default="R_e",
+                    help="throat size held by Newton (default R_e, the "
+                         "Fig. 3e pin; area frees oblateness R_e/R_pol)")
+    ap.add_argument("--free-J", action="store_true", dest="free_J",
+                    help="add J as a fifth search knob at the pinned "
+                         "throat size (default: J held)")
+    ap.add_argument("--J-min", type=float, default=0.0, dest="J_min",
+                    help="lower J bound when --free-J (default 0)")
+    ap.add_argument("--J-max", type=float, default=None, dest="J_max",
+                    help="upper J bound when --free-J (default: the "
+                         "member's |J|; required on a static member)")
+    ap.add_argument("--J-step", type=float, default=None, dest="J_step",
+                    help="J knob scale when --free-J (default a tenth of "
+                         "the J window)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--no-save", action="store_true",
                     help="skip the .npz of each best slot's solved fields "
@@ -208,31 +229,60 @@ def main() -> int:
                     dest="save_accepted")
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
-    x0 = np.array([float(v) for v in args.x0.split(",")])
-    scales = np.array([args.m_step, *SCALES[1:]])
-    assert x0.size == 4, "--x0 takes m,q1,q2,q3"
+    x0_in = np.array([float(v) for v in args.x0.split(",")])
     assert args.q_min < args.q_max, "--q-min must be < --q-max"
-    if not (args.m_min <= x0[0] <= args.m_max) or np.any(
-            (x0[1:] < args.q_min) | (x0[1:] > args.q_max)):
+    if x0_in.size not in (4, 5):
+        ap.error("--x0 takes m,q1,q2,q3 or m,q1,q2,q3,J")
+    if x0_in.size == 5 and not args.free_J:
+        ap.error("--x0 with five values needs --free-J")
+    if not (args.m_min <= x0_in[0] <= args.m_max) or np.any(
+            (x0_in[1:4] < args.q_min) | (x0_in[1:4] > args.q_max)):
         ap.error("--x0 sits outside the m or q bounds")
 
     sol = Solution.load(args.solution)
     J_member = float(sol.meta["prescribed"]["J"])
     J0 = J_member if args.J_pin is None else float(args.J_pin)
+    try:
+        x0 = knob_vector(x0_in, free_j=args.free_J, j_start=J0)
+    except ValueError as err:
+        ap.error(str(err))
+    J0 = float(x0[4]) if args.free_J else J0
+    J_min, J_max = args.J_min, args.J_max
+    if args.free_J:
+        if J_max is None:
+            span = max(abs(J_member), abs(J0))
+            if span <= 0.0:
+                ap.error("--free-J on a static start needs --J-max")
+            J_max = span
+        if not (J_min < J_max):
+            ap.error("--J-min must be < --J-max")
+        if not (J_min <= J0 <= J_max):
+            ap.error("starting J sits outside --J-min/--J-max")
+    J_step = args.J_step
+    if args.free_J and J_step is None:
+        J_step = 0.1 * (J_max - J_min)
+    scales = np.array([args.m_step, *SCALES[1:]]
+                      + ([J_step] if args.free_J else []))
+    score_key = bill_name(args.pin)
     psim0 = -math.pi * sol.observables["D"] / sol.eta0
     nx = args.nx or sol.nx
     ny = args.ny or sol.ny
     name = args.solution.rsplit("/", 1)[-1]
     stem = name.rsplit(".", 1)[0]
+    extra = (f"_{args.pin}" if args.pin != "R_e" else "") + (
+        "_freeJ" if args.free_J else "")
     out = pathlib.Path(args.out or f"runs/optimisation/opt/{stem}_opt4"
-                                   f"{'s' if args.stability else ''}_"
-                                   f"{nx}x{ny}.tsv")
+                                   f"{'s' if args.stability else ''}"
+                                   f"{extra}_{nx}x{ny}.tsv")
     out.parent.mkdir(parents=True, exist_ok=True)
+    wide = args.pin != "R_e" or args.free_J
+    extra_head = "\tJ\tR_A\tR_pol\tX_A\tpin" if wide else ""
     if not out.exists():
         out.write_text(
             "member\tnx\tny\tmass\tq1\tq2\tq3\tnewton\titers\tX\tsigma\t"
             "psi_minus\tR_e\tE19\tE_c\ttails\tminQ\tverdict"
-            + ("\tlam_eta0\n" if args.stability else "\n"))
+            + ("\tlam_eta0" if args.stability else "")
+            + extra_head + "\n")
 
     # the member holding J on its own grid, and its measured throat
     p1 = MatterCollocationProblem(
@@ -249,13 +299,20 @@ def main() -> int:
     F1, W1, N1, B1, P1 = (np.asarray(a) for a in p1.fields(u1))
     omega1, psim1 = p1.unpack(u1)[-2:]
     th = throat(p1.eta0, p1.map, p1.sx, p1.sy, p1.Dx, F1, N1, B1)
+    pin_row = pin_held(args.pin, th)
     xi1 = float(p1.map.xi_of_eta(th["eta_throat"]))
     print(f"{name} ({nx}x{ny}, eta0 {sol.eta0:g}, gamma {sol.gamma:g}): "
           f"J-held {i1['res_scaled_inf']:.1e}; R_e {th['R_e']:.10f}, "
-          f"J {J_member:.6e}; optimize from ({', '.join(f'{v:g}' for v in x0)})",
+          f"R_A {th['R_A']:.10f}, R_pol {th['R_pol']:.10f}, "
+          f"J {J_member:.6e}; pin {pin_row[0]}={pin_row[1]:.10g}; "
+          f"score {score_key}; "
+          f"optimize from ({', '.join(f'{v:g}' for v in x0)})",
           flush=True)
     if J0 != J_member:
         print(f"optimize at J {J0:g} (member holds {J_member:g})",
+              flush=True)
+    if args.free_J:
+        print(f"J is a search knob in [{J_min:g}, {J_max:g}]",
               flush=True)
 
     grid = dataclasses.replace(sol.radial_map, eta0=1.0)
@@ -269,17 +326,19 @@ def main() -> int:
     def solve_at(x, prev, jval=None):
         """One pinned solve at knob vector x, continued from prev, at
         the member's J (or ``jval`` -- the stability twin's branch, which
-        takes the twin's stall cut)."""
+        takes the twin's stall cut).  When --free-J and jval is omitted,
+        the fifth knob is the prescribed J."""
         t0 = time.time()
         stall_ok = args.stall_ok if jval is None else args.twin_stall_ok
-        m, q = float(x[0]), tuple(float(v) for v in x[1:])
+        m, q = float(x[0]), tuple(float(v) for v in x[1:4])
+        j_run = (float(jval) if jval is not None
+                 else (float(x[4]) if len(x) > 4 else J0))
         pot = (None if m == 0.0
                else (lambda pm, m=m, q=q: PolynomialPotential.kink_q(
                    m, pm, q)))
         p2 = MatterCollocationProblem(
             eta0=1.0, gamma=sol.gamma, radial_map=grid, nx=nx, ny=ny,
-            prescribe=("J", J0 if jval is None else jval),
-            pin=("R_e", th["R_e"]), potential=pot)
+            prescribe=("J", j_run), pin=pin_row, potential=pot)
         u0 = p2.pack(prev["F"] - p2.f_bg, prev["W"] - prev["omega"] * p2.q,
                      prev["N"], prev["B"] - 1.0,
                      prev["PSI"] - prev["psim"] * p2.psi_prof,
@@ -289,12 +348,12 @@ def main() -> int:
             u, info = newton(p2.residual, p2.jacobian, u0, tol=TOL)
         except Exception as err:
             return {"verdict": "FAILED", "err": str(err),
-                    "secs": time.time() - t0}, None
+                    "secs": time.time() - t0, "J": j_run}, None
         if not info["converged"] and info["res_scaled_inf"] > stall_ok:
             return {"verdict": "FAILED",
                     "err": f"newton {info['res_scaled_inf']:.1e}, "
                            f"{info.get('reason', '?')}",
-                    "secs": time.time() - t0}, None
+                    "secs": time.time() - t0, "J": j_run}, None
         F, W, Nf, B, PSI = (np.asarray(a) for a in p2.fields(u))
         omega, psim = p2.unpack(u)[-2:]
         tt = p2.throat(u)
@@ -307,8 +366,10 @@ def main() -> int:
                     tail_ratio(B - 1.0, axis=0))
         mon = max(e19, e_c)
         row = {"newton": info["res_scaled_inf"], "iters": info["iters"],
-               "X": xv["X"], "sigma": tt["sigma"], "psim": psim,
-               "R_e": tt["R_e"], "e19": e19, "e_c": e_c, "tails": tails,
+               "X": xv["X"], "X_A": xv["X_A"], "sigma": tt["sigma"],
+               "psim": psim, "R_e": xv["R_e"], "R_A": xv["R_A"],
+               "R_pol": xv["R_pol"], "J": j_run,
+               "e19": e19, "e_c": e_c, "tails": tails,
                "verdict": ("PASS" if mon <= CLEAN_GATE else
                            "FRONTIER" if mon <= CEILING else "ABOVE-GATE"),
                "secs": time.time() - t0}
@@ -318,9 +379,18 @@ def main() -> int:
         state.setdefault("nodes", (np.asarray(p2.sx), np.asarray(p2.sy)))
         return row, nxt
 
+    def extra_cols(row):
+        if not wide:
+            return ""
+        if row["verdict"] == "FAILED":
+            return "\tnan\tnan\tnan\tnan\t" + args.pin
+        return (f"\t{row['J']:.10g}\t{row['R_A']:.10f}\t"
+                f"{row['R_pol']:.10f}\t{row['X_A']:.10e}\t{args.pin}")
+
     def record(x, row):
-        m, q = float(x[0]), tuple(float(v) for v in x[1:])
-        tag = f"m {m:.4f} q ({', '.join(f'{v:+.3f}' for v in q)})"
+        m, q = float(x[0]), tuple(float(v) for v in x[1:4])
+        jtag = (f"  J {float(x[4]):.4g}" if len(x) > 4 else "")
+        tag = f"m {m:.4f} q ({', '.join(f'{v:+.3f}' for v in q)}){jtag}"
         qvals = "\t".join(f"{v:.6g}" for v in q)
         stab_col = ""
         stab_tag = ""
@@ -335,10 +405,12 @@ def main() -> int:
                   f"({row['err']})  [{row['secs']:.0f}s]", flush=True)
             line = (f"{name}\t{nx}\t{ny}\t{m:.6g}\t{qvals}\tnan\tnan\tnan\t"
                     f"nan\tnan\tnan\tnan\tnan\tnan\t{min_q(q):.3f}\t"
-                    f"FAILED{stab_col}\n")
+                    f"FAILED{stab_col}{extra_cols(row)}\n")
         else:
             print(f"  [{state['nfev']}] {tag}: newton {row['newton']:.1e} "
                   f"({row['iters']} it)  X {row['X']:.8e}  "
+                  f"X_A {row['X_A']:.8e}  R_e/R_pol "
+                  f"{row['R_e'] / row['R_pol']:.4f}  "
                   f"sigma {row['sigma']:.8f}  E19 {row['e19']:.1e}  "
                   f"E_c {row['e_c']:.1e}  tails {row['tails']:.1e}  "
                   f"{row['verdict']}{stab_tag}  [{row['secs']:.0f}s]",
@@ -349,7 +421,7 @@ def main() -> int:
                     f"{row['psim']:.10f}\t{row['R_e']:.10f}\t"
                     f"{row['e19']:.3e}\t{row['e_c']:.3e}\t"
                     f"{row['tails']:.3e}\t{min_q(q):.3f}\t"
-                    f"{row['verdict']}{stab_col}\n")
+                    f"{row['verdict']}{stab_col}{extra_cols(row)}\n")
         with out.open("a") as fh:
             fh.write(line)
 
@@ -361,17 +433,21 @@ def main() -> int:
     def static_seed():
         """The J = 0, V = 0 root from the problem's own background (f_bg,
         psi_prof: the exact static member at gamma on the arctan map,
-        B = 1, nu = omega = 0), scaled to the R_e pin."""
+        B = 1, nu = omega = 0), scaled to the active size pin."""
         p0 = MatterCollocationProblem(
             eta0=1.0, gamma=sol.gamma, radial_map=grid, nx=nx, ny=ny,
-            prescribe=("J", 0.0), pin=("R_e", th["R_e"]))
+            prescribe=("J", 0.0), pin=pin_row)
         F = np.asarray(p0.f_bg) * np.ones((1, ny + 1))
         zero, one = np.zeros_like(F), np.ones_like(F)
         psim_s = -math.pi * math.hypot(1.0, sol.gamma / (2.0 * math.pi))
         ts = throat(1.0, p0.map, p0.sx, p0.sy, p0.Dx, F, zero, one)
+        if args.pin == "area":
+            sigma0 = math.sqrt(th["area_throat"] / ts["area_throat"])
+        else:
+            sigma0 = th["R_e"] / ts["R_e"]
         return {"F": F, "W": zero, "N": zero, "B": one,
                 "PSI": psim_s * np.asarray(p0.psi_prof), "omega": 0.0,
-                "psim": psim_s, "sigma": th["R_e"] / ts["R_e"],
+                "psim": psim_s, "sigma": sigma0,
                 "xi_t": float(p0.map.xi_of_eta(ts["eta_throat"]))}
 
     if J0 == 0.0:
@@ -383,8 +459,9 @@ def main() -> int:
         spinning solve at x (J in thirds, a stalled leg bisected toward
         the last solved J, cap splits per leg): the route that does not
         depend on how far the nearest J = 0 seed sits in knob space."""
-        prev, jlast = spin, J0
-        for Jk in (2 * J0 / 3, J0 / 3, 0.0):
+        j_spin = float(x[4]) if len(x) > 4 else J0
+        prev, jlast = spin, j_spin
+        for Jk in (2 * j_spin / 3, j_spin / 3, 0.0):
             pending, splits = [Jk], 0
             while pending:
                 jt = pending[-1]
@@ -404,10 +481,11 @@ def main() -> int:
         nearest J = 0 cache entry, else spin_down from the spinning solve
         at x; flatten, screen.  Returns (lam, None), or (None, why) when
         both routes failed."""
-        m, q = float(x[0]), tuple(float(v) for v in x[1:])
+        m, q = float(x[0]), tuple(float(v) for v in x[1:4])
         near = min(state["solved_j0"],
                    key=lambda s: float(np.sum(np.abs(
-                       (np.array(s) - np.array(key)) / scales))))
+                       (np.array(s)[:4] - np.array(key)[:4])
+                       / scales[:4]))))
         _, jnxt = solve_at(x, state["solved_j0"][near], jval=0.0)
         route = "direct"
         if jnxt is None:
@@ -432,7 +510,7 @@ def main() -> int:
         map, sigma, the potential coefficients, and the J = 0 twin."""
         spin = state["solved"][key]
         twin = state["solved_j0"].get(key)
-        m, q = float(key[0]), [float(v) for v in key[1:]]
+        m, q = float(key[0]), [float(v) for v in key[1:4]]
         pot = PolynomialPotential.kink_q(m, float(spin["psim"]), tuple(q))
         arrays = {k: np.asarray(spin[k]) for k in FIELDS}
         if twin is not None:
@@ -444,10 +522,14 @@ def main() -> int:
             "gamma": sol.gamma,
             "radial_map": {"class": type(grid).__name__,
                            **dataclasses.asdict(grid)},
-            "J": J0, "R_e": th["R_e"], "m": m, "q": q,
+            "J": float(row.get("J", J0)),
+            "R_e": float(row.get("R_e", th["R_e"])),
+            "R_A": float(row.get("R_A", th["R_A"])),
+            "pin": args.pin, "m": m, "q": q,
             "potential_coeffs": [float(c) for c in pot.coeffs],
             **{k: float(spin[k]) for k in scal},
-            "X": row["X"], "X_v0": x_v0, "E19": row["e19"],
+            "X": row["X"], "X_A": row.get("X_A"), "X_v0": x_v0,
+            "E19": row["e19"],
             "E_c": row["e_c"],
             "verdict": row["verdict"], "lam_eta0": row.get("lam"),
             "j0": (None if twin is None
@@ -465,9 +547,11 @@ def main() -> int:
 
     def objective(x):
         state["nfev"] += 1
-        m, q = float(x[0]), tuple(float(v) for v in x[1:])
+        m, q = float(x[0]), tuple(float(v) for v in x[1:4])
+        j_try = float(x[4]) if len(x) > 4 else J0
         if (not (args.m_min <= m <= args.m_max)
                 or any(not (args.q_min <= qk <= args.q_max) for qk in q)
+                or (args.free_J and not (J_min <= j_try <= J_max))
                 or min_q(q) <= 0.0):
             print(f"  [{state['nfev']}] m {m:.4f} q "
                   f"({', '.join(f'{v:+.3f}' for v in q)}): inadmissible",
@@ -498,7 +582,8 @@ def main() -> int:
         if row["verdict"] == "ABOVE-GATE":
             return death(monitor_overflow(row))
         mon_pen = 0.0 if row["verdict"] == "PASS" else 0.1
-        val = row["X"] + mon_pen
+        score = row[score_key]
+        val = score + mon_pen
         if args.stability:
             val += (args.stab_fail_pen if lam is None
                     else args.stab_weight * lam)
@@ -506,20 +591,21 @@ def main() -> int:
                          ("best_frontier", row["verdict"] != "ABOVE-GATE"),
                          ("best_stable", args.stability and lam == 0.0
                           and row["verdict"] == "PASS")):
-            if ok and (state[slot] is None or row["X"] < state[slot][0]):
-                state[slot] = (row["X"], key, dict(row))
+            if ok and (state[slot] is None or score < state[slot][0]):
+                state[slot] = (score, key, dict(row))
         return val
 
     # the walk-in: m in thirds, then the shape in 0.3 steps.  A leg that
     # stalls gets bisected toward the last solved point (the stiff-spin
     # straight line stalls marginally where the step-3 fan got through
     # on another route); capped so a true wall still stops the run
-    m0 = float(x0[0])
+    x_pot = np.asarray(x0[:4], float)
+    m0 = float(x_pot[0])
     chain = [np.array([mk, 0, 0, 0]) for mk in
              (0.0, m0 / 3.0, 2 * m0 / 3.0, m0)]
-    n_q = max(1, int(math.ceil(max(abs(v) for v in x0[1:]) / 0.3))
-              if np.any(x0[1:]) else 1)
-    chain += [np.concatenate([[m0], x0[1:] * k / n_q])
+    n_q = max(1, int(math.ceil(max(abs(v) for v in x_pot[1:]) / 0.3))
+              if np.any(x_pot[1:]) else 1)
+    chain += [np.concatenate([[m0], x_pot[1:] * k / n_q])
               for k in range(1, n_q + 1)]
 
     def walk(chain, prev, jval=None, what="walk-in"):
@@ -547,11 +633,12 @@ def main() -> int:
         return prev, row
 
     row_v0, _ = solve_at(np.zeros(4), prev0)
-    x_v0 = row_v0.get("X")
+    x_v0 = row_v0.get(score_key)
     if x_v0 is None:
         print(f"classical (V = 0) FAILED: {row_v0['err']}", flush=True)
         return 1
-    print(f"classical (V = 0): X {x_v0:.8e}  E19 {row_v0['e19']:.1e}  "
+    print(f"classical (V = 0): X {row_v0['X']:.8e}  "
+          f"X_A {row_v0['X_A']:.8e}  E19 {row_v0['e19']:.1e}  "
           f"E_c {row_v0['e_c']:.1e}", flush=True)
 
     prev, row = walk(chain, prev0)
@@ -584,11 +671,15 @@ def main() -> int:
     if args.engine == "cma":
         import cma
 
+        lo = [args.m_min, args.q_min, args.q_min, args.q_min]
+        hi = [args.m_max, args.q_max, args.q_max, args.q_max]
+        if args.free_J:
+            lo.append(J_min)
+            hi.append(J_max)
         es = cma.CMAEvolutionStrategy(
             list(x0), args.sigma0,
             {"CMA_stds": list(scales),
-             "bounds": [[args.m_min, args.q_min, args.q_min, args.q_min],
-                        [args.m_max, args.q_max, args.q_max, args.q_max]],
+             "bounds": [lo, hi],
              "popsize": args.popsize, "maxfevals": args.maxfev,
              "tolfun": args.fatol, "verbose": -9, "seed": args.seed})
         while not es.stop() and state["nfev"] < args.maxfev:
@@ -599,8 +690,9 @@ def main() -> int:
     else:
         from scipy.optimize import minimize
 
-        simplex = np.vstack([x0] + [x0 + scales[i] * np.eye(4)[i]
-                                    for i in range(4)])
+        n = int(x0.size)
+        simplex = np.vstack([x0] + [x0 + scales[i] * np.eye(n)[i]
+                                    for i in range(n)])
         res = minimize(objective, x0, method="Nelder-Mead",
                        options={"maxfev": args.maxfev, "fatol": args.fatol,
                                 "xatol": 1e-3, "initial_simplex": simplex,
@@ -618,9 +710,11 @@ def main() -> int:
             xb, key, row = state[slot]
             stab = (f"  lam {row['lam']:.4f}"
                     if row.get("lam") is not None else "")
-            print(f"{label}: X {xb:.8e} ({100 * (xb / x_v0 - 1):+.1f} % "
+            jbit = f"  J {key[4]:g}" if len(key) > 4 else ""
+            print(f"{label}: {score_key} {xb:.8e} "
+                  f"({100 * (xb / x_v0 - 1):+.1f} % "
                   f"vs V = 0) at m {key[0]:g} "
-                  f"q ({', '.join(f'{v:g}' for v in key[1:])})  "
+                  f"q ({', '.join(f'{v:g}' for v in key[1:4])}){jbit}  "
                   f"E19 {row['e19']:.1e}  E_c {row['e_c']:.1e}{stab}",
                   flush=True)
     if args.stability:

@@ -100,9 +100,22 @@ def throat(eta0, rmap, sx, sy, Dx, F, N, B, n_mu: int = 64) -> dict:
     xi_v, y_eq = np.array([xi_t]), np.array([-1.0])
     f_eq = _grid_eval(sx, sy, F, xi_v, y_eq)[0, 0]
     b_eq = _grid_eval(sx, sy, B, xi_v, y_eq)[0, 0]
-    return {"eta_throat": eta_t, "area_throat": float(area(xi_t)[0]),
-            "R_e": float(b_eq * math.exp(-0.5 * f_eq)
-                         * math.sqrt(eta_t**2 + eta0**2))}
+    h_t = eta_t**2 + eta0**2
+    area_t = float(area(xi_t)[0])
+    # R_pol (KK eq. 6 with B): meridian half-length / pi.
+    th_g, wth = np.polynomial.legendre.leggauss(64)
+    th = 0.5 * math.pi * (th_g + 1.0)
+    y_th = np.cos(2.0 * th)
+    f_m = _grid_eval(sx, sy, F, xi_v, y_th)[0]
+    n_m = _grid_eval(sx, sy, N, xi_v, y_th)[0]
+    b_m = _grid_eval(sx, sy, B, xi_v, y_th)[0]
+    nu_m = n_m * np.sin(th) ** 2
+    r_pol = math.sqrt(h_t) / math.pi * (0.5 * math.pi) * float(
+        (b_m * np.exp(0.5 * (nu_m - f_m))) @ wth)
+    return {"eta_throat": eta_t, "area_throat": area_t,
+            "R_e": float(b_eq * math.exp(-0.5 * f_eq) * math.sqrt(h_t)),
+            "R_A": math.sqrt(area_t / (4.0 * math.pi)),
+            "R_pol": r_pol}
 
 
 def nec_rays(eta0, rmap, sx, sy, Dx, N, B, PSI, n_x: int = 96) -> dict:
@@ -131,10 +144,16 @@ def nec_rays(eta0, rmap, sx, sy, Dx, N, B, PSI, n_x: int = 96) -> dict:
 
 
 def exotic_x(eta0, rmap, sx, sy, Dx, F, N, B, PSI) -> dict:
-    """The Fig. 3e quantity X = |VIQ| / R_e, with VIQ and the throat."""
+    """The Fig. 3e quantity X = |VIQ| / R_e, with VIQ and the throat.
+
+    ``X_A = |VIQ| / R_A`` is the same bill per areal radius, used when
+    the search pins area instead of $R_e$ (so flattening cannot cheat
+    $X$ by growing $R_e$ at fixed $A$).  ``X`` itself is unchanged.
+    """
     viq = bill(eta0, rmap, sx, sy, Dx, F, B, PSI)
     th = throat(eta0, rmap, sx, sy, Dx, F, N, B)
-    return {"VIQ": viq, **th, "X": abs(viq) / th["R_e"]}
+    return {"VIQ": viq, **th, "X": abs(viq) / th["R_e"],
+            "X_A": abs(viq) / th["R_A"]}
 
 
 class _Jet:

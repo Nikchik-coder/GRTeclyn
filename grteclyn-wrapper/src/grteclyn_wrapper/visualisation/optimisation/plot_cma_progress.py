@@ -57,6 +57,11 @@ KNOWN = {
     "fam_a_r1_0000.json": dict(label="D21", x_v0=4.64453314, x_seed=2.44332143,
                               q0=(0.0, 0.0, 0.0)),
 }
+# Same member JSON as D21; J = 0, so classical X and the kink start differ.
+KNOWN_TSV = {
+    "fam_a_r1_0000_opt4s_150x30_d0.tsv": dict(
+        label="D0", x_v0=4.89835324, x_seed=2.51733602, q0=(0.0, 0.0, 0.0)),
+}
 
 
 def find_tsv(name: str) -> pathlib.Path:
@@ -206,11 +211,13 @@ def main(argv=None) -> int:
     if not path.is_file():
         path = find_tsv(path.name)
     member, rows = load(path)
-    known = KNOWN.get(member, {})
+    known = KNOWN_TSV.get(path.name) or KNOWN.get(member, {})
     label = args.label or known.get("label") or pathlib.Path(member).stem
     x_v0 = args.x_v0 if args.x_v0 is not None else known.get("x_v0")
     x_seed = args.x_seed if args.x_seed is not None else known.get("x_seed")
     q0 = known.get("q0")
+    if args.out == OUT and known.get("label"):
+        args.out = OUT.with_name(f"cma_progress_{known['label'].lower()}")
     y_best, champ = running_best(rows, GATED)
     if champ is None:
         y_best, champ = running_best(rows, None)

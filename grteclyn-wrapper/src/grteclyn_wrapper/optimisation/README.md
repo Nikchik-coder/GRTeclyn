@@ -26,7 +26,10 @@ Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisa
 - `winding_solve.py`: the step-5 winding-field ladders (spin carried by the matter phase);
 - `check_chi_star.py`: the step-4 J = 0 cross-check against the published dressed star;
 - `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) search at pinned J and R_e (Nelder–Mead or
-  CMA-ES; `--stability` adds each candidate's J = 0 radial growth rate to the score); it saves each best point's
+  CMA-ES; `--stability` adds each candidate's J = 0 radial growth rate to the score). Opt-in:
+  `--pin area` holds throat area so oblateness is free (score $X_A = |{\rm VIQ}|/R_A$);
+  `--free-J` adds $J$ as a fifth knob. Defaults omit both, so existing 4-knob jobs are
+  unchanged. It saves each best point's
   solved fields as .npz, which `python -m grteclyn_wrapper.optimisation.handoff` turns into a 7-column table;
 - `grid_check.py`: grid convergence of solved potentials at the member's J (one walk-in, then each finer grid
   seeded by spectral interpolation, one R_e pin for all), to tell under-resolution from the round-off floor;
