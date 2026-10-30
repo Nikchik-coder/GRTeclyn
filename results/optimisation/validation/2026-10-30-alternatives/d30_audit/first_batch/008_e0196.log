@@ -1,0 +1,56 @@
+Solving 150x30: J=1.60593419281, R_e=4.26878755538
+{"nx": 150, "ny": 30, "newton": 1.6211269711326624e-11, "iters": 1, "X": 1.9755876607255636, "X_A": 2.0062869836077324, "VIQ": -8.433364020674576, "R_e": 4.268787555383546, "R_A": 4.203468441742859, "R_pol": 4.171361636869548, "sigma": 2.3259544874777043, "E19": 7.336682908120652e-08, "E_c": 5.733753016928742e-09, "J_error": 8.624802702112946e-09, "pin_error": 1.709743457922741e-14, "tails": 1.1577426011251357e-11, "lapse_min": 0.20787957635076193, "stability": "not_assessed", "scalar_in_vacuum_interval": true, "verdict": "ABOVE_GATE", "seconds": 10.214388630120084}
+Solving 180x36: J=1.60593419281, R_e=4.26878755538
+{"nx": 180, "ny": 36, "newton": 3.7471953347921947e-10, "iters": 0, "X": 1.975587660725564, "X_A": 2.006286983607737, "VIQ": -8.433364020674595, "R_e": 4.268787555383554, "R_A": 4.20346844174286, "R_pol": 4.171361636869551, "sigma": 2.3259544874777043, "E19": 4.1663108575221064e-07, "E_c": 4.686678550799788e-09, "J_error": 5.826669967823098e-09, "pin_error": 1.887379141862766e-14, "tails": 2.002546330595118e-15, "lapse_min": 0.20787957635076182, "stability": "not_assessed", "scalar_in_vacuum_interval": true, "verdict": "ABOVE_GATE", "seconds": 10.837128453887999}
+Solving 210x42: J=1.60593419281, R_e=4.26878755538
+W1030 18:55:18.979710 3829123 hlo_rematerialization.cc:3363] Can't reduce memory use below 42.61GiB (45754974225 bytes) by rematerialization; only reduced to 46.01GiB (49400670860 bytes), down from 46.01GiB (49400670860 bytes) originally
+E1030 18:55:41.099012 3829123 gpu_cudamallocasync_allocator.cc:366] gpu_async_0 cuMemAllocAsync failed to allocate 33077999888 bytes: RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+
+ Reported by CUDA: Free memory/Total memory: 20296564736/85017624576
+E1030 18:55:41.099120 3829123 gpu_cudamallocasync_allocator.cc:371] Stats: Limit:                        59.38GiB
+InUse:                        46.01GiB
+MaxInUse:                     76.82GiB
+NumAllocs:                        6485
+MaxAllocSize:                 30.81GiB
+Reserved:                           0B
+PeakReserved:                       0B
+PeakAllocated:                    76.82GiB
+LargestFreeBlock:                   0B
+
+E1030 18:55:41.099140 3829123 gpu_cudamallocasync_allocator.cc:69] Histogram of current allocation: (allocation_size_in_bytes, nb_allocation_of_that_sizes), ...;
+E1030 18:55:41.099143 3829123 gpu_cudamallocasync_allocator.cc:72] 181476, 1
+E1030 18:55:41.099147 3829123 gpu_cudamallocasync_allocator.cc:72] 362952, 4
+E1030 18:55:41.099148 3829123 gpu_cudamallocasync_allocator.cc:72] 364544, 1
+E1030 18:55:41.099150 3829123 gpu_cudamallocasync_allocator.cc:72] 16466769288, 3
+E1030 18:55:41.099154 3829123 gpu_cudamallocasync_allocator.cc:105] CU_MEMPOOL_ATTR_RESERVED_MEM_CURRENT: 63753420800
+E1030 18:55:41.099155 3829123 gpu_cudamallocasync_allocator.cc:107] CU_MEMPOOL_ATTR_USED_MEM_CURRENT: 49402305692
+E1030 18:55:41.099157 3829123 gpu_cudamallocasync_allocator.cc:108] CU_MEMPOOL_ATTR_RESERVED_MEM_HIGH: 84020297728
+E1030 18:55:41.099158 3829123 gpu_cudamallocasync_allocator.cc:109] CU_MEMPOOL_ATTR_USED_MEM_HIGH: 82480305580
+Traceback (most recent call last):
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 86, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 57, in main
+    state, row = solve_trial(state, config, nx, ny, pin, d2, max_iter=24)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/exploration.py", line 154, in solve_trial
+    u, info = newton(p.residual, p.jacobian, pack_seed(p, state, cloud, frequency),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/solver/newton.py", line 85, in newton
+    history.append(scaled_inf(r))
+                   ^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/solver/newton.py", line 66, in scaled_inf
+    return float(xp.max(xp.abs(res * scale))) if scale is not None else np.inf
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/.venv/lib/python3.12/site-packages/jax/_src/array.py", line 295, in __float__
+    return self._value.__float__()
+           ^^^^^^^^^^^
+  File "grteclyn-wrapper/.venv/lib/python3.12/site-packages/jax/_src/profiler.py", line 420, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/.venv/lib/python3.12/site-packages/jax/_src/array.py", line 637, in _value
+    npy_value, did_copy = self._single_device_array_to_np_array_did_copy()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 30.81GiB with allocator gpu_async_0 on device 0. [executable_name='jit__reduce_max'] [tf-allocator-allocation-error='']

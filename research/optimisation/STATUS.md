@@ -30,11 +30,9 @@ remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
 `opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
-The corrected e0374 recheck also failed both finer grids at 22:15 MSK;
-no D30 export. `opt-select-d30-rest` started at 22:16 MSK on card 1,
-checking the remaining 103 saved candidates in increasing X until one clears.
-ETA depends on first clearance; the full batch is roughly 1.3 h
-(~23:35 MSK), with a hard 2 h safety limit (00:16 MSK, October 31).
+D30 e0137 cleared all three grids at 22:21 MSK. Its matched N128 launch
+entered full preflight on second-node card 1 at 22:22 MSK, checkpoints off,
+stop t = 100. No stationary validation jobs remain running.
 Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
 468 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
@@ -46,7 +44,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
-| `opt-select-d30-rest` | second / 1 | remaining-candidate scan | ~0.013 h/candidate | first clearance unknown; full batch ~23:35 MSK |
+| `D30_potential_L64_N128_ml3_spdrv0_t100` | second / 1 | preflight; stop 100 | pending | pending |
+| `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
 | `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
@@ -126,6 +125,19 @@ E_c = 2.50e-9, relative X drift = 8.66e-15. Exported as
 checkpoints off. This is background clearance only; stability is unassessed.
 Seed, selected grid fields, checks and all attempted-candidate logs are packed
 in `results/optimisation/validation/2026-10-30-alternatives/d0/`.
+
+**D30 alternative cleared (22:21 MSK).** Search e0137: X = 2.184602703634,
+J = 1.605934192814, R_e = 4.268787555383, matching the classical D30
+control. All three grids PASS; at 210x42 E19 = 6.42e-10,
+E_c = 4.60e-9, relative X drift = 4.22e-15. Selected after 30 initial
+alternatives and nine further candidates; e0374's separate recheck failed.
+Exported `D30_validated_2049x129.spinbg`, matched N128 launch 22:22 MSK
+on the same matter binary and full hold profile as D0. Checkpoints off.
+The selected candidate has higher X than the search minimum; this evolution
+measures its growth rate, not that of the rejected minimum. Selected fields,
+seed and check logs are packed under
+`results/optimisation/validation/2026-10-30-alternatives/d30/`; the first
+batch and the oversolving diagnostic are in adjacent `d30_audit/`.
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 

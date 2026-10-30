@@ -1,0 +1,16 @@
+Solving 150x30: J=1.60593419281, R_e=4.26878755205
+{"nx": 150, "ny": 30, "newton": 4.570201028660802e-11, "iters": 3, "X": 1.935059196011341, "X_A": 1.9643593377467494, "VIQ": -8.260356608413325, "R_e": 4.268787552050119, "R_A": 4.2051148431368475, "R_pol": 4.173802853597501, "sigma": 2.3575335644529383, "E19": 6.21466539640348e-05, "E_c": 9.230995337812276e-08, "J_error": 9.78717740145324e-07, "pin_error": 2.3092638912203256e-14, "tails": 9.572594432693432e-09, "lapse_min": 0.20787957635076193, "stability": "not_assessed", "scalar_in_vacuum_interval": true, "verdict": "ABOVE_GATE", "seconds": 12.0242732509505}
+Solving 180x36: J=1.60593419281, R_e=4.26878755205
+{"nx": 180, "ny": 36, "newton": 6.356347868089287e-10, "iters": 2, "X": 1.935058855601445, "X_A": 1.9643589913256696, "VIQ": -8.260355155275107, "R_e": 4.268787552049762, "R_A": 4.20511484497063, "R_pol": 4.173802856319768, "sigma": 2.3575331642361026, "E19": 4.840188963735153e-06, "E_c": 2.8385289928507407e-05, "J_error": 8.740052694663606e-08, "pin_error": 9.50350909079134e-14, "tails": 6.782520769785439e-10, "lapse_min": 0.20787957635076193, "stability": "not_assessed", "scalar_in_vacuum_interval": true, "verdict": "ABOVE_GATE", "seconds": 10.653877229895443}
+Solving 210x42: J=1.60593419281, R_e=4.26878755205
+W1030 18:52:35.781475 3819685 hlo_rematerialization.cc:3363] Can't reduce memory use below 42.61GiB (45754974225 bytes) by rematerialization; only reduced to 46.01GiB (49400670860 bytes), down from 46.01GiB (49400670860 bytes) originally
+Traceback (most recent call last):
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 86, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 57, in main
+    state, row = solve_trial(state, config, nx, ny, pin, d2, max_iter=24)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/exploration.py", line 158, in solve_trial
+    raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")
+RuntimeError: Newton residual 1.109e-09: line search stalled
