@@ -19,8 +19,11 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 
 ## Live
 
-First extension batch finished at 20:14 MSK on 2026-10-30. Both cards idle.
-Follow-up tests are prepared below; no new evolutions.
+Follow-up stationary trials launched at 20:16 MSK on 2026-10-30:
+`opt-ext-d21-r2` on card 0; `opt-ext-s0-r2` on card 1 (boson mass 3).
+150×30 → 180×36; 200 GB process caps; timeout 1 h (21:16 MSK).
+First-batch solves took 7–17 s each; estimated finish within 0.1 h, by
+20:22 MSK, subject to the cloud solves. No new evolutions.
 Second-node scratch: 21 GB leftover N192 (3 plotfiles), 47 MB cache, 455 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
