@@ -11,8 +11,9 @@ The page before this compaction (the campaign diary to 2026-10-29) is
 Priority: **repair and revalidate the radial stability screen** (pending).
 The stationary extension trials are complete and archived as exploratory work;
 their small validated gain does not warrant inclusion in the paper (2026-10-30).
-No further extension runs, new 3+1 evolutions or repeat searches in the old
-four-parameter family are planned. The 2026-10-30
+No further extension runs or repeat searches in the old four-parameter family
+are planned. D0 and D30 N128 evolutions are authorized after background
+validation, with checkpoints off (2026-10-30 evening). The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
@@ -44,6 +45,18 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
+
+D0 and D30: validate the saved search candidates on 150x30, 180x36 and
+210x42, then evolve at N128 only if the final two grids pass the independent
+constraints and their relative X difference is at most 1e-6. Use each
+classical run's packed settings (L64, three extra levels, drive off, stop 100,
+plot interval 100), full consumer diagnostics and keep-last 3. Checkpoints
+off for both, explicitly confirmed. D30 matches the classical J and R_e;
+D0 must first undergo consistent similarity scaling, including the potential,
+from the search's D21-sized throat to classical static R_e = 3.8895493987.
+D40/D46 have no saved search candidates; D51's existing export is rejected.
+The new validator reconstructs physical radii from fields and records stability
+as unassessed. It never exports a failed background or fabricates a zero rate.
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
@@ -81,7 +94,7 @@ background, checkpoint-off bookkeeping and stop time. Both have no imposed
 perturbation, so numerical errors supply the initial disturbance. A controlled
 collapse-time comparison would also fix that perturbation. For a stricter
 rate comparison, use the same binary, drive and exactly matched R_e/J.
-No new evolution is authorized or launched. Second-node scratch rechecked:
+No new evolution was launched during that comparison audit. Second-node scratch rechecked:
 47 MB cache only, 473 GB free; all three D21 logs have no checkpoint writes.
 
 ## Stationary extensions — 2026-10-30 (excluded from the paper)
