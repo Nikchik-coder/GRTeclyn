@@ -15,30 +15,27 @@ and extra matter recipes. Evolutions wait for the go.
 ## Live
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
-`main3d_matter_16460fb0`. Scratch: 21 GB in live N192, 472 GB free.
+`main3d_matter_16460fb0`. Scratch: 21 GB leftover N192 (3 plotfiles), 472 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 102.7 | 5.0 u/h | ~9.5 h, ~22:20 MSK 30 Oct |
-| `opt-d80` | 0 | walk-in | — | ~1.3 h, ~14:10 MSK |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | — | 112.2, NaN in h11 (level 3) | dead | — |
+| `opt-d90` | 0 | walk-in | — | ~1.3 h, ~16:30 MSK |
 
-N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
+N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R settled ~3.49, not the classical 2.52). Onset later at higher N (−1% at t=58 / 67 / 81).
 
 ## Drainhole CMA queue (card 0)
 
-D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
-
-D0 finished 09:06 MSK. `opt-d21-area-freej400` finished 10:46 MSK.
-`opt-d30` finished 12:17 MSK. Card 0 now runs `opt-d80`: same recipe on
-`fam_a_r1_0023` (v_e 0.791), seed 105. TSV
-`runs/optimisation/opt/fam_a_r1_0023_opt4s_kink_150x30.tsv`. D90 held.
+D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
+Card 0 now runs `opt-d90`: same recipe on `fam_a_r1_0031` (v_e 0.900), seed 107. TSV
+`runs/optimisation/opt/fam_a_r1_0031_opt4s_kink_150x30.tsv`. Queue empty.
 
 ## Planned (nothing launches without the go)
 
-D51 X 1.606 triplet stays written, not launched. D90 CMA stays held.
+D51 X 1.606 triplet stays written, not launched.
 
 ## Main results
 
@@ -76,10 +73,14 @@ $R_e/R_{\mathrm{pol}}$ 1.189, E19 1.2e-9, λη₀ = 0. Frontier X_A 1.53867
 D30 CMA-ES (2026-10-30; kink x0, 400 evals, seed 103): search-best clean
 X **1.88040565** (−57.0 % vs V = 0) at m 0.740, q (0.607, 0.201, −0.664),
 E19 1.3e-9, λη₀ = 0. Frontier 1.84808 (E19 3.0e-9). Not grid-checked.
+D80 CMA-ES (2026-10-30; kink x0, 400 evals, seed 105): search-best clean
+X **1.10469483** (−22.2 % vs V = 0) at m 0.234, q (0.083, 0.504, 1.187),
+E19 2.6e-10, λη₀ = 0. Frontier 1.10396 (E19 1.1e-7). Family: 69 PASS, 72
+FRONTIER. Not grid-checked. Classical V = 0 X 1.41924.
 Cleared for evolution: D51 smoke X **1.6061738698** (−52.8 %), unchanged to
 4e-15 over 150×30 → 180×36 → 210×42 (E19 6e-9–3e-8, dense-solve floor). Not
 cleared: earlier D30 clean X 1.693 and D51 frontier X 1.505 (stalled on the
-first finer grid). D90 search not run.
+first finer grid). D90 search live.
 
 **Potential landscape.** Not flat. Shape + rays at m 0.3: best clean −27.3 /
 −26.9 / −20.6 % at v_e 0.27 / 0.50 / 0.85 vs V = 0; no bottom found (Newton or
@@ -102,7 +103,7 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
-- [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet live; D51 parked.
+- [ ] 9. Evolve the winners — **remaining work.** D21 X 1.829 triplet dead (N 192 NaN at t 112); D51 parked.
 - [ ] 10. Publish.
 
 ## Future directions
