@@ -24,7 +24,10 @@ Follow-up stationary trials launched at 20:16 MSK on 2026-10-30:
 150×30 → 180×36; 200 GB process caps; timeout 1 h (21:16 MSK).
 First-batch solves took 7–17 s each; estimated finish within 0.1 h, by
 20:22 MSK, subject to the cloud solves. No new evolutions.
-Second-node scratch: 21 GB leftover N192 (3 plotfiles), 47 MB cache, 455 GB free.
+Second-node scratch clean: 47 MB retained cache, 474 GB free. The three old
+N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
+frames and movies retained. Cleanup logged in
+`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-30.md`.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
