@@ -30,9 +30,11 @@ remaining (03:20 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
 `opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
-A validator oversolving issue was then identified; `opt-d30-e0374-recheck`
-started at 22:14 MSK on card 1, using the existing 1e-9 Newton acceptance
-tolerance (see below). Expected check duration ~0.02 h, until ~22:16 MSK.
+The corrected e0374 recheck also failed both finer grids at 22:15 MSK;
+no D30 export. `opt-select-d30-rest` started at 22:16 MSK on card 1,
+checking the remaining 103 saved candidates in increasing X until one clears.
+ETA depends on first clearance; the full batch is roughly 1.3 h
+(~23:35 MSK), with a hard 2 h safety limit (00:16 MSK, October 31).
 Second-node scratch: D0 two plotfiles, 4.8 GB; retained cache 47 MB,
 468 GB free. Keep-last 3 active; no checkpoints. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
@@ -44,7 +46,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 1.13 / 100, alive | 18.8 units/h | 5.3 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
-| `opt-d30-e0374-recheck` | second / 1 | stationary three-grid check | ~0.02 h/check | ~22:16 MSK |
+| `opt-select-d30-rest` | second / 1 | remaining-candidate scan | ~0.013 h/candidate | first clearance unknown; full batch ~23:35 MSK |
+| `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
 | `opt-validate-d0` | — | 150x30 above gate; 180x36 Newton stalled | ended 21:43 MSK | — |
 | `opt-validate-d30` | — | 180x36 and 210x42 above gate | ended 21:43 MSK | — |
@@ -110,6 +113,9 @@ are unchanged. A fresh full validator run must still clear the candidate
 before any export/launch. Earlier rejected outputs remain archived as
 numerical failures of that procedure, not evidence against the potentials.
 Eight existing exploration/potential tests pass after this correction.
+The fresh e0374 run still requires Newton updates on 180x36 and fails
+E19/E_c at 3.19e-5/1.39e-5; 210x42 also fails. Stopping consistently
+therefore does not by itself clear this candidate; it remains unexported.
 
 **D0 alternative cleared (21:56 MSK).** Search e0211, ninth alternative
 checked: X = 1.841676813964, J = 0, R_e = 3.889549398712 after consistent
