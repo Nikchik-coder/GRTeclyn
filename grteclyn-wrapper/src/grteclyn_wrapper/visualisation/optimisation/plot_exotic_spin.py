@@ -31,9 +31,10 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style
 REPO = pathlib.Path(__file__).resolve().parents[5]
 OUT = REPO / "results" / "optimisation" / "figures"
 
-# X = |VIQ|/R_e from STATUS 2026-10-29.  v_e is the packed member (symmetric)
-# or the packed spinning header (drainhole D21, D51).
+# X = |VIQ|/R_e from STATUS.  v_e is the packed member (symmetric) or the
+# packed spinning header (drainhole D21, D51); D0 is J = 0 (search-best).
 FOUND = (
+    ("drainhole", 0.0, 1.83872766),
     ("drainhole", 0.2100172006151723, 1.8287958015),
     ("drainhole", 0.5127052512125934, 1.6061738698),
     ("symmetric", 0.2747870070282676, 1.63372),
@@ -67,12 +68,15 @@ def plot(out=OUT) -> None:
     handles = [(Line2D([], [], color=style.FAINT, lw=0.6), "static wormhole")]
     for fam, (*_, name, ls) in zip(fams, FAMILIES):
         _curve(ax, fam, ls)
-        pts = [(ve, X / x0[name]) for n, ve, X in FOUND if n == name]
-        ax.plot(*zip(*pts), ls="none", zorder=3, **MARK[name])
+        pts = sorted((ve, X / x0[name]) for n, ve, X in FOUND if n == name)
+        xv, yv = zip(*pts)
+        ax.plot(xv, yv, color=style.INK, ls=ls, lw=1.0, zorder=2)
+        ax.plot(xv, yv, ls="none", zorder=3, **MARK[name])
         handles.append((Line2D([], [], color=style.INK, ls=ls, lw=1.3,
                                **{**MARK[name], "ms": 3.4}), name))
     ax.set(xlabel=r"$v_e$", ylabel=r"$\mathcal{I}/\mathcal{I}_{\rm static}$",
-           xlim=(0, 1), ylim=(0, 1.15))
+           xlim=(-0.06, 1), ylim=(0, 1.15))
+    ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_yticks([0.0, 0.5, 1.0])
     style.legend_top(ax, handles, ncol=3, borderpad=0.4, **TIGHT)
     hits = style.label_audit(fig)

@@ -22,7 +22,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 93.0 | 5.0 u/h | ~11.5 h, ~22:25 MSK 30 Oct |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 93.5 | 5.0 u/h | ~11.3 h, ~22:20 MSK 30 Oct |
+| `opt-d30` | 0 | walk-in | — | ~1.3 h, ~12:20 MSK |
 
 N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
@@ -30,12 +31,12 @@ N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, n
 
 D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
 
-D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held.
-`opt-d21-area-freej400` finished 10:46 MSK (400 evals, exit 0). Card 0 free. TSV `runs/optimisation/opt/fam_a_r1_0000_opt4s_area_freeJ_150x30.tsv`.
+D0 finished 09:06 MSK. `opt-d21-area-freej400` finished 10:46 MSK.
+Card 0 now runs `opt-d30`: D21 recipe (x0 kink, 150×30, 400 evals, q∈[-2,8], `--stability`), J and R_e held, seed 103. TSV `runs/optimisation/opt/fam_a_r1_0005_opt4s_kink_150x30.tsv`. D80/D90 held.
 
 ## Planned (nothing launches without the go)
 
-D51 X 1.606 triplet stays written, not launched. D30/D80/D90 CMA stay held.
+D51 X 1.606 triplet stays written, not launched. D80/D90 CMA stay held.
 
 ## Main results
 
