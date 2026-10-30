@@ -15,7 +15,8 @@ and extra matter recipes. Evolutions wait for the go.
 ## Live
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
-`main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 458 GB free.
+`main3d_matter_16460fb0`. Scratch: 21 GB in live N192, 468 GB free.
+Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
