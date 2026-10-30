@@ -14,7 +14,7 @@ and extra matter recipes. Evolutions wait for the go.
 
 ## Live
 
-Nothing running. Both cards idle. Scratch: 21 GB leftover N192 (3 plotfiles), 457 GB free.
+Symmetric static CMA on card 0. Scratch: 21 GB leftover N192 (3 plotfiles), 457 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
@@ -23,13 +23,16 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
 | `D21_X1p829_L64_N192_ml3_spdrv0_t150` | — | 112.2, NaN in h11 (level 3) | dead | — |
 | `opt-d90` | — | 400/400, finished 16:43 MSK | done | — |
+| `opt-s0` | 0 | walk-in | — | ~1.3 h, ~18:10 MSK |
 
 N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R settled ~3.49, not the classical 2.52). Onset later at higher N (−1% at t=58 / 67 / 81).
 
 ## Drainhole CMA queue (card 0)
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. Queue empty.
+`opt-d90` finished 16:43 MSK. Drainhole queue empty.
+`opt-s0` is the symmetric family at J = 0 (`fam_b_0000`, eta0 1, gamma 0, `--J 0`, seed 111). TSV
+`runs/optimisation/opt/fam_b_0000_opt4s_kink_150x30_s0.tsv`. Classical V = 0 X is π.
 
 ## Planned (nothing launches without the go)
 
