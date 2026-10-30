@@ -16,13 +16,13 @@ and extra matter recipes. Evolutions wait for the go.
 
 D21 X 1.829, L 64, max_level 3, stop 150, checkpoints off. Binary
 `main3d_matter_16460fb0`. Scratch: 32 GB in the three run dirs, 458 GB free.
-Card 0 is empty.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
-| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 84.1 | 5.0 u/h | ~13 h, ~22:25 MSK 30 Oct |
+| `D21_X1p829_L64_N192_ml3_spdrv0_t150` | 1 | 85.6 | 5.0 u/h | ~13 h, ~22:20 MSK 30 Oct |
+| `opt-d21-area-freej400` | 0 | walk-in | — | ~1.5 h, ~10:55 MSK |
 
 N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, not the classical 2.52). Onset later at N 128 (−1% at t=67 vs 58). N 192 is at R_eq −0.6%, −0.1% at t=62.
 
@@ -30,7 +30,7 @@ N 96 / N 128 both died mid-plunge (R_eq −24% / −27%; MOTS R settled ~3.49, n
 
 D0 1.2 h (~09:10 MSK), D30 1.3 h after that (~10:30 MSK), D80 1.3 h (~11:50 MSK), D90 1.3 h (~13:10 MSK).
 
-D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held. Nothing further on card 0. Recipe is D21's (x0 0.3,0,0,0, 150×30, 400 evals, q∈[-2,8], `--stability`); each member a fresh CMA seed. PASS/FRONTIER npz under `runs/optimisation/opt/`; TSV + accepted + best slots in `results/optimisation/opt/`.
+D0 finished 09:06 MSK. D30 was stopped at start; D80/D90 held. Card 0 now runs `opt-d21-area-freej400`: 400 evals, `--pin area --free-J --stability`, x0 the D21 winner (1.023, 0.672, 0.048, 0.310), $J\in[0,4.13]$, seed 113. TSV `runs/optimisation/opt/fam_a_r1_0000_opt4s_area_freeJ_150x30.tsv`.
 
 ## Planned (nothing launches without the go)
 
@@ -95,9 +95,9 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 
 ## Future directions
 
-- **Oblate throat and equatorial exotic rings.** Replace the equatorial pin `pin=("R_e", ...)` with the proper-area pin `pin=("area", A)` (or polar radius $R_{\mathrm{pol}}$) so oblateness $R_e/R_{\mathrm{pol}}$ is free to grow, and open $\theta$-dependent scalar profiles / equatorial focusing so the NEC violation concentrates into an oblate equatorial ring rather than a full shell.
+- **Oblate throat and free spin (in, opt-in).** `optimize_potential.py --pin area` holds $A$ so $R_e/R_{\mathrm{pol}}$ can grow; `--free-J` adds $J$ as a fifth CMA-ES knob. Defaults stay the published 4-knob $R_e$+$J$ walk. Still open: $\theta$-dependent scalar profiles / equatorial focusing so the NEC violation is a ring, not a shell.
 - **Driving $X \to 0$.** Topological censorship forbids $X = 0$ in classical GR, but $X$ can be pushed arbitrarily small toward the thin-shell limit ($m R_e \gg 1$) on finer spectral grids (bounded only by Chebyshev resolution and Ford–Roman quantum inequalities), or cut further by restoring canonical / winding partner fields ($\chi, \Lambda$) to carry mass and angular momentum while the phantom pays solely for the throat flare-out.
-- **Spin and throat-radius pins vs joint optimization.** Throat size ($R_e$ or $R_A$) must stay pinned, otherwise the optimizer trivially shrinks the throat toward a black hole. Spin $J$ is pinned to isolate the potential's gain at each $v_e$, but freeing $J$ as a fifth CMA-ES knob at fixed throat area searches the global $(J, m, q_1, q_2, q_3)$ minimum where high spin ($v_e \to 1$) and potential confinement compound.
+- **Pins.** Throat size ($R_e$ or $R_A$) must stay pinned, otherwise the optimizer shrinks the throat toward a black hole. $J$ stays pinned to isolate the potential's gain at each $v_e$, unless `--free-J` is on.
 
 ## Rules
 
