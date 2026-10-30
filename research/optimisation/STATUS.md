@@ -21,8 +21,12 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 ## Live
 
 Stationary extension tests finished at 20:18 MSK on 2026-10-30.
-Both cards idle; no evolutions launched.
-Second-node scratch clean: 47 MB retained cache, 474 GB free. The three old
+D0 and D30 stationary validation started at 21:42 MSK, 2026-10-30,
+on second-node cards 0 and 1 (`opt-validate-d0`, `opt-validate-d30`).
+Each checks 150x30, 180x36 and 210x42 before an N128 evolution is allowed.
+No 3+1 evolutions launched yet. Speed and ETA pending the first solve;
+each validation has a 2 h safety limit (23:42 MSK), not a runtime estimate.
+Second-node scratch clean: 47 MB retained cache, 473 GB free. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
 frames and movies retained. Cleanup logged in
 `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-30.md`.
@@ -30,6 +34,8 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
+| `opt-validate-d0` | second / 0 | stationary grid checks; no evolution time | first solve | pending |
+| `opt-validate-d30` | second / 1 | stationary grid checks; no evolution time | first solve | pending |
 | `D21_X1p829_L64_N096_ml3_spdrv0_t150` | — | 87.5, NaN in h11 (level 3) | dead | — |
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
 | `D21_X1p829_L64_N192_ml3_spdrv0_t150` | — | 112.2, NaN in h11 (level 3) | dead | — |
