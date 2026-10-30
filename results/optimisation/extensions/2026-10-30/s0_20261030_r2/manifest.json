@@ -1,0 +1,39 @@
+{
+  "arguments": {
+    "seed": "runs/optimisation/opt/fam_b_0000_opt4s_kink_150x30_s0_best_clean.npz",
+    "stages": "cloud,winding",
+    "grid": "150x30",
+    "fine_grid": "180x36",
+    "degree": 6,
+    "indices": "1",
+    "shape_step": 0.25,
+    "amplitudes": "0.005,0.02",
+    "matter_mass": 3.0,
+    "quartic": 0.0,
+    "gamma_offsets": "-0.1,0.1",
+    "gpu": 1,
+    "jac_chunk": 512,
+    "out": "runs/optimisation/extensions/s0_20261030_r2"
+  },
+  "physical_throat": {
+    "eta_throat": -0.016835642022982586,
+    "area_throat": 13.22274170458025,
+    "R_e": 1.0257837743675025,
+    "R_A": 1.025783774367508,
+    "R_pol": 1.025783774367517
+  },
+  "config": {
+    "m": 1.1981758616,
+    "q": [
+      2.4326849506,
+      -0.0456837549,
+      1.196847691
+    ],
+    "gamma": 0.0,
+    "J": 0.0
+  },
+  "commit": "15fbbf7c295a73013f94b5c54c6194e6e6b4216a",
+  "stability": "not_assessed",
+  "constraints_gate": 1e-08,
+  "comparison": "phantom-only VIQ at matched physical size and J"
+}

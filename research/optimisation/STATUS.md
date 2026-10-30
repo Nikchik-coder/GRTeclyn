@@ -19,11 +19,8 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 
 ## Live
 
-Follow-up stationary trials launched at 20:16 MSK on 2026-10-30:
-`opt-ext-d21-r2` on card 0; `opt-ext-s0-r2` on card 1 (boson mass 3).
-150×30 → 180×36; 200 GB process caps; timeout 1 h (21:16 MSK).
-First-batch solves took 7–17 s each; estimated finish within 0.1 h, by
-20:22 MSK, subject to the cloud solves. No new evolutions.
+Stationary extension tests finished at 20:18 MSK on 2026-10-30.
+Both cards idle; no evolutions launched.
 Second-node scratch clean: 47 MB retained cache, 474 GB free. The three old
 N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
 frames and movies retained. Cleanup logged in
@@ -52,27 +49,34 @@ D51 X 1.606 triplet stays written, not launched. Its previous clearance is withd
 
 ## Stationary extensions — 2026-10-30
 
-Implementation prepared: `explore_extensions.py` starts from saved candidate
-fields, reconstructs physical size, and holds J fixed. Positive Bernstein
-controls enlarge the potential family; canonical-cloud amplitude and frequency
-are solved together. Shape/asymmetry use a fixed area. The best trial of each
-stage and its reference are re-solved on a finer grid; a gain requires passing
-independent constraints and exceeding the grid drift. Stability is not assessed.
-First fixed-area D21 shape trial: X_A 1.8410621350 → 1.8383247213
-(−0.1487%), reproduced at 150×30 and 180×36 with both constraints passing.
-The first R_e baseline stalled at 6.4e-10, before its independent constraints
-were evaluated. Follow-up accepts Newton stalls up to 1e-9 but keeps the
-1e-8 constraint gates unchanged. S0 baseline at 150×30 is ABOVE_GATE
-(E19 1.0e-5); no validated matter gain. The first low-mass cloud seeds were
-not localized under the initial filter. Follow-up checks the asymptotic tail
-beyond |xi| > 0.99 (not 0.9) and tests more compact massive clouds.
+Implemented and tested after push → cluster pull: positive degree-six Bernstein
+potentials, amplitude-pinned canonical clouds, rotating clouds, fixed-area
+shape and asymmetry. All retain physical J; the potential/matter arms retain
+R_e, the shape/asymmetry arms retain area. No stability penalty or old-family
+CMA restarts. **32 regression tests passed** on the node.
 
-Cluster regression suite: **32 passed** (11.46 s). Code `5db53c14` was pushed,
-pulled, then tested. First bounded D21/S0 trials finished; outputs under
-`runs/optimisation/extensions/{d21,s0}_20261030/`, logs in
-`runs/capped_jobs/opt-ext-{d21,s0}/log`. No stability penalty or old-family CMA
-restarts. The article cites Dzhunushaliev et al., PRD 90, 124038 (2014); both
-LaTeX engines build.
+- **Confirmed fixed-area potential gain:** D21 X_A 1.8410621350 → 1.8383247213
+  (−0.1487%); 150×30 and 180×36 pass the independent constraints, grid drift
+  3.4e-13. Only Bernstein control b1 was increased; shape was allowed to respond.
+- **Promising fixed-radius potential:** D21 X 1.8287958015 → 1.8207149850
+  (−0.4419%). The new trial passes at both grids, but this batch's 180×36
+  reference solve fails its constraints. The comparison remains provisional
+  despite agreement with the previously audited 210×42 reference value.
+- **Asymmetry:** gamma shifted by +0.1 suggests −1.84% at fixed area, but the
+  fine trial fails E19 (1.8e-4); not a validated gain.
+- **Ordinary/rotating bosons:** nonzero S0 clouds solve with mass 3 and amplitudes
+  0.005/0.02; no lower bill in these trials. The S0 references and matter trials
+  fail the independent-constraint gate, so no physical conclusion. D21's
+  linear seed search finds no localized mode in both asymptotic mass gaps for
+  the tested masses; this does not exclude finite-amplitude branches.
+- **Reproducibility:** inputs, configurations, all trial records and fields are
+  tracked in `results/optimisation/extensions/2026-10-30/` (about 5 MB).
+  Code `5db53c14` introduced the tests; `15fbbf7c` improved the tail check and
+  accepted Newton's observed 1e-9 floor while keeping independent gates at 1e-8.
+  Jobs `opt-ext-{d21,s0}` and `opt-ext-{d21,s0}-r2` all finished normally.
+- **Next:** resolve reference/constraint failures before enlarging the probes.
+  Stability remains unassessed. Dzhunushaliev et al., PRD 90, 124038 (2014),
+  is cited in the article; both LaTeX engines build and the in-place PDF is rebuilt.
 
 ## Validation audit — 2026-10-30
 
