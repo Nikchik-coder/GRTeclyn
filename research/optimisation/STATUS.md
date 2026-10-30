@@ -51,6 +51,13 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 ## Planned (nothing launches without the go)
 
+Alternative D0/D30 candidates are authorized for resolution checks and N128
+launches once cleared (2026-10-30). Checkpoints remain off for both arms.
+`select_validated_candidate.py` ranks saved candidates by X, skips the two
+already failed choices, and tests up to 30 per arm on the unchanged three
+grids/gates. Each arm stops at its first cleared background. The classical
+R_e/J matching and evolution settings below remain required.
+
 D0 and D30: validate the saved search candidates on 150x30, 180x36 and
 210x42, then evolve at N128 only if the final two grids pass the independent
 constraints and their relative X difference is at most 1e-6. Use each
