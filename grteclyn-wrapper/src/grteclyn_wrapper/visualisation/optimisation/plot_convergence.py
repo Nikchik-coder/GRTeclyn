@@ -75,10 +75,12 @@ def load(runs, psi4_r: int, t_max: float | None) -> dict[int, dict[str, np.ndarr
             head = f.readline().split()[1:]
         psi4 = np.loadtxt(small / "psi4_mode_l2_all.dat")
         re_, im_ = head.index(f"Re_m0(R={psi4_r})"), head.index(f"Im_m0(R={psi4_r})")
+        spheres = np.loadtxt(small / "throat_spheres.dat")
+        spheres = spheres[np.isfinite(spheres).all(1)]
         member = dict(
             norms=norms,
             geometry=np.loadtxt(data / "throat_geometry.dat"),
-            spheres=np.loadtxt(small / "throat_spheres.dat"),
+            spheres=spheres,
             psi4=np.column_stack((psi4[:, 0], np.hypot(psi4[:, re_], psi4[:, im_]))),
             psi4_re=psi4[:, [0, re_]],
             collapse=np.loadtxt(data / "collapse_diagnostics.dat"),
