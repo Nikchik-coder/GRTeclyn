@@ -235,20 +235,31 @@ def curves_of(data, ns, panel: str, r_exact: float) -> dict[int, tuple[np.ndarra
     return out
 
 
-def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: int):
+def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: int,
+         t_constraints: float | None = None):
     style.prd(8.0)
     hold = kind == "hold"
+    # split: Ham/Mom stop at t_constraints; the bottom row keeps each member's end
+    split = hold and t_constraints is not None
     # a collapse's (j)-(l) run on their own aligned time: only rows 1-2 and (i) share t
     # 4.0 in tall, so the two triplets share one appendix page
-    fig, axes = plt.subplots(3, LEVELS, figsize=(7.0, 4.0), sharex=hold, layout="constrained")
+    fig, axes = plt.subplots(3, LEVELS, figsize=(7.0, 4.0),
+                             sharex=hold and not split, layout="constrained")
     if not hold:
         for ax in list(axes[:2].flat):
             ax.sharex(axes[2, 0])
             ax.tick_params(labelbottom=False)
+    elif split:
+        for ax in axes[0].flat:
+            ax.sharex(axes[1, 0])
+            ax.tick_params(labelbottom=False)
+        for ax in axes[1].flat:
+            ax.sharex(axes[1, 0])
     lo, hi = ns[0], ns[-1]
     rescaled = look["rescaled"] or look["colours"][-1]
     # a hold to its shortest member's end; a collapse to its longest (it can kill the coarsest early)
     t_end = (min if hold else max)(d["norms"][-1, 0] for d in data.values())
+    t_bottom = max(d["norms"][-1, 0] for d in data.values()) if split else t_end
     members = [dict(color=c, ls=SOLID, lw=1.1) for c in look["colours"]]
     brackets = [dict(color=rescaled, ls=ls, lw=0.9) for ls in (DASHED, DOTTED)]
     tags = iter("abcdefghijkl")
@@ -261,13 +272,18 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
             for p, b in zip(ORDERS, brackets):
                 ax.plot(t, y * (hi / lo) ** p, **b)
 
+    def constraint_curve(n, col):
+        a = page(data[n]["norms"])
+        if split:
+            a = a[a[:, 0] <= t_constraints + 1e-9]
+        return a[:, 0], a[:, col]
+
     # rows 1-2: the constraints, level by level
     for c in range(2):
         for level in range(LEVELS):
             ax = axes[c, level]
             col = column(level, c)
-            draw_members(ax, {n: (page(data[n]["norms"])[:, 0], page(data[n]["norms"])[:, col])
-                              for n in ns}, bracketed=True)
+            draw_members(ax, {n: constraint_curve(n, col) for n in ns}, bracketed=True)
             ax.set_yscale("log")
             if level == 0:
                 ax.set_ylabel(CONSTRAINTS[c])
@@ -320,9 +336,19 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
     for ax, title, xlabel in zip(axes[2], titles, xlabels):
         ax.set_title(f"({next(tags)})  {title}", **TITLE)
         ax.set_xlabel(xlabel)
-    for ax in (axes.flat if hold else list(axes[:2].flat) + [ax_i]):
-        ax.set_xlim(0.0, t_end)
-    if not hold:
+    if split:
+        for ax in axes[:2].flat:
+            ax.set_xlim(0.0, t_constraints)
+        for ax in axes[1].flat:
+            ax.set_xlabel(r"$t$")
+        for ax in axes[2].flat:
+            ax.set_xlim(0.0, t_bottom)
+    elif hold:
+        for ax in axes.flat:
+            ax.set_xlim(0.0, t_end)
+    else:
+        for ax in list(axes[:2].flat) + [ax_i]:
+            ax.set_xlim(0.0, t_end)
         for ax in (ax_j, ax_k, ax_l):
             ax.set_xlim(*ALIGNED)
 
@@ -335,13 +361,16 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
     return fig
 
 
-def report(data, ns, r_exact: float, kind: str, psi4_r: int) -> None:
+def report(data, ns, r_exact: float, kind: str, psi4_r: int,
+           t_constraints: float | None = None) -> None:
     """Every number the figure shows, per panel."""
     lo, hi = ns[0], ns[-1]
     r = hi / lo
     # a collapse's equal-t orders stop where its members' collapse stages part
-    t_last = np.inf if kind == "hold" else T_SAME
-    print("orders over t = %g-%s (min .. max, median)" % (T_FROM, "end" if kind == "hold" else f"{T_SAME:g}"))
+    t_last = t_constraints if t_constraints is not None else (
+        np.inf if kind == "hold" else T_SAME)
+    t_label = "end" if np.isinf(t_last) else f"{t_last:g}"
+    print("orders over t = %g-%s (min .. max, median)" % (T_FROM, t_label))
     for level in range(LEVELS):
         for c, name in enumerate(("Ham", "Mom")):
             col = column(level, c)

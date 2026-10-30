@@ -32,10 +32,11 @@ REPO = pathlib.Path(__file__).resolve().parents[5]
 OUT = REPO / "results" / "optimisation" / "figures"
 
 # X = |VIQ|/R_e from STATUS.  v_e is the packed member (symmetric) or the
-# packed spinning header (drainhole D21, D51); D0 is J = 0 (search-best).
+# packed spinning header (drainhole D21, D30, D51); D0 is J = 0 (search-best).
 FOUND = (
     ("drainhole", 0.0, 1.83872766),
     ("drainhole", 0.2100172006151723, 1.8287958015),
+    ("drainhole", 0.3044712262324205, 1.88040565),
     ("drainhole", 0.5127052512125934, 1.6061738698),
     ("symmetric", 0.2747870070282676, 1.63372),
     ("symmetric", 0.5037707249409871, 1.49461),

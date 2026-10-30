@@ -5,7 +5,8 @@ The three evolutions differ only in the base grid: $N = 96 / 128 / 192$
 on the $L = 64$ box, $\texttt{max_level} = 3$, so level $l$ has
 $\Delta x = (2/3, 1/2, 1/3) / 2^l$.  Same layout as the spinning-wormhole
 convergence figure (``plot_convergence --spin 0.2c``'s equal-$t$ rows).
-Drawn to the finest member's last time, so the three sit at the same $t$.
+Ham / Mom panels stop at $t = 50$ (the equal-$t$ window).  The bottom
+row runs to each member's last time.
 
 Top two rows: each level's $L_2$ Hamiltonian (first row) and momentum
 (second row) constraint, from ``constraint_norms_levels.dat``.  The
@@ -104,6 +105,8 @@ def main(argv=None) -> int:
                     help="three comma-separated colours replacing the members' colours")
     ap.add_argument("--t-max", type=float, default=None,
                     help="clip every member to this t (default: finest member's last time)")
+    ap.add_argument("--t-constraints", type=float, default=50.0,
+                    help="Ham/Mom xlim (default 50, the equal-t window)")
     args = ap.parse_args(argv)
     look = dict(sw.PALETTES[args.palette])
     if args.colors:
@@ -118,12 +121,15 @@ def main(argv=None) -> int:
         data_dir = finest / "data" if (finest / "data").is_dir() else finest
         t_max = float(np.loadtxt(data_dir / "constraint_norms_levels.dat")[-1, 0])
     data = load(RUNS, PSI4_R, t_max)
-    fig = sw.draw(data, BOX, ns, R_EXACT, look, "hold", PSI4_R)
+    fig = sw.draw(data, BOX, ns, R_EXACT, look, "hold", PSI4_R,
+                  t_constraints=args.t_constraints)
     problems = style.label_audit(fig)
     png = style.save(fig, args.out or FIGURES / STEM)
 
-    print(f"D21 X=1.829 triplet N {' / '.join(map(str, ns))}, t <= {t_max:.2f}")
-    sw.report(data, ns, R_EXACT, "hold", PSI4_R)
+    print(f"D21 X=1.829 triplet N {' / '.join(map(str, ns))}, "
+          f"Ham/Mom t <= {args.t_constraints:g}, rest t <= {t_max:.2f}")
+    sw.report(data, ns, R_EXACT, "hold", PSI4_R,
+              t_constraints=args.t_constraints)
     print(f"palette {args.palette}; label audit: "
           f"{'clean' if not problems else f'{len(problems)} problem(s): {problems}'}")
     rel = png.relative_to(REPO) if png.is_relative_to(REPO) else png
