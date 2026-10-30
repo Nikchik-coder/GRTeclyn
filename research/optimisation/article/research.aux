@@ -9,7 +9,7 @@
 \citation{fewster2005}
 \citation{kleihaus_kunz2014,chew2016}
 \citation{shirokov2026s}
-\citation{kuhfittig2008,helmerich2024warpfactory}
+\citation{dzhunushaliev2014topology}
 \citation{jax2018}
 \citation{hansen01}
 \citation{shirokov2026s}
@@ -46,49 +46,53 @@
 \citation{alic2012}
 \citation{bona1995}
 \citation{alcubierre2003gauge}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Geometry-first versus matter-first search. Dashed: prescribe a metric and infer its stress-energy tensor $T_{\mu \nu }$. Solid: propose a confining potential $\mathcal  {V}(\psi )$ for the phantom field, solve the coupled Einstein--Klein--Gordon equations at fixed $R_e$ and $J$, screen for stability, and verify the winners in full $3{+}1$ nonlinear evolution.}}{3}{figure.1}\protected@file@percent }
-\newlabel{fig:search}{{1}{3}{Geometry-first versus matter-first search. Dashed: prescribe a metric and infer its stress-energy tensor $T_{\mu \nu }$. Solid: propose a confining potential $\mathcal {V}(\psi )$ for the phantom field, solve the coupled Einstein--Klein--Gordon equations at fixed $R_e$ and $J$, screen for stability, and verify the winners in full $3{+}1$ nonlinear evolution}{figure.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Exotic-matter bill $X$ across CMA-ES evaluations for the D21 drainhole on the search grid. Red: accepted candidates passing the identity gates; grey: rejected candidates. Dashed line: massless phantom baseline ($\mathcal  {V}=0$, $X=4.645$). The search-grid minimum ($X=1.785$) settles at $X=1.829$ ($-61\%$) upon finer-grid re-solve (Table~\ref {tab:X}).}}{3}{figure.2}\protected@file@percent }
-\newlabel{fig:cma}{{2}{3}{Exotic-matter bill $X$ across CMA-ES evaluations for the D21 drainhole on the search grid. Red: accepted candidates passing the identity gates; grey: rejected candidates. Dashed line: massless phantom baseline ($\mathcal {V}=0$, $X=4.645$). The search-grid minimum ($X=1.785$) settles at $X=1.829$ ($-61\%$) upon finer-grid re-solve (Table~\ref {tab:X})}{figure.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:search}{{1}{3}{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability}{figure.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}CMA-ES}{3}{section*.7}\protected@file@percent }
 \newlabel{sec:opt:cma}{{III\,B}{3}{}{section*.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {IV}Numerical setup}{3}{section*.8}\protected@file@percent }
 \newlabel{sec:setup}{{IV}{3}{}{section*.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A}Interpolation onto the grid}{3}{section*.9}\protected@file@percent }
 \newlabel{sec:setup:id}{{IV\,A}{3}{}{section*.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Search-grid exoticity $X$ against CMA-ES evaluation for D21. Dark and light grey points lie within and above the background-constraint threshold, respectively. The blue step tracks the running minimum; the square marks its first attainment. The inset resolves the late-search plateau. The search minimum is $X=1.785$, compared with $X=1.829$ after finer-grid re-solve (Table~\ref {tab:X}).}}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:cma}{{2}{3}{Search-grid exoticity $X$ against CMA-ES evaluation for D21. Dark and light grey points lie within and above the background-constraint threshold, respectively. The blue step tracks the running minimum; the square marks its first attainment. The inset resolves the late-search plateau. The search minimum is $X=1.785$, compared with $X=1.829$ after finer-grid re-solve (Table~\ref {tab:X})}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}Evolution scheme}{3}{section*.10}\protected@file@percent }
 \newlabel{sec:setup:scheme}{{IV\,B}{3}{}{section*.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C}Criteria}{3}{section*.11}\protected@file@percent }
-\newlabel{sec:setup:criteria}{{IV\,C}{3}{}{section*.11}{}}
 \citation{shirokov2026s}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Optimized wormhole models: family, equatorial rotation velocity $v_e$, and the four confining potential parameters of Eq.~\eqref  {eq:kink}. Family (a) is the asymmetric drainhole ($\gamma =-\pi $), and family (b) is the symmetric wormhole ($\gamma =0$). Model D$n$ has $v_e\approx n/100$; S$n$ likewise.}}{4}{table.1}\protected@file@percent }
-\newlabel{tab:models}{{I}{4}{Optimized wormhole models: family, equatorial rotation velocity $v_e$, and the four confining potential parameters of Eq.~\eqref {eq:kink}. Family (a) is the asymmetric drainhole ($\gamma =-\pi $), and family (b) is the symmetric wormhole ($\gamma =0$). Model D$n$ has $v_e\approx n/100$; S$n$ likewise}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Exotic-matter integral $X$ of the potential-confined models of Table~\ref {tab:models}, compared against the massless phantom ($\mathcal  {V}=0$) at identical throat radius $R_e$ and angular momentum $J$. Every model passes the four criteria of Sec.~\ref {sec:setup:criteria}.}}{4}{table.2}\protected@file@percent }
-\newlabel{tab:X}{{II}{4}{Exotic-matter integral $X$ of the potential-confined models of Table~\ref {tab:models}, compared against the massless phantom ($\mathcal {V}=0$) at identical throat radius $R_e$ and angular momentum $J$. Every model passes the four criteria of Sec.~\ref {sec:setup:criteria}}{table.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates.}}{4}{figure.3}\protected@file@percent }
+\newlabel{fig:search-regions}{{3}{4}{CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le 1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C}Criteria}{4}{section*.11}\protected@file@percent }
+\newlabel{sec:setup:criteria}{{IV\,C}{4}{}{section*.11}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {V}Results}{4}{section*.12}\protected@file@percent }
 \newlabel{sec:results}{{V}{4}{}{section*.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A}Reduction of $X$ at fixed throat and spin}{4}{section*.13}\protected@file@percent }
 \newlabel{sec:results:X}{{V\,A}{4}{}{section*.13}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B}Elimination of the radial instability}{4}{section*.14}\protected@file@percent }
-\newlabel{sec:results:stab}{{V\,B}{4}{}{section*.14}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Exotic-matter bill $X$ relative to each family's static member, against equatorial rotation $v_e$. Curves: massless phantom ($\mathcal  {V}=0$). Squares: CMA-ES minima (filled: drainhole; open: symmetric). The confined solutions lie below the massless families at every spin tested.}}{4}{figure.3}\protected@file@percent }
-\newlabel{fig:exotic}{{3}{4}{Exotic-matter bill $X$ relative to each family's static member, against equatorial rotation $v_e$. Curves: massless phantom ($\mathcal {V}=0$). Squares: CMA-ES minima (filled: drainhole; open: symmetric). The confined solutions lie below the massless families at every spin tested}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C}Three-dimensional evolution of D21}{4}{section*.15}\protected@file@percent }
-\newlabel{sec:results:evol}{{V\,C}{4}{}{section*.15}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusions}{4}{section*.16}\protected@file@percent }
-\newlabel{sec:conclusions}{{VI}{4}{}{section*.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Optimized wormhole models: family, equatorial rotation velocity $v_e$, and the four confining potential parameters of Eq.~\eqref  {eq:kink}. Family (a) is the asymmetric drainhole ($\gamma =-\pi $), and family (b) is the symmetric wormhole ($\gamma =0$). Model D$n$ has $v_e\approx n/100$; S$n$ likewise.}}{4}{table.1}\protected@file@percent }
+\newlabel{tab:models}{{I}{4}{Optimized wormhole models: family, equatorial rotation velocity $v_e$, and the four confining potential parameters of Eq.~\eqref {eq:kink}. Family (a) is the asymmetric drainhole ($\gamma =-\pi $), and family (b) is the symmetric wormhole ($\gamma =0$). Model D$n$ has $v_e\approx n/100$; S$n$ likewise}{table.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Exotic-matter integral $X$ of the potential-confined models of Table~\ref {tab:models}, compared against the massless phantom ($\mathcal  {V}=0$) at identical throat radius $R_e$ and angular momentum $J$. Every model passes the four criteria of Sec.~\ref {sec:setup:criteria}.}}{4}{table.2}\protected@file@percent }
+\newlabel{tab:X}{{II}{4}{Exotic-matter integral $X$ of the potential-confined models of Table~\ref {tab:models}, compared against the massless phantom ($\mathcal {V}=0$) at identical throat radius $R_e$ and angular momentum $J$. Every model passes the four criteria of Sec.~\ref {sec:setup:criteria}}{table.2}{}}
 \citation{shirokov2026code}
 \citation{shirokov2026s}
 \citation{chew2016}
-\citation{azad2023,azad2024}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Exotic-matter bill $X$ relative to each family's static member, against equatorial rotation $v_e$. Curves: massless phantom ($\mathcal  {V}=0$). Squares: CMA-ES minima (filled: drainhole; open: symmetric). The confined solutions lie below the massless families at every spin tested.}}{5}{figure.4}\protected@file@percent }
+\newlabel{fig:exotic}{{4}{5}{Exotic-matter bill $X$ relative to each family's static member, against equatorial rotation $v_e$. Curves: massless phantom ($\mathcal {V}=0$). Squares: CMA-ES minima (filled: drainhole; open: symmetric). The confined solutions lie below the massless families at every spin tested}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B}Elimination of the radial instability}{5}{section*.14}\protected@file@percent }
+\newlabel{sec:results:stab}{{V\,B}{5}{}{section*.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C}Three-dimensional evolution of D21}{5}{section*.15}\protected@file@percent }
+\newlabel{sec:results:evol}{{V\,C}{5}{}{section*.15}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusions}{5}{section*.16}\protected@file@percent }
+\newlabel{sec:conclusions}{{VI}{5}{}{section*.16}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Reproducibility}{5}{section*.17}\protected@file@percent }
 \newlabel{sec:data}{{VII}{5}{}{section*.17}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {}Acknowledgments}{5}{section*.18}\protected@file@percent }
 \@writefile{toc}{\appendix }
 \@writefile{toc}{\contentsline {section}{\numberline {A}Solver and stability checks}{5}{section*.19}\protected@file@percent }
 \newlabel{app:checks}{{A}{5}{}{section*.19}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Convergence of the D21 evolution}{5}{section*.20}\protected@file@percent }
-\newlabel{app:conv}{{B}{5}{}{section*.20}{}}
+\citation{azad2023,azad2024}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Convergence of the D21 evolution}{6}{section*.20}\protected@file@percent }
+\newlabel{app:conv}{{B}{6}{}{section*.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Three-resolution convergence study of the optimized D21 drainhole evolution over $N=96, 128, 192$. (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint $L_2$ norms per refinement level; dashed and dotted curves show the $N=192$ norm rescaled for second-order ($2^{2}$) and fourth-order ($2^{4}$) convergence. (i)--(l)~Equatorial throat radius drift, areal throat radius drift, $(\ell ,m)=(2,0)$ Newman--Penrose scalar $\Psi _4^{20}$ extracted at $R=14$, and minimum puncture lapse $\alpha _{\min }$. Constraint norms fall systematically with resolution and the throat holds.}}{7}{figure.5}\protected@file@percent }
+\newlabel{fig:conv}{{5}{7}{Three-resolution convergence study of the optimized D21 drainhole evolution over $N=96, 128, 192$. (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint $L_2$ norms per refinement level; dashed and dotted curves show the $N=192$ norm rescaled for second-order ($2^{2}$) and fourth-order ($2^{4}$) convergence. (i)--(l)~Equatorial throat radius drift, areal throat radius drift, $(\ell ,m)=(2,0)$ Newman--Penrose scalar $\Psi _4^{20}$ extracted at $R=14$, and minimum puncture lapse $\alpha _{\min }$. Constraint norms fall systematically with resolution and the throat holds}{figure.5}{}}
 \bibcite{ellis1973}{{1}{}{{}}{{}}}
 \bibcite{bronnikov1973}{{2}{}{{}}{{}}}
 \bibcite{morris_thorne1988}{{3}{}{{}}{{}}}
@@ -98,30 +102,29 @@
 \bibcite{visser2003}{{7}{}{{}}{{}}}
 \bibcite{fewster2005}{{8}{}{{}}{{}}}
 \bibcite{kuhfittig2008}{{9}{}{{}}{{}}}
-\bibcite{kleihaus_kunz2014}{{10}{}{{}}{{}}}
-\bibcite{chew2016}{{11}{}{{}}{{}}}
-\bibcite{azad2023}{{12}{}{{}}{{}}}
-\bibcite{azad2024}{{13}{}{{}}{{}}}
-\bibcite{shirokov2026}{{14}{}{{}}{{}}}
-\bibcite{shirokov2026s}{{15}{}{{}}{{}}}
-\bibcite{helmerich2024warpfactory}{{16}{}{{}}{{}}}
-\bibcite{hansen01}{{17}{}{{}}{{}}}
-\bibcite{jax2018}{{18}{}{{}}{{}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Three-resolution convergence study of the optimized D21 drainhole evolution over $N=96, 128, 192$. (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint $L_2$ norms per refinement level; dashed and dotted curves show the $N=192$ norm rescaled for second-order ($2^{2}$) and fourth-order ($2^{4}$) convergence. (i)--(l)~Equatorial throat radius drift, areal throat radius drift, $(\ell ,m)=(2,0)$ Newman--Penrose scalar $\Psi _4^{20}$ extracted at $R=14$, and minimum puncture lapse $\alpha _{\min }$. Constraint norms fall systematically with resolution and the throat holds.}}{6}{figure.4}\protected@file@percent }
-\newlabel{fig:conv}{{4}{6}{Three-resolution convergence study of the optimized D21 drainhole evolution over $N=96, 128, 192$. (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint $L_2$ norms per refinement level; dashed and dotted curves show the $N=192$ norm rescaled for second-order ($2^{2}$) and fourth-order ($2^{4}$) convergence. (i)--(l)~Equatorial throat radius drift, areal throat radius drift, $(\ell ,m)=(2,0)$ Newman--Penrose scalar $\Psi _4^{20}$ extracted at $R=14$, and minimum puncture lapse $\alpha _{\min }$. Constraint norms fall systematically with resolution and the throat holds}{figure.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {}References}{6}{section*.21}\protected@file@percent }
-\bibcite{alic2012}{{19}{}{{}}{{}}}
-\bibcite{bona1995}{{20}{}{{}}{{}}}
-\bibcite{alcubierre2003gauge}{{21}{}{{}}{{}}}
-\bibcite{grteclyn}{{22}{}{{}}{{}}}
-\bibcite{amrex}{{23}{}{{}}{{}}}
-\bibcite{grchombo}{{24}{}{{}}{{}}}
-\bibcite{shirokov2026code}{{25}{}{{}}{{}}}
+\bibcite{dzhunushaliev2014topology}{{10}{}{{}}{{}}}
+\bibcite{kleihaus_kunz2014}{{11}{}{{}}{{}}}
+\bibcite{chew2016}{{12}{}{{}}{{}}}
+\bibcite{azad2023}{{13}{}{{}}{{}}}
+\bibcite{azad2024}{{14}{}{{}}{{}}}
+\bibcite{shirokov2026}{{15}{}{{}}{{}}}
+\bibcite{shirokov2026s}{{16}{}{{}}{{}}}
+\bibcite{helmerich2024warpfactory}{{17}{}{{}}{{}}}
+\bibcite{hansen01}{{18}{}{{}}{{}}}
+\bibcite{jax2018}{{19}{}{{}}{{}}}
+\bibcite{alic2012}{{20}{}{{}}{{}}}
+\bibcite{bona1995}{{21}{}{{}}{{}}}
+\bibcite{alcubierre2003gauge}{{22}{}{{}}{{}}}
+\bibcite{grteclyn}{{23}{}{{}}{{}}}
+\bibcite{amrex}{{24}{}{{}}{{}}}
+\bibcite{grchombo}{{25}{}{{}}{{}}}
+\bibcite{shirokov2026code}{{26}{}{{}}{{}}}
 \bibdata{researchNotes}
 \bibstyle{apsrev4-2}
 \citation{REVTEX42Control}
 \citation{apsrev42Control}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\newlabel{LastBibItem}{{25}{7}{}{section*.21}{}}
-\newlabel{LastPage}{{}{7}{}{}{}}
-\gdef \@abspage@last{7}
+\@writefile{toc}{\contentsline {section}{\numberline {}References}{8}{section*.21}\protected@file@percent }
+\newlabel{LastBibItem}{{26}{8}{}{section*.21}{}}
+\newlabel{LastPage}{{}{8}{}{}{}}
+\gdef \@abspage@last{8}
