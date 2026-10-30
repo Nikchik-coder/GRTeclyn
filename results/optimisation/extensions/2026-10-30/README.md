@@ -4,6 +4,10 @@ These are bounded exploratory tests, not a completed optimisation or a
 stability study. No GRTeclyn evolutions were run. The cluster regression suite
 passed all 32 tests before the trials.
 
+Paper scope decision, 2026-10-30: exclude these extension trials because the
+validated incremental reduction is small. The code and data remain archived
+as exploratory research; no follow-up extension runs are planned.
+
 ## Result
 
 The D21 fixed-area potential perturbation `shape_b1_plus` reduces X_A from

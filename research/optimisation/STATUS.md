@@ -8,11 +8,11 @@ Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
-Priority: **stationary extension tests**, authorized 2026-10-30: richer positive
-potentials, ordinary/rotating bosonic matter, fixed-area shape and asymmetry.
-Code is pushed before pulling and running on the second GPU node. No new
-3+1 evolutions or repeat searches in the old four-parameter family.
-Repair and revalidation of the radial stability screen remain pending. The 2026-10-30
+Priority: **repair and revalidate the radial stability screen** (pending).
+The stationary extension trials are complete and archived as exploratory work;
+their small validated gain does not warrant inclusion in the paper (2026-10-30).
+No further extension runs, new 3+1 evolutions or repeat searches in the old
+four-parameter family are planned. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
@@ -47,7 +47,7 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
-## Stationary extensions — 2026-10-30
+## Stationary extensions — 2026-10-30 (excluded from the paper)
 
 Implemented and tested after push → cluster pull: positive degree-six Bernstein
 potentials, amplitude-pinned canonical clouds, rotating clouds, fixed-area
@@ -74,8 +74,10 @@ CMA restarts. **32 regression tests passed** on the node.
   Code `5db53c14` introduced the tests; `15fbbf7c` improved the tail check and
   accepted Newton's observed 1e-9 floor while keeping independent gates at 1e-8.
   Jobs `opt-ext-{d21,s0}` and `opt-ext-{d21,s0}-r2` all finished normally.
-- **Next:** resolve reference/constraint failures before enlarging the probes.
-  Stability remains unassessed. Dzhunushaliev et al., PRD 90, 124038 (2014),
+- **Disposition:** retain the code and data as exploratory research; exclude
+  these trials from the paper because the validated incremental gain is small.
+  No follow-up extension runs are planned. Stability remains unassessed.
+  Dzhunushaliev et al., PRD 90, 124038 (2014),
   is cited in the article; both LaTeX engines build and the in-place PDF is rebuilt.
 
 ## Validation audit — 2026-10-30
