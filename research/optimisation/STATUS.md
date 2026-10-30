@@ -26,7 +26,7 @@ D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
 Neither original minimum cleared the background gate; alternatives were checked next.
 D0 alternative e0211 cleared all three grids; full preflight passed and the
 N128 evolution started at 21:58 MSK on second-node card 0. Checkpoints off,
-stop t = 100. At 22:37 MSK: t = 12.68, speed 19.3 units/h, about 4.5 h
+stop t = 100. At 22:40 MSK: t = 13.40, speed 19.4 units/h, about 4.5 h
 remaining (03:10 MSK, October 31). Frame 0 inspected against classical D0;
 all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
 consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
@@ -36,7 +36,12 @@ started on second-node card 1 at 22:22 MSK, checkpoints off,
 then was explicitly aborted at t = 0.54. No D30 evolution workers remain. The fresh `opt-d30-resolution-cma` search
 started on card 1 at 22:37 MSK, code `6990e8d0`, 400-evaluation cap.
 Cheap checks per best and full finalist refinement; no stability penalty.
-Warm-up underway; search speed/ETA not yet measurable (4 h wall cap).
+At 22:40 MSK, 11 evaluations recorded; roughly 500 evaluations/h after
+continuation warm-up, provisional remaining time 0.8 h (23:30 MSK).
+Screened e0004 has X = 2.16892078855 at the matched R_e/J; saved fields
+are 210x42, explicitly provisional. No `best_clean` file exists yet.
+GPU memory: D0 22.4 GiB, CMA 60.3 GiB. D0 consumer processes t = 13
+while evolution is at 13.40; keep-last 3 and no checkpoints verified.
 Thirteen local tests pass; the new checker also passed the archived e0374
 on all three grids on the cluster CPU, without Newton or a dense Jacobian.
 Second-node scratch: D0 three plotfiles, 7.1 GB; stopped D30 one plotfile,
@@ -48,10 +53,10 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 12.68 / 100, alive | 19.3 units/h | 4.5 h; Oct 31 03:10 MSK |
+| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 13.40 / 100, alive | 19.4 units/h | 4.5 h; Oct 31 03:10 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
-| `opt-d30-resolution-cma` | second / 1 | started 22:37 MSK; max 400 evaluations | warming up | pending rate; wall cap Oct 31 02:37 MSK |
+| `opt-d30-resolution-cma` | second / 1 | 11 / 400 evaluations; alive | about 500 evaluations/h | about 0.8 h; 23:30 MSK (provisional) |
 | `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
