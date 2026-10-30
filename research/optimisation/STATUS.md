@@ -13,8 +13,8 @@ The stationary extension trials are complete and archived as exploratory work;
 their small validated gain does not warrant inclusion in the paper (2026-10-30).
 No further extension runs are planned. D30 evolution authorization was withdrawn
 on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
-search is authorized, with mandatory resolution validation before accepting
-a new best. D0 continues with checkpoints off; no new D30 evolution is authorized. The 2026-10-30
+search is authorized: cheap finer-grid screening of each new best, then a
+full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 continues with checkpoints off; no new D30 evolution is authorized. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
@@ -47,7 +47,7 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 9.37 / 100, alive | 19.1 units/h | 4.7 h; Oct 31 03:20 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
-| D30 CMA with resolution gate | second / 1 planned | authorized; implementation pending | pending | pending |
+| D30 CMA with resolution gate | second / 1 planned | authorized; code/tests in progress | pending | pending |
 | `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
@@ -69,14 +69,27 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 ## Planned (nothing launches without the go)
 
-D30: rerun CMA-ES at the same classical R_e/J, with a mandatory new-best
-resolution gate on 150x30, 180x36 and 210x42. A coarse minimum is provisional;
-only the final two PASS grids with relative X drift <= 1e-6 may become the
-accepted best. Keep Newton acceptance 1e-9 and independent constraints 1e-8.
-Failures must feed back to the search rather than silently replace its best.
-Preserve diagnostic records and save the finest validated fields. This is
-stationary numerical clearance; physical stability remains unassessed.
-No D30 evolution is queued. D0 e0211 continues its authorized N128 evolution.
+D30: rerun 400 CMA-ES evaluations, seed 103, kink x0=(0.3,0,0,0),
+at the same classical R_e/J and bounds. New bests get cheap equation checks
+on 150x30, 180x36 and 210x42; only the finalist gets full Newton re-solves.
+This replaces the earlier proposal to fully re-solve every new best, explicitly
+confirmed on 2026-10-30. The coarse search and screened best remain provisional.
+The final result requires all three grids PASS, last-two relative X drift <=1e-6,
+Newton acceptance 1e-9 and independent constraints 1e-8. Failed screens penalize
+CMA proposals; failed final refinement produces no validated best or evolution.
+No radial stability penalty: that screen is under repair. No D30 evolution is
+queued. D0 e0211 continues its authorized N128 evolution.
+
+**Cost/necessity audit (22:30 MSK).** Evaluating the original e0374 polynomial
+on 150x30, 180x36, 210x42 and 174x35 takes 0.6-0.8 seconds per CPU grid.
+All five imposed equations are below 6.0e-9 in the existing monitored region;
+both independent constraints stay below 2.0e-9. Full re-solving introduces
+larger errors (up to E19=1.11e-4). This supports cheap screening first, not
+calling interpolation a convergence study. e0391 still misses the 1e-8 gate
+under interpolation (E19 up to 3.03e-8). The 3D N128 initial Hamiltonian norms
+use different units/weights from these stationary monitors; their magnitudes
+cannot justify dropping the latter's threshold. Audit records are packed in
+`results/optimisation/validation/2026-10-30-resolution-audit/`.
 
 D40/D46 have no saved search candidates; D51's existing export is rejected.
 The new validator reconstructs physical radii from fields and records stability

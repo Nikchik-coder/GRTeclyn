@@ -38,11 +38,21 @@ Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisa
 - `winding_solve.py`: the step-5 winding-field ladders (spin carried by the matter phase);
 - `check_chi_star.py`: the step-4 J = 0 cross-check against the published dressed star;
 - `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) search at pinned J and R_e (Nelder–Mead or
-  CMA-ES; `--stability` adds each candidate's J = 0 radial growth rate to the score). Opt-in:
+  CMA-ES; `--stability` is refused while the radial screen is under repair). Opt-in:
   `--pin area` holds throat area so oblateness is free (score $X_A = |{\rm VIQ}|/R_A$);
   `--free-J` adds $J$ as a fifth knob. Defaults omit both, so existing 4-knob jobs are
-  unchanged. It saves each best point's
-  solved fields as .npz, which `python -m grteclyn_wrapper.optimisation.handoff` turns into a 7-column table;
+  unchanged. New bests must pass inexpensive checks of all imposed equations,
+  unused constraints, spin and radius on three grids. `best_screened.npz` is
+  provisional: it evaluates the same polynomial at new nodes. The default
+  `--refine-best final` independently re-solves the finalist; only a PASS on
+  all three grids and <=1e-6 relative bill drift writes `best_clean.npz`,
+  containing the finest solved fields. `--refine-best each` instead re-solves
+  every new best. Failed screens receive a death penalty. Failed final
+  refinement exits 2, without a validated result or an automatic evolution.
+  Physical stability remains unassessed. Outputs require a fresh prefix;
+- `python -m grteclyn_wrapper.optimisation.resolution`: standalone residual
+  screening of a saved candidate; `--method refine` performs full re-solves.
+  Every grid's fields and diagnostics are retained for comparison;
 - `grid_check.py`: grid convergence of solved potentials at the member's J (one walk-in, then each finer grid
   seeded by spectral interpolation, one R_e pin for all), to tell under-resolution from the round-off floor;
 - `stability_screen.py`: the radial stability column — re-solves each potential at J = 0 on the member's R_e pin

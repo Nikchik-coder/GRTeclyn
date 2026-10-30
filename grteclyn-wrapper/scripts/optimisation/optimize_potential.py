@@ -38,8 +38,10 @@ evaluation continues Newton from the NEAREST solved point
 append to the scan-format TSV (--out; default under
 runs/optimisation/opt/).  The walk-in to --x0 runs the ladder's anchor
 chain (m in thirds, then the shape in 0.3 steps along the straight
-line).  Reported at the end: best clean, best frontier, evaluation
-counts.  A Newton failure anywhere is a verdict, not an error.
+line). New best candidates are screened on three grids; the finalist is
+independently re-solved before best_clean is written. Screened and frontier
+files remain provisional. --refine-best each re-solves every new best
+instead. A Newton failure anywhere is a verdict, not an error.
 
 Run through capped_job.sh; solver jobs take a card by default
 (2026-10-28), so pass --gpu N after nvidia-smi:
@@ -56,6 +58,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import gc
 import json
 import math
 import pathlib
@@ -75,6 +78,9 @@ from grteclyn_wrapper.optimisation.matter_equations import (
     MatterCollocationProblem,
 )
 from grteclyn_wrapper.optimisation.potentials import PolynomialPotential
+from grteclyn_wrapper.optimisation.resolution import (
+    check_candidate, refinement_grids, save_checked,
+)
 from grteclyn_wrapper.optimisation.solver.device import select_device
 from grteclyn_wrapper.optimisation.solver.newton import newton
 from grteclyn_wrapper.optimisation.stability_radial import (
@@ -227,7 +233,12 @@ def main() -> int:
                          "on by default)")
     ap.add_argument("--no-save-accepted", action="store_false",
                     dest="save_accepted")
+    ap.add_argument("--refine-best", choices=("final", "each"), default="final",
+                    help="screen every new best on finer grids; independently "
+                         "re-solve only the finalist (default), or every new best")
     args = ap.parse_args()
+    if args.stability:
+        ap.error("the radial stability screen is under repair; omit --stability")
     select_device(args.gpu, args.jac_chunk)
     x0_in = np.array([float(v) for v in args.x0.split(",")])
     assert args.q_min < args.q_max, "--q-min must be < --q-max"
@@ -277,6 +288,8 @@ def main() -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     wide = args.pin != "R_e" or args.free_J
     extra_head = "\tJ\tR_A\tR_pol\tX_A\tpin" if wide else ""
+    if out.exists() or list(out.parent.glob(f"{out.stem}_best*.npz")):
+        ap.error("output already exists; choose a fresh prefix for this search")
     if not out.exists():
         out.write_text(
             "member\tnx\tny\tmass\tq1\tq2\tq3\tnewton\titers\tX\tsigma\t"
@@ -321,7 +334,11 @@ def main() -> int:
              "omega": sol.eta0 * omega1, "psim": psim1,
              "sigma": sol.eta0, "xi_t": xi1}
     state = {"solved": {}, "nfev": 0,
-             "best_clean": None, "best_frontier": None}
+             "best_clean": None, "best_screened": None, "best_frontier": None}
+    grids = refinement_grids(nx, ny)
+    checks_root = out.with_name(f"{out.stem}_resolution")
+    print(f"new-best checks: {grids}; full refinement: {args.refine_best}; "
+          "physical stability not assessed", flush=True)
 
     def solve_at(x, prev, jval=None):
         """One pinned solve at knob vector x, continued from prev, at
@@ -367,8 +384,9 @@ def main() -> int:
         mon = max(e19, e_c)
         row = {"newton": info["res_scaled_inf"], "iters": info["iters"],
                "X": xv["X"], "X_A": xv["X_A"], "sigma": tt["sigma"],
-               "psim": psim, "R_e": xv["R_e"], "R_A": xv["R_A"],
-               "R_pol": xv["R_pol"], "J": j_run,
+               "psim": psim, "R_e": tt["sigma"] * xv["R_e"],
+               "R_A": tt["sigma"] * xv["R_A"],
+               "R_pol": tt["sigma"] * xv["R_pol"], "J": j_run,
                "e19": e19, "e_c": e_c, "tails": tails,
                "verdict": ("PASS" if mon <= CLEAN_GATE else
                            "FRONTIER" if mon <= CEILING else "ABOVE-GATE"),
@@ -531,7 +549,8 @@ def main() -> int:
             "X": row["X"], "X_A": row.get("X_A"), "X_v0": x_v0,
             "E19": row["e19"],
             "E_c": row["e_c"],
-            "verdict": row["verdict"], "lam_eta0": row.get("lam"),
+            "verdict": row["verdict"], "stability": "not_assessed",
+            "resolution_validated": False,
             "j0": (None if twin is None
                    else {k: float(twin[k]) for k in scal}),
             "conventions": SAVE_CONVENTIONS,
@@ -545,6 +564,37 @@ def main() -> int:
         path = out.with_name(f"{out.stem}_{slot}.npz")
         return dump_npz(path, key, row, slot=slot)
 
+    def check_best(key, row, method):
+        # Release old JAX executables before changing grid sizes. Only CPU
+        # field arrays survive in the continuation cache.
+        import jax
+        gc.collect()
+        jax.clear_caches()
+        spin = dict(state["solved"][key], sx=state["nodes"][0],
+                    sy=state["nodes"][1], gamma=sol.gamma, map=grid)
+        config = dict(m=float(key[0]), q=list(map(float, key[1:4])),
+                      gamma=sol.gamma, J=float(row["J"]))
+        check_d2 = (float(spin["psim"])*float(spin["sigma"])/math.pi)**2
+        result, checked = check_candidate(
+            spin, config, grids, pin_row, check_d2,
+            checks_root/f"e{row['nfev']:04d}_{method}", method=method,
+            score_key=score_key)
+        if not result["passed"]:
+            return None
+        final = dict(row, **result["records"][-1])
+        final.update(e19=final["E19"], e_c=final["E_c"])
+        slot = "best_clean" if method == "refine" else "best_screened"
+        # Rank checked candidates by the checked bill, not the coarse bill.
+        if state[slot] is None or final[score_key] < state[slot][0]:
+            if not args.no_save:
+                save_checked(out.with_name(f"{out.stem}_{slot}.npz"),
+                             checked, config,
+                             dict(member=name, member_eta0=sol.eta0, pin=args.pin,
+                                  nfev=row["nfev"], X_v0=x_v0,
+                                  conventions=SAVE_CONVENTIONS), result)
+            state[slot] = (final[score_key], key, final)
+        return final
+
     def objective(x):
         state["nfev"] += 1
         m, q = float(x[0]), tuple(float(v) for v in x[1:4])
@@ -557,7 +607,7 @@ def main() -> int:
                   f"({', '.join(f'{v:+.3f}' for v in q)}): inadmissible",
                   flush=True)
             return death(10.0)
-        key = tuple(np.round(np.asarray(x, float), 10))
+        key = tuple(map(float, x))
         if not state["solved"]:
             seed = prev0
         else:
@@ -566,6 +616,7 @@ def main() -> int:
                            (np.array(s) - np.array(key)) / scales))))
             seed = state["solved"][near]
         row, nxt = solve_at(x, seed)
+        row["nfev"] = state["nfev"]
         lam = None
         if nxt is not None and args.stability:
             lam, row["j0_fail"] = stab_at(x, key, nxt)
@@ -587,12 +638,18 @@ def main() -> int:
         if args.stability:
             val += (args.stab_fail_pen if lam is None
                     else args.stab_weight * lam)
-        for slot, ok in (("best_clean", row["verdict"] == "PASS"),
-                         ("best_frontier", row["verdict"] != "ABOVE-GATE"),
-                         ("best_stable", args.stability and lam == 0.0
-                          and row["verdict"] == "PASS")):
-            if ok and (state[slot] is None or score < state[slot][0]):
-                state[slot] = (score, key, dict(row))
+        if state["best_frontier"] is None or score < state["best_frontier"][0]:
+            state["best_frontier"] = (score, key, dict(row))
+        incumbent = state["best_clean" if args.refine_best == "each" else "best_screened"]
+        if row["verdict"] == "PASS" and (incumbent is None or score < incumbent[0]):
+            checked = check_best(key, row, "screen")
+            if checked is None:
+                return death(1.0)
+            if args.refine_best == "each":
+                checked = check_best(key, row, "refine")
+                if checked is None:
+                    return death(1.0)
+            val = checked[score_key]
         return val
 
     # the walk-in: m in thirds, then the shape in 0.3 steps.  A leg that
@@ -699,8 +756,13 @@ def main() -> int:
                                 "adaptive": True})
         print(f"\nsimplex stopped: {res.message} after {state['nfev']} "
               f"evaluations", flush=True)
-    slots = [("best_clean", "best clean (<= 1e-8)"),
-             ("best_frontier", "best frontier (<= 1e-6)")]
+    if args.refine_best == "final" and state["best_screened"] is not None:
+        _, key, row = state["best_screened"]
+        print("independently refining the screened finalist", flush=True)
+        check_best(key, row, "refine")
+    slots = [("best_clean", "best resolution-validated background"),
+             ("best_screened", "best screened (provisional)"),
+             ("best_frontier", "search-grid frontier (provisional)")]
     if args.stability:
         slots.append(("best_stable", "best stable clean (lam = 0)"))
     for slot, label in slots:
@@ -723,8 +785,11 @@ def main() -> int:
               f"spun down, {tw['failed']} failed", flush=True)
     if not args.no_save:
         for slot, _ in slots:
-            if state[slot] is not None:
+            if state[slot] is not None and slot not in ("best_clean", "best_screened"):
                 print(f"saved {slot}: {save_solution(slot)}", flush=True)
+    if state["best_clean"] is None:
+        print("NO VALIDATED FINAL RESULT; screened candidates remain provisional", flush=True)
+        return 2
     return 0
 
 
