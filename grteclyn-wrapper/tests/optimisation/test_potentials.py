@@ -31,3 +31,32 @@ def test_kink_q_matches_product_form():
         du = 1e-7
         want_d = (pot.V(psi + du) - pot.V(psi - du)) / (2 * du)
         assert pot.dV(psi) == pytest.approx(want_d, rel=2e-6, abs=1e-6)
+
+
+def test_positive_bernstein_family_embeds_existing_cubic():
+    from grteclyn_wrapper.optimisation.potentials import BernsteinKinkPotential
+    q = (.672, .048, .310)
+    controls = BernsteinKinkPotential.elevate_power_shape(q, 6)
+    new = BernsteinKinkPotential(.4, -3.1, controls)
+    old = PolynomialPotential.kink_q(.4, -3.1, q)
+    psi = np.linspace(-3.1, 0, 101)
+    for method in ("V", "dV", "d2V"):
+        np.testing.assert_allclose(getattr(new, method)(psi), getattr(old, method)(psi),
+                                   rtol=1e-10, atol=1e-11)
+
+
+def test_positive_bernstein_vacua_and_derivatives():
+    from grteclyn_wrapper.optimisation.potentials import BernsteinKinkPotential
+    pot = BernsteinKinkPotential(.7, -2.3, (1., .2, 4., .1, 2., .3, 1.5))
+    psi = np.linspace(-2.3, 0, 101)
+    assert np.min(pot.V(psi)) >= 0
+    assert np.all(pot.V(psi[1:-1]) > 0)
+    for vacuum in (-2.3, 0.):
+        assert pot.V(vacuum) == 0
+        assert pot.dV(vacuum) == 0
+        assert pot.d2V(vacuum) > 0
+    h = 1e-5
+    np.testing.assert_allclose(pot.dV(psi), (pot.V(psi+h)-pot.V(psi-h))/(2*h), atol=1e-8)
+    np.testing.assert_allclose(pot.d2V(psi), (pot.dV(psi+h)-pot.dV(psi-h))/(2*h), atol=1e-7)
+    with pytest.raises(ValueError):
+        BernsteinKinkPotential(.3, -3., (1., -1., 2.))

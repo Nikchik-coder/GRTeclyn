@@ -8,7 +8,11 @@ Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
-Priority: **repair and revalidate the radial stability screen**. The 2026-10-30
+Priority: **stationary extension tests**, authorized 2026-10-30: richer positive
+potentials, ordinary/rotating bosonic matter, fixed-area shape and asymmetry.
+Code is pushed before pulling and running on the second GPU node. No new
+3+1 evolutions or repeat searches in the old four-parameter family.
+Repair and revalidation of the radial stability screen remain pending. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
@@ -38,6 +42,16 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 ## Planned (nothing launches without the go)
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
+
+## Stationary extensions — 2026-10-30
+
+Implementation prepared: `explore_extensions.py` starts from saved candidate
+fields, reconstructs physical size, and holds J fixed. Positive Bernstein
+controls enlarge the potential family; canonical-cloud amplitude and frequency
+are solved together. Shape/asymmetry use a fixed area. The best trial of each
+stage and its reference are re-solved on a finer grid; a gain requires passing
+independent constraints and exceeding the grid drift. Stability is not assessed.
+Cluster unit tests and bounded D21/S0 trials are next; no launches yet.
 
 ## Validation audit — 2026-10-30
 

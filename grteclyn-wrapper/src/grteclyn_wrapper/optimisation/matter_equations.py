@@ -398,6 +398,10 @@ class MatterCollocationProblem:
     + j_matter_tail must be flat on a solution).  omega_z is physical
     under a pin (it scales as 1/sigma, like omega_chi).
 
+    ``pin_chi = A`` similarly pins chi at the mid column/equator and
+    solves its physical frequency as a bordered unknown. This avoids
+    accepting the zero-cloud solution when exploring ordinary matter.
+
     ``pin_zeta = A`` makes omega_z a bordered unknown (the winding
     tuple's omega_z seeds it through ``pack``) held by the row
     zeta(mid column, equator) = A: the boson-star way around the fragile
@@ -414,7 +418,8 @@ class MatterCollocationProblem:
                  pin: tuple[str, float] | None = None,
                  chi: tuple | None = None,
                  winding: tuple | None = None,
-                 pin_zeta: float | None = None):
+                 pin_zeta: float | None = None,
+                 pin_chi: float | None = None):
         # thread cap, platform and float64 BEFORE the first jax import
         from .solver.device import configure_jax
         from .solver.jacobian import dense_jacobian
@@ -477,6 +482,9 @@ class MatterCollocationProblem:
         if pin_zeta is not None and self.winding is None:
             raise ValueError("pin_zeta needs a winding field")
         self.pin_zeta = None if pin_zeta is None else float(pin_zeta)
+        if pin_chi is not None and self.chi is None:
+            raise ValueError("pin_chi needs a canonical cloud")
+        self.pin_chi = None if pin_chi is None else float(pin_chi)
         self.tags = (("f", "w", "N", "B", "psi")
                      + (("chi",) if self.chi is not None else ())
                      + (("z",) if self.winding is not None else ()))
@@ -485,6 +493,7 @@ class MatterCollocationProblem:
         self.n_unknowns = (self.nf * self.n + (1 if mode == "J" else 0)
                            + (1 if self.border_psi else 0)
                            + (1 if self.pin_zeta is not None else 0)
+                           + (1 if self.pin_chi is not None else 0)
                            + (2 if self.pin is not None else 0))
 
         xi_i = self.sx[1:-1]
@@ -558,7 +567,8 @@ class MatterCollocationProblem:
     # -- packing --------------------------------------------------------------
 
     def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None,
-             sigma=None, xi_t=None, dchi=None, dzeta=None, omega_z=None):
+             sigma=None, xi_t=None, dchi=None, dzeta=None, omega_z=None,
+             omega_chi=None):
         import numpy as np
 
         parts = [np.ravel(df), np.ravel(dw), np.ravel(dN), np.ravel(dB),
@@ -581,6 +591,10 @@ class MatterCollocationProblem:
             if psi_minus is None:
                 raise ValueError("bordered problem: psi_minus is an unknown")
             parts.append(np.atleast_1d(float(psi_minus)))
+        if self.pin_chi is not None:
+            if omega_chi is None:
+                raise ValueError("pin_chi problem: seed omega_chi")
+            parts.append(np.atleast_1d(float(omega_chi)))
         if self.pin_zeta is not None:
             if omega_z is None:
                 raise ValueError("pin_zeta problem: omega_z is an unknown "
@@ -621,6 +635,16 @@ class MatterCollocationProblem:
             return self.winding[1]
         i = (self.nf * self.n + (1 if self.mode == "J" else 0)
              + (1 if self.border_psi else 0))
+        i += int(self.pin_chi is not None)
+        return float(u[i])
+
+    def omega_chi_of(self, u):
+        """Physical frequency, solved when the cloud amplitude is pinned."""
+        if self.chi is None:
+            raise ValueError("no canonical cloud")
+        if self.pin_chi is None:
+            return self.chi[1]
+        i = self.nf * self.n + int(self.mode == "J") + int(self.border_psi)
         return float(u[i])
 
     def potential_at(self, psi_minus):
@@ -665,6 +689,10 @@ class MatterCollocationProblem:
         psi_minus = u[tail] if self.border_psi else self.psi_minus_fixed
         if self.border_psi:
             tail += 1
+        omega_chi_run = None
+        if self.chi is not None:
+            omega_chi_run = u[tail] if self.pin_chi is not None else self.chi[1]
+            tail += int(self.pin_chi is not None)
         omega_z_run = None
         if self.winding is not None:
             omega_z_run = (u[tail] if self.pin_zeta is not None
@@ -692,7 +720,7 @@ class MatterCollocationProblem:
         if self.chi is not None:
             chi_kw = {"U": sigma**2 * u_pot.V(interior["chi"]),
                       "dU": sigma**2 * u_pot.dV(interior["chi"]),
-                      "oc2": sigma**2 * omega_chi**2}
+                      "oc2": sigma**2 * omega_chi_run**2}
         if self.winding is not None:
             uz_pot, _, k_w = self.winding
             Zv = self.sink_i * interior["z"]
@@ -723,6 +751,9 @@ class MatterCollocationProblem:
         if self.border_psi:
             out = jnp.concatenate(
                 [out, jnp.atleast_1d(E["E19"][self.mid - 1, -1])])
+        if self.pin_chi is not None:
+            out = jnp.concatenate(
+                [out, jnp.atleast_1d(d["chi"][self.mid, -1] - self.pin_chi)])
         if self.pin_zeta is not None:
             out = jnp.concatenate(
                 [out, jnp.atleast_1d(d["z"][self.mid, -1] - self.pin_zeta)])
@@ -868,7 +899,7 @@ class MatterCollocationProblem:
             u_pot, omega_chi = self.chi
             chi_kw = {"U": s2 * u_pot.V(interior["chi"]),
                       "dU": s2 * u_pot.dV(interior["chi"]),
-                      "oc2": s2 * omega_chi**2}
+                      "oc2": s2 * self.omega_chi_of(u)**2}
         if self.winding is not None:
             uz_pot, _, k_w = self.winding
             omega_z = self.omega_z_of(u)

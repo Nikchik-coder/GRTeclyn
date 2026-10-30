@@ -26,7 +26,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-__all__ = ["PolynomialPotential", "ZERO"]
+__all__ = ["PolynomialPotential", "BernsteinKinkPotential", "ZERO"]
 
 FOUR_PI = 4.0 * math.pi
 EIGHT_PI = 8.0 * math.pi
@@ -134,6 +134,80 @@ class PolynomialPotential:
             for j, c in enumerate(shape):
                 out[i + j] += b * c
         return cls(tuple(out))
+
+
+@dataclass(frozen=True)
+class BernsteinKinkPotential:
+    """A kink with a positive Bernstein shape on the vacuum interval.
+
+    Positive controls guarantee Q > 0 for 0 <= psi/psi_minus <= 1.
+    The first control is one, preserving the mass at the zero vacuum.
+    Evaluation stays in Bernstein form to avoid cancellation at the vacua.
+    ``psi_minus`` may be a JAX tracer in a bordered Newton solve.
+    """
+
+    m: float
+    psi_minus: float
+    controls: tuple[float, ...]
+
+    def __post_init__(self):
+        if not self.controls or self.controls[0] != 1.0:
+            raise ValueError("the first Bernstein control must be one")
+        if any(not math.isfinite(c) or c <= 0 for c in self.controls):
+            raise ValueError("Bernstein controls must be finite and positive")
+
+    @staticmethod
+    def _bernstein(u, controls):
+        n = len(controls) - 1
+        return sum(c * math.comb(n, i) * u**i * (1-u)**(n-i)
+                   for i, c in enumerate(controls))
+
+    def _shape(self, psi, order=0):
+        c = self.controls
+        factor = 1.0
+        for _ in range(order):
+            factor *= (len(c) - 1) / self.psi_minus
+            c = tuple(b - a for a, b in zip(c, c[1:]))
+            if not c:
+                return 0.0 * psi
+        return factor * self._bernstein(psi / self.psi_minus, c)
+
+    def V(self, psi):
+        return (self.m / self.psi_minus)**2 * psi**2 * (
+            psi - self.psi_minus)**2 * self._shape(psi)
+
+    def dV(self, psi):
+        p = self.psi_minus
+        base = psi**2 * (psi-p)**2
+        deriv = 2*psi*(psi-p)*(2*psi-p)
+        return (self.m/p)**2 * (deriv*self._shape(psi)
+                               + base*self._shape(psi, 1))
+
+    def d2V(self, psi):
+        p = self.psi_minus
+        base = psi**2 * (psi-p)**2
+        deriv = 2*psi*(psi-p)*(2*psi-p)
+        second = 12*psi**2 - 12*p*psi + 2*p*p
+        return (self.m/p)**2 * (second*self._shape(psi)
+                               + 2*deriv*self._shape(psi, 1)
+                               + base*self._shape(psi, 2))
+
+    @staticmethod
+    def elevate_power_shape(q, degree):
+        """Represent 1 + sum q[k] u**(k+1) exactly at a higher degree.
+
+        Refuse shapes without positive controls; approximation would change
+        the matched baseline before the experiment starts.
+        """
+        if degree < len(q):
+            raise ValueError("degree must cover the original shape")
+        a = (1.0, *q)
+        controls = tuple(sum(a[k] * math.comb(i, k) / math.comb(degree, k)
+                             for k in range(min(i, len(q)) + 1))
+                         for i in range(degree + 1))
+        if any(c <= 0 or not math.isfinite(c) for c in controls):
+            raise ValueError("baseline has nonpositive Bernstein controls")
+        return controls
 
 
 ZERO = PolynomialPotential(())

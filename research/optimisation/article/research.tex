@@ -84,6 +84,8 @@ A static traversable wormhole requires matter that violates the null energy cond
 
 However, those spinning families still rely on a free, massless phantom ($\mathcal{V}=0$). Choosing $\mathcal{V}=0$ is a matter of analytic convenience rather than physical necessity: without a potential, the scalar equation decouples, but the field itself is completely unpinned. Its gradient decays slowly as $1/r^2$ into the asymptotic regions, wasting exotic energy far from the throat where it does no work supporting the geometry, and the absence of a potential barrier leaves a soft radial mode that drives collapse. This paper asks whether adding a confining potential $\mathcal{V}(\psi)$ to the same phantom field can trap the exotic matter at the throat, reducing the required NEC violation further at fixed throat size and spin while stiffening the throat against radial instability.
 
+Ordinary bosonic matter provides another way to modify the throat geometry. Dzhunushaliev et al.~\cite{dzhunushaliev2014topology} constructed boson stars containing phantom-supported wormholes. Their solutions retain a radial unstable mode, although suitable boson self-interactions can bring its eigenvalue close to zero.
+
 The optimization varies a confining potential $\mathcal{V}(\psi)$ for the phantom scalar $\psi$ (Fig.~\ref{fig:search}). For each proposed potential, a spectral Newton solver constructs a stationary rotating spacetime at fixed equatorial throat radius $R_e$ and angular momentum $J$. Two Einstein identities that the solver never uses determine whether a candidate passes the constraint checks; the spectral decay of the highest Chebyshev coefficients provides an additional resolution diagnostic. The exotic-matter integral and a static radial perturbation screen then supply the optimization score.
 
 Section~\ref{sec:model} defines the matter model, the confining potential family, and the exotic-matter integral $X$. Section~\ref{sec:opt} describes the search pipeline: the spectral Newton solver with JAX automatic-differentiation Jacobians~\cite{jax2018} and the covariance-matrix adaptation evolution strategy (CMA-ES)~\cite{hansen01}. Section~\ref{sec:setup} details the interpolation onto the adaptive-mesh-refinement (AMR) grid, the $3{+}1$ evolution scheme, and the acceptance criteria. Section~\ref{sec:results} reports the optimized minima, their radial stability, and the $3{+}1$ evolution of the slowly rotating drainhole. Section~\ref{sec:conclusions} summarizes our conclusions. Appendix~\ref{app:checks} records the $\mathcal{V}=0$ regression and the radial growth-rate screen, and Appendix~\ref{app:conv} presents the three-resolution convergence study of the D21 evolution. We use $G=c=1$. Following Ref.~\cite{shirokov2026s}, the drainhole family has throat parameter $\eta_0=2$ and end-mass asymmetry $\gamma=-\pi$, so the static member has unit mass.
@@ -358,6 +360,12 @@ C.~J.~Fewster and T.~A.~Roman,
 P.~K.~F.~Kuhfittig,
 \newblock ``Viable models of traversable wormholes supported by small amounts of exotic matter,''
 \newblock arXiv:0806.1194 [gr-qc] (2008).
+
+\bibitem{dzhunushaliev2014topology}
+V.~Dzhunushaliev, V.~Folomeev, C.~Hoffmann, B.~Kleihaus, and J.~Kunz,
+\newblock ``Boson Stars with Nontrivial Topology,
+\newblock Phys.\ Rev.\ D \textbf{90}, 124038 (2014),
+\newblock \href{https://arxiv.org/abs/1409.6978}{arXiv:1409.6978 [gr-qc]}.
 
 \bibitem{kleihaus_kunz2014}
 B.~Kleihaus and J.~Kunz,

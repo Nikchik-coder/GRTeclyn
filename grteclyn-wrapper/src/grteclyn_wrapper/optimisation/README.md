@@ -1,8 +1,9 @@
 # `grteclyn_wrapper.optimisation`: campaign M's solver
 
 Exact rotating Ellis–Bronnikov wormholes held open by an exotic scalar **with a potential**, and the search for the
-design that needs the least exotic matter at a fixed throat size and spin. Remaining work (2026-10-29) is 3+1
-GRTeclyn evolutions of the cleared bare-field tables; further 2D-solver and extra-matter knobs are dropped. Plan:
+design that needs the least exotic matter at a fixed throat size and spin. Stationary extension experiments resumed on 2026-10-30: richer positive potentials, ordinary and rotating
+bosonic matter, and fixed-area shape/asymmetry trials. No 3+1 evolutions are part of this batch.
+Stability labels remain withdrawn pending repair of the radial screen. Plan:
 [`research/optimisation/Minimal Exotic Wormhole Search.md`](../../../../research/optimisation/Minimal%20Exotic%20Wormhole%20Search.md);
 what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](../../../../research/optimisation/STATUS.md).
 
@@ -18,7 +19,18 @@ what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](.
 | `solver/jacobian.py` | the exact dense Jacobian of a jitted residual: `jax.jacfwd`, or `chunked_jacfwd` in column blocks |
 | `solver/device.py` | where jax runs: CPU by default, a CUDA card on request, float64, the XLA thread cap |
 
+`exploration.py` provides matched stationary trials from saved optimiser fields. Physical size is
+recomputed from the fields and sigma, avoiding the old radius-metadata ambiguity. Ordinary clouds
+use an amplitude pin with frequency as an unknown, like winding clouds. Both asymptotic mass gaps
+must permit a localized mode.
+
 Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisation/):
+- `explore_extensions.py`: bounded trials from a saved NPZ (`--stages potential,cloud,winding,shape,asymmetry`).
+  Positive Bernstein controls enrich the potential while exactly embedding the starting cubic.
+  Shape and asymmetry hold area and J; other trials hold R_e and J. Every stage refines its best
+  trial and matched reference; failed constraints or a gain comparable to grid drift never count
+  as confirmed. JSONL records include failures, physical radii, phantom-only X/X_A, J bookkeeping,
+  lapse and spectral tails. NPZs are diagnostic, not evolution exports. No stability penalty is used.
 - `pipeline.py` and `pipeline.toml`: the campaign's runnable stages;
 - `first_matter_solve.py`: the V ≠ 0 kink ladders;
 - `scan_potential.py`: the step-3 shape and γ scans and the open rays;

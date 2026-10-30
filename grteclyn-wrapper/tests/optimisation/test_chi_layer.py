@@ -66,3 +66,47 @@ def test_nrow_identity_with_a_nonzero_cloud():
     lhs = (1.0 - y[None, :]) * E["E_Nr"]
     rhs = E["E_N"] - 2.0 / h * E["E19"] + E["E_B"] / jets["B"]
     np.testing.assert_allclose(lhs, rhs, rtol=0, atol=1e-12)
+
+
+def test_amplitude_pin_and_frequency_jacobian():
+    """Frequency border preserves the fixed-frequency equations and AD."""
+    pot = PolynomialPotential.mass(.8)
+    args = dict(eta0=1., gamma=-.2, nx=NX, ny=NY,
+                prescribe=("J", .01), pin=("R_e", 2.))
+    fixed = MatterCollocationProblem(**args, chi=(pot, .4))
+    bordered = MatterCollocationProblem(**args, chi=(pot, .4), pin_chi=.02)
+    shape = (NX+1, NY+1)
+    zeros = np.zeros(shape)
+    cloud = .02*(1-fixed.sx[:, None]**2)*np.ones(shape)
+    kw = dict(omega_inf=.05, psi_minus=-3., sigma=1.5, xi_t=0., dchi=cloud)
+    uf = fixed.pack(zeros, zeros, zeros, zeros, zeros, **kw)
+    ub = bordered.pack(zeros, zeros, zeros, zeros, zeros, omega_chi=.4, **kw)
+    rb = np.asarray(bordered.residual(ub))
+    # Cloud-frequency border is immediately before the two size rows.
+    np.testing.assert_allclose(np.delete(rb, -3), fixed.residual(uf), atol=1e-13)
+    assert abs(rb[-3]) < 1e-15
+    assert bordered.omega_chi_of(ub) == .4
+    column = ub.size-3
+    h = 1e-6
+    delta = np.zeros_like(ub)
+    delta[column] = h
+    numerical = (bordered.residual(ub+delta)-bordered.residual(ub-delta))/(2*h)
+    np.testing.assert_allclose(np.asarray(bordered.jacobian(ub))[:, column], numerical,
+                               rtol=1e-7, atol=1e-9)
+    np.testing.assert_allclose(bordered.diagnostics(ub)["E_c"],
+                               fixed.diagnostics(uf)["E_c"], atol=1e-13)
+
+
+def test_two_cloud_frequency_borders_have_distinct_offsets():
+    p = MatterCollocationProblem(eta0=1., gamma=0., nx=NX, ny=NY,
+        prescribe=("J", .01), pin=("area", 20.),
+        chi=(PolynomialPotential.mass(.8), .3), pin_chi=.02,
+        winding=(PolynomialPotential.mass(.9), .5, 1), pin_zeta=.04)
+    zeros = np.zeros((NX+1, NY+1))
+    u = p.pack(zeros, zeros, zeros, zeros, zeros, dchi=zeros+.02,
+               dzeta=zeros+.04, omega_inf=.1, psi_minus=-3., sigma=1.,
+               xi_t=0., omega_chi=.3, omega_z=.5)
+    assert len(u) == p.n_unknowns
+    assert p.omega_chi_of(u) == .3
+    assert p.omega_z_of(u) == .5
+    assert np.asarray(p.residual(u)).shape == u.shape
