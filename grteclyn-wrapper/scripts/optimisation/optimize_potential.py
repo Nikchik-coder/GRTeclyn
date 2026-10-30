@@ -152,6 +152,9 @@ def main() -> int:
                          "SCALES")
     ap.add_argument("--popsize", type=int, default=None,
                     help="cma population (default 4 + 3 ln n = 8)")
+    ap.add_argument("--seed", type=int, default=7,
+                    help="cma RNG seed (D21 used 7; a new member needs a "
+                         "fresh seed or it replays D21's knob sequence)")
     ap.add_argument("--stability", action="store_true",
                     help="score stability too: every evaluation also "
                          "solves the knobs at J = 0 (from its own "
@@ -190,10 +193,19 @@ def main() -> int:
     ap.add_argument("--ny", type=int, default=None)
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD")
     ap.add_argument("--jac-chunk", type=int, default=None)
+    ap.add_argument("--J", type=float, default=None, dest="J_pin",
+                    help="optimize at this J instead of the member's "
+                         "(0 is the static drainhole of the same family)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--no-save", action="store_true",
                     help="skip the .npz of each best slot's solved fields "
                          "(written next to the TSV by default)")
+    ap.add_argument("--save-accepted", action="store_true", default=True,
+                    help="also write a .npz for every PASS and FRONTIER "
+                         "evaluation (the family a later grid-check reads; "
+                         "on by default)")
+    ap.add_argument("--no-save-accepted", action="store_false",
+                    dest="save_accepted")
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
     x0 = np.array([float(v) for v in args.x0.split(",")])
@@ -205,7 +217,8 @@ def main() -> int:
         ap.error("--x0 sits outside the m or q bounds")
 
     sol = Solution.load(args.solution)
-    J0 = float(sol.meta["prescribed"]["J"])
+    J_member = float(sol.meta["prescribed"]["J"])
+    J0 = J_member if args.J_pin is None else float(args.J_pin)
     psim0 = -math.pi * sol.observables["D"] / sol.eta0
     nx = args.nx or sol.nx
     ny = args.ny or sol.ny
@@ -224,7 +237,7 @@ def main() -> int:
     # the member holding J on its own grid, and its measured throat
     p1 = MatterCollocationProblem(
         eta0=sol.eta0, gamma=sol.gamma, radial_map=sol.radial_map,
-        nx=nx, ny=ny, prescribe=("J", J0))
+        nx=nx, ny=ny, prescribe=("J", J_member))
     F0 = sol.eval_grid("f", p1.sx, p1.sy)
     W0 = sol.eval_grid("w", p1.sx, p1.sy)
     N0 = sol.eval_grid("N", p1.sx, p1.sy)
@@ -239,8 +252,11 @@ def main() -> int:
     xi1 = float(p1.map.xi_of_eta(th["eta_throat"]))
     print(f"{name} ({nx}x{ny}, eta0 {sol.eta0:g}, gamma {sol.gamma:g}): "
           f"J-held {i1['res_scaled_inf']:.1e}; R_e {th['R_e']:.10f}, "
-          f"J {J0:.6e}; optimize from ({', '.join(f'{v:g}' for v in x0)})",
+          f"J {J_member:.6e}; optimize from ({', '.join(f'{v:g}' for v in x0)})",
           flush=True)
+    if J0 != J_member:
+        print(f"optimize at J {J0:g} (member holds {J_member:g})",
+              flush=True)
 
     grid = dataclasses.replace(sol.radial_map, eta0=1.0)
     d2 = (psim1 * sol.eta0 / math.pi) ** 2
@@ -358,6 +374,10 @@ def main() -> int:
                 "psim": psim_s, "sigma": th["R_e"] / ts["R_e"],
                 "xi_t": float(p0.map.xi_of_eta(ts["eta_throat"]))}
 
+    if J0 == 0.0:
+        prev0 = static_seed()
+        print("J = 0: start from the static drainhole seed", flush=True)
+
     def spin_down(x, spin, cap=3):
         """The J = 0 twin by continuation in J at fixed knobs, from the
         spinning solve at x (J in thirds, a stalled leg bisected toward
@@ -407,11 +427,9 @@ def main() -> int:
                         radial_map=grid)
         return (0.0 if o.get("stable") else float(o["lam"])), None
 
-    def save_solution(slot):
-        """The slot's solved fields and what rebuilds them physically:
-        the collocation nodes, the map, sigma, the potential's
-        coefficients, and the J = 0 twin's fields when it solved."""
-        _, key, row = state[slot]
+    def dump_npz(path, key, row, slot=None):
+        """Solved fields and what rebuilds them: collocation nodes, the
+        map, sigma, the potential coefficients, and the J = 0 twin."""
         spin = state["solved"][key]
         twin = state["solved_j0"].get(key)
         m, q = float(key[0]), [float(v) for v in key[1:]]
@@ -422,7 +440,8 @@ def main() -> int:
         scal = ("omega", "psim", "sigma", "xi_t")
         meta = {
             "member": name, "slot": slot, "nx": nx, "ny": ny,
-            "member_eta0": sol.eta0, "gamma": sol.gamma,
+            "nfev": state["nfev"], "member_eta0": sol.eta0,
+            "gamma": sol.gamma,
             "radial_map": {"class": type(grid).__name__,
                            **dataclasses.asdict(grid)},
             "J": J0, "R_e": th["R_e"], "m": m, "q": q,
@@ -435,10 +454,14 @@ def main() -> int:
                    else {k: float(twin[k]) for k in scal}),
             "conventions": SAVE_CONVENTIONS,
         }
-        path = out.with_name(f"{out.stem}_{slot}.npz")
         np.savez(path, sx=state["nodes"][0], sy=state["nodes"][1],
                  meta=json.dumps(meta, default=float), **arrays)
         return path
+
+    def save_solution(slot):
+        _, key, row = state[slot]
+        path = out.with_name(f"{out.stem}_{slot}.npz")
+        return dump_npz(path, key, row, slot=slot)
 
     def objective(x):
         state["nfev"] += 1
@@ -467,6 +490,11 @@ def main() -> int:
         if nxt is None:
             return death(10.0)
         state["solved"][key] = nxt
+        if (args.save_accepted and not args.no_save
+                and row["verdict"] in ("PASS", "FRONTIER")
+                and "nodes" in state):
+            dump_npz(out.with_name(f"{out.stem}_e{state['nfev']:04d}.npz"),
+                     key, row, slot=f"e{state['nfev']:04d}")
         if row["verdict"] == "ABOVE-GATE":
             return death(monitor_overflow(row))
         mon_pen = 0.0 if row["verdict"] == "PASS" else 0.1
@@ -562,7 +590,7 @@ def main() -> int:
              "bounds": [[args.m_min, args.q_min, args.q_min, args.q_min],
                         [args.m_max, args.q_max, args.q_max, args.q_max]],
              "popsize": args.popsize, "maxfevals": args.maxfev,
-             "tolfun": args.fatol, "verbose": -9, "seed": 7})
+             "tolfun": args.fatol, "verbose": -9, "seed": args.seed})
         while not es.stop() and state["nfev"] < args.maxfev:
             xs = es.ask()
             es.tell(xs, [objective(np.asarray(xv)) for xv in xs])
