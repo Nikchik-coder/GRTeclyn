@@ -14,7 +14,7 @@ and extra matter recipes. Evolutions wait for the go.
 
 ## Live
 
-Symmetric static CMA on card 0. Scratch: 21 GB leftover N192 (3 plotfiles), 457 GB free.
+Nothing running. Both cards idle. Scratch: 21 GB leftover N192 (3 plotfiles), 456 GB free.
 Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 
 | run | card | t | speed | ETA |
@@ -23,7 +23,7 @@ Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
 | `D21_X1p829_L64_N128_ml3_spdrv0_t150` | — | 97.7, NaN in A11 (level 3) | dead | — |
 | `D21_X1p829_L64_N192_ml3_spdrv0_t150` | — | 112.2, NaN in h11 (level 3) | dead | — |
 | `opt-d90` | — | 400/400, finished 16:43 MSK | done | — |
-| `opt-s0` | 0 | walk-in | — | ~1.3 h, ~18:10 MSK |
+| `opt-s0` | — | 400/400, finished 18:04 MSK | done | — |
 
 N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R settled ~3.49, not the classical 2.52). Onset later at higher N (−1% at t=58 / 67 / 81).
 
@@ -31,8 +31,7 @@ N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R 
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
 `opt-d90` finished 16:43 MSK. Drainhole queue empty.
-`opt-s0` is the symmetric family at J = 0 (`fam_b_0000`, eta0 1, gamma 0, `--J 0`, seed 111). TSV
-`runs/optimisation/opt/fam_b_0000_opt4s_kink_150x30_s0.tsv`. Classical V = 0 X is π.
+`opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
 
@@ -45,11 +44,12 @@ clean, screened stable unless noted), vs classical V = 0:
 
 | v_e | X | vs V = 0 | knobs (m, q₁, q₂, q₃) |
 |---|---|---|---|
+| 0 | 1.62676341 | −48.2 % | 1.198, 2.433, −0.046, 1.197 |
 | 0.27 | 1.63372 | −45.4 % | 0.855, 3.232, 3.776, −0.256 |
 | 0.50 | 1.49461 | −43.1 % | 0.864, 4.606, 0.559, −0.806 |
 | 0.85 | 1.09759 | −24.9 % | 0.425, 2.438, 4.267, 0.445 |
 
-Classical X: 2.99352 / 2.62527 / 1.46184. Frontiers −47.8 / −45.6 / −27.0 %.
+Classical X: π / 2.99352 / 2.62527 / 1.46184. The v_e 0 search (2026-10-30, seed 111) frontier is 1.60271 (E19 5.6e-7); family 43 PASS, 142 FRONTIER. Not grid-checked. Frontiers at the three spins −47.8 / −45.6 / −27.0 %.
 The v_e 0.50 loop-best (X 1.47714, −43.7 %) had an open twin and is not the
 screened number. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Family-(b)
 holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets.

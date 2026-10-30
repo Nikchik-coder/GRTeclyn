@@ -33,7 +33,7 @@ OUT = REPO / "results" / "optimisation" / "figures"
 
 # X = |VIQ|/R_e from STATUS.  v_e is the packed member (symmetric) or the
 # packed spinning header (drainhole D21, D30, D51, D90) or the r1 JSON (D80);
-# D0 is J = 0 (search-best).
+# D0 and the symmetric static are J = 0 (search-best).
 FOUND = (
     ("drainhole", 0.0, 1.83872766),
     ("drainhole", 0.2100172006151723, 1.8287958015),
@@ -41,6 +41,7 @@ FOUND = (
     ("drainhole", 0.5127052512125934, 1.6061738698),
     ("drainhole", 0.7908256780231234, 1.10469483),
     ("drainhole", 0.8997849046244889, 0.787086131),
+    ("symmetric", 0.0, 1.62676341),
     ("symmetric", 0.2747870070282676, 1.63372),
     ("symmetric", 0.5037707249409871, 1.49461),
     ("symmetric", 0.8474413551909138, 1.09759),
