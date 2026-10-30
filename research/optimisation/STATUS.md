@@ -47,6 +47,16 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 D51 X 1.606 triplet stays written, not launched. Its previous clearance is withdrawn.
 
+**Deferred D21 control check (2026-10-30).** The classical evolution used
+J = 1 and `sponge_drive_strength = 1`; optimized D21 used J = 1.0138 and
+`sponge_drive_strength = 0`. Optimisation did not require changing the sponge
+setting. Why it was changed has not been established. Investigate later;
+the existing runs are not a matched control pair, so their onset difference
+does not establish that the potential delays collapse. Before that comparison,
+match throat size, angular momentum, numerical settings and perturbation.
+No control rerun is authorized or launched. The current paper revision updates
+the search figures, tables and D21 resolution study without that comparison.
+
 ## Stationary extensions — 2026-10-30 (excluded from the paper)
 
 Implemented and tested after push → cluster pull: positive degree-six Bernstein
@@ -109,11 +119,29 @@ CMA restarts. **32 regression tests passed** on the node.
   rates; gate exports and enforce separate grid checks; then rerun stability
   validation. Code is unchanged by this audit. Logs are under
   `runs/capped_jobs/opt-audit-*` on the second GPU node.
-- **Paper blocked:** the draft's claims of eliminated radial instability, every
-  model passing all four criteria, and sustained D21 throat survival are not
-  supported. Revise these claims after the checks above; the exoticity reductions
-  are separate measurements. Figure 1 now shows the actual search loop and the
-  separate resolution/evolution checks.
+- **Paper scope revised:** the updated tables distinguish nine search-grid minima
+  from the selected D21 e140 210×42 solution. The old claims of eliminated
+  radial instability, every model passing all four criteria, and sustained
+  throat survival are removed. The appendix uses the final N96/N128/N192
+  diagnostic streams, with measured early constraint orders and later
+  resolution-dependent contraction. The classical-control comparison is
+  deferred as noted above; the stability-code repairs remain pending.
+
+## Article figures and tables — 2026-10-30
+
+The article selection ledger is `results/optimisation/article/ledger_models.tsv`;
+`research/optimisation/article/claims/claims.py` checks the selected raw trace
+records, fine D21 field data, stream hashes and constraint orders, then generates
+both tables and numerical macros. Search-grid rows use the same background-only
+selection throughout; S50 is now X = 1.47714. D51 has no qualifying row. The
+separate D21 search minimum is not the evolved candidate. The spin plot reads
+the same ledger. The appendix figure uses blue/light blue/black and labels
+refinement levels only once above the Hamiltonian/momentum columns. Its inputs
+are packed under `results/optimisation/campaign/` for local rebuilding.
+Both LaTeX engines build the seven-page revision. The selection/stream checker
+passes for ten table entries and forty constraint-order pairs; all revised
+figure label audits pass. Tables I and II share aligned model rows, and the
+S85 label is clear of its marker and the classical curves.
 
 ## Main results
 
@@ -124,12 +152,12 @@ clean candidates, all stability labels withdrawn), vs classical V = 0:
 |---|---|---|---|
 | 0 | 1.62676341 | −48.2 % | 1.198, 2.433, −0.046, 1.197 |
 | 0.27 | 1.63372 | −45.4 % | 0.855, 3.232, 3.776, −0.256 |
-| 0.50 | 1.49461 | −43.1 % | 0.864, 4.606, 0.559, −0.806 |
+| 0.50 | 1.47714 | −43.7 % | 0.962, 3.739, 0.922, −0.828 |
 | 0.85 | 1.09759 | −24.9 % | 0.425, 2.438, 4.267, 0.445 |
 
 Classical X: π / 2.99352 / 2.62527 / 1.46184. The v_e 0 search (2026-10-30, seed 111) frontier is 1.60271 (E19 5.6e-7); family 43 PASS, 142 FRONTIER. Not grid-checked. Frontiers at the three spins −47.8 / −45.6 / −27.0 %.
-The v_e 0.50 loop-best (X 1.47714, −43.7 %) had an open twin and is not the
-listed number. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Family-(b)
+The v_e 0.50 selection now uses the background-only minimum (X 1.47714,
+−43.7 %), replacing the old radial-screen-filtered X 1.49461. Bill-only Nelder–Mead was −32.0 / −35.4 / −26.2 %. Family-(b)
 holds die at the far-side puncture at t ≈ 23, so these are not the 3+1 targets.
 
 **Drainhole (the 3+1 family).** Classical spinning X: D21 4.64453, D51 3.39986,

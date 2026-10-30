@@ -25,6 +25,21 @@ the Newton solve are absent from these TSVs. Extension trials are excluded.
 followed by that file path. It shows the same constraint threshold, a running
 minimum, and an inset resolving the second half of the recorded search.
 
+## Campaign M article tables and resolution study
+
+`article/ledger_models.tsv` is the common selection for the parameter table,
+exoticity table and `figures/exotic_spin.{png,pdf}`. Nine search-grid minima
+pass both background constraints at 1e-8; D21 on 210x42 is a separate selected
+candidate. See `article/README.md` for provenance and the claims checker.
+
+`campaign/` contains the final D21 N96/N128/N192 diagnostic streams and
+numerical settings. Rebuild `figures/convergence_d21.{png,pdf}` with
+`-m grteclyn_wrapper.visualisation.optimisation.plot_convergence`.
+The plot and measured order table use these tracked inputs. Constraint orders
+are measured through t=50; the later diagnostic histories show contraction.
+The classical evolution has different angular momentum and sponge driving;
+a controlled delay comparison is deferred in the campaign STATUS.
+
 ## Campaign F measurements
 
 | path | what | rebuild |

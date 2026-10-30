@@ -1,143 +1,139 @@
 #!/usr/bin/env python3
-r"""D21 $X = 1.829$ resolution triplet: constraints on every level, the throat, the wave zone.
+"""D21 resolution study from the final, tracked diagnostic streams.
 
-The three evolutions differ only in the base grid: $N = 96 / 128 / 192$
-on the $L = 64$ box, $\texttt{max_level} = 3$, so level $l$ has
-$\Delta x = (2/3, 1/2, 1/3) / 2^l$.  Same layout as the spinning-wormhole
-convergence figure (``plot_convergence --spin 0.2c``'s equal-$t$ rows).
-Ham / Mom panels stop at $t = 50$ (the equal-$t$ window).  The bottom
-row runs to each member's last time.
-
-Top two rows: each level's $L_2$ Hamiltonian (first row) and momentum
-(second row) constraint, from ``constraint_norms_levels.dat``.  The
-finest member is redrawn at the coarsest spacing for orders 2 and 4.
-
-Bottom row: (i) equatorial throat radius against the background's
-$R_e$; (j) areal radius against its $t = 0$ value; (k) the $(2,0)$
-mode of $\Psi_4$ at $R = 14$ against its $t = 0$ value; (l) the lapse
-at the $\eta \to -\infty$ puncture.
-
-    python -m grteclyn_wrapper.visualisation.optimisation.plot_convergence
-
-Reads the live dirs under ``runs/optimisation/evolution/convergence/``
-(or a packed copy under ``results/optimisation/campaign/``).  Writes
-``results/optimisation/figures/convergence_d21``.
+Constraints use the common t <= 50 interval. The lower row shows each
+run's complete recorded diagnostic history, with missing throat estimates
+left as gaps. Rescaling is applied only to constraints whose exact value
+is zero, never to the throat drift. No spinning-paper layout is imported.
 """
-
 from __future__ import annotations
-
 import argparse
-import pathlib
-
+import csv
+import gzip
+from pathlib import Path
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
-
-from grteclyn_wrapper.visualisation.spinning_wormhole import plot_convergence as sw
-from grteclyn_wrapper.visualisation.spinning_wormhole.solutions import REPO
 from grteclyn_wrapper.visualisation.wormhole_merger import style
+from .palette import BLUE, LIGHT_BLUE, INK, GREY, RESOLUTIONS
 
-LIVE = REPO / "runs" / "optimisation" / "evolution" / "convergence"
-PACKED = REPO / "results" / "optimisation" / "campaign"
-FIGURES = REPO / "results" / "optimisation" / "figures"
-STEM = "convergence_d21"
-BOX = 64.0
-PSI4_R = 14
-# background D21_X1p82879580_2049x129.spinbg, meta table_R_e
+REPO = Path(__file__).resolve().parents[5]
+PACKED = REPO / "results/optimisation/campaign"
+FIGURES = REPO / "results/optimisation/figures"
+RUNS = tuple((n, f"D21_X1p829_L64_N{n:03d}_ml3_spdrv0_t150") for n in (96, 128, 192))
 R_EXACT = 4.063830498135651
-RUNS = (
-    (96, "D21_X1p829_L64_N096_ml3_spdrv0_t150"),
-    (128, "D21_X1p829_L64_N128_ml3_spdrv0_t150"),
-    (192, "D21_X1p829_L64_N192_ml3_spdrv0_t150"),
-)
+TIMES = (10., 20., 30., 40., 50.)
 
 
-def run_dir(name: str) -> pathlib.Path:
-    for root in (LIVE, PACKED):
-        path = root / name
-        if path.is_dir():
-            return path
-    raise SystemExit(f"{name}: not under {LIVE} or {PACKED}")
+def stream(root, folder, name):
+    p = root / folder / name
+    return p if p.exists() else p.with_suffix(p.suffix + ".gz")
 
 
-def clip(arr: np.ndarray, t_max: float) -> np.ndarray:
-    return arr[arr[:, 0] <= t_max + 1e-9]
-
-
-def load(runs, psi4_r: int, t_max: float | None) -> dict[int, dict[str, np.ndarray]]:
-    """Each member's streams: evolution files in ``data/``, consumer files in
-    ``small_data/``; a packed dir keeps both at the root."""
-    out = {}
-    for n, name in runs:
-        root = run_dir(name)
-        data = root / "data" if (root / "data").is_dir() else root
-        small = root / "small_data" if (root / "small_data").is_dir() else root
-        norms = np.loadtxt(data / "constraint_norms_levels.dat")
-        with open(small / "psi4_mode_l2_all.dat") as f:
+def load():
+    data = {}
+    for n, name in RUNS:
+        root = PACKED / name
+        d = {k: np.loadtxt(stream(root, "data", f)) for k, f in (
+            ("norms", "constraint_norms_levels.dat"),
+            ("geometry", "throat_geometry.dat"), ("collapse", "collapse_diagnostics.dat"))}
+        for key, a in d.items():
+            if not np.isfinite(a).all() or np.any(np.diff(a[:, 0]) <= 0):
+                raise ValueError(f"{name}: non-finite or unordered {key}")
+        d["spheres"] = np.loadtxt(stream(root, "small_data", "throat_spheres.dat"))
+        p = stream(root, "small_data", "psi4_mode_l2_all.dat")
+        with (gzip.open(p, "rt") if p.suffix == ".gz" else p.open()) as f:
             head = f.readline().split()[1:]
-        psi4 = np.loadtxt(small / "psi4_mode_l2_all.dat")
-        re_, im_ = head.index(f"Re_m0(R={psi4_r})"), head.index(f"Im_m0(R={psi4_r})")
-        spheres = np.loadtxt(small / "throat_spheres.dat")
-        spheres = spheres[np.isfinite(spheres).all(1)]
-        member = dict(
-            norms=norms,
-            geometry=np.loadtxt(data / "throat_geometry.dat"),
-            spheres=spheres,
-            psi4=np.column_stack((psi4[:, 0], np.hypot(psi4[:, re_], psi4[:, im_]))),
-            psi4_re=psi4[:, [0, re_]],
-            collapse=np.loadtxt(data / "collapse_diagnostics.dat"),
-            mots=np.loadtxt(small / "mots_spectral.dat"),
-        )
-        if t_max is not None:
-            member = {k: clip(v, t_max) for k, v in member.items()}
-        for key, arr in member.items():
-            if arr.size == 0:
-                raise SystemExit(f"{name}: {key} empty at t <= {t_max}")
-            if key != "mots" and not np.isfinite(arr).all():
-                raise SystemExit(f"{name}: non-finite rows in {key}")
-        out[n] = member
-    return out
+        wave = np.loadtxt(p)
+        d["wave"] = wave[:, [0, head.index("Re_m0(R=14)")]]
+        data[n] = d
+    return data
 
 
-def main(argv=None) -> int:
+def order_rows(data):
+    rows = []
+    for level in range(4):
+        for j, name in enumerate(("Ham", "Mom")):
+            for t in TIMES:
+                e = []
+                for n, _ in RUNS:
+                    a = data[n]["norms"]
+                    if not a[0, 0] <= t <= a[-1, 0]:
+                        raise ValueError("order time lies outside a recorded stream")
+                    e.append(np.interp(t, a[:, 0], a[:, 1 + 2 * level + j]))
+                rows.append(dict(constraint=name, level=level, time=t,
+                                 p96_128=np.log(e[0]/e[1])/np.log(128/96),
+                                 p128_192=np.log(e[1]/e[2])/np.log(192/128)))
+    return rows
+
+
+def draw(data, t_constraints=50.):
+    style.prd(8.0)
+    fig, axes = plt.subplots(3, 4, figsize=(7.05, 3.85), layout="constrained")
+    formats = [dict(color=c, lw=1.1) for c in RESOLUTIONS]
+    rescaled = [dict(color=GREY, lw=.85, ls=ls) for ls in ("--", ":")]
+    for j in range(2):
+        for level in range(4):
+            ax = axes[j, level]
+            for (n, _), fmt in zip(RUNS, formats):
+                a = data[n]["norms"]
+                a = a[a[:, 0] <= t_constraints + 1e-8]
+                ax.plot(a[:, 0], a[:, 1 + 2*level + j], **fmt)
+            a = data[192]["norms"]
+            a = a[a[:, 0] <= t_constraints + 1e-8]
+            for p, fmt in zip((2, 4), rescaled):
+                ax.plot(a[:, 0], a[:, 1 + 2*level + j] * 2**p, **fmt)
+            ax.set(yscale="log", xlim=(0, t_constraints), xticks=[0, 25, 50])
+            title = f"({chr(97+j*4+level)})" + (f" Level {level}" if j == 0 else "")
+            ax.set_title(title, loc="left", fontsize=7.5, pad=4)
+            if j == 0:
+                ax.tick_params(labelbottom=False)
+            else:
+                ax.set_xlabel(r"$t$")
+            if level == 0:
+                ax.set_ylabel((r"$\|\mathcal{H}\|_2$", r"$\|\mathcal{M}\|_2$")[j])
+    for (n, _), fmt in zip(RUNS, formats):
+        d = data[n]
+        g, a, w, c = (d[k] for k in ("geometry", "spheres", "wave", "collapse"))
+        axes[2, 0].plot(g[:, 0], 100*(g[:, 1]/g[0, 1]-1), **fmt)
+        axes[2, 1].plot(a[:, 0], 100*(a[:, 2]/a[0, 2]-1), **fmt)
+        axes[2, 2].plot(w[:, 0], 1e5*(w[:, 1]-w[0, 1]), **fmt)
+        axes[2, 3].plot(c[:, 0], c[:, 1], **fmt)
+    names = ("Equatorial radius", "Areal radius", "Wave extraction", "Minimum lapse")
+    labels = (r"$\Delta R_{\rm eq}/R_{\rm eq}(0)$ [%]", r"$\Delta R_A/R_A(0)$ [%]",
+              r"$10^5\Delta(r\,\mathrm{Re}\,\Psi_4^{20})$", r"$\alpha_{\min}$")
+    for i, ax in enumerate(axes[2]):
+        ax.set_title(f"({chr(105+i)}) {names[i]}", loc="left", fontsize=7.5, pad=4)
+        ax.set(xlabel=r"$t$", ylabel=labels[i], xlim=(0, 115), xticks=[0, 50, 100])
+    axes[2, 3].set_yscale("log")
+    fig.legend([Line2D([], [], **f) for f in formats + rescaled],
+               [f"$N={n}$" for n, _ in RUNS] + [r"$N=192\times 2^2$", r"$N=192\times 2^4$"],
+               loc="outside upper center", ncol=5, frameon=False, fontsize=7.5,
+               handlelength=2, columnspacing=1.5)
+    return fig
+
+
+def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--out", type=pathlib.Path, default=None,
-                    help="output stem (default results/optimisation/figures/convergence_d21)")
-    ap.add_argument("--palette", choices=sorted(sw.PALETTES), default="rgb",
-                    help="colour scheme (default rgb, the spinning paper's)")
-    ap.add_argument("--colors", default=None,
-                    help="three comma-separated colours replacing the members' colours")
-    ap.add_argument("--t-max", type=float, default=None,
-                    help="clip every member to this t (default: finest member's last time)")
-    ap.add_argument("--t-constraints", type=float, default=50.0,
-                    help="Ham/Mom xlim (default 50, the equal-t window)")
+    ap.add_argument("--out", type=Path, default=FIGURES / "convergence_d21")
     args = ap.parse_args(argv)
-    look = dict(sw.PALETTES[args.palette])
-    if args.colors:
-        look["colours"] = tuple(c.strip() for c in args.colors.split(","))
-        if len(look["colours"]) != 3:
-            ap.error("--colors takes exactly three colours")
-
-    ns = tuple(n for n, _ in RUNS)
-    t_max = args.t_max
-    if t_max is None:
-        finest = run_dir(RUNS[-1][1])
-        data_dir = finest / "data" if (finest / "data").is_dir() else finest
-        t_max = float(np.loadtxt(data_dir / "constraint_norms_levels.dat")[-1, 0])
-    data = load(RUNS, PSI4_R, t_max)
-    fig = sw.draw(data, BOX, ns, R_EXACT, look, "hold", PSI4_R,
-                  t_constraints=args.t_constraints)
-    problems = style.label_audit(fig)
-    png = style.save(fig, args.out or FIGURES / STEM)
-
-    print(f"D21 X=1.829 triplet N {' / '.join(map(str, ns))}, "
-          f"Ham/Mom t <= {args.t_constraints:g}, rest t <= {t_max:.2f}")
-    sw.report(data, ns, R_EXACT, "hold", PSI4_R,
-              t_constraints=args.t_constraints)
-    print(f"palette {args.palette}; label audit: "
-          f"{'clean' if not problems else f'{len(problems)} problem(s): {problems}'}")
-    rel = png.relative_to(REPO) if png.is_relative_to(REPO) else png
-    print(f"wrote {rel}")
-    return 1 if problems else 0
-
+    data = load()
+    fig = draw(data)
+    issues = style.label_audit(fig)
+    print(style.save(fig, args.out))
+    plt.close(fig)
+    rows = order_rows(data)
+    with (PACKED / "constraint_orders.tsv").open("w") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
+        writer.writeheader(); writer.writerows(rows)
+    for n, d in data.items():
+        g = d["geometry"]
+        t1 = g[np.flatnonzero(g[:, 1]/g[0, 1] <= .99)[0], 0]
+        print(f"N={n}: last t={g[-1,0]:g}; first 1% contraction t={t1:g}")
+    print(f"label audit: {issues or 'clean'}")
+    return bool(issues)
 
 if __name__ == "__main__":
     raise SystemExit(main())

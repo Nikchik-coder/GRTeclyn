@@ -53,8 +53,8 @@ PARAMS = ("mass", "q1", "q2", "q3")
 GATED = ("PASS", "FRONTIER")
 # Line style remains an independent channel when printed in greyscale.
 CURVES = (
-    ("#292929", "-"), ("#1f77b4", "-"), ("#4a8d82", "--"),
-    ("#85739c", ":"), ("#777777", "-."), ("#35566e", (0, (5, 2, 1, 2))),
+    ("#292929", "-"), ("#1f77b4", "-"), ("#79b9dd", "--"),
+    ("#4c667b", ":"), ("#777777", "-."), ("#35566e", (0, (5, 2, 1, 2))),
 )
 
 
