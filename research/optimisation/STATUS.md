@@ -62,14 +62,32 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 
 ## Live
 
-Checked **2026-10-31 at 21:10 MSK**. **D80 and D90 low-mass searches
-launched on second-node cards 0 and 1**, after pulling `3e11fa5f` and
-checking both cards idle. Jobs `opt-d80-lowmass-20261031` and
-`opt-d90-lowmass-20261031`; outputs `runs/optimisation/low_mass_20261031/`.
-First-node GPU now runs the geometry pilot below. These low-mass jobs
-are progressing through CMA proposals; their measured completion ETA is pending. Each has a
-**4 h cap, ending November 1 at 01:10 MSK**, 400 CMA proposals, four threads
-and a 200 GiB virtual-memory cap. No evolution, plotfiles or AMR checkpoints.
+Checked **2026-10-31 at 21:49 MSK**. D80 finished **21:44:01 MSK**,
+400 proposals, exit 0: X=1.069974516102 versus V=0 X=1.419239991186
+(24.61% lower), m=0.1998769, q=(-1.998487,0.022093,7.996882).
+**Its reported final refinement took zero Newton updates on every grid**;
+it passes interpolated-background checks but is not yet an independent
+recovery test. A perturbed-seed recheck is being prepared on the free card.
+D90 is still searching (at least 372/400); its screened X=0.61325934 is
+2.29% above V=0 X=0.59954903. Both use second-node cards 0/1, respectively.
+First-node card 0 continues the geometry pilot below.
+
+**D90 extension authorized (21:48 MSK).** If the first 400-proposal search
+does not beat V=0, run separate bounded restarts from its final screened
+shape and from a weak pure kink near m=0.01, at the same R_e/J/gamma.
+Keep the massless reference explicit; a lower coarse-grid bill or a failed
+resolution screen is not an improvement. Exact launch settings follow below
+when started. Original jobs: `opt-d80-lowmass-20261031`,
+`opt-d90-lowmass-20261031`; output `runs/optimisation/low_mass_20261031/`.
+No evolution, plotfiles or AMR checkpoints. At 21:48 storage is clean:
+first node **46 MB cache / 614 GB free**, second **47 MB / 556 GB free**.
+
+The legacy search and standalone resolution command now request a
+perturbed seed, at least one Newton correction and a 1e-14 solve target
+for final refinement, as the true-area study already does. Cheap screens
+remain unchanged. The focused search/resolution/study suites pass **84 tests**.
+Old zero-update labels must not substitute for this recovery test; the
+original files and logs will be retained alongside the recheck.
 
 Requested experiment: m in [0.001, 0.20], x0=(0.10,0,0,0), mass step 0.03,
 q_i in [-2,8], seeds 205 (D80) and 207 (D90). Hold each classical reference's

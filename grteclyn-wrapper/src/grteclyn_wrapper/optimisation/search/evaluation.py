@@ -98,7 +98,7 @@ def check_best(ctx: SearchContext, key, row, method):
     result, checked = check_candidate(
         spin, config, ctx.grids, ctx.pin_row, check_d2,
         ctx.checks_root/f"e{row['nfev']:04d}_{method}", method=method,
-        score_key=ctx.score_key)
+        score_key=ctx.score_key, perturb_seed=(method == "refine"))
     if not result["passed"]:
         return None
     final = dict(row, **result["records"][-1])

@@ -88,6 +88,7 @@ def search(command, invoke, monkeypatch, tmp_path):
     patch('exotic_x', exotic)
     def check(state, config, grids, pin, d2, directory, **kw):
         method = kw['method']
+        assert kw['perturb_seed'] == (method == 'refine')
         trace.checks.append(method)
         row = dict(nx=4, ny=2, X=3.-config['m']+trace.checked_offset, X_A=5.-config['m']+trace.checked_offset, R_e=2., R_A=3.,
                    R_pol=2., E19=0., E_c=0., verdict='PASS')

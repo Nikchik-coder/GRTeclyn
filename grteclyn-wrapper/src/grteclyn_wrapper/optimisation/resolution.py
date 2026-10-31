@@ -218,7 +218,8 @@ def main():
     result, checked = check_candidate(
         state, config, refinement_grids(len(state["sx"])-1, len(state["sy"])-1),
         pin, (state["psim"]*state["sigma"]/np.pi)**2, args.out,
-        method=args.method, score_key="X_A" if pin[0]=="area" else "X")
+        method=args.method, score_key="X_A" if pin[0]=="area" else "X",
+        perturb_seed=(args.method == "refine"))
     if result["passed"]:
         save_checked(args.out/("validated.npz" if args.method=="refine" else "screened.npz"),
                      checked, config, metadata, result)
