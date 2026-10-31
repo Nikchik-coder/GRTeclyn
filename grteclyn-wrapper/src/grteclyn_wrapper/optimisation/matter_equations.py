@@ -687,12 +687,22 @@ class MatterCollocationProblem:
     def _jets(self, fields_by_tag):
         jets = {}
         for tag, A in fields_by_tag.items():
+            # Remove the endpoint linear interpolant before differentiating.
+            # Dxx applied to an O(1) constant can leave O(1e-7) roundoff at
+            # nx=180, overwhelming small metric corrections. Restore the
+            # interpolant's analytic first derivative; its second is zero.
+            x = self.sx[:, None]
+            y = self.sy[None, :]
+            radial = A - (.5*(1+x)*A[:1] + .5*(1-x)*A[-1:])
+            angular = A - (.5*(1+y)*A[:, :1] + .5*(1-y)*A[:, -1:])
             jets[tag] = A
-            jets[f"{tag}_x"] = self.Dx @ A
-            jets[f"{tag}_xx"] = self.Dxx @ A
-            jets[f"{tag}_y"] = A @ self.Dy.T
-            jets[f"{tag}_yy"] = A @ self.Dyy.T
-        jets["B_xy"] = (self.Dx @ fields_by_tag["B"]) @ self.Dy.T
+            jets[f"{tag}_x"] = self.Dx @ radial + .5*(A[:1]-A[-1:])
+            jets[f"{tag}_xx"] = self.Dxx @ radial
+            jets[f"{tag}_y"] = angular @ self.Dy.T + .5*(A[:, :1]-A[:, -1:])
+            jets[f"{tag}_yy"] = angular @ self.Dyy.T
+        bx = jets['B_x']
+        angular = bx - (.5*(1+y)*bx[:, :1] + .5*(1-y)*bx[:, -1:])
+        jets["B_xy"] = angular @ self.Dy.T + .5*(bx[:, :1]-bx[:, -1:])
         return jets
 
     def _residual(self, u, value):
