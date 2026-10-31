@@ -23,8 +23,10 @@ def validate(state, config, row, *, reference_peak, tidal_factor, energy_budget=
               for k in ('X_full','E_b'))
     out['volume_relative_drift']=float(drift)
     if drift>1e-6: reasons.append('volume_quadrature')
-    if energy_budget is not None and fine['E_b_over_R_A']>energy_budget:
-        reasons.append('ordinary_energy_budget')
+    if energy_budget is not None:
+        out['ordinary_energy_limit'] = float(energy_budget)
+        if fine['E_b_over_R_A']>energy_budget:
+            reasons.append('ordinary_energy_budget')
     if config.get('matter'):
         from .exoticity import _grid_eval
         key='CHI' if config['matter']=='cloud' else 'Z'

@@ -221,6 +221,16 @@ def test_required_newton_update_survives_small_scaled_residual():
     assert abs(solved[0]-1)<1e-12
 
 
+def test_infeasible_search_scores_guide_without_overriding_acceptance():
+    from grteclyn_wrapper.optimisation.study import search_score
+    feasible = search_score(dict(verdict='PASS', X_full=1e6))
+    near = search_score(dict(verdict='ABOVE_GATE', E19=2e-8))
+    far = search_score(dict(verdict='ABOVE_GATE', E19=1e-3))
+    assert feasible < 1 < near < far < 3
+    assert search_score(dict(verdict='FAILED')) == 4
+    assert search_score(dict(verdict='ABOVE_GATE', E_c=float('nan'))) == 4
+
+
 def test_signed_winding_reverses_twist_and_preserves_other_equations():
     from grteclyn_wrapper.optimisation.matter_equations import MatterCollocationProblem
     from grteclyn_wrapper.optimisation.potentials import PolynomialPotential

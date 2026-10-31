@@ -65,6 +65,23 @@ The boson reference passes all three grids; its first finite-amplitude seed
 stalled, and the remaining mass/amplitude seeds continue. Both cards are busy.
 No extra scratch plotfiles or AMR checkpoints are produced.
 
+The first refinement diagnostic finished normally: interpolation passes all
+three grids, but correcting the fine-grid equations can degrade the unused
+constraints; refreshing every Jacobian does not resolve it. This points to
+numerical solve behavior, not a demonstrated new physical branch failure.
+
+`opt-area-derivative-check-20261031` ran on second/card 0 from 15:31 MSK,
+code `163dde5e`, four threads, 200 GiB, 30 min cap. It completed normally.
+Removing linear backgrounds from derivative evaluation reduces cancellation
+in a manufactured test (164 tests pass), but the 180x36 solves still fail the
+unchanged constraints. Output: `runs/optimisation/fixed_area/derivative_check_20261031/`.
+It is a numerical improvement, not a repair of the full refinement failure.
+The next diagnostic inspects the LU correction and the largest residual rows.
+
+The boson pilot has produced numerical nonzero-field solutions, not physical
+clearance: one is bound and localized but has E_b/R_A = 3.015 (limit 1) and
+E19 = 6.43e-6. More seeds and the CMA stage continue; no accepted winner yet.
+
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
 

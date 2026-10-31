@@ -83,6 +83,29 @@ def write_json(path,data):
     tmp.replace(path)
 
 
+def search_score(row):
+    """Guide infeasible proposals toward the unchanged hard acceptance gates."""
+    if row.get('verdict') == 'PASS':
+        x = float(row['X_full'])
+        return x/(1+x) if np.isfinite(x) and x > 0 else 4.
+    if row.get('verdict') == 'FAILED':
+        return 4.
+    penalty = .1*len(row.get('rejection_reasons', []))
+    for key, limit in (('E19', 1e-8), ('E_c', 1e-8), ('J_error', 1e-6),
+                       ('pin_error', 1e-8), ('volume_relative_drift', 1e-6),
+                       ('amplitude_error', 1e-6)):
+        value = float(row.get(key, 0.))
+        if not np.isfinite(value):
+            return 4.
+        penalty += np.log1p(max(0., abs(value)/limit-1))
+    if row.get('tidal_limit', 0.) > 0:
+        penalty += np.log1p(max(0., row['tidal_peak']/row['tidal_limit']-1))
+    if row.get('ordinary_energy_limit', 0.) > 0:
+        penalty += np.log1p(max(0., row['E_b_over_R_A']/row['ordinary_energy_limit']-1))
+    # Feasible < 1; solved but rejected in [2,3); failed solves score 4.
+    return 2+penalty/(1+penalty)
+
+
 def source_manifest(solution,cfg,args,case):
     paths=[Path(solution).with_suffix(ext) for ext in ('.json','.npz')]
     paths += [Path(p) for p in cfg['candidate_seeds']]
@@ -327,11 +350,11 @@ def run(args,*,error):
             r['seconds']=time.monotonic()-start_time
             r=accept_seed(s,c,r,x,'search')
             # Infeasible scores cannot outrank any positive feasible objective.
-            return r['X_full']/(1+r['X_full']) if r['verdict']=='PASS' else 2.
+            return search_score(r)
         except (RuntimeError,ValueError,FloatingPointError,np.linalg.LinAlgError) as err:
             record(dict(stage='search',parameters=list(map(float,x)),verdict='FAILED',
                         rejection_reasons=[str(err)],seconds=time.monotonic()-start_time))
-            return 3.
+            return 4.
         finally:
             release_solver()
     if remaining:
