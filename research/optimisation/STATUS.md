@@ -34,14 +34,25 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:52 MSK**. **Opposite-winding and warm nonrotating boson
-searches occupy second/cards 1 and 0. The potential-only finalist passes all
+Checked **2026-10-31 at 15:52 MSK**. **Opposite-winding bosons occupy second/card 1; the warm local pilot on
+card 0 was stopped for the corrected CMA restart. The potential-only finalist passes all
 three grids. D46 at the 15:45 snapshot was alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
 (19:22 MSK); its consumer advances.**
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+The warm NM pilot was stopped at **15:54 MSK** after 58 proposals,
+all rejected. It reaches E_b/R_A = 0.994685 but its peak tide is 0.256794,
+about eight times the reference and twice the t4 cap; X_full = 1.904439.
+This is a diagnosed physical trade-off, not a Newton failure. The old
+sequential penalty can prefer a point just above the energy cap because
+its excessive tides are not evaluated. The replacement is an explicit CMA
+run with simultaneous diagnostics, starting from re-solved candidate 00053.
+Selected fields and the full trace/log are archived in
+`results/optimisation/validation/2026-10-31-extensions/boson-k0-local/`.
+No accepted or refined boson winner exists yet. Scratch is unchanged.
 
 `opt-boson-k1-t4-e1-20261031` ended **15:51:21 MSK**, exit 2:
 all 40 linear-mode attempts unresolved and all 40 finite seeds failed.
@@ -402,7 +413,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
-| `opt-boson-k0-warm-20261031` | second / 0 | reference passing, alive | measuring | 2 h cap; Oct 31 17:44 MSK |
+| `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
 | `opt-boson-kminus1-t4-e1-20261031` | second / 1 | reference/seed search starting | measuring | 2 h cap; Oct 31 17:52 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
 | `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |

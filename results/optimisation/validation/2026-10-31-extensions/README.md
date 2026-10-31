@@ -31,3 +31,12 @@ attempts unresolved and 40 finite-seed solves failed, across two backgrounds,
 five masses and four amplitudes. No nonzero solution or CMA evaluation;
 this is initialization failure, not evidence that the branch cannot exist.
 The opposite signed winding is tested separately.
+
+`boson-k0-local` (code cb72d5a3) was stopped after 58 local Nelder-Mead
+proposals to replace sequential rejection scoring with simultaneous energy
+and tidal penalties. The launcher defaulted to NM because `--engine cma`
+was omitted. Candidate 00053 has X_full=1.904439, E_b/R_A=0.994685, and
+peak tide 0.256794 versus cap 0.128492: it is rejected, not a winner.
+Only the starting matter seed, this diagnostic candidate, reference fields
+and complete trace/log are archived; other provisional fields remain in the
+stopped cluster run. The new CMA run re-solves 00053 before using it.

@@ -1,0 +1,13 @@
+# Each named case is a separate capped stationary job. Listing launches nothing.
+version = 1
+tidal_factors = [4.0]
+energy_budgets = [1.0]
+windings = [0]
+mass_range = [0.5, 8.0] # physical boson mass times the fixed areal radius
+mass_seeds = [0.5, 1.0, 2.0, 4.0, 8.0]
+amplitude_seeds = [0.01, 0.03, 0.1, 0.3] # chi = sqrt(4pi) phi
+amplitude_max = 0.5
+candidate_seeds = ["results/optimisation/article/d21_e140_210x42.npz"]
+
+# This numerical seed is not an accepted model; it is re-solved and rechecked.
+matter_candidate_seeds = ["results/optimisation/validation/2026-10-31-extensions/boson-k0-local/candidate_00053.npz"]

@@ -1,0 +1,6 @@
+{
+  "status": "stopped_for_complete_constraint_scoring",
+  "search_evaluations": 58,
+  "selected_seed": "candidate_00053.npz",
+  "reason": "Energy-feasible candidate fails tidal cap; restart with simultaneous penalties and explicit CMA."
+}
