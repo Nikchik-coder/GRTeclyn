@@ -34,7 +34,7 @@ removed from both queues. The old D51 export remains rejected.
 ## Live
 
 Checked **2026-10-31 at 15:22 MSK**. **The ordinary-boson pilot is running
-on second/card 1; second/card 0 is reserved for refinement diagnostics.**
+on second/card 1; refinement diagnostics are running on second/card 0.**
 D46's last evolution check remains the 15:01 snapshot below.
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
@@ -53,6 +53,17 @@ Logs persist under `runs/capped_jobs/opt-boson-k0-t4-e1-20261031/`.
 The companion diagnostic will compare perturbed/unperturbed seeds and fresh
 versus reused Jacobians. Acceptance thresholds remain unchanged.
 Second-node scratch: 47 MB cache only; 476 GB free.
+
+`opt-area-refinement-diagnose-20261031` started at **15:26:13 MSK**
+on second/card 0 after pulling `922a93a7`; all 162 optimisation tests pass.
+It independently tests candidate 00071 on 150x30, 180x36 and 210x42 with
+unperturbed and perturbed seeds and fresh versus reused Jacobians. Four
+threads, 200 GiB cap, 1 h timeout (**16:26 MSK**). Output:
+`runs/optimisation/fixed_area/diagnose_20261031/`.
+Newton histories, damping, Jacobian counts and exit reasons are now recorded.
+The boson reference passes all three grids; its first finite-amplitude seed
+stalled, and the remaining mass/amplitude seeds continue. Both cards are busy.
+No extra scratch plotfiles or AMR checkpoints are produced.
 
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
@@ -296,6 +307,7 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
+| `opt-area-refinement-diagnose-20261031` | second / 0 | three-grid diagnosis | measuring | hard timeout Oct 31 16:26 MSK |
 | `opt-boson-k0-t4-e1-20261031` | second / 1 | reference and seed search starting | measuring | hard timeout Oct 31 17:22 MSK |
 | `opt-d21-area-t4-pilot-20261031` | second / 1, finished | 88 proposals; 10 search-grid passes, no validated finalist | exit 2; 972.8 s | finished Oct 31 14:57 MSK |
 | `opt-d21-area-t2-pilot-r2-20261031` | second / 1, finished | reference PASS; 16 proposals, no accepted candidate | ended, exit 2; 181.6 s | Oct 31 14:37 MSK |
