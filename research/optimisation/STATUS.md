@@ -64,8 +64,16 @@ after D40 finished. Initial continuation failed at m = 0.01875 after six
 bisections (Newton residual 2.7e-7, max_iter); exit 1 at 09:45 MSK.
 **No CMA evaluations or validated winner were produced.** The queue's JSON
 says `search_launched`, not success; the capped-job exit code and log are
-final. No retry setting has been chosen. The freed card is now assigned to
-the already-authorized D40 evolution.
+final. A revised retry is authorized (09:57 MSK): 60 mass increments to
+m = 0.3 (step 0.005), 48 Newton iterations per initialization solve and
+24 total bisections per leg. These replace 3/12/6 only for initialization;
+fixed R_e/J, seed 151, search bounds, 400 evaluations, Newton acceptance
+1e-9, independent constraints and finalist validation remain unchanged.
+The new CLI options are covered by bounded-failure, seed-reuse and acceptance
+regressions; 46 search/solver tests pass. The retry will use a fresh r2
+output prefix and wait for D46 to release first/card 0. No GPU is free:
+second/card 0 now runs the already-authorized D40 evolution. No dynamical
+instability conclusion follows from this initialization failure.
 
 D40 `D40_cma20261031_L64_N128_ml3_spdrv0_t100` started at 09:49:56 MSK,
 second/card 0, checkpoints off. Its 2049x129 background was exported from

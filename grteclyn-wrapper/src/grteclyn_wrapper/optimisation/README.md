@@ -65,6 +65,14 @@ candidate usually helps Newton's method converge. The initial walk from the
 known solution changes the potential gradually; failed steps are bisected a
 limited number of times.
 
+For difficult initialization, `--walk-m-steps`, `--walk-max-iter` and
+`--walk-max-splits` control the number of mass increments, Newton iterations
+per solve and total bisections per leg. Defaults are 3, 12 and 6. Increasing
+these budgets changes only the walk to the initial potential; search bounds,
+proposal solves and independent validation thresholds remain unchanged.
+Failure before `walk-in done` means CMA-ES has not started, not that a dynamical
+instability was measured.
+
 Both search engines use the same scoring and checks. Nelder–Mead (`--engine nm`)
 moves a simplex through the parameter space. CMA-ES (`--engine cma`) proposes
 populations of candidates and adapts their spread. Neither engine changes the

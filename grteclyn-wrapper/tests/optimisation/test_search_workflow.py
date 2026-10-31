@@ -28,7 +28,8 @@ def search(command, invoke, monkeypatch, tmp_path):
                 monkeypatch.setattr(module, name, value)
     trace = SimpleNamespace(solves=[], checks=[], scores=[], proposals=None,
                             refine_pass=True, screen_pass=True, fail_mass=None, monitor=0.,
-                            proposal_monitor=0., checked_offset=0.)
+                            proposal_monitor=0., checked_offset=0., budgets=[],
+                            initialization_iters=0, initialization_step=None)
     shape = (5, 3)
     radial = ArctanMap(eta0=1.)
     sol = SimpleNamespace(meta={'prescribed': {'J': 1.}}, observables={'D': 1/np.pi},
@@ -69,6 +70,13 @@ def search(command, invoke, monkeypatch, tmp_path):
     def newton(residual, jac, u, **kw):
         p = residual.__self__
         trace.solves.append((p.mass, p.kw['prescribe'][1], u['marker']))
+        trace.budgets.append(kw.get('max_iter', 12))
+        if 0 < p.mass < .3 - 1e-10 and (
+                kw.get('max_iter', 12) < trace.initialization_iters or
+                (trace.initialization_step is not None and
+                 p.mass - u['marker'] > trace.initialization_step + 1e-10)):
+            return u, dict(converged=False, res_scaled_inf=1e-5, iters=12,
+                           reason='controlled continuation stall')
         if trace.fail_mass is not None and np.isclose(p.mass, trace.fail_mass):
             raise RuntimeError('controlled Newton failure')
         return dict(marker=p.mass), dict(converged=True, res_scaled_inf=0., iters=1)
@@ -167,6 +175,46 @@ def test_walk_failure_is_bounded(search):
     assert search.run() == 1
     assert len(search.solves) < 25
     assert not search.scores
+
+
+def test_gradual_initialization_keeps_search_and_validation_unchanged(search):
+    search.initialization_iters = 48
+    search.initialization_step = .005
+    assert search.run('--walk-m-steps', '60', '--walk-max-iter', '48',
+                      '--walk-max-splits', '24') == 0
+    masses = [m for (m, _, _), budget in zip(search.solves, search.budgets)
+              if budget == 48]
+    np.testing.assert_allclose(masses[:61], np.linspace(0, .3, 61))
+    assert search.budgets[-1] == 12  # CMA/NM proposals retain their own budget.
+    assert search.checks == ['screen', 'refine']
+    assert search.scores == pytest.approx([2.7])
+
+
+def test_increased_continuation_budget_does_not_accept_failed_newton(search):
+    search.initialization_iters = 49
+    assert search.run('--walk-m-steps', '60', '--walk-max-iter', '48',
+                      '--walk-max-splits', '24') == 1
+    assert len(search.solves) == 28  # Member, V=0, walk zero, 25 failed attempts.
+    assert not search.scores
+    assert not search.checks
+    assert not list(search.out.glob('*best*.npz'))
+
+
+def test_bisection_reuses_last_successful_fields(search):
+    search.initialization_step = .025
+    assert search.run('--walk-max-splits', '24') == 0
+    assert any(np.isclose(m, .05) and np.isclose(seed, .025)
+               for m, _, seed in search.solves)
+    assert search.checks == ['screen', 'refine']
+
+
+@pytest.mark.parametrize('option', ['--walk-m-steps', '--walk-max-iter', '--walk-max-splits'])
+@pytest.mark.parametrize('value', ['0', '-1'])
+def test_invalid_continuation_budgets_do_not_solve(search, option, value):
+    with pytest.raises(SystemExit) as exc:
+        search.run(option, value)
+    assert exc.value.code == 2
+    assert not search.solves
 
 
 @pytest.mark.parametrize('extra', [['--stability'], ['--x0', '.3,0,0,0,1'], ['--x0', '5,0,0,0']])

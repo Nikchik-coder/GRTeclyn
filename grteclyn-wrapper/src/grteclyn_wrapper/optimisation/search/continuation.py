@@ -100,15 +100,17 @@ def stab_at(ctx: SearchContext, x, key, spin):
 
 
 def walk(ctx: SearchContext, chain, prev, jval=None, what="walk-in"):
+    """Follow each leg with a bounded split budget, retaining accepted seeds."""
     xlast, row = chain[0] * 0.0, None
     for xk in chain:
         pending, splits = [xk], 0
         while pending:
             xt = pending[-1]
-            row, nxt = evaluation.solve_at(ctx, xt, prev, jval=jval)
+            row, nxt = evaluation.solve_at(ctx, xt, prev, jval=jval,
+                                           max_iter=ctx.args.walk_max_iter)
             if nxt is None:
                 splits += 1
-                if splits > 6:
+                if splits > ctx.args.walk_max_splits:
                     print(f"{what} FAILED at "
                           f"({', '.join(f'{v:g}' for v in xt)}): "
                           f"{row['err']} (after {splits - 1} splits)",
@@ -121,4 +123,7 @@ def walk(ctx: SearchContext, chain, prev, jval=None, what="walk-in"):
                 continue
             prev, xlast = nxt, xt
             pending.pop()
+        print(f"  {what} reached ({', '.join(f'{v:g}' for v in xk)}): "
+              f"newton {row['newton']:.1e} ({row['iters']} it); "
+              f"{row['verdict']}", flush=True)
     return prev, row

@@ -12,6 +12,13 @@ import argparse
 from ..search.state import SCALES, STALL_OK
 
 
+def positive_int(value: str) -> int:
+    number = int(value)
+    if number < 1:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return number
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("solution", help=".npz / .json path of a V = 0 member")
@@ -79,6 +86,13 @@ def build_parser() -> argparse.ArgumentParser:
                          "route: stability uncertifiable, not "
                          "disqualifying")
     ap.add_argument("--maxfev", type=int, default=200)
+    ap.add_argument("--walk-m-steps", type=positive_int, default=3,
+                    help="mass increments from V=0 to x0 during initialization")
+    ap.add_argument("--walk-max-splits", type=positive_int, default=6,
+                    help="total bisection budget per initial continuation leg")
+    ap.add_argument("--walk-max-iter", type=positive_int, default=12,
+                    help="Newton iteration budget during initialization only; "
+                         "acceptance thresholds and search solves are unchanged")
     ap.add_argument("--fatol", type=float, default=2e-5,
                     help="X tolerance of the simplex stop")
     ap.add_argument("--nx", type=int, default=None)

@@ -160,14 +160,14 @@ def run(args, *, error):
         prev0 = ctx.prev0 = continuation.static_seed(ctx)
         print("J = 0: start from the static drainhole seed", flush=True)
 
-    # the walk-in: m in thirds, then the shape in 0.3 steps.  A leg that
+    # the walk-in: configurable mass increments, then shape in 0.3 steps. A leg that
     # stalls gets bisected toward the last solved point (the stiff-spin
     # straight line stalls marginally where the step-3 fan got through
     # on another route); capped so a true wall still stops the run
     x_pot = np.asarray(x0[:4], float)
     m0 = float(x_pot[0])
-    chain = [np.array([mk, 0, 0, 0]) for mk in
-             (0.0, m0 / 3.0, 2 * m0 / 3.0, m0)]
+    chain = [np.array([m0 * k / args.walk_m_steps, 0, 0, 0])
+             for k in range(args.walk_m_steps + 1)]
     n_q = max(1, int(math.ceil(max(abs(v) for v in x_pot[1:]) / 0.3))
               if np.any(x_pot[1:]) else 1)
     chain += [np.concatenate([[m0], x_pot[1:] * k / n_q])
@@ -182,6 +182,9 @@ def run(args, *, error):
           f"X_A {row_v0['X_A']:.8e}  E19 {row_v0['e19']:.1e}  "
           f"E_c {row_v0['e_c']:.1e}", flush=True)
 
+    print(f"walk-in budgets: {args.walk_m_steps} mass increments, "
+          f"{args.walk_max_iter} Newton iterations/solve, "
+          f"{args.walk_max_splits} splits/leg; acceptance unchanged", flush=True)
     prev, row = continuation.walk(ctx, chain, prev0)
     if prev is None:
         return 1

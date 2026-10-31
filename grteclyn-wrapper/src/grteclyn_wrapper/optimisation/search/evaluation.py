@@ -20,7 +20,7 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
 from .state import TOL, C_GATE, CLEAN_GATE, CEILING, SAVE_CONVENTIONS
 
 
-def solve_at(ctx: SearchContext, x, prev, jval=None):
+def solve_at(ctx: SearchContext, x, prev, jval=None, *, max_iter=12):
     """One pinned solve at knob vector x, continued from prev, at
     the member's J (or ``jval`` -- the stability twin's branch, which
     takes the twin's stall cut).  When --free-J and jval is omitted,
@@ -42,7 +42,8 @@ def solve_at(ctx: SearchContext, x, prev, jval=None):
                  omega_inf=prev["omega"], psi_minus=prev["psim"],
                  sigma=prev["sigma"], xi_t=prev["xi_t"])
     try:
-        u, info = newton(p2.residual, p2.jacobian, u0, tol=TOL)
+        u, info = newton(p2.residual, p2.jacobian, u0, tol=TOL,
+                         max_iter=max_iter)
     except Exception as err:
         return {"verdict": "FAILED", "err": str(err),
                 "secs": time.time() - t0, "J": j_run}, None
