@@ -33,10 +33,24 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Latest supplied cluster check: **2026-10-31 at 11:56 MSK**. All three H100s
-are occupied; **D30, D40 and D46 evolutions and their consumers are alive.
-D51 is removed
-from both the search and evolution queue; no further retry is authorized.**
+Checked **2026-10-31 at 14:04 MSK**. **D30 finished at t = 100 (exit 0)
+at 13:44 MSK; second/card 1 is free. D40 and D46 are evolving with live
+consumers. D51 remains removed from both queues.**
+
+D30's four evolution diagnostic streams are finite through t = 100; its
+consumer processed the final plotfile. Reaching the chosen stop time is
+not a stability or late-time accuracy claim: final global Ham/Mom norms
+are 4.45e-3/1.49e-3 and the throat is contracting. Seven diagnostic streams,
+parameters, final log and source hashes are archived under
+`results/optimisation/completed/2026-10-31/d30/evolution/` (1.5 MB).
+The three finished scratch plotfiles (7.1 GiB) were removed after archiving;
+frames, slice caches and movies remain. No checkpoints or queued restart
+need this run. Cleanup is logged in the October 31 scratch manifest.
+
+Scratch after cleanup: first node 7.2 GB used / 621 GB free; second node
+7.2 GB used / 461 GB free. Three plotfiles each for D40/D46, no checkpoints
+or finished-run plotfiles. Current progress and ETAs are in the table below;
+earlier startup observations below retain their measurement times.
 
 The module entry point is
 `python -m grteclyn_wrapper.optimisation.commands.optimize_potential`.
@@ -160,11 +174,11 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 64.05 / 100, alive | 20.0 units/h | 1.8 h; Oct 31 13:44 MSK |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, now free | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
-| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 41.96 / 100, alive | 20.0 units/h | 2.9 h; Oct 31 14:50 MSK |
+| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 84.72 / 100, alive | 19.98 units/h | 0.76 h; Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 15.16 / 150, alive; full preflight passed | 18.1 units/h | 7.4 h; Oct 31 19:23 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 53.98 / 150, alive | 18.14 units/h | 5.30 h; Oct 31 19:22 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
