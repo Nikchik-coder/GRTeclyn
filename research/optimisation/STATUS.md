@@ -60,6 +60,45 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 | D21 potential-only dynamical comparison | Evolve the saved V=0 reference at J=1.0138 with drive 0, same R_e, binary, grid and perturbation | One N128 evolution, roughly 6--9 GPU h to t100--150 at 18 units/h; deferred, no new launch authorized here; checkpoint choice needed |
 | Continuum growth rate and onset model | Fit each saved D21 resolution over matched linear intervals, test fit-window sensitivity and a common-tau logarithmic onset law | CPU post-processing of existing streams; no new evolution needed for the first check |
 
+## Signed-interior potential experiment — authorized, awaiting dispatch
+
+The October 31 request allows negative Q inside the kink while keeping both
+asymptotic vacua locally massive. `--potential-domain endpoint-positive`
+requires m_min>0 and Q(1)>0; the default positive family remains available.
+For V=m² psi²(psi-psi_minus)² Q/psi_minus², both endpoints retain V=V'=0,
+with V''(0)=2m² and V''(psi_minus)=2m²Q(1). These local conditions do not
+establish a connecting solution or stability. The rotation equation contains
+no explicit V term: enhanced frame dragging is a hypothesis to measure.
+
+Two stationary tests are authorized; neither displaces an active job:
+
+| Test | Search and control | Budget / dispatch |
+|---|---|---|
+| Signed D90 | Exact member 0031 R_e/J/gamma; m=[0.001,0.20], q_i=[-8,8], x0=(0.05,-4.2,4.2,0), seed 239; explicit V=0 control | 400 CMA proposals, 4 h cap; next free second-node GPU |
+| Signed geometry | D21 true minimal area/gamma fixed, J=[0,7.7], initial-reference tidal ceiling ×4; m=[0.005,1.2], q_i=[-8,8], x0=(0.5,-4.2,4.2,0), seed 241; V=0 control at winning J required | 200 CMA proposals, 4 h cap; other free second-node GPU |
+
+The starting shape has Q(0)=Q(1)=1 and Q(1/2)=-0.05. Allowing signed
+interiors does not force the winner to have one: saved extrema and endpoint
+values distinguish signed candidates from ordinary positive-family results.
+Both searches use 150x30 and actual perturbed final refinement on
+150x30/180x36/210x42. D90 keeps cheap finer-grid screens on each new best;
+the geometry study retains independent off-grid equations, the true minimal
+surface, angular-gradient exoticity and the tidal ceiling. No radial stability
+screen, evolution, AMR checkpoints or plotfiles. Negative V itself contributes
+no direct null-contracted term; reduced X still requires changed scalar gradients.
+
+Validation: **189 optimisation tests pass**, including signed-vacuum derivatives,
+opt-in proposal acceptance, final-refinement metadata, free-J matched controls
+and rejection before GPU selection. Dispatch guards reject missing telemetry
+and busy cards; shell syntax and whitespace checks pass.
+
+Reproducible commands: `research/optimisation/studies/run_signed_potential.sh`.
+Output root: `runs/optimisation/signchanging_20261031/` (D90 `d90.tsv`,
+geometry `geometry/potential-t4/`). Dispatch must fail closed if GPU telemetry
+fails or a compute job is present. At **22:08 MSK** all three GPUs remain
+occupied: first node geometry, second node the two D90 extensions. Scratch is
+clean: first **46 MB cache / 614 GB free**, second **47 MB / 559 GB free**.
+
 ## Live
 
 Checked **2026-10-31 at 21:52 MSK**. Both initial 400-proposal

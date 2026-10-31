@@ -359,7 +359,9 @@ def test_free_spin_gain_requires_matched_control():
     assert compare_results(reference,winner)['validated_fractional_improvement']==.5
 
 
-def test_free_spin_workflow_matches_final_reference(monkeypatch,tmp_path):
+@pytest.mark.parametrize("domain,q", [("positive",[0.,0.,0.]),
+                                     ("endpoint-positive",[-4.2,4.2,0.])])
+def test_free_spin_workflow_matches_final_reference(monkeypatch,tmp_path,domain,q):
     from grteclyn_wrapper.optimisation import study,study_report
     from grteclyn_wrapper.optimisation.commands.optimize_potential import build_parser
     import scipy.optimize
@@ -382,16 +384,19 @@ def test_free_spin_workflow_matches_final_reference(monkeypatch,tmp_path):
     monkeypatch.setattr(study_report,'plot_comparison',lambda *a:None)
     def minimize(objective,x0,**kw):
         assert len(x0)==5 and x0[4]==1.
-        objective(np.array([.3,0,0,0,2.]))
+        objective(np.array([.3,*q,2.]))
     monkeypatch.setattr(scipy.optimize,'minimize',minimize)
     config=tmp_path/'study.toml'; config.write_text('windings=[]\n')
     out=tmp_path/'out'
     args=build_parser().parse_args(['unused.json','--study-config',str(config),
          '--study-case','potential-t4','--nx','8','--ny','4','--out',str(out),
-         '--maxfev','1','--free-J','--J-min','0','--J-max','3','--J-step','.5'])
+         '--maxfev','1','--free-J','--J-min','0','--J-max','3','--J-step','.5',
+         '--potential-domain',domain,'--q-min','-8'])
     assert study.run(args,error=lambda msg:pytest.fail(msg))==0
     data=json.loads((out/'potential-t4/outcome.json').read_text())
     assert [c['J'] for c in checks]==[1.,2.,2.]
+    assert checks[1]['q']==q
+    assert all(c['potential_domain']==domain for c in checks)
     assert checks[-1]['m']==0 and checks[-1]['q']==[0,0,0]
     assert data['winner_J']==2. and data['reference_J']==1.
     assert data['fractional_change_from_initial_reference']==.5

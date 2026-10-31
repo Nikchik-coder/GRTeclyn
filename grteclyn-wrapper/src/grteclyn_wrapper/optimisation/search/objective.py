@@ -9,7 +9,8 @@ from __future__ import annotations
 from .state import SearchContext
 import numpy as np
 from . import evaluation, continuation, artifacts
-from .scoring import min_q, death, monitor_overflow
+from .scoring import death, monitor_overflow
+from ..potential_domain import admissible
 
 
 def objective(ctx: SearchContext, x):
@@ -19,7 +20,7 @@ def objective(ctx: SearchContext, x):
     if (not (ctx.args.m_min <= m <= ctx.args.m_max)
             or any(not (ctx.args.q_min <= qk <= ctx.args.q_max) for qk in q)
             or (ctx.args.free_J and not (ctx.J_min <= j_try <= ctx.J_max))
-            or min_q(q) <= 0.0):
+            or not admissible(q, ctx.args.potential_domain)):
         print(f"  [{ctx.state['nfev']}] m {m:.4f} q "
               f"({', '.join(f'{v:+.3f}' for v in q)}): inadmissible",
               flush=True)

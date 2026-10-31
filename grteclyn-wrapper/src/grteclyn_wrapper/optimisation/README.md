@@ -40,6 +40,31 @@ With an area pin, the code uses `X_A = |VIQ|/R_A`, where `R_A` is the radius of 
 sphere with the same area. These are dimensionless measures; smaller is better
 only when the numerical checks also pass.
 
+## Potentials with a negative interior
+
+The default `--potential-domain positive` requires `Q(u)>0` over the whole
+field interval. The experimental `endpoint-positive` mode instead requires
+`Q(1)>0` and a strictly positive `--m-min`. Both workflows support it.
+For the factored potential, the endpoints still obey `V=V'=0`, with
+`V''(0)=2m²` and `V''(psi_minus)=2m² Q(1)`. These are local vacuum conditions;
+they do not guarantee a regular connecting solution or dynamical stability.
+
+For example, `q=(-4.2,4.2,0)` gives `Q(0)=Q(1)=1` and `Q(0.5)=-0.05`.
+Use bounds that contain these coefficients, such as `--q-min -8 --q-max 8`.
+The solver already evaluates signed potentials; this option changes the
+admissible search family, not the field equations. Polynomial extrema are
+checked between collocation nodes too. Candidate metadata records the domain,
+and search diagnostics retain the minimum and endpoint value of Q.
+The existing independent constraints and final resolution checks still apply.
+The rotation equation has no explicit potential source: any change in frame
+dragging is mediated by the solved geometry and must be measured.
+
+The reproducible foreground jobs in
+`research/optimisation/studies/run_signed_potential.sh` compare a fixed-size,
+fixed-spin D90 search and a separate fixed-true-area/free-spin experiment.
+The latter needs a massless control at its winning spin before attributing a
+reduction to the potential. Neither job runs a time evolution.
+
 ## What happens during a search
 
 ```mermaid

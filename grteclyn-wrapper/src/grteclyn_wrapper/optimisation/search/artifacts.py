@@ -12,6 +12,7 @@ import json
 import numpy as np
 from ..potentials import PolynomialPotential
 from .scoring import min_q
+from ..potential_domain import shape_diagnostics
 from .state import FIELDS, SAVE_CONVENTIONS
 
 
@@ -84,6 +85,8 @@ def dump_npz(ctx: SearchContext, path, key, row, slot=None):
         "R_e": float(row.get("R_e", ctx.th["R_e"])),
         "R_A": float(row.get("R_A", ctx.th["R_A"])),
         "pin": ctx.args.pin, "m": m, "q": q,
+        "potential_domain": ctx.args.potential_domain,
+        **shape_diagnostics(q),
         "potential_coeffs": [float(c) for c in pot.coeffs],
         **{k: float(spin[k]) for k in scal},
         "X": row["X"], "X_A": row.get("X_A"), "X_v0": ctx.x_v0,

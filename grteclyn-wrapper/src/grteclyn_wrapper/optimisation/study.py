@@ -13,6 +13,7 @@ import numpy as np
 
 from .exploration import (load_seed,save_trial,solve_trial,physical_throat,bound_mode)
 from .resolution import check_candidate,refinement_grids,save_checked
+from .potential_domain import admissible, validate_start
 from .surfaces import find_surface
 from .study_validation import validate
 
@@ -136,7 +137,7 @@ def source_manifest(solution,cfg,args,case):
           for p in sorted(dependencies)}
     return dict(version=1,sources=sources,code=code,study=cfg,case=case,
                 search={k:getattr(args,k) for k in ('nx','ny','x0','m_min','m_max','q_min','q_max',
-                        'maxfev','engine','seed','sigma0','popsize','fatol','m_step',
+                        'potential_domain','maxfev','engine','seed','sigma0','popsize','fatol','m_step',
                         'walk_max_splits','walk_max_iter','free_J','J_min','J_max','J_step')},
                 resume_mode='restart_from_best_with_saved_continuation_seeds',
                 stability='not_assessed')
@@ -267,6 +268,7 @@ def run(args,*,error):
             not args.m_min<=x_input[0]<=args.m_max or
             np.any(x_input[1:]<args.q_min) or np.any(x_input[1:]>args.q_max)):
         error('study needs four finite x0 parameters inside ordered bounds')
+    validate_start(args, x_input[1:4], error)
     if args.nx is not None and (args.nx<4 or args.nx%2): error('nx must be even and >=4')
     if args.ny is not None and args.ny<2: error('ny must be >=2')
     from .solver.device import select_device
@@ -298,6 +300,7 @@ def run(args,*,error):
         with log.open('a') as f: f.write(json.dumps(row,allow_nan=False)+'\n')
         print(json.dumps(row,allow_nan=False),flush=True)
     base,basecfg=massless_state(args.solution)
+    basecfg['potential_domain']=args.potential_domain
     if args.free_J and not args.J_min<=basecfg['J']<=args.J_max:
         error('reference J must lie inside free-J bounds')
     pin=('minimal_area',physical_throat(base)['area_throat'])
@@ -430,9 +433,8 @@ def run(args,*,error):
         try:
             if not np.isfinite(x).all() or np.any(x<lo) or np.any(x>hi):
                 raise ValueError('parameter_bounds')
-            u=np.linspace(0.,1.,1001)
-            if np.min(1+x[1]*u+x[2]*u**2+x[3]*u**3)<=0:
-                raise ValueError('potential_positivity')
+            if not admissible(x[1:4],args.potential_domain):
+                raise ValueError('potential_domain')
             c=dict(basecfg,m=float(x[0]),q=list(map(float,x[1:4])))
             if args.free_J: c['J']=float(x[4])
             if case['winding'] is not None:

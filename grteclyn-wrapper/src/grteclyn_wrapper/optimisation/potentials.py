@@ -151,8 +151,9 @@ class PolynomialPotential:
 
         lam = m^2 / psi_minus^2.  Q(0) = 1 keeps cal V''(0) = 2 m^2, and
         both vacua stay degenerate for any q (double zeros); the
-        psi_minus well stays a minimum only while Q > 0 on the kink, so
-        a scan checks min Q before solving.  q = () is ``kink``."""
+        psi_minus well has positive curvature when m>0 and Q(1)>0.
+        Requiring Q>0 throughout the interval is an additional search-family
+        restriction, not a local vacuum condition. q = () is ``kink``."""
         lam = m * m / (psi_minus * psi_minus)
         base = (0.0, 0.0, lam * psi_minus**2, -2.0 * lam * psi_minus, lam)
         shape = (1.0,) + tuple(qk / psi_minus ** (k + 1)

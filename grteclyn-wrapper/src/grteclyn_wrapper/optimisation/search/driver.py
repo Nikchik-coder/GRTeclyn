@@ -26,7 +26,6 @@ def run(args, *, error):
     """Execute one search with parsed CLI options and no global search state."""
     if args.stability:
         error("the radial stability screen is under repair; omit --stability")
-    select_device(args.gpu, args.jac_chunk)
     x0_in = np.array([float(v) for v in args.x0.split(",")])
     assert args.q_min < args.q_max, "--q-min must be < --q-max"
     if x0_in.size not in (4, 5):
@@ -36,6 +35,11 @@ def run(args, *, error):
     if not (args.m_min <= x0_in[0] <= args.m_max) or np.any(
             (x0_in[1:4] < args.q_min) | (x0_in[1:4] > args.q_max)):
         error("--x0 sits outside the m or q bounds")
+
+    from ..potential_domain import validate_start
+    validate_start(args, x0_in[1:4], error)
+    select_device(args.gpu, args.jac_chunk)
+    print(f"potential domain: {args.potential_domain}; stability not assessed", flush=True)
 
     sol = Solution.load(args.solution)
     J_member = float(sol.meta["prescribed"]["J"])

@@ -294,3 +294,30 @@ def test_existing_best_is_not_overwritten(search):
         search.run()
     assert best.read_bytes() == b'existing best'
     assert not search.solves
+
+
+@pytest.mark.parametrize('domain,accepted',[('positive',False),('endpoint-positive',True)])
+def test_signed_proposal_requires_opt_in_and_survives_refinement(search,domain,accepted):
+    search.proposals=[[.3,-4.2,4.2,0.]]
+    code=search.run('--potential-domain',domain,'--q-min','-8')
+    if not accepted:
+        assert code==2
+        assert search.checks==[]
+        return
+    assert code==0
+    assert search.checks==['screen','refine']
+    with np.load(search.out/'search_best_clean.npz') as z:
+        meta=json.loads(str(z['meta']))
+        assert meta['potential_domain']==domain
+        assert meta['q']==[-4.2,4.2,0.]
+        assert meta['stability']=='not_assessed'
+    with np.load(search.out/'search_e0001.npz') as z:
+        meta=json.loads(str(z['meta']))
+        assert meta['negative_interior']
+        assert meta['min_Q']==pytest.approx(-.05)
+
+
+def test_endpoint_mode_requires_positive_mass_floor_before_gpu(search,monkeypatch):
+    monkeypatch.setattr(search.module,'select_device',lambda *a:pytest.fail('invalid bounds selected GPU'))
+    with pytest.raises(SystemExit):
+        search.run('--potential-domain','endpoint-positive','--m-min','0')

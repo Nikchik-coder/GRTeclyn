@@ -212,6 +212,7 @@ def main():
     select_device(args.gpu, 512)
     state, metadata = load_seed(args.seed)
     config = {k: metadata[k] for k in ("m", "q", "gamma", "J")}
+    config["potential_domain"] = metadata.get("potential_domain", "positive")
     th = physical_throat(state)
     pin = (("area", th["area_throat"]) if metadata.get("pin") == "area"
            else ("R_e", th["R_e"]))

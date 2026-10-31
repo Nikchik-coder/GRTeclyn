@@ -3,11 +3,19 @@ import dataclasses
 import numpy as np
 from .study_diagnostics import volume_budgets, tidal_envelope, independent_equations
 from .surfaces import verify_surface
+from .potential_domain import admissible, shape_diagnostics
 
 
 def validate(state, config, row, *, reference_peak, tidal_factor, energy_budget=None,
              detailed=False):
     out=dict(row); reasons=[]
+    domain=config.get('potential_domain','positive')
+    q=config.get('q',[])
+    out.update(potential_domain=domain, **shape_diagnostics(q))
+    if config.get('m',0.) != 0. and not admissible(q,domain):
+        out.update(verdict='ABOVE_GATE',rejection_reasons=['potential_domain'],
+                   stability='not_assessed')
+        return out
     if row.get('verdict')!='PASS': reasons.append('stationary_constraints')
     coarse=volume_budgets(state,config)
     fine=volume_budgets(state,config,n_x=384,n_mu=128)

@@ -39,6 +39,10 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--q-max", type=float, default=8.0,
                     help="upper bound on each of q1, q2, q3 (the step-3 "
                          "shape box; D51's rejected basin sat at q3 ~ 17)")
+    ap.add_argument("--potential-domain", choices=("positive", "endpoint-positive"),
+                    default="positive", help="positive: Q>0 throughout [0,1]; "
+                    "endpoint-positive: allow negative interior Q, require Q(1)>0 "
+                    "and m-min>0; neither condition certifies stability")
     ap.add_argument("--m-step", type=float, default=SCALES[0],
                     help="the mass knob's scale (CMA step, simplex edge, "
                          "seed metric); m is physical, its stiffness is "

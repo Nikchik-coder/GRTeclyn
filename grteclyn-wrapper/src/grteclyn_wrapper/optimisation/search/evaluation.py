@@ -93,7 +93,8 @@ def check_best(ctx: SearchContext, key, row, method):
     spin = dict(ctx.state["solved"][key], sx=ctx.state["nodes"][0],
                 sy=ctx.state["nodes"][1], gamma=ctx.sol.gamma, map=ctx.grid)
     config = dict(m=float(key[0]), q=list(map(float, key[1:4])),
-                  gamma=ctx.sol.gamma, J=float(row["J"]))
+                  gamma=ctx.sol.gamma, J=float(row["J"]),
+                  potential_domain=ctx.args.potential_domain)
     check_d2 = (float(spin["psim"])*float(spin["sigma"])/math.pi)**2
     result, checked = check_candidate(
         spin, config, ctx.grids, ctx.pin_row, check_d2,
