@@ -82,6 +82,12 @@ search. Same total area/J/gamma and t4/energy-one gates; four threads,
 The opposite-winding pilot continues on card 1. Scratch: 47 MB cache,
 476 GB free. No checkpoint or consumer is needed for stationary solves.
 
+The rotating continuation has reached gamma about -0.851, but many
+attempts stop Newton near 1e-13 and fail the unused equations. Its next
+continuation uses Newton target 1e-14 before interpreting those rejections
+as a branch limit. Acceptance thresholds remain unchanged. A stronger
+amplitude is still a separate available test, not an inferred necessity.
+
 The S0 continuation passes the full target spin and reaches gamma about
 -0.695 at amplitude 0.02. Near -0.704 Newton converges but the unused
 constraints exceed tolerance; bisection is still exploring the boundary.

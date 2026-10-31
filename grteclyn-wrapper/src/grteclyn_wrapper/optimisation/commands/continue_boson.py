@@ -68,7 +68,7 @@ def main(argv=None):
             raise RuntimeError('continuation exhausted its 80-solve budget')
         try:
             solved, row = solve_trial(state, goal, args.nx, args.ny, pin, d2,
-                                      max_iter=24, newton_tol=1e-12)
+                                      max_iter=24, newton_tol=1e-14)
             if row['verdict'] != 'PASS':
                 raise RuntimeError('stationary or bound-state gate failed: '+
                                    json.dumps(_clean(row)))
@@ -95,7 +95,8 @@ def main(argv=None):
             for value in np.geomspace(config['amplitude'], args.amplitude, 5)[1:]:
                 advance(dict(config, amplitude=float(value)), 'amplitude')
         initial_j = config['J']
-        for value in np.linspace(initial_j, target['J'], 5)[1:]:
+        spin_steps = [] if initial_j == target['J'] else np.linspace(initial_j, target['J'], 5)[1:]
+        for value in spin_steps:
             advance(dict(config, J=float(value)), 'spin')
         initial_gamma = config['gamma']
         for value in np.linspace(initial_gamma, target['gamma'], 13)[1:]:
