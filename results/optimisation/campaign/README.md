@@ -28,12 +28,13 @@ Add `--with-history --out /tmp/d21_growth_with_history` to include the two
 radius histories beside the growth-rate plot. The article uses the compact
 single-column version, replacing its standalone CMA-ES progress figure.
 It uses N=128 for every plotted model. Classical inputs and background
-headers remain in `results/spinningwormhole/`; potential D21 uses the streams
+headers remain in `results/spinningwormhole/`; potential D0 uses the completed
+2026-10-31 archive and has J = 0. Potential D21 uses the streams
 here and the archived e140 fields to calculate its own throat area. The
 physical area includes the saved length scale squared. The x coordinate
 therefore uses each solution's own J/A, not the search reference's spin label.
 
-`../figures/instability_curve.tsv` records all plotted rates and fitting times.
+`../article/instability_curve.tsv` records all plotted rates and fitting times.
 The fit is the spinning paper's `rate_tau`: the slope of ln|dR_A/dt| while
 the radius changes by 0.2–1%. As in that figure, expansion takes precedence
 if a run first contracts and later expands through the interval. For D21,

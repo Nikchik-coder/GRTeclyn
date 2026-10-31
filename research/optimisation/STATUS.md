@@ -26,12 +26,28 @@ on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
 search is authorized: cheap finer-grid screening of each new best, then a
 full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 ended with a NaN at t = 88.4175. Evolution of the validated D30 e0316 winner is authorized on 2026-10-31, N128 on card 1, checkpoints off. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
-The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
-parked, and its exported background needs revalidation. Evolutions wait for the go.
+The D21 3+1 triplet ended in NaNs at every resolution. D40, D46 and D51 fresh searches and subsequent validated N128 evolutions
+are authorized (2026-10-31), checkpoints off for each. The old D51 export
+remains rejected; only a newly validated winner can be evolved.
 
 ## Live
 
-Checked 2026-10-31 at 08:43 MSK: **D30 e0316 launched on second-node card 1; full preflight in progress.**
+Checked 2026-10-31 at 09:08 MSK: **D30 evolving; D40 search running; D46 CUDA-startup retry.**
+
+Both nodes pulled refactor `1d934551` before new searches. The entry point is
+`python -m grteclyn_wrapper.optimisation.commands.optimize_potential`, not the
+removed script path. 57 search/pipeline/candidate-command regression tests pass.
+D40 uses `fam_a_r1_0008`, seed 104; D46 uses `fam_a_r1_0010`, seed 146;
+D51 will use `fam_a_log_0017`, seed 151, matching the plotted classical members.
+All searches: 400 evaluations, 150x30, fixed reference R_e/J, cheap checks per
+new best, full 150/180/210 finalist refinement, no radial stability screen.
+D40 started 09:07 MSK on second/card 0. D46 first attempt (first/card 0)
+exited 134 before any evaluation: CUDA pool reservation exceeded its 160 GiB
+virtual-address cap. Retry `opt-d46-resolution-cma-r2` uses the established
+220 GiB GPU virtual cap, 4 threads and a fresh output prefix. Actual host
+memory is monitored separately. D51 search and all three evolutions are queued.
+Evolution controls come from the classical runs: D40 stop 100; D46/D51 stop
+150; N128/L64/ml3/drive 0/dt multiplier 0.02/plot interval 100, checkpoints off.
 
 Run `D30_e0316_L64_N128_ml3_spdrv0_t100` uses the validated e0316
 210x42 background exported to 2049x129. Diff against the previous D30
@@ -39,7 +55,10 @@ template changes only the background and run paths: N128, L64, max_level 3,
 drive 0, dt multiplier 0.02, stop t = 100, plot interval 100. Checkpoints off;
 full 14-field hold consumer with keep-last 3. Same matter binary (16460fb0).
 Code/results pushed as `00ac13e3`, pulled on the node before launch.
-Evolution speed/ETA pending the first steps; frame and consumer checks pending.
+Full preflight passed; frame 0 compared against the old D30 image, all 14
+fields rendered, throat/MOTS/wave rows present. Consumer keeps up and prunes
+to three plotfiles. At 09:04 MSK: t = 6.77, 20.0 units/h, ETA 4.7 h
+(13:44 MSK). GPU memory 22.9 GiB.
 
 D30 `opt-d30-resolution-cma` finished all 400 evaluations at 23:15 MSK,
 October 30 (exit 0). Finalist e0316 passes 150x30, 180x36 and 210x42:
@@ -66,15 +85,20 @@ Seven lossless diagnostic streams, parameters and failure evidence are archived
 under `results/optimisation/completed/2026-10-31/d0/`. The archive is 2.9 MB
 including D30's final fields, trace, log and all screening decisions.
 
-Second-node scratch at launch: clean, D30 preflight 2.4 GB, cache 47 MB,
-461 GB free (464 GB after completed-run cleanup).
+Scratch clean: second node D30 7.1 GB (three plotfiles), cache 47 MB,
+456 GB free; first node cache 46 MB, 633 GB free. No checkpoints.
 Deleted only the finished D0 and aborted D30 plotfiles (9.5 GB); no checkpoints.
 Cleanup recorded in the October 31 scratch manifest.
 Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | full preflight | pending | pending |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 6.77 / 100, alive | 20.0 units/h | 4.7 h; Oct 31 13:44 MSK |
+| `opt-d40-resolution-cma` | second / 0 | continuation | pending | provisional 1 h; Oct 31 10:10 MSK |
+| `opt-d46-resolution-cma-r2` | first / 0 | startup | pending | provisional 1 h; Oct 31 10:10 MSK |
+| `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
+| D51 new search | next free search card | queued | — | after D40/D46 search |
+| D40/D46/D51 N128 evolutions | available cards | queued after validated finalists; checkpoints off | — | pending searches |
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | — | NaN at 88.4175 / 100 | ended; 19.9 units/h | ended Oct 31 02:24 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
@@ -95,7 +119,7 @@ N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R 
 ## Drainhole CMA queue
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished; no further searches queued.
+`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished. D40/D46 searches are live; D51 is queued.
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
@@ -121,7 +145,7 @@ use different units/weights from these stationary monitors; their magnitudes
 cannot justify dropping the latter's threshold. Audit records are packed in
 `results/optimisation/validation/2026-10-30-resolution-audit/`.
 
-D40/D46 have no saved search candidates; D51's existing export is rejected.
+D40/D46 had no saved candidates before this campaign; D51's old export is rejected.
 The new validator reconstructs physical radii from fields and records stability
 as unassessed. It never exports a failed background or fabricates a zero rate.
 
