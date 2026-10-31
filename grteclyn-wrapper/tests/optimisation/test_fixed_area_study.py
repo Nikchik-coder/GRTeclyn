@@ -201,6 +201,7 @@ def test_refinement_with_zero_updates_cannot_certify(monkeypatch,tmp_path):
     s=ellis(8,4)
     def no_correction(seed,*args,**kw):
         assert np.max(abs(seed['F']-s['F']))>0
+        assert kw['newton_tol'] == 1e-14
         return s,dict(verdict='PASS',iters=0,X_full=3.14)
     monkeypatch.setattr(r,'solve_trial',no_correction)
     monkeypatch.setattr(r,'save_trial',lambda *a:None)

@@ -114,10 +114,15 @@ def check_candidate(state, config, grids, pin, d2, directory, *,
     directory.mkdir(parents=True, exist_ok=False)
     (directory/'manifest.json').write_text(json.dumps(dict(
         method=method, config=config, grids=grids, pin=pin,
-        newton_acceptance=1e-9, independent_constraint_gate=1e-8,
+        newton_acceptance=1e-9, newton_target=1e-14 if perturb_seed else 1e-9,
+        independent_constraint_gate=1e-8,
         relative_bill_tolerance=1e-6, score_key=score_key,
                 perturb_seed=perturb_seed,
         stability='not_assessed'), indent=2)+'\n')
+    # Row-equilibrated Newton residuals can hide derivative errors after
+    # a seed perturbation. Recover the field to search-level accuracy before
+    # applying the unchanged independent constraint gates.
+    solve_tol = 1e-14 if perturb_seed else 1e-9
     records, source = [], state
     for nx, ny in grids:
         start = time.monotonic()
@@ -135,7 +140,7 @@ def check_candidate(state, config, grids, pin, d2, directory, *,
                     seed['F']=state['F']+1e-6*bump
                 kwargs={'min_updates':1} if perturb_seed else {}
                 state, row = solve_trial(seed, config, nx, ny, pin, d2,
-                                        max_iter=24, newton_tol=1e-9, **kwargs)
+                                        max_iter=24, newton_tol=solve_tol, **kwargs)
                 if perturb_seed:
                     row['seed_perturbation']=1e-6
                     if row.get('newton_updates',row.get('iters',0))==0:

@@ -346,6 +346,7 @@ def run(args,*,error):
                 for x in xs:
                     vals.append(objective(np.asarray(x)) if count<args.maxfev else 3.)
                 es.tell(xs,vals)
+            write_json(out/'search_stop.json',dict(criteria=es.stop(),evaluations=count))
         else:
             from scipy.optimize import minimize
             simplex=np.vstack([x0]+[np.clip(x0+scales[i]*np.eye(len(x0))[i],lo,hi) for i in range(len(x0))])
