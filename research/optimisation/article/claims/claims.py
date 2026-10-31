@@ -45,6 +45,9 @@ def check(rows):
         root = REPO / 'results/optimisation' / folder
         for entry in json.loads((root/'archive_manifest.json').read_text()):
             assert hashlib.sha256((root/entry['archive']).read_bytes()).hexdigest() == entry['archive_sha256']
+    movie_root = REPO / 'results/optimisation/completed/2026-10-31/d46/evolution'
+    for movie in json.loads((movie_root/'movie_closeout.json').read_text())['movies']:
+        assert hashlib.sha256((movie_root/'movies'/movie['file']).read_bytes()).hexdigest() == movie['sha256']
     data = load()
     expected = order_rows(data)
     with (PACKED/'constraint_orders.tsv').open() as f:

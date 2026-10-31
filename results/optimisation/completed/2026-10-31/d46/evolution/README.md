@@ -21,5 +21,7 @@ Gzip streams preserve all samples. Deployment paths and node identity in
 text are normalized; archive_manifest.json records source and archived
 SHA256 hashes. Numerical fields for the initial background are in the
 parent directory. NFS frames and slice caches are retained; fixed-scale
-movies are restricted to t<=100. The last three scratch plotfiles were
+movies are restricted to t<=100. All 14 movies are also archived in movies/;
+movie_closeout.json records hashes, frame counts and fixed colour limits.
+Encoded K, phi and chi frames at t=20 and t=80 have been visually checked. The last three scratch plotfiles were
 pruned only after transfer and hash verification; no checkpoints existed.

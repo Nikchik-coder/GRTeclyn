@@ -62,13 +62,13 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 
 ## Live
 
-Checked **2026-10-31 at 20:26 MSK**. **All three GPUs idle.** D46 ended
+Checked **2026-10-31 at 20:35 MSK**. **All three GPUs idle.** D46 ended
 at **18:56:57 MSK**, exit 6, NaN in K on level 3 near **t=141.43/150**;
 last speed 18.15 units/h. Both remaining boson jobs ended without a validated
-winner. No GPU job or ETA remains. CPU fixed-scale D46 movie closeout is
-running with seven CPU workers (one thread, 8 GiB cap each) and t<=100;
-its log is `runs/capped_jobs/opt-d46-closeout-parallel-20261031/log`.
-The serial renderer was stopped and replaced at 20:24 MSK; no GPU launch.
+winner. No GPU job or ETA remains. CPU closeout also finished: all 14 fixed-scale movies stop at t=100,
+were verified at 20:34 MSK and are archived with hashes (1.2 MB total).
+Encoded K, phi and chi frames at t=20 and t=80 retain fixed colour bars.
+No movie-rendering or verification jobs remain.
 
 Storage: first node scratch **46 MB cache, 583 GB free**; second node
 **47 MB cache, 471 GB free**. D46's last three plotfiles (7.1 GB) were removed
@@ -599,11 +599,13 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 ### Queued stationary studies — fixed area and bosonic matter
 
-**Exploration is authorised and active.** The factored-potential fix passes
-168 optimisation tests and the t4 finalist passes three independent grids.
-The first nonrotating boson pilot failed; rotating and warm nonrotating
-searches are active. Next use freed cards for a corrected t2 potential
-search and targeted boson continuation, guided by the measured failures.
+**Further exploration remains authorised; all launched pilots are finished.**
+The factored-potential fix passes 168 optimisation tests and the t4 finalist
+passes three independent grids. No tested boson pilot has produced a
+validated D21 winner. Next studies are a corrected t2 potential search and
+a targeted boson continuation, guided by the archived failures; neither is
+currently running. The stricter Newton target did not resolve the
+independent-constraint rejection along the amplitude-0.02 continuation.
 Do not expand all 27 boson cases blindly before establishing a feasible
 branch. No evolution restart checkpoints are needed. Details and costs:
 [implementation](#implementation--fixed-area-studies-2026-10-31).

@@ -34,4 +34,3 @@ Host Name: ilya-test-3-gpu-1-0
 11: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7bcb0a181e40]
 
 12: test(+0x422d5) [0x5cbd2a2922d5]
-
