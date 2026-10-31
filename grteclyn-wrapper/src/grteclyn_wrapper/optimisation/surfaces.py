@@ -93,6 +93,35 @@ def find_surface(eta0,rmap,sx,sy,F,N,B,xi_start=0.):
     return result.x
 
 
+def _polish_minimum(fun, grad, hess, feasible, point):
+    """Resolve the gradient after an area-based minimizer stops near roundoff."""
+    point = np.asarray(point).copy()
+    for _ in range(8):
+        g = np.asarray(grad(point))
+        if not np.isfinite(g).all() or np.max(abs(g)) < 1e-9:
+            break
+        h = np.asarray(hess(point))
+        if not np.isfinite(h).all() or np.linalg.eigvalsh(h)[0] <= 0:
+            break
+        step = np.linalg.solve(h, -g)
+        value = float(fun(point))
+        for scale in 2. ** -np.arange(16):
+            trial = point + scale * step
+            if not feasible(trial):
+                continue
+            trial_value = float(fun(trial))
+            # Near the minimum, area changes are below floating-point noise;
+            # require a smaller gradient as well as no resolved area increase.
+            slack = 16 * np.finfo(float).eps * max(1., abs(value))
+            if (np.isfinite(trial_value) and trial_value <= value + slack
+                    and np.max(abs(np.asarray(grad(trial)))) < np.max(abs(g))):
+                point = trial
+                break
+        else:
+            break
+    return point
+
+
 def verify_surface(eta0, rmap, sx, sy, F, N, B, coefficients, *, discover=True):
     """Independent higher-order minimisation, Hessian and extra-throat search.
 
@@ -125,6 +154,12 @@ def verify_surface(eta0, rmap, sx, sy, F, N, B, coefficients, *, discover=True):
                           jac=lambda c: np.asarray(grad(c))/area0,
                           constraints=constraint,method='SLSQP',
                           options={'ftol':1e-13,'maxiter':150})
+        if result.success:
+            result.x = _polish_minimum(
+                lambda c: float(fun(c))/area0,
+                lambda c: np.asarray(grad(c))/area0,
+                lambda c: np.asarray(hess(c))/area0,
+                lambda c: bool(np.all(constraint['fun'](c) > 0)), result.x)
         eigen = np.linalg.eigvalsh(np.asarray(hess(result.x))/area0)
         stationarity = float(np.max(abs(np.asarray(grad(result.x))))/area0)
         good = bool(result.success and stationarity<1e-7 and eigen[0]>0)

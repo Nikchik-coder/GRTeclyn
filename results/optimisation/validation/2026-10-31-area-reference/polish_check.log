@@ -1,0 +1,3 @@
+150x30 {"surface_verified": true, "surface_minima": 1, "surface_unresolved": false, "surface_area_drift": 0.0, "surface_gradient": 4.675230127277848e-13, "surface_hessian_min": 4.504553881768983}
+180x36 {"surface_verified": true, "surface_minima": 1, "surface_unresolved": false, "surface_area_drift": 0.0, "surface_gradient": 4.694614383601732e-13, "surface_hessian_min": 4.504322771966743}
+210x42 {"surface_verified": true, "surface_minima": 1, "surface_unresolved": false, "surface_area_drift": 0.0, "surface_gradient": 4.80335539314717e-13, "surface_hessian_min": 4.504182264816905}

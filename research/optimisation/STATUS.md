@@ -58,6 +58,17 @@ probe is inspecting minimiser termination. The remaining potential caps
 (1 and 4) and bosonic cases are blocked by this shared reference check;
 no acceptance threshold has been relaxed.
 
+Surface-gate diagnosis: the auxiliary SLSQP starts reported success on
+area stagnation but left normalized gradients 8.7e-7 (180x36) and 8.8e-6
+(210x42), above the unchanged 1e-7 gate. The candidate graph itself had
+gradient below 5e-13 and positive Hessian. A bounded Newton polishing step
+now requires decreasing gradient, positive curvature, interior feasibility
+and no resolved area increase; final gate thresholds are unchanged. The
+saved three-grid reference passes with this fix. Failure fields, original
+checks and the corrected surface checks are archived under
+`results/optimisation/validation/2026-10-31-area-reference/`; the 180x36
+case is a regression test. The original failed pilot is preserved.
+
 D30's four evolution diagnostic streams are finite through t = 100; its
 consumer processed the final plotfile. Reaching the chosen stop time is
 not a stability or late-time accuracy claim: final global Ham/Mom norms

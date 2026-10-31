@@ -79,6 +79,36 @@ def test_ellis_surface_minimum_and_coupled_pin():
     assert p.throat(u)['area']==pytest.approx(16*np.pi)
 
 
+def test_surface_polish_resolves_gradient_below_area_roundoff():
+    from grteclyn_wrapper.optimisation.surfaces import _polish_minimum
+    h = np.diag([5., 1e4])
+    initial = np.array([1e-9, 1e-9])
+    fun = lambda x: 1. + .5 * x @ h @ x
+    grad = lambda x: h @ x
+    polished = _polish_minimum(fun, grad, lambda x: h,
+                               lambda x: np.max(abs(x)) < .999, initial)
+    assert np.max(abs(grad(initial))) > 1e-7
+    assert np.max(abs(grad(polished))) < 1e-9
+    assert fun(polished) <= fun(initial)
+    # A negative-curvature stationary point must never be polished into
+    # something the surface verifier can mistake for a minimum.
+    saddle = _polish_minimum(lambda x: -float(x @ x), lambda x: -2*x,
+                             lambda x: -2*np.eye(2), lambda x: True, initial)
+    np.testing.assert_array_equal(saddle, initial)
+
+
+def test_d21_refined_reference_surface_multistart():
+    from pathlib import Path
+    from grteclyn_wrapper.optimisation.exploration import load_seed
+    root = Path(__file__).resolve().parents[3]
+    saved = root / 'results/optimisation/validation/2026-10-31-area-reference/reference/diagnostic_180x36.npz'
+    s, _ = load_seed(saved)
+    checked = verify_surface(1., s['map'], s['sx'], s['sy'],
+                             s['F'], s['N'], s['B'], s['surface_coefficients'])
+    assert checked['surface_verified'], checked
+    assert checked['surface_minima'] == 1 and not checked['surface_unresolved']
+
+
 def test_angular_deformation_changes_true_minimum():
     from grteclyn_wrapper.optimisation.surfaces import find_surface
     from scipy.optimize import minimize_scalar
