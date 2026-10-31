@@ -95,11 +95,25 @@ def search_score(row):
     penalty = .1*len(row.get('rejection_reasons', []))
     for key, limit in (('E19', 1e-8), ('E_c', 1e-8), ('J_error', 1e-6),
                        ('pin_error', 1e-8), ('volume_relative_drift', 1e-6),
-                       ('amplitude_error', 1e-6)):
-        value = float(row.get(key, 0.))
+                       ('amplitude_error', 1e-6), ('offgrid_einstein', 1e-8),
+                       ('offgrid_scalar', 1e-8), ('surface_area_drift', 1e-8),
+                       ('surface_gradient', 1e-7), ('tidal_drift', 1e-3)):
+        raw = row.get(key, 0.)
+        if raw is None:
+            return 4.
+        value = float(raw)
         if not np.isfinite(value):
             return 4.
         penalty += np.log1p(max(0., abs(value)/limit-1))
+    for tail in row.get('boson_tail_ratios', []):
+        if any(value is None for value in tail):
+            return 4.
+        a, b, c = map(float, tail)
+        if not np.isfinite([a, b, c]).all():
+            return 4.
+        penalty += np.log1p(max(0., c/1e-6-1))
+        penalty += np.log1p(max(0., b/(a+1e-12)-1))
+        penalty += np.log1p(max(0., c/(b+1e-12)-1))
     if row.get('tidal_limit', 0.) > 0:
         penalty += np.log1p(max(0., row['tidal_peak']/row['tidal_limit']-1))
     if row.get('ordinary_energy_limit', 0.) > 0:

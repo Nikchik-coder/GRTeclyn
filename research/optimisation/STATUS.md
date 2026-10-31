@@ -54,6 +54,16 @@ search. Same total area/J/gamma and t4/energy-one gates; four threads,
 The opposite-winding pilot continues on card 1. Scratch: 47 MB cache,
 476 GB free. No checkpoint or consumer is needed for stationary solves.
 
+A second initialization route is ready: `commands.continue_boson` takes a
+saved S0 mixed-field solution, rescales it to the D21 reference area and
+optionally reverses its azimuthal orientation, then continues J and gamma
+separately. Every step checks the unused equations and both-end mass gaps;
+no partial path counts as a D21 model. Six bisection levels, 80 solves total,
+and the usual complete final gates/refinement. Scaling/reflection regression
+and all fixed-area tests pass (32). Test this after the direct rotating pilot.
+Future search scoring also measures off-grid, surface and tail excesses;
+the currently running pilots retain their launch implementations.
+
 The warm NM pilot was stopped at **15:54 MSK** after 58 proposals,
 all rejected. It reaches E_b/R_A = 0.994685 but its peak tide is 0.256794,
 about eight times the reference and twice the t4 cap; X_full = 1.904439.

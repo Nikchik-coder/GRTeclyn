@@ -229,6 +229,11 @@ def test_infeasible_search_scores_guide_without_overriding_acceptance():
     assert feasible < 1 < near < far < 3
     assert search_score(dict(verdict='FAILED')) == 4
     assert search_score(dict(verdict='ABOVE_GATE', E_c=float('nan'))) == 4
+    for key in ('offgrid_einstein', 'offgrid_scalar'):
+        assert (search_score(dict(verdict='ABOVE_GATE', **{key: 2e-8})) <
+                search_score(dict(verdict='ABOVE_GATE', **{key: 1e-3})))
+    assert (search_score(dict(verdict='ABOVE_GATE', boson_tail_ratios=[[.1, .01, 2e-6]])) <
+            search_score(dict(verdict='ABOVE_GATE', boson_tail_ratios=[[.1, .01, .1]])))
 
 
 def test_excess_energy_does_not_hide_excess_tides(monkeypatch):
@@ -299,3 +304,25 @@ def test_matter_roundtrip_and_export_refusal(tmp_path):
     assert p.fields(u)[5][6,-1]==pytest.approx(.03)
     with pytest.raises(ValueError,match='cannot export'):
         matter_background(path,32,16)
+
+
+def test_boson_continuation_similarity_and_azimuthal_reflection():
+    from grteclyn_wrapper.optimisation.boson_continuation import prepare_seed
+    s = ellis(32, 12)
+    s['Z'] = .1*(1-s['sx'][:, None]**2)**3*np.ones((1, 13))
+    s['frequency'] = .7
+    cfg = dict(m=.4, q=[0., 0., 0.], gamma=0., J=.2,
+               matter='winding', winding_k=1, matter_mass=1., amplitude=.1)
+    before = volume_budgets(s, cfg)
+    scaled, c, factor = prepare_seed(s, cfg, 9*before['area'], -1)
+    after = volume_budgets(scaled, c)
+    assert factor == pytest.approx(3.)
+    assert after['area'] == pytest.approx(9*before['area'])
+    assert after['X_full'] == pytest.approx(before['X_full'])
+    assert after['E_b_over_R_A'] == pytest.approx(before['E_b_over_R_A'])
+    assert after['J_b'] == pytest.approx(-9*before['J_b'])
+    assert c['J'] == pytest.approx(-1.8)
+    assert c['m']*scaled['sigma'] == pytest.approx(cfg['m']*s['sigma'])
+    assert s['frequency'] == .7 and cfg['winding_k'] == 1
+    with pytest.raises(ValueError, match='magnitude'):
+        prepare_seed(s, cfg, before['area'], 0)

@@ -189,6 +189,14 @@ Their winding, area, J and asymmetry must match the case, and they are
 re-solved and rechecked before use. An earlier rejected model can supply a
 numerical starting point without inheriting an acceptance verdict.
 
+`commands.continue_boson` offers another initialization route: rescale a
+saved mixed-field solution to the reference area, optionally reflect its
+azimuthal orientation, then continue total spin and asymmetry separately.
+Every step must pass the stationary and bound-state checks. Bisection has
+a six-level limit and the whole path an 80-solve budget. Reaching the target
+still requires all study gates and three-grid refinement; partial paths are
+retained as diagnostics, not D21 candidates.
+
 Ordinary budgets constrain `E_b/R_A`, with `E_b = integral T_nn dV` over
 both ends; this positive proper-volume energy is not an ADM mass. The search
 also records Noether charge, total matter angular momentum, separate
