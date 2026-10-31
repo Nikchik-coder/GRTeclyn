@@ -32,7 +32,7 @@ remains rejected; only a newly validated winner can be evolved.
 
 ## Live
 
-Checked 2026-10-31 at 09:08 MSK: **D30 evolving; D40 search running; D46 CUDA-startup retry.**
+Checked 2026-10-31 at 09:12 MSK: **D30 evolving; D40 and D46 searches alive; D51 detached queue waiting for D40.**
 
 Both nodes pulled refactor `1d934551` before new searches. The entry point is
 `python -m grteclyn_wrapper.optimisation.commands.optimize_potential`, not the
@@ -45,7 +45,18 @@ D40 started 09:07 MSK on second/card 0. D46 first attempt (first/card 0)
 exited 134 before any evaluation: CUDA pool reservation exceeded its 160 GiB
 virtual-address cap. Retry `opt-d46-resolution-cma-r2` uses the established
 220 GiB GPU virtual cap, 4 threads and a fresh output prefix. Actual host
-memory is monitored separately. D51 search and all three evolutions are queued.
+memory is monitored separately: D46 uses 1.3 GiB RSS, first-node total 13.2 GiB
+of 182 GiB. Retry started 09:09 MSK and completed its initial continuation.
+D51 is automatically queued behind the D40 search on second/card 0 through
+`runs/optimisation/queues/d51_after_d40_20261031.py` (PID in the adjacent
+`.pid`, state in `.json`, log in `.log`). The queue rechecks GPU availability,
+uses the refactored module and 220 GiB/4-thread/4-hour capped-job limits; it
+does not launch an evolution. D51 does not depend on D40 passing validation.
+The three matched evolution templates and diffs are prepared under
+`runs/optimisation/evolution/templates/`; `queues/matched_20261031.json`
+records source controls, expected best_clean paths and the launch gates.
+Evolutions remain authorized but not launched: each requires successful search
+exit, three-grid refinement PASS, finite diagnostics and matching physical R_e/J.
 Evolution controls come from the classical runs: D40 stop 100; D46/D51 stop
 150; N128/L64/ml3/drive 0/dt multiplier 0.02/plot interval 100, checkpoints off.
 
@@ -57,7 +68,7 @@ full 14-field hold consumer with keep-last 3. Same matter binary (16460fb0).
 Code/results pushed as `00ac13e3`, pulled on the node before launch.
 Full preflight passed; frame 0 compared against the old D30 image, all 14
 fields rendered, throat/MOTS/wave rows present. Consumer keeps up and prunes
-to three plotfiles. At 09:04 MSK: t = 6.77, 20.0 units/h, ETA 4.7 h
+to three plotfiles. At 09:12 MSK: t = 9.40, about 20 units/h, ETA 4.5 h
 (13:44 MSK). GPU memory 22.9 GiB.
 
 D30 `opt-d30-resolution-cma` finished all 400 evaluations at 23:15 MSK,
@@ -93,11 +104,11 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 6.77 / 100, alive | 20.0 units/h | 4.7 h; Oct 31 13:44 MSK |
-| `opt-d40-resolution-cma` | second / 0 | continuation | pending | provisional 1 h; Oct 31 10:10 MSK |
-| `opt-d46-resolution-cma-r2` | first / 0 | startup | pending | provisional 1 h; Oct 31 10:10 MSK |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 9.40 / 100, alive | 20.0 units/h | 4.5 h; Oct 31 13:44 MSK |
+| `opt-d40-resolution-cma` | second / 0 | 37 / 400, alive | roughly 500 evaluations/h | provisional 0.8 h; Oct 31 10:00 MSK |
+| `opt-d46-resolution-cma-r2` | first / 0 | continuation complete, alive | pending | provisional 1 h; Oct 31 10:15 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
-| D51 new search | next free search card | queued | — | after D40/D46 search |
+| D51 new search | second / 0 after D40 search | detached queue alive | pending | provisional start Oct 31 10:00 MSK; search about 1 h |
 | D40/D46/D51 N128 evolutions | available cards | queued after validated finalists; checkpoints off | — | pending searches |
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | — | NaN at 88.4175 / 100 | ended; 19.9 units/h | ended Oct 31 02:24 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
