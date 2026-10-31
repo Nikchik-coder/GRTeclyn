@@ -1,0 +1,5 @@
+{
+  "status": "stopped_for_graded_offgrid_penalties",
+  "search_evaluations": 32,
+  "reason": "Off-grid failures were distinguished only by a fixed reason penalty; use measured scalar/Einstein excess and start at lower potential mass to address tides."
+}

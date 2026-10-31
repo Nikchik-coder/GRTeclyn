@@ -82,6 +82,13 @@ search. Same total area/J/gamma and t4/energy-one gates; four threads,
 The opposite-winding pilot continues on card 1. Scratch: 47 MB cache,
 476 GB free. No checkpoint or consumer is needed for stationary solves.
 
+The S0 continuation passes the full target spin and reaches gamma about
+-0.695 at amplitude 0.02. Near -0.704 Newton converges but the unused
+constraints exceed tolerance; bisection is still exploring the boundary.
+A stronger-amplitude continuation (0.1) is the next bounded test if this
+path fails: raise the amplitude at the symmetric seed before adding spin
+and asymmetry. Both the matter-energy and tidal caps remain unchanged.
+
 A second initialization route is ready: `commands.continue_boson` takes a
 saved S0 mixed-field solution, rescales it to the D21 reference area and
 optionally reverses its azimuthal orientation, then continues J and gamma

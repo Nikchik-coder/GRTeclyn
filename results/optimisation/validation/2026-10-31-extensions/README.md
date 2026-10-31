@@ -46,3 +46,9 @@ stopped cluster run. The new CMA run re-solves 00053 before using it.
 violate the unused equations by orders of magnitude. They are diagnostic
 failures, not wormhole solutions, and were not passed to a production search.
 A separate continuation route starts from the saved symmetric winding seed.
+
+`boson-k0-joint` (code ea97e390) was stopped after 32 CMA proposals to
+replace fixed off-grid rejection penalties with measured residual excesses.
+No candidate passed. The complete trace and two contrasting fields (tidal
+failure and off-grid failure), plus reference fields, are retained. The next
+run uses the graded checks and a lower initial phantom mass.

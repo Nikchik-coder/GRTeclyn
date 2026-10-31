@@ -14,9 +14,13 @@ def main(argv=None):
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--gpu', type=int, required=True)
     ap.add_argument('--winding', type=int, choices=(-1, 0, 1), required=True)
+    ap.add_argument('--amplitude', type=float,
+                    help='continue the anchor amplitude before spin/asymmetry (0 < a <= .5)')
     ap.add_argument('--nx', type=int, default=150)
     ap.add_argument('--ny', type=int, default=30)
     args = ap.parse_args(argv)
+    if args.amplitude is not None and not 0 < args.amplitude <= .5:
+        ap.error('amplitude must lie in (0, .5]')
     from ..solver.device import select_device
     select_device(args.gpu, 512)
     import numpy as np
@@ -73,7 +77,7 @@ def main(argv=None):
             if depth >= 6 or stage == 'initial':
                 raise
             midpoint = dict(goal)
-            for key in ('J', 'gamma'):
+            for key in ('J', 'gamma', 'amplitude'):
                 midpoint[key] = (config[key]+goal[key])/2
             advance(midpoint, stage, depth+1)
             advance(goal, stage, depth+1)
@@ -87,6 +91,9 @@ def main(argv=None):
 
     try:
         advance(config, 'initial')
+        if args.amplitude is not None:
+            for value in np.geomspace(config['amplitude'], args.amplitude, 5)[1:]:
+                advance(dict(config, amplitude=float(value)), 'amplitude')
         initial_j = config['J']
         for value in np.linspace(initial_j, target['J'], 5)[1:]:
             advance(dict(config, J=float(value)), 'spin')
