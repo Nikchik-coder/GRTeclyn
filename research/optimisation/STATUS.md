@@ -60,7 +60,7 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 | D21 potential-only dynamical comparison | Evolve the saved V=0 reference at J=1.0138 with drive 0, same R_e, binary, grid and perturbation | One N128 evolution, roughly 6--9 GPU h to t100--150 at 18 units/h; deferred, no new launch authorized here; checkpoint choice needed |
 | Continuum growth rate and onset model | Fit each saved D21 resolution over matched linear intervals, test fit-window sensitivity and a common-tau logarithmic onset law | CPU post-processing of existing streams; no new evolution needed for the first check |
 
-## Signed-interior potential experiment — authorized, awaiting dispatch
+## Signed-interior potential experiment — queued (22:13 MSK)
 
 The October 31 request allows negative Q inside the kink while keeping both
 asymptotic vacua locally massive. `--potential-domain endpoint-positive`
@@ -70,7 +70,21 @@ with V''(0)=2m² and V''(psi_minus)=2m²Q(1). These local conditions do not
 establish a connecting solution or stability. The rotation equation contains
 no explicit V term: enhanced frame dragging is a hypothesis to measure.
 
-Two stationary tests are authorized; neither displaces an active job:
+**Queue launched 2026-10-31 at 22:13:16 MSK**, second node, slots 0/1:
+`opt-signed-potential-queue-20261031`, detached session 103341. Both nodes
+see code `485f8d44` after the shared checkout pull. Verified at 22:13:
+runner/workers alive, both jobs pending, running directory empty; all three
+GPUs remain occupied by their existing searches. No signed search has started.
+The next free slot takes D90, then the other slot takes geometry. The queue
+checks every 30 s and each job independently refuses missing telemetry or an
+occupied GPU. Four threads and 200 GiB virtual cap per process; queue timeout
+**8 h, November 1 at 06:13 MSK**, individual search caps **4 h after dispatch**.
+Start/finish ETA is pending dispatch and measured progress. Queue state and
+UTC event times: `runs/optimisation/signchanging_20261031/queue/queue.log`;
+commands, commit and hashes: the parent `dispatch_manifest.txt` and job files.
+No queued run needs a checkpoint. Existing searches continue unchanged.
+
+Two stationary tests are queued; neither displaces an active job:
 
 | Test | Search and control | Budget / dispatch |
 |---|---|---|
@@ -95,7 +109,7 @@ and busy cards; shell syntax and whitespace checks pass.
 Reproducible commands: `research/optimisation/studies/run_signed_potential.sh`.
 Output root: `runs/optimisation/signchanging_20261031/` (D90 `d90.tsv`,
 geometry `geometry/potential-t4/`). Dispatch must fail closed if GPU telemetry
-fails or a compute job is present. At **22:08 MSK** all three GPUs remain
+fails or a compute job is present. At **22:13 MSK** all three GPUs remain
 occupied: first node geometry, second node the two D90 extensions. Scratch is
 clean: first **46 MB cache / 614 GB free**, second **47 MB / 559 GB free**.
 
