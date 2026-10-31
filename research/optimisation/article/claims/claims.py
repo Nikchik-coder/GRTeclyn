@@ -11,6 +11,7 @@ import physics
 from grteclyn_wrapper.visualisation.optimisation.paper_results import REPO, load_models
 from grteclyn_wrapper.visualisation.optimisation.plot_convergence import load, order_rows, PACKED
 from grteclyn_wrapper.visualisation.optimisation.plot_instability_curve import load as load_growth, GROWTH_TABLE
+from grteclyn_wrapper.visualisation.optimisation.plot_contraction_delay import load as load_delay, TABLE as DELAY_TABLE
 OUT = Path(__file__).resolve().parents[1] / "numbers.tex"
 
 def check(rows):
@@ -54,6 +55,19 @@ def check(rows):
                 assert saved[key] == value, key
             else:
                 assert np.isclose(float(saved[key]), value, rtol=1e-12, atol=0), key
+    _, delay_rows = load_delay()
+    with DELAY_TABLE.open() as f:
+        saved_delay = list(csv.DictReader(f, delimiter='\t'))
+    assert len(saved_delay) == len(delay_rows)
+    for saved, measured in zip(saved_delay, delay_rows):
+        for key, value in measured.items():
+            if isinstance(value, str):
+                assert saved[key] == value
+            elif value is None:
+                assert saved[key] == ''
+            else:
+                assert np.isclose(float(saved[key]), value, rtol=1e-12, atol=0)
+    print(f'Checked {len(delay_rows)} contraction-threshold times.')
     print(f'Checked {len(rows)} selected candidates, {len(expected)} order pairs and {len(growth)} growth fits.')
     return data
 
@@ -113,6 +127,9 @@ def generate(rows, data):
     d30 = next(p for p in candidates if p['label'] == 'D30 potential')
     ref30 = next(p for p in points if p['label'] == 'D30')
     macro('clmGrowthDthirtyReduction', f"{100*(1-d30['rate']/ref30['rate']):.0f}")
+    d40 = next(p for p in candidates if p['label'] == 'D40 potential')
+    ref40 = next(p for p in points if p['label'] == 'D40')
+    macro('clmGrowthDfortyIncrease', f"{100*(d40['rate']/ref40['rate']-1):.0f}")
     OUT.write_text('\n'.join(chunks)+'\n')
     print(OUT)
 

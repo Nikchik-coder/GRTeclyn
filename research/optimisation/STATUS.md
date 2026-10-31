@@ -550,6 +550,35 @@ changes are recorded above; they have not repaired the instability screen.
   descriptive; an exactly matched control remains deferred as noted above.
   The stability-code repairs remain pending.
 
+## Contraction delay and D40 growth — 2026-10-31
+
+The N128 D40 potential run contracts: areal radius decreases 2.539% by
+t = 100, versus 30.211% for the classical run. Equatorial and polar radii
+also decrease. It is not on the expanding branch. The common 0.2–1%
+radius-deficit fit gives tau = 11.07058 versus 13.27262 classically,
+a 19.89% higher growth rate despite later contraction.
+
+The new single-panel `contraction_delay` figure compares the time to first
+1% contraction, interpolated between saved samples, with no time shifts.
+Classical / potential times are D0 43.77 / 60.31, D21 46.77 / 66.85,
+D30 50.99 / 83.07, D40 58.72 / 89.42. Its checked table is
+`results/optimisation/article/contraction_delay.tsv`; the script is
+`visualisation/optimisation/plot_contraction_delay.py`.
+All four reach the threshold later; this does not mean all have smaller
+growth rates or establish a continuum delay. D21 retains its spin/damping
+mismatch. The paper now separates delay from rate and includes D40 in the
+rate figure. Both LaTeX engines build; 24 threshold times, ten growth fits
+and the label audits pass.
+
+Follow-up searches were authorised, then held by the subsequent wait.
+The interrupted call had already started `opt-d21-strict-refine-20261031`
+on second/card 0, code `9fa71204`, four threads, 220 GiB, 30 min cap.
+It completed at 15:10:17 MSK, exit 2: candidate 00071 still failed the
+strict refinement. Output: `runs/optimisation/fixed_area/strict_refine_20261031/`.
+The new 1e-14 perturbed-solve target retains every acceptance threshold;
+its cause needs further diagnosis. No further search was launched.
+At the post-interruption check both second-node GPUs were idle.
+
 ## Article figures and tables — 2026-10-30
 
 The article selection ledger is `results/optimisation/article/ledger_models.tsv`;

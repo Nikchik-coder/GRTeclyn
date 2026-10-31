@@ -1,4 +1,4 @@
-"""Compare the evolved D0/D21/D30 potentials with the spinning paper at N=128.
+"""Compare the evolved D0/D21/D30/D40 potentials with the spinning paper at N=128.
 
 Reuse the spinning paper's radius-derivative fit, not its plotting style.
 The comparison is between finite-resolution evolutions, not a continuum
@@ -99,7 +99,21 @@ def load():
     d30 = dict(label="D30 potential", j=meta30["J"],
                frac=100 * 8 * np.pi * meta30["J"] / area30,
                branch="collapses", **measured)
-    return points, [d0, candidate, d30], histories
+    d40_root = REPO / "results/optimisation/completed/2026-10-31/d40"
+    with np.load(d40_root / "fam_a_r1_0008_cma_resolution_20261031_best_clean.npz") as d:
+        meta40 = json.loads(str(d["meta"]))
+        assert meta40["resolution"]["passed"] and meta40["verdict"] == "PASS"
+        sx, dx = lobatto(d["sx"].size - 1)
+        np.testing.assert_allclose(sx, d["sx"], atol=1e-14)
+        geom40 = throat(1.0, ArctanMap(1.0), sx, d["sy"], dx,
+                        d["F"], d["N"], d["B"])
+    area40 = geom40["area_throat"] * meta40["sigma"] ** 2
+    np.testing.assert_allclose(geom40["R_e"] * meta40["sigma"], meta40["R_e"], rtol=1e-9)
+    measured, _ = measure(d40_root / "evolution/small_data/throat_spheres.dat")
+    d40 = dict(label="D40 potential", j=meta40["J"],
+               frac=100 * 8 * np.pi * meta40["J"] / area40,
+               branch="collapses", **measured)
+    return points, [d0, candidate, d30, d40], histories
 
 
 def draw(points, candidates, histories, with_history=False):
