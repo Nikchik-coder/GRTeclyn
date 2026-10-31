@@ -82,6 +82,22 @@ The boson pilot has produced numerical nonzero-field solutions, not physical
 clearance: one is bound and localized but has E_b/R_A = 3.015 (limit 1) and
 E19 = 6.43e-6. More seeds and the CMA stage continue; no accepted winner yet.
 
+`opt-area-linear-step-20261031` ran on second/card 0 from **15:35:34**
+to **15:35:47 MSK**, code `fa6c5232`, four threads, 200 GiB, 30 min cap.
+The LU correction is accurate (relative linear residual 5e-11; iterative
+correction 2e-12), but arbitrarily small nonlinear steps change the residual
+by order unity. The largest residuals are in the f/B equations at the
+last interior negative-end node. Output:
+`runs/optimisation/fixed_area/linear_step_20261031.json`.
+
+The expanded kink polynomial loses its double vacuum zero to floating-point
+cancellation; the far-end equations amplify that fictitious potential.
+Factored evaluation preserves the same polynomial coefficients and analytic
+derivatives while making both vacuum values/first derivatives exactly zero.
+A high-precision near-vacuum regression now checks relative accuracy.
+Full tests and a GPU three-grid recheck are required before calling this
+the resolution of the observed failure. Radial stability is still unassessed.
+
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
 

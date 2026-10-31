@@ -33,6 +33,30 @@ def test_kink_q_matches_product_form():
         assert pot.dV(psi) == pytest.approx(want_d, rel=2e-6, abs=1e-6)
 
 
+def test_kink_nonzero_vacuum_is_exact_and_nearby_energy_keeps_precision():
+    from decimal import Decimal, localcontext
+    m, pm, q = .5209548187006455, -2.31, (-.2537873287, -.2183012095, .4078081612)
+    pot = PolynomialPotential.kink_q(m, pm, q)
+    assert pot.V(pm) == 0. and pot.dV(pm) == 0.
+    assert pot.d2V(pm) == pytest.approx(2*m*m*(1+sum(q)))
+    psi = pm*(1-1e-10)
+    with localcontext() as ctx:
+        ctx.prec = 70
+        md, pd, sd = map(Decimal.from_float, (m, pm, psi))
+        shape = 1+sum(Decimal.from_float(c)*(sd/pd)**k for k,c in enumerate(q,1))
+        exact = float(md**2/pd**2*sd**2*(sd-pd)**2*shape)
+    assert pot.V(psi) == pytest.approx(exact, rel=1e-13, abs=0)
+
+
+def test_factored_kink_keeps_exported_polynomial_and_derivatives():
+    factored = PolynomialPotential.kink_q(.4, -3.1, (.5, -.3, .2))
+    expanded = PolynomialPotential(factored.coeffs)
+    psi = np.linspace(-3.0, .5, 33)
+    for method in ('V', 'dV', 'd2V', 'dV_over'):
+        np.testing.assert_allclose(getattr(factored, method)(psi),
+                                   getattr(expanded, method)(psi), atol=2e-14, rtol=2e-12)
+
+
 def test_positive_bernstein_family_embeds_existing_cubic():
     from grteclyn_wrapper.optimisation.potentials import BernsteinKinkPotential
     q = (.672, .048, .310)

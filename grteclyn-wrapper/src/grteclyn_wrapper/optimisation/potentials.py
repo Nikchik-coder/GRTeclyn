@@ -37,14 +37,35 @@ class PolynomialPotential:
     """cal V(psi) = sum_k coeffs[k] psi^k, solver normalization."""
 
     coeffs: tuple[float, ...] = ()
+    # Retain the product form for a kink: expanded Horner evaluation loses
+    # the double zero at the nonzero vacuum to cancellation. Compactified
+    # far-end equations amplify that tiny fictitious potential.
+    _kink_data: tuple | None = None
+
+    def _kink_parts(self, psi):
+        m, pm, q = self._kink_data
+        u = psi/pm
+        shape, first, second = 0.*psi+1., 0.*psi, 0.*psi
+        for k, coefficient in enumerate(q, 1):
+            shape = shape+coefficient*u**k
+            first = first+k*coefficient*u**(k-1)/pm
+            if k >= 2:
+                second = second+k*(k-1)*coefficient*u**(k-2)/pm**2
+        return m*m/(pm*pm), psi-pm, shape, first, second
 
     def V(self, psi):
+        if self._kink_data is not None:
+            lam, z, shape, _, _ = self._kink_parts(psi)
+            return lam*(psi*z)**2*shape
         out = 0.0 * psi
         for c in reversed(self.coeffs):
             out = out * psi + c
         return out
 
     def dV(self, psi):
+        if self._kink_data is not None:
+            lam, z, shape, first, _ = self._kink_parts(psi)
+            return lam*(2*psi*z*(psi+z)*shape+(psi*z)**2*first)
         out = 0.0 * psi
         n = len(self.coeffs)
         for k in range(n - 1, 0, -1):
@@ -53,6 +74,10 @@ class PolynomialPotential:
 
     def d2V(self, psi):
         """cal V''(psi), the radial stability screen's V2 column."""
+        if self._kink_data is not None:
+            lam, z, shape, first, second = self._kink_parts(psi)
+            g, gp = psi*z, psi+z
+            return lam*((2*gp**2+4*g)*shape+4*g*gp*first+g*g*second)
         out = 0.0 * psi
         n = len(self.coeffs)
         for k in range(n - 1, 1, -1):
@@ -65,6 +90,9 @@ class PolynomialPotential:
         rows need the ratio where the field has zeros (the winding
         amplitude vanishes on the axis), so a linear term is refused --
         the ratio would be singular there."""
+        if self._kink_data is not None:
+            lam, z, shape, first, _ = self._kink_parts(psi)
+            return lam*(2*z*(psi+z)*shape+psi*z*z*first)
         if len(self.coeffs) > 1 and self.coeffs[1] != 0.0:
             raise ValueError("dV_over: the potential has a linear term")
         out = 0.0 * psi
@@ -111,7 +139,7 @@ class PolynomialPotential:
         has mass m in the cal V = m^2 psi^2 sense)."""
         lam = m * m / (psi_minus * psi_minus)
         return cls((0.0, 0.0, lam * psi_minus**2, -2.0 * lam * psi_minus,
-                    lam))
+                    lam), (m, psi_minus, ()))
 
     @classmethod
     def kink_q(cls, m: float, psi_minus: float,
@@ -133,7 +161,7 @@ class PolynomialPotential:
         for i, b in enumerate(base):
             for j, c in enumerate(shape):
                 out[i + j] += b * c
-        return cls(tuple(out))
+        return cls(tuple(out), (m, psi_minus, tuple(q)))
 
 
 @dataclass(frozen=True)
