@@ -33,13 +33,39 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:22 MSK**. **The ordinary-boson pilot is running
-on second/card 1; refinement diagnostics are running on second/card 0.**
+Checked **2026-10-31 at 15:43 MSK**. **The rotating-boson pilot is running
+on second/card 1. The potential-only finalist now passes all three grids.**
 D46's last evolution check remains the 15:01 snapshot below.
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+The first nonrotating pilot finished at about **15:36 MSK**, exit 2:
+40 seed combinations, three numerical finite-field solutions, nine CMA
+proposals, no accepted model. Candidate 00046 is bound/localized but exceeds
+the energy budget (3.015 versus 1) and unused-equation tolerance.
+
+`opt-area-factored-refine-20261031` ran on second/card 0 from **15:39 MSK**,
+code `6020e9f7`, four threads, 200 GiB, 0.5 h cap. **Passed:** all three
+perturbed 150x30/180x36/210x42 solves take two full Newton updates to about
+1e-15; unused constraints remain below 3e-10, and full-bill relative drift
+is 2.91e-13. X_full = 2.188430376060 versus reference 4.684238262942
+(53.28% reduction), with peak tides 2.593 times reference inside the t4 cap.
+This confirms the vacuum-cancellation repair for the observed refinement
+failure. It does not repair radial stability screening. The earlier pilot's
+no-winner outcome below is superseded for candidate 00071 by this recheck.
+
+`opt-boson-k1-t4-e1-20261031` started **15:39:30 MSK** on second/card 1,
+code `6020e9f7`, four threads, 200 GiB, 2 h cap (**17:39 MSK**).
+It uses the same fixed area/J/asymmetry and t4/energy-one gates, winding +1,
+seed 27, 200 CMA evaluations, factored potential and continuous infeasibility
+scores. At 15:43 it is progressing through finite seed attempts; no winner.
+Output: `runs/optimisation/fixed_area/boson_winding_20261031/boson-k1-t4-e1/`.
+Completed diagnostics, the first boson pilot and the validated potential
+fields are archived in `results/optimisation/validation/2026-10-31-extensions/`
+with hashes. Second scratch: 47 MB cache only, 476 GB free; no plotfiles or
+AMR checkpoints from stationary jobs.
 
 `opt-boson-k0-t4-e1-20261031` started at **15:22:42 MSK** on second/card 1
 after pulling `fd81f1d5` and confirming both cards idle. Case
@@ -95,8 +121,8 @@ cancellation; the far-end equations amplify that fictitious potential.
 Factored evaluation preserves the same polynomial coefficients and analytic
 derivatives while making both vacuum values/first derivatives exactly zero.
 A high-precision near-vacuum regression now checks relative accuracy.
-Full tests and a GPU three-grid recheck are required before calling this
-the resolution of the observed failure. Radial stability is still unassessed.
+All 168 optimisation tests pass, and the GPU three-grid recheck above confirms
+the repair of this refinement failure. Radial stability is still unassessed.
 
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
@@ -341,7 +367,9 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | three-grid diagnosis | measuring | hard timeout Oct 31 16:26 MSK |
-| `opt-boson-k0-t4-e1-20261031` | second / 1 | reference and seed search starting | measuring | hard timeout Oct 31 17:22 MSK |
+| `opt-boson-k1-t4-e1-20261031` | second / 1 | finite seed search, alive | measuring | 2 h cap; Oct 31 17:39 MSK |
+| `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |
+| `opt-boson-k0-t4-e1-20261031` | second / 1 | finished, no accepted model | 819 s | done |
 | `opt-d21-area-t4-pilot-20261031` | second / 1, finished | 88 proposals; 10 search-grid passes, no validated finalist | exit 2; 972.8 s | finished Oct 31 14:57 MSK |
 | `opt-d21-area-t2-pilot-r2-20261031` | second / 1, finished | reference PASS; 16 proposals, no accepted candidate | ended, exit 2; 181.6 s | Oct 31 14:37 MSK |
 | `opt-d21-area-t2-pilot-20261031` | second / 1, superseded by r2 | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |

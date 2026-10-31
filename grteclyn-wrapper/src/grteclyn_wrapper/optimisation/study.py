@@ -33,12 +33,14 @@ def load_config(path):
     with open(path,'rb') as f:
         cfg=tomllib.load(f)
     allowed={'version','tidal_factors','energy_budgets','windings','mass_range',
-             'amplitude_seeds','amplitude_max','mass_seeds','candidate_seeds'}
+             'amplitude_seeds','amplitude_max','mass_seeds','candidate_seeds',
+             'matter_candidate_seeds'}
     if set(cfg)-allowed:
         raise ValueError(f'unknown study keys: {sorted(set(cfg)-allowed)}')
     defaults=dict(version=1,tidal_factors=[1.,2.,4.],energy_budgets=[.1,.3,1.],
                   windings=[-1,0,1],mass_range=[.5,8.],mass_seeds=[.5,1.,2.,4.,8.],
-                  amplitude_seeds=[.01,.03,.1,.3],amplitude_max=.5,candidate_seeds=[])
+                  amplitude_seeds=[.01,.03,.1,.3],amplitude_max=.5,candidate_seeds=[],
+                  matter_candidate_seeds=[])
     defaults.update(cfg); cfg=defaults
     if cfg['version']!=1: raise ValueError('unsupported study version')
     for key in ('tidal_factors','energy_budgets','mass_seeds','amplitude_seeds'):
@@ -109,6 +111,7 @@ def search_score(row):
 def source_manifest(solution,cfg,args,case):
     paths=[Path(solution).with_suffix(ext) for ext in ('.json','.npz')]
     paths += [Path(p) for p in cfg['candidate_seeds']]
+    paths += [Path(p) for p in cfg.get('matter_candidate_seeds', [])]
     sources={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
     package=Path(__file__).parent
     dependencies=list(package.rglob('*.py'))
@@ -299,6 +302,27 @@ def run(args,*,error):
                                 parameters=[c['m'],*c['q']]))
             except (RuntimeError,ValueError,FloatingPointError) as err:
                 record(dict(stage='repin_existing',verdict='FAILED',error=str(err)))
+    if case['winding'] is not None and not solved:
+        for path in cfg.get('matter_candidate_seeds', []):
+            seed, meta = load_seed(path)
+            c = meta['config']
+            expected = 'cloud' if case['winding'] == 0 else 'winding'
+            if (c.get('matter') != expected or c.get('winding_k', 0) != case['winding']
+                    or not np.isclose(c['gamma'], basecfg['gamma'], atol=1e-12, rtol=0)
+                    or not np.isclose(c['J'], basecfg['J'], atol=1e-10, rtol=0)
+                    or meta['pin'][0] != pin[0]
+                    or not np.isclose(meta['pin'][1], pin[1], atol=0, rtol=1e-10)):
+                raise ValueError('matter seed does not match the study geometry and winding')
+            try:
+                # Re-solve under this implementation; old acceptance is not inherited.
+                s, r = solve_trial(seed, c, *grid, pin, d2, max_iter=24)
+                r['seed_source'] = str(path)
+                accept_seed(s, c, r, parameters(c), 'matter_warm_seed')
+            except (RuntimeError, ValueError, FloatingPointError) as err:
+                record(dict(stage='matter_warm_seed', verdict='FAILED',
+                            seed_source=str(path), error=str(err)))
+            finally:
+                release_solver()
     if case['winding'] is not None and not solved:
         for bi,(background,background_config) in enumerate(backgrounds):
             for mass in cfg['mass_seeds']:
