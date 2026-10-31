@@ -27,13 +27,14 @@ search is authorized: cheap finer-grid screening of each new best, then a
 full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 ended with a NaN at t = 88.4175. Evolution of the validated D30 e0316 winner is authorized on 2026-10-31, N128 on card 1, checkpoints off. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D40, D46 and D51 fresh searches and subsequent validated N128 evolutions
-are authorized (2026-10-31), checkpoints off for each. The old D51 export
-remains rejected; only a newly validated winner can be evolved.
+were authorized (2026-10-31), checkpoints off for each. D51 authorization
+was withdrawn at 11:03 MSK after its second initialization failure; it is
+removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
 Checked 2026-10-31 at 11:05 MSK. **D30 and D40 evolving; D46 evolution
-launched on first/card 0 with full preflight in progress. D51 is removed
+advancing on first/card 0 after full preflight passed. D51 is removed
 from both the search and evolution queue; no further retry is authorized.**
 
 The module entry point is
@@ -59,7 +60,10 @@ D46 search `opt-d46-resolution-cma-r2` completed all 400 evaluations at
 X = **1.699350508660**, versus V=0 **3.720579504338** (54.33% less).
 Final E19/E_c = 5.58e-9/2.53e-9; R_e = 4.882163848839 and
 J = 3.154107711925 match the classical D46 reference. Refinement required
-zero Newton updates; physical stability remains unassessed.
+zero Newton updates; physical stability remains unassessed. Completed search
+fields, trace, screen/refinement diagnostics and job provenance are archived
+in `results/optimisation/completed/2026-10-31/d46/` (5.2 MB, 49 files plus
+hash manifest); field finiteness, refinement metadata and archive hashes pass.
 
 D46 `D46_cma20261031_L64_N128_ml3_spdrv0_t150` launched at 11:04:34 MSK
 on first/card 0, checkpoints off. Shared checkout pulled `bf11c922` before
@@ -68,7 +72,14 @@ potential background, with read-back verification. Template diff against the
 exact classical D46 run changes only background/deployment paths and explicit
 checkpoint-off keys. N128/L64/ml3, drive 0, dt multiplier 0.02, stop t = 150,
 plot interval 100; matter binary 16460fb0. Full preflight and 14-field hold
-consumer, keep-last 3. Start verification is in progress; no measured ETA yet.
+consumer, keep-last 3. Full preflight passed and all 14 initial fields
+rendered. Initial R_eq = 4.88266 versus spectral 4.88216 (0.01%); potential
+coefficients are read by the evolution. The initial chi frame was compared
+visually with the matched classical image (different zooms); both are centered
+and nonblank. First MOTS extraction is still in progress: the first seed
+found a surface, and the remaining seed search is running. Startup consumer
+cost exceeds the plot interval; verify subsequent passes using the saved
+surface before declaring throughput adequate. Early speed is about 18 units/h.
 
 D51 retry `opt-d51-resolution-cma-r2` ran on first/card 0 from 10:44:50
 to 10:56:17 MSK, exit 1. Even with 60 mass increments, 48 Newton iterations
