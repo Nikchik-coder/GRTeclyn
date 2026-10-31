@@ -62,32 +62,40 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 
 ## Live
 
-Checked **2026-10-31 at 21:49 MSK**. D80 finished **21:44:01 MSK**,
-400 proposals, exit 0: X=1.069974516102 versus V=0 X=1.419239991186
-(24.61% lower), m=0.1998769, q=(-1.998487,0.022093,7.996882).
-**Its reported final refinement took zero Newton updates on every grid**;
-it passes interpolated-background checks but is not yet an independent
-recovery test. A perturbed-seed recheck is being prepared on the free card.
-D90 is still searching (at least 372/400); its screened X=0.61325934 is
-2.29% above V=0 X=0.59954903. Both use second-node cards 0/1, respectively.
-First-node card 0 continues the geometry pilot below.
+Checked **2026-10-31 at 21:52 MSK**. Both initial 400-proposal
+low-mass searches finished, exit 0: D80 at **21:44:01**, D90 at **21:51:50**.
+D80: X=1.069974516102 versus V=0 X=1.419239991186 (24.61% lower),
+m=0.1998769, q=(-1.998487,0.022093,7.996882). D90: screened finalist
+X=0.611923753514 versus V=0 X=0.599549029786 (**2.06% higher**),
+m=0.05850821, q=(-1.593098,0.333527,3.429064). It did not beat V=0;
+the unqualified coarse minimum X=0.60859386 also remains above V=0.
 
-D80 perturbed recovery launched **21:51 MSK**, second/card 0, job
-`opt-d80-lowmass-recheck-20261031`, source `87d52379`, four threads,
-200 GiB virtual cap, 0.5 h timeout (22:21 MSK). Input coarse e0395;
-output `runs/optimisation/low_mass_20261031/d80_recheck/`.
-The standalone resolution command performs actual Newton corrections
-on 150x30, 180x36 and 210x42 before writing `validated.npz`.
+**Perturbed recovery:** original final-grid checks took zero Newton updates.
+Their `best_clean` labels alone are insufficient independent validation.
+D80's recheck `opt-d80-lowmass-recheck-20261031` ran on second/card 0
+from 21:51 MSK to **21:51:49**, exit 0: all three grids PASS with actual
+Newton corrections, finest X=1.069974516105, E19=1.13e-10, E_c=4.11e-10.
+D90's corresponding recheck launched **21:52:36**, second/card 0,
+job `opt-d90-lowmass-recheck-20261031`, coarse e0397; 0.5 h timeout,
+**22:22 MSK** hard stop. Outputs are `d80_recheck/` and `d90_recheck/`
+under `runs/optimisation/low_mass_20261031/`; originals stay unchanged.
 
-**D90 extension authorized (21:48 MSK).** If the first 400-proposal search
-does not beat V=0, run separate bounded restarts from its final screened
-shape and from a weak pure kink near m=0.01, at the same R_e/J/gamma.
-Keep the massless reference explicit; a lower coarse-grid bill or a failed
-resolution screen is not an improvement. Exact launch settings follow below
-when started. Original jobs: `opt-d80-lowmass-20261031`,
-`opt-d90-lowmass-20261031`; output `runs/optimisation/low_mass_20261031/`.
-No evolution, plotfiles or AMR checkpoints. At 21:48 storage is clean:
-first node **46 MB cache / 614 GB free**, second **47 MB / 556 GB free**.
+**D90 extension authorized and started.** Warm restart launched
+**21:52:36 MSK**, second/card 1, job `opt-d90-extend-warm-20261031`,
+code `87d52379` (checkout `acdbade8`). 800 CMA proposals, seed 223,
+x0=(0.0585082124,-1.5930976620,0.3335265754,3.4290638686), mass step 0.01.
+Bounds m in [0,0.20], q_i in [-2,8]; allowing m=0 includes the classical
+limit, although a finite random search need not propose that exact endpoint.
+Reference R_e/J/gamma unchanged. Search 150x30, cheap per-best finer-grid
+screens, actual perturbed 150x30/180x36/210x42 finalist recovery.
+Four threads, 200 GiB virtual cap, **4 h timeout, November 1 at 01:52 MSK**;
+measured search speed/ETA pending walk-in. Output
+`runs/optimisation/d90_extension_20261031/warm.tsv`.
+A separate weak-kink restart (m=0.01, q=0, mass step 0.005, seed 227,
+800 proposals, same bounds and gates) is queued for card 0 after D90's recheck.
+First-node card 0 continues the geometry pilot below. No evolution,
+plotfiles or AMR checkpoints; no consumer is needed. At 21:48 storage
+was clean: first **46 MB cache / 614 GB free**, second **47 MB / 556 GB free**.
 
 The legacy search and standalone resolution command now request a
 perturbed seed, at least one Newton correction and a 1e-14 solve target
