@@ -25,6 +25,7 @@ POTENTIALS = {
     'D21': POTENTIAL/'small_data/throat_spheres.dat.gz',
     'D30': ROOT/'d30/evolution/small_data/throat_spheres.dat.gz',
     'D40': ROOT/'d40/evolution/small_data/throat_spheres.dat',
+    'D46': ROOT/'d46/evolution/small_data/throat_spheres.dat.gz',
 }
 
 
@@ -49,6 +50,10 @@ def load():
         histories[model] = {}
         for branch, path in paths.items():
             data = np.loadtxt(path)
+            # Restrict the D46 potential analysis to the pre-runaway interval.
+            # Its classical reference briefly contracts before expanding.
+            if model == 'D46' and branch == 'potential':
+                data = data[data[:, 0] <= 100]
             t, r = data[:, 0], data[:, 2]
             assert np.isfinite(t).all()
             # The spherical throat finder loses the minimum late in the
@@ -85,7 +90,7 @@ def draw(histories):
         ax.plot(xs, measured[branch], color=color, lw=.9, marker=marker,
                 ms=4.1, mec=color, mew=.9,
                 mfc='white' if branch == 'potential' else color, zorder=3)
-    ax.set(xlim=(-1.5, xs[-1]+1.8), ylim=(35, 96),
+    ax.set(xlim=(-1.5, xs[-1]+1.8), ylim=(35, 103),
            xlabel='Reference model', ylabel=r'Time to $1\%$ contraction')
     ax.set_xticks(xs, models)
     ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())

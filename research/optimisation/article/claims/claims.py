@@ -39,6 +39,12 @@ def check(rows):
     for entry in json.loads((PACKED/'stream_manifest.json').read_text()):
         raw = gzip.decompress((PACKED/entry['path']).read_bytes())
         assert hashlib.sha256(raw).hexdigest() == entry['sha256_raw']
+    for folder in ('completed/2026-10-31/d46/evolution',
+                   'validation/2026-10-31-extensions/boson-k0-cma-r2',
+                   'validation/2026-10-31-extensions/s0-continuation-strict'):
+        root = REPO / 'results/optimisation' / folder
+        for entry in json.loads((root/'archive_manifest.json').read_text()):
+            assert hashlib.sha256((root/entry['archive']).read_bytes()).hexdigest() == entry['archive_sha256']
     data = load()
     expected = order_rows(data)
     with (PACKED/'constraint_orders.tsv').open() as f:
@@ -137,6 +143,10 @@ def generate(rows, data):
     d40 = next(p for p in candidates if p['label'] == 'D40 potential')
     ref40 = next(p for p in points if p['label'] == 'D40')
     macro('clmGrowthDfortyIncrease', f"{100*(d40['rate']/ref40['rate']-1):.0f}")
+    _, delay_rows = load_delay()
+    d46_times = {r['branch']: r['time'] for r in delay_rows
+                 if r['model'] == 'D46' and r['deficit'] == .01}
+    macro('clmDelayDfortysix', f"{d46_times['potential']-d46_times['classical']:.1f}")
     OUT.write_text('\n'.join(chunks)+'\n')
     print(OUT)
 

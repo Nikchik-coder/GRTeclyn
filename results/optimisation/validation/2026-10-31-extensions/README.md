@@ -55,7 +55,30 @@ run uses the graded checks and a lower initial phantom mass.
 
 `s0-continuation` (code 8264945e) re-solved the old symmetric winding
 seed and reached the target J at fixed true area, then gamma=-0.883573.
-It was stopped after 55 attempts because the 1e-12 Newton stopping target
-caused many unused-equation rejections. All successful fields are retained.
+It was stopped after 55 attempts to test whether a tighter Newton stopping
+target would resolve the unused-equation rejections. All successful fields
+are retained; the strict repeat below does not establish that stopping error
+caused those rejections.
 The restart uses a 1e-14 target from step_0052. These intermediate models
 have different asymmetry from D21 and are not matched D21 results.
+
+`boson-k0-cma-r2` (code 8264945e) finished at 16:31:21 MSK, exit 2.
+All 96 proposals were rejected: 94 ABOVE_GATE and two FAILED. Overlapping
+reasons include energy budget (87), tides (46), stationary constraints,
+quadrature and localization (22 each), off-grid equations (14) and
+positivity (two). No validated improvement was obtained. The complete trace,
+all returned fields, reference checks, outcome and job log are archived.
+Rejected low-X proposals do not replace the potential-only finalist.
+
+`s0-continuation-strict` (code 932053bd) finished at 16:16:40 MSK, exit 2.
+It retains the 1e-14 Newton target and all physical gates. The last passing
+asymmetry is gamma=-0.915914362, short of the D21 target -pi. The next trial
+has Newton residual 8.92e-16 but E19=1.00734e-8 exceeds the unchanged 1e-8
+limit. This is an independent-constraint rejection, not Newton failure or
+proof that the rotating branch does not exist. All passing fields, attempted
+step diagnostics, manifest and job log are retained. No D21 boson winner.
+
+The current validated extension remains the potential-only fixed-area result
+at the top of this file. It uses a different geometric normalization from
+the fixed-equatorial-radius article search and is not a new record in that
+comparison. Radial instability screening remains disabled and unvalidated.

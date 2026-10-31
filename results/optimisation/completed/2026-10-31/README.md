@@ -1,4 +1,4 @@
-# Completed D0 evolution and D30/D40 searches
+# Completed stationary searches and evolutions
 
 D30 completed 400 CMA-ES evaluations on 2026-10-30 at 23:15 MSK (exit 0).
 `d30/*_best_clean.npz` contains the accepted e0316 fields on 210x42. All
@@ -8,7 +8,7 @@ J = 1.6059341928143887 and R_e = 4.268787555383. The V=0 bill is
 finalist's independent checks and fields. Zero Newton updates were needed
 at each final grid because the initial residual already met its tolerance.
 The result is a numerically cleared background; stability is not assessed.
-Evolution of this D30 candidate is authorized; see the campaign STATUS for live progress.
+The D30 evolution completed t=100 and its streams are under d30/evolution/.
 
 D0 failed at t = 88.4175 with a NaN in K on level 3; last finite diagnostic
 time is 88.41. The manifest finished at 02:24 MSK on 2026-10-31. Its equatorial
@@ -37,5 +37,12 @@ winners, all screening decisions and the finalist's three diagnostic fields.
 Screen-only field arrays remain on the cluster. `archive_manifest.json`
 records original and archived hashes; deployment paths are replaced by
 `<repo>` in text and NPZ metadata. Numerical arrays are retained unchanged.
-The D40 N128 evolution is authorized with checkpoints off; live progress
-and its start checks are recorded in the campaign STATUS.
+The D40 N128 evolution completed t=100 with checkpoints off; its diagnostics
+are archived under d40/evolution/.
+
+D46's validated stationary winner and its three-grid checks are under d46/.
+The N128 evolution terminated with a NaN near t=141.43, short of t=150.
+See d46/evolution/README.md for the conservative analysis cutoff t=100,
+complete diagnostic provenance and the distinction between its contracting
+throat and the classical reference's eventual expansion. Both article
+comparison figures now include D46; late numerical breakdown is excluded.

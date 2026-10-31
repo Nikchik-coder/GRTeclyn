@@ -62,10 +62,44 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 
 ## Live
 
-Checked **2026-10-31 at 16:14 MSK**. **Strict S0-to-D21 continuation occupies
-second/card 1; nonrotating CMA occupies card 0. The potential-only finalist passes all
-three grids. D46 at the 15:45 snapshot was alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
-(19:22 MSK); its consumer advances.**
+Checked **2026-10-31 at 20:26 MSK**. **All three GPUs idle.** D46 ended
+at **18:56:57 MSK**, exit 6, NaN in K on level 3 near **t=141.43/150**;
+last speed 18.15 units/h. Both remaining boson jobs ended without a validated
+winner. No GPU job or ETA remains. CPU fixed-scale D46 movie closeout is
+running with seven CPU workers (one thread, 8 GiB cap each) and t<=100;
+its log is `runs/capped_jobs/opt-d46-closeout-parallel-20261031/log`.
+The serial renderer was stopped and replaced at 20:24 MSK; no GPU launch.
+
+Storage: first node scratch **46 MB cache, 583 GB free**; second node
+**47 MB cache, 471 GB free**. D46's last three plotfiles (7.1 GB) were removed
+after archive/hash verification; no checkpoints existed. Empty completed
+second-node scratch folders were removed. All frames and slice caches remain.
+Cleanup is logged in the NFS cleanup manifest for October 31.
+
+Completed archives and figures:
+- `completed/2026-10-31/d46/evolution/`: complete diagnostics, params,
+  manifest and compressed logs; last finite coarse row t=141.43, consumer t=141.
+  Analysis cutoff t=100 precedes the late constraint growth and numerical
+  plunge; this is not a convergence certificate. Early fit t=77--96 gives
+  tau=11.479644. First 1% areal contraction is t=96.145495 versus classical
+  t=73.724877, a delay of 22.420618. The classical D46 contracts briefly
+  (minimum radius ratio 0.988820), then expands; its plotted rate belongs
+  to that expansion. The potential continues contracting. Do not describe
+  D46 as same-branch instability suppression or delayed identical collapse.
+- `validation/2026-10-31-extensions/boson-k0-cma-r2/`: all 96 proposals
+  rejected (94 ABOVE_GATE, two FAILED), ended 16:31:21 MSK, exit 2. All
+  returned fields and complete trace are retained; no validated improvement.
+- `validation/2026-10-31-extensions/s0-continuation-strict/`: ended
+  16:16:40 MSK, exit 2. Last passing gamma=-0.915914362, short of -pi.
+  Next solve converges to 8.92e-16 but E19=1.00734e-8 fails the 1e-8 gate.
+  This is not a Newton failure or a demonstrated branch limit.
+- The contraction-delay and growth-rate figures include D46; article text
+  and captions distinguish the classical rebound. Potential-only fixed-area
+  X_full=2.188430 remains the validated extension result. Radial screening
+  is still **not fixed** and disabled.
+
+### Earlier launches (historical; current state above)
+
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
@@ -517,10 +551,10 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
-| `opt-boson-k0-cma-r2-20261031` | second / 0 | reference validation, alive | measuring | 2 h cap; Oct 31 18:07 MSK |
+| `opt-boson-k0-cma-r2-20261031` | second / 0 | finished, 96 rejected; no winner | done | ended Oct 31 16:31 MSK |
 | `opt-boson-k0-joint-cma-20261031` | second / 0 | stopped after 32 proposals for graded off-grid scoring | done | Oct 31 16:07 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
-| `opt-boson-cont-strict-20261031` | second / 1 | strict continuation from gamma -0.8836 | measuring | 1 h cap; Oct 31 17:14 MSK |
+| `opt-boson-cont-strict-20261031` | second / 1 | failed independent constraint at gamma -0.9189 | done | ended Oct 31 16:16 MSK |
 | `opt-boson-s0-to-d21-20261031` | second / 1 | stopped at gamma -0.8836 for stricter Newton | 55 attempts | Oct 31 16:13 MSK |
 | `opt-boson-kminus1-t4-e1-20261031` | second / 1 | stopped, 40 combinations and no usable seed | done | Oct 31 16:05 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
@@ -533,7 +567,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0, finished | 100 / 100; normal finalization | 19.97 units/h | finished Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 84.38 / 150, alive | 18.13 units/h | 3.62 h; Oct 31 19:22 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | NaN near 141.43 / 150; archived | 18.15 units/h (final) | ended Oct 31 18:56 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
@@ -558,7 +592,7 @@ N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R 
 ## Drainhole CMA queue
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished. D40 passed and its evolution finished at t = 100; D46 passed and its evolution is running; D51 failed initialization again and is removed from the queue.
+`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished. D40 passed and its evolution finished at t = 100; D46 passed and its evolution ended with a NaN near t = 141.43; D51 failed initialization again and is removed from the queue.
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)

@@ -22,3 +22,9 @@ the static formulas with independent infinite-domain quadratures and a numerical
 peak search, compares the displayed values with the physics ledger, and rebuilds
 the timing estimates from the packed streams. The inferred seeding order assumes
 a common growth time; it is not an independently converged instability rate.
+
+The growth-rate and first-contraction tables under `results/optimisation/article/`
+are checked against the archived radius histories. D46 potential data are
+restricted to t<=100; its classical reference later expands. The D46 crossing
+delay macro is generated from those rows. The closeout manifests for D46 and
+the two finished boson searches are also checked against archived file hashes.

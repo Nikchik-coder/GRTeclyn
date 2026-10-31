@@ -51,13 +51,25 @@ are measured through t=50; the later diagnostic histories show contraction.
 The classical evolution has different angular momentum and sponge driving;
 a controlled delay comparison is deferred in the campaign STATUS.
 
-## Completed D0/D30 checks
+## Completed searches and evolution comparisons
 
 `completed/2026-10-31/` archives the finished D30 search (400 evaluations,
 final three-grid PASS, X = 1.918733359440, stability unassessed) and D0's
 N128 evolution, which contracted and terminated with NaN in K at t = 88.4175.
 The pack includes complete small diagnostic streams and the validated D30
-fields; these outcomes have not yet been added to the article.
+fields. D30 and D40 completed t=100; D46 terminated near t=141.43 with
+a NaN. The article figures include all five evolved potential models.
+Rebuild with `-m grteclyn_wrapper.visualisation.optimisation.plot_contraction_delay`
+and `-m grteclyn_wrapper.visualisation.optimisation.plot_instability_curve`.
+D46 analysis stops at t=100, before its late numerical breakdown. Its
+classical reference briefly crosses 1% contraction and then expands, while
+the optimized run keeps contracting. The figures distinguish first-crossing
+delay from the growth rate and eventual direction of motion.
+
+The fixed-area extension archives under `validation/2026-10-31-extensions/`
+include the finished nonrotating boson CMA and strict rotating continuation.
+Neither produced a validated D21 boson winner; rejected proposals are not
+added as physical points to the article figures.
 
 ## Stationary mechanism and trade-offs
 

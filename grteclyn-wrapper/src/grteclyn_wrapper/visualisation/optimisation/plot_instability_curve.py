@@ -1,4 +1,4 @@
-"""Compare the evolved D0/D21/D30/D40 potentials with the spinning paper at N=128.
+"""Compare the evolved D0/D21/D30/D40/D46 potentials with the spinning paper at N=128.
 
 Reuse the spinning paper's radius-derivative fit, not its plotting style.
 The comparison is between finite-resolution evolutions, not a continuum
@@ -35,8 +35,10 @@ GROWTH_TABLE = REPO / "results/optimisation/article/instability_curve.tsv"
 MODELS = ("D0", "D21", "D30", "D40", "D46", "D51")
 
 
-def measure(path, collapse=True):
+def measure(path, collapse=True, tmax=None):
     a = np.loadtxt(path)
+    if tmax is not None:
+        a = a[a[:, 0] <= tmax]
     tau, span = rate_tau(a[:, 0], a[:, 2], collapse=collapse)
     if tau is None or tau <= 0:
         raise ValueError(f"No positive growth-time fit for {path}")
@@ -113,7 +115,21 @@ def load():
     d40 = dict(label="D40 potential", j=meta40["J"],
                frac=100 * 8 * np.pi * meta40["J"] / area40,
                branch="collapses", **measured)
-    return points, [d0, candidate, d30, d40], histories
+    d46_root = REPO / "results/optimisation/completed/2026-10-31/d46"
+    with np.load(d46_root / "fam_a_r1_0010_cma_resolution_20261031_r2_best_clean.npz") as d:
+        meta46 = json.loads(str(d["meta"]))
+        assert meta46["resolution"]["passed"] and meta46["verdict"] == "PASS"
+        sx, dx = lobatto(d["sx"].size - 1)
+        np.testing.assert_allclose(sx, d["sx"], atol=1e-14)
+        geom46 = throat(1.0, ArctanMap(1.0), sx, d["sy"], dx,
+                        d["F"], d["N"], d["B"])
+    area46 = geom46["area_throat"] * meta46["sigma"] ** 2
+    np.testing.assert_allclose(geom46["R_e"] * meta46["sigma"], meta46["R_e"], rtol=1e-9)
+    measured, _ = measure(d46_root / "evolution/small_data/throat_spheres.dat.gz", tmax=100)
+    d46 = dict(label="D46 potential", j=meta46["J"],
+               frac=100 * 8 * np.pi * meta46["J"] / area46,
+               branch="collapses", **measured)
+    return points, [d0, candidate, d30, d40, d46], histories
 
 
 def draw(points, candidates, histories, with_history=False):
@@ -140,10 +156,10 @@ def draw(points, candidates, histories, with_history=False):
                     color=BLUE, lw=1, zorder=2)
     for p in points:
         ax.scatter(p["frac"], p["rate"], marker="^" if p["branch"] == "inflates" else "o",
-                   s=20, color=INK, zorder=3)
+                   s=9, color=INK, zorder=3)
     for candidate in candidates:
-        ax.scatter(candidate["frac"], candidate["rate"], marker="s", s=23,
-                   facecolor="white", edgecolor=BLUE, linewidth=.95, zorder=4)
+        ax.scatter(candidate["frac"], candidate["rate"], marker="s", s=9,
+                   facecolor="white", edgecolor=BLUE, linewidth=.65, zorder=4)
     ax.set(xlim=(-1.5, 38), ylim=(-.005, .205), xlabel="Reference model",
            ylabel=r"Growth rate $1/\tau$")
     # Model ticks label the physical spin coordinates; do not make the
@@ -194,8 +210,8 @@ def main(argv=None):
         writer.writerows(points + candidates)
     for candidate in candidates:
         ref = next(p for p in points if p["label"] == candidate["label"].split()[0])
-        print(f"{candidate['label']}, N=128: tau {ref['tau']:.6f} -> {candidate['tau']:.6f}; "
-              f"rate change {100*(candidate['rate']/ref['rate']-1):.2f}%")
+        print(f"{candidate['label']}, N=128: tau {candidate['tau']:.6f}; "
+              f"reference tau {ref['tau']:.6f} ({ref['branch']})")
     return bool(issues)
 
 

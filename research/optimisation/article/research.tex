@@ -431,7 +431,7 @@ using the logarithmic dependence expected for such a perturbation. The
 constraint order and the order of the perturbation amplitude are different
 measurements.
 
-At fixed numerical resolution, the potential-bearing D0, D21$^\star$, D30 and D40 runs reach the same fractional contraction later than their classical counterparts (Fig.~\ref{fig:delay}). We measure the time at which each throat's areal radius first falls by $1\%$ from its own initial value. The difference between these times measures a delay in contraction, separately from the subsequent exponential growth rate. D0, D30 and D40 use their reference throat size, angular momentum and evolution settings. The D21 comparison also changes the background spin slightly and the outer
+At fixed numerical resolution, the potential-bearing D0, D21$^\star$, D30, D40 and D46 runs reach the same fractional contraction later than their classical counterparts (Fig.~\ref{fig:delay}). We measure the time at which each throat's areal radius first falls by $1\%$ from its own initial value. The difference between these times measures a delay in contraction, separately from the subsequent exponential growth rate. D0, D30, D40 and D46 use their reference throat size, angular momentum and evolution settings. The D21 comparison also changes the background spin slightly and the outer
 damping: classical D21 uses $J=1$ and drive strength $1$, while D21$^\star$
 uses $J=1.0138$ and drive strength $0$. Holding area fixed, the classical
 quadratic rate fit predicts only a $\clmSpinSensitivity\%$ change from this
@@ -442,16 +442,22 @@ these two numerical setups rather than a controlled potential-only effect.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{contraction_delay.pdf}
-\caption{Time to the first $1\%$ decrease in throat areal radius at $N=128$, for classical (black circles) and optimized (open blue squares) runs. Crossings are interpolated between saved samples; lines join measured points, and grey segments show the delay. Horizontal positions use the classical reference spins. D21$^\star$ has the spin and damping differences described in the text. Every optimized run reaches this contraction threshold later.}
+\caption{Time to the first $1\%$ decrease in throat areal radius at $N=128$, for classical (black circles) and optimized (open blue squares) runs. Crossings are interpolated between saved samples; lines join measured points, and grey segments show the delay. Horizontal positions use the classical reference spins. D21$^\star$ has the spin and damping differences described in the text. Every optimized run reaches this contraction threshold later; the classical D46 subsequently reverses and expands.}
 \label{fig:delay}
 \end{figure}
 
-The growth rate answers a separate question: how rapidly does contraction amplify once it develops? We fit $\ln|dR_A/dt|$ over the same $0.2$--$1\%$ areal-radius decrease (Fig.~\ref{fig:growth}). For D21$^\star$, the growth time increases from $\tau=\clmGrowthClassicalTau$ to $\clmGrowthPotentialTau$. D0 and D30 likewise have lower fitted rates. D40 instead has a $\clmGrowthDfortyIncrease\%$ higher rate despite its delayed contraction. Thus the potential delays the observed contraction in these runs, but does not uniformly suppress its growth rate. The resolution dependence of the onset distinguishes these finite-resolution delays from a continuum instability measurement.
+D46 illustrates why a contraction threshold alone does not specify the later
+outcome. Its classical throat briefly passes the threshold before reversing
+and expanding, whereas the potential-bearing throat continues to contract.
+The potential delays the first crossing by $\clmDelayDfortysix$ time units,
+but the two runs do not undergo the same subsequent evolution.
+
+The growth rate answers a separate question: how rapidly does contraction amplify once it develops? We fit $\ln|dR_A/dt|$ over the same $0.2$--$1\%$ areal-radius decrease (Fig.~\ref{fig:growth}). For D21$^\star$, the growth time increases from $\tau=\clmGrowthClassicalTau$ to $\clmGrowthPotentialTau$. D0 and D30 likewise have lower fitted rates. D40 instead has a $\clmGrowthDfortyIncrease\%$ higher rate despite its delayed contraction. Thus the potential delays the observed contraction in these runs, but does not uniformly suppress its growth rate. The D46 potential fit describes contraction, whereas the classical D46 point describes its later expansion. The resolution dependence of the onset distinguishes these finite-resolution delays from a continuum instability measurement.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{instability_curve.pdf}
-\caption{Measured growth rates at $N=128$ for the classical models and four potential-bearing solutions (open blue squares). Positions retain $8\pi J/A$; ticks name the classical references. Grey and blue curves fit $a-b(8\pi J/A)^2$ to contracting models; the dashed blue extension is an extrapolation, not a measured stability threshold. Over the common $0.2$--$1\%$ contraction interval, the potential lowers the rate for D0--D30 but raises it at D40.}
+\caption{Measured growth rates at $N=128$ for the classical models and five potential-bearing solutions (open blue squares). Positions retain $8\pi J/A$; ticks name the classical references. Grey and blue curves fit $a-b(8\pi J/A)^2$ to contracting models; the dashed blue extension is an extrapolation, not a measured stability threshold. Over the common $0.2$--$1\%$ contraction interval, the potential lowers the rate for D0--D30 but raises it at D40. The two D46 points describe contraction with the potential and expansion without it.}
 \label{fig:growth}
 \end{figure}
 
@@ -462,7 +468,7 @@ The growth rate answers a separate question: how rapidly does contraction amplif
 
 Adding a scalar potential can lower the stationary exotic-matter requirement without changing the reference throat size or angular momentum. The search combines numerical solutions of the field equations with independent Einstein constraints, and it retains a reduction of about $\clmDfineReductionRounded\%$ for the selected D21 solution on a finer grid. The benefit depends on the reference solution; the high-spin D90 search does not improve on its massless counterpart.
 
-The D21 evolutions initially show decreasing constraint errors under refinement and later develop contraction. Its onset moves later on finer grids. At a common numerical resolution, the four evolved potential-bearing models reach a fixed fractional contraction later than their classical counterparts. This delay is distinct from the fitted growth rate: D40 contracts later even though its subsequent rate is higher.
+The D21 evolutions initially show decreasing constraint errors under refinement and later develop contraction. Its onset moves later on finer grids. At a common numerical resolution, the five evolved potential-bearing models reach a fixed fractional contraction later than their classical counterparts. This delay is distinct from the fitted growth rate: D40 contracts later even though its subsequent rate is higher. At D46 the classical throat reverses into expansion, while the optimized throat continues to contract.
 
 The stationary comparisons explain the exoticity reduction: the scalar
 variation is confined to a narrower region near the throat, with little

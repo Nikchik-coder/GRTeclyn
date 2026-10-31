@@ -23,3 +23,9 @@ D40	classical	0.02	66.41758134894523	results/spinningwormhole/campaign/drainhole
 D40	potential	0.002	71.53758145165312	results/optimisation/completed/2026-10-31/d40/evolution/small_data/throat_spheres.dat
 D40	potential	0.01	89.42301195686642	results/optimisation/completed/2026-10-31/d40/evolution/small_data/throat_spheres.dat
 D40	potential	0.02	97.25653188661384	results/optimisation/completed/2026-10-31/d40/evolution/small_data/throat_spheres.dat
+D46	classical	0.002	50.16475268709019	results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat
+D46	classical	0.01	73.72487656344413	results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat
+D46	classical	0.02		results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat
+D46	potential	0.002	76.62765968696577	results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz
+D46	potential	0.01	96.1454946271912	results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz
+D46	potential	0.02		results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz

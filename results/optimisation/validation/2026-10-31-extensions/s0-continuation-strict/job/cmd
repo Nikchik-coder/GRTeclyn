@@ -1,0 +1,1 @@
+env PYTHONUNBUFFERED=1 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.continue_boson results/optimisation/validation/2026-10-31-extensions/s0-continuation/step_0052.npz results/optimisation/validation/2026-10-31-extensions/boson-k1/reference.npz --out runs/optimisation/fixed_area/continuation_strict_20261031 --gpu 1 --winding -1
