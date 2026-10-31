@@ -184,6 +184,10 @@ resolved decaying tails and the complete coupled equations are required.
 Failure of both seed routes is recorded as an unresolved nonzero branch.
 Seeds are tried on the massless background and re-pinned potential candidates;
 `candidate_seeds` can include a preceding potential study's `best_clean.npz`.
+`matter_candidate_seeds` accepts saved nonzero canonical-field candidates.
+Their winding, area, J and asymmetry must match the case, and they are
+re-solved and rechecked before use. An earlier rejected model can supply a
+numerical starting point without inheriting an acceptance verdict.
 
 Ordinary budgets constrain `E_b/R_A`, with `E_b = integral T_nn dV` over
 both ends; this positive proper-volume energy is not an ADM mass. The search
@@ -195,7 +199,11 @@ frequency is an eigenvalue, not an independent search knob.
 
 Each case saves `manifest.json`, `evaluations.jsonl`, provisional candidate
 NPZs, the separately refined `reference.npz`, refinement records and
-`outcome.json`. Only a successful final check writes `best_clean.npz`.
+`outcome.json`. CMA termination criteria are recorded in `search_stop.json`.
+Infeasible candidates receive scores that increase with measured constraint
+excess, so a rejected population can move toward feasibility. Every feasible
+candidate outranks every infeasible one; this scoring never relaxes the
+acceptance gates. Only a successful final check writes `best_clean.npz`.
 `comparison.png/pdf` compare tides and ordinary energy with `X_full`;
 rebuild them with `python -m grteclyn_wrapper.optimisation.study_report CASE_DIR`.
 NPZ schema 2 preserves canonical fields, frequency and surface coefficients;
@@ -205,6 +213,10 @@ fields because that evolution format cannot represent them.
 Final validation perturbs the initial metric and requires Newton corrections
 on each finer grid. It repeats every physical constraint, direct off-grid
 Ricci-versus-matter and divergence-form scalar checks, and quadrature checks.
+Kink potentials are evaluated in factored form to preserve their double
+zeros at both asymptotic vacua. Expanding first into monomials causes
+cancellation near the nonzero vacuum, amplified by compactification. The
+exported polynomial coefficients describe the same potential.
 An objective drift above `1e-6` rejects the finalist. Improvements must exceed
 the combined numerical uncertainty. All results remain stationary;
 self-interactions, multi-throat acceptance and stability are outside this version.

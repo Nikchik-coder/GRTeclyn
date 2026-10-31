@@ -39,18 +39,23 @@ def validate(state, config, row, *, reference_peak, tidal_factor, energy_budget=
         localized=all(c<1e-6 and c<=b+1e-12 and b<=a+1e-12 for a,b,c in shells)
         out.update(boson_tail_ratios=[v.tolist() for v in shells],boson_localized=bool(localized))
         if not localized: reasons.append('boson_localization')
-    if not reasons:
+    # A finite energy-budget excess does not invalidate the geometry. Measure
+    # the remaining constraints too, otherwise the search can prefer a model
+    # just above that budget simply because its excessive tides were hidden.
+    def geometry_ready():
+        return not set(reasons)-{'ordinary_energy_budget'}
+    if geometry_ready():
         surface=verify_surface(1.,state['map'],state['sx'],state['sy'],state['F'],
                                state['N'],state['B'],state['surface_coefficients'])
         out.update(surface)
         if not surface['surface_verified']: reasons.append('minimal_surface')
-    if not reasons:
+    if geometry_ready():
         off=independent_equations(state,config,
               radial_points=max(17,len(state['sx'])//4) if detailed else 17,
               angular_points=max(9,len(state['sy'])//2) if detailed else 9)
         out.update(off)
         if not off['offgrid_pass']: reasons.append('offgrid_equations')
-    if not reasons:
+    if geometry_ready():
         tides=tidal_envelope(state)
         out.update(tides)
         if not tides['tidal_converged']: reasons.append('tidal_sampling')

@@ -231,6 +231,24 @@ def test_infeasible_search_scores_guide_without_overriding_acceptance():
     assert search_score(dict(verdict='ABOVE_GATE', E_c=float('nan'))) == 4
 
 
+def test_excess_energy_does_not_hide_excess_tides(monkeypatch):
+    from grteclyn_wrapper.optimisation import study_validation as v
+    s = ellis()
+    budget = dict(X_full=2., E_b=2., E_b_over_R_A=2., B_min=1.,
+                  lapse_min=1., R_A=1.)
+    monkeypatch.setattr(v, 'volume_budgets', lambda *a, **kw: budget)
+    monkeypatch.setattr(v, 'verify_surface', lambda *a: dict(surface_verified=True))
+    monkeypatch.setattr(v, 'independent_equations',
+                        lambda *a, **kw: dict(offgrid_pass=True))
+    monkeypatch.setattr(v, 'tidal_envelope', lambda *a: dict(
+        tidal_peak=3., tidal_drift=0., tidal_converged=True))
+    row = v.validate(s, {}, dict(verdict='PASS'), reference_peak=1.,
+                     tidal_factor=1., energy_budget=1.)
+    assert row['verdict'] == 'ABOVE_GATE'
+    assert row['rejection_reasons'] == ['ordinary_energy_budget', 'tidal_limit']
+    assert row['tidal_peak'] == 3.
+
+
 def test_signed_winding_reverses_twist_and_preserves_other_equations():
     from grteclyn_wrapper.optimisation.matter_equations import MatterCollocationProblem
     from grteclyn_wrapper.optimisation.potentials import PolynomialPotential

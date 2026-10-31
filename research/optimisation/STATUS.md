@@ -46,13 +46,22 @@ No dynamical evolution is part of this extension; no AMR checkpoints.
 `opt-boson-k0-warm-20261031` started **15:44:46 MSK** on second/card 0
 after pulling `cb72d5a3` and checking the card idle. The archived numerical
 seed 00046 is re-solved with the vacuum fix; no old verdict is inherited.
-Case boson-k0-t4-e1, config `studies/d21_boson_warm.toml`, seed 37,
-200 CMA evaluations, same area/J/asymmetry and acceptance gates. Four
+Case boson-k0-t4-e1, config `studies/d21_boson_warm.toml`,
+200 local Nelder-Mead evaluations, same area/J/asymmetry and acceptance gates.
+The launch omitted `--engine cma`, so its default is NM (seed 37 is unused).
+Retain this useful local refinement; fresh global runs specify CMA explicitly. Four
 threads, 200 GiB, 2 h timeout (**17:44 MSK**). All three reference grids pass. The warm boson seed and initial proposals
 now pass stationary constraints; their remaining rejection is the ordinary
 energy budget (about 3 versus the limit 1). Output: `runs/optimisation/fixed_area/boson_warm_20261031/`.
 Warm-seed changes pass all 30 fixed-area tests. First scratch: 7.2 GB used,
 619 GB free, three D46 plotfiles, no checkpoints; second: 47 MB, 476 GB free.
+
+Search-scoring follow-up: a numerically valid model above the ordinary-energy
+budget now also gets surface, off-grid and tidal checks. Previously its tide
+was hidden until the energy fell below the limit, which could make a point
+just above the energy limit spuriously preferable to one below it. No hard
+gate changes. The already-running warm pilot retains its original scoring;
+subsequent jobs use the complete diagnostics.
 
 The first nonrotating pilot finished at about **15:36 MSK**, exit 2:
 40 seed combinations, three numerical finite-field solutions, nine CMA
