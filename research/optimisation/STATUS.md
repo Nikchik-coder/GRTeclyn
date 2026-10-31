@@ -92,6 +92,44 @@ The old free-J D21 scan changed spin, so it is not a fixed-spin comparison.
 Launch-time storage: first node **46 MB cache, 609 GB free**; second node
 **47 MB cache, 529 GB free**. No scratch plotfiles or checkpoints.
 
+### Geometry/free-spin pilot — prepared, launch pending (21:20 MSK)
+
+Authorized: fixed **true minimal throat area** and asymptotic redshift, free J,
+with m >= 0.005. The legacy `--pin area` fixes a constant-eta surface; this pilot
+instead extends the coupled minimal-surface study. Config:
+[`studies/d21_geometry_free_spin.toml`](studies/d21_geometry_free_spin.toml).
+Initial reference: D21 member 0000, J=1.013799991684, A=204.0268;
+warm seed: the validated factored t4 finalist, X_full=2.188430376060.
+
+Planned box: J in [0,7.7], m in [0.005,1.2], q_i in [-2,8]; seed 211,
+200 CMA evaluations at 150x30, mass step 0.1 and J step 0.5. The upper spin
+bound is a finite pilot choice, not a proven wormhole limit. Tides stay below
+four times the **initial** massless reference; changing spin cannot loosen
+that cap. Full X includes radial and angular gradients, with the existing
+independent Einstein/scalar, surface and quadrature gates. The finalist and
+a separately continued massless control at its own J are re-solved on
+150x30, 180x36, 210x42. Joint gain and matched-spin gain are separate outputs;
+a failed control yields no claimed potential-induced gain. Stability remains
+not assessed. Saved shape, lapse and tidal diagnostics must be examined
+before interpreting a small X as a traversable, near-zero-exoticity limit.
+
+The proposed local curvature/rotation balance and polar-support mechanism
+are hypotheses, not verified identities or findings. A scalar-only V(psi)
+already permits angular field variation and does not enforce equal proper
+wall thickness at all latitudes. Multiplying it by a prescribed angular
+weight would require a consistent covariant matter extension. No such
+coordinate-dependent potential is added. For spherical throat topology,
+Gauss--Bonnet fixes integrated Gaussian curvature at 4 pi; shape can
+redistribute it, not erase it. The rotating massless family's Kerr limit
+([Kleihaus and Kunz](https://arxiv.org/abs/1409.1503)) does not establish a
+regular traversable X=0 solution. This pilot tests the covariant existing
+model before any further winding-matter extension.
+
+Validation before launch: full optimisation suite **177 passed**; added
+coverage checks J continuation, fifth-parameter propagation, fixed-area
+control matching and rejection of spin-only gains. The existing D80/D90
+jobs use the legacy driver and are unaffected by this study extension.
+
 ### Completed evolution and boson closeout (20:35 MSK)
 
 Checked **2026-10-31 at 20:35 MSK**. **All three GPUs idle.** D46 ended

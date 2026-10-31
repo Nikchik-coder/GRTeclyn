@@ -326,3 +326,105 @@ def test_boson_continuation_similarity_and_azimuthal_reflection():
     assert s['frequency'] == .7 and cfg['winding_k'] == 1
     with pytest.raises(ValueError, match='magnitude'):
         prepare_seed(s, cfg, before['area'], 0)
+
+
+def test_spin_continuation_bisects_J(monkeypatch):
+    from grteclyn_wrapper.optimisation import study
+    calls=[]
+    def solve(state,c,*a,**kw):
+        calls.append(c['J'])
+        if abs(c['J']-state['J'])>.51: raise RuntimeError('step too large')
+        return dict(J=c['J']),dict(verdict='PASS')
+    monkeypatch.setattr(study,'solve_trial',solve)
+    monkeypatch.setattr(study,'release_solver',lambda:None)
+    start=dict(m=.3,q=[0,0,0],J=1.)
+    state,_=study.continue_to(dict(J=1.),start,dict(start,J=2.),(8,4),
+                              ('minimal_area',10.),1.)
+    assert calls==[2.,1.5,2.] and state['J']==2.
+
+
+def test_free_spin_gain_requires_matched_control():
+    from grteclyn_wrapper.optimisation.study import compare_results
+    reference=dict(X_full=4.)
+    winner=dict(X_full=2.)
+    missing=compare_results(reference,winner,free_J=True)
+    assert missing['fractional_change_from_initial_reference']==.5
+    assert missing['validated_fractional_improvement'] is None
+    matched=dict(status='validated',diagnostics=dict(X_full=1.))
+    worse=compare_results(reference,winner,matched,free_J=True)
+    assert worse['matched_spin_fractional_change']==-1.
+    assert worse['validated_fractional_improvement'] is None
+    better=compare_results(reference,dict(X_full=.5),matched,free_J=True)
+    assert better['validated_fractional_improvement']==.5
+    assert compare_results(reference,winner)['validated_fractional_improvement']==.5
+
+
+def test_free_spin_workflow_matches_final_reference(monkeypatch,tmp_path):
+    from grteclyn_wrapper.optimisation import study,study_report
+    from grteclyn_wrapper.optimisation.commands.optimize_potential import build_parser
+    import scipy.optimize
+    s=ellis(8,4); cfg=dict(m=0.,q=[0.,0.,0.],gamma=0.,J=1.)
+    def row(c):
+        # Rotating massless model is cheaper than the potential candidate.
+        x=4. if c['J']==1. else (1. if c['m']==0 else 2.)
+        return dict(verdict='PASS',nx=8,ny=4,X=x,X_A=x,X_full=x,R_A=1.,tidal_peak=1.)
+    checks=[]
+    def check(state,c,grids,pin,*a,**kw):
+        checks.append(c.copy())
+        assert pin[0]=='minimal_area' and kw['perturb_seed']
+        return dict(passed=True,method='refine',records=[row(c)],relative_bill_drift=0.),s
+    monkeypatch.setattr(study,'massless_state',lambda *a:(s,cfg))
+    monkeypatch.setattr(study,'source_manifest',lambda *a:{})
+    monkeypatch.setattr(study,'check_candidate',check)
+    monkeypatch.setattr(study,'solve_trial',lambda state,c,*a,**kw:(s,row(c)))
+    monkeypatch.setattr(study,'validate',lambda state,c,r,**kw:r)
+    monkeypatch.setattr(study,'release_solver',lambda:None)
+    monkeypatch.setattr(study_report,'plot_comparison',lambda *a:None)
+    def minimize(objective,x0,**kw):
+        assert len(x0)==5 and x0[4]==1.
+        objective(np.array([.3,0,0,0,2.]))
+    monkeypatch.setattr(scipy.optimize,'minimize',minimize)
+    config=tmp_path/'study.toml'; config.write_text('windings=[]\n')
+    out=tmp_path/'out'
+    args=build_parser().parse_args(['unused.json','--study-config',str(config),
+         '--study-case','potential-t4','--nx','8','--ny','4','--out',str(out),
+         '--maxfev','1','--free-J','--J-min','0','--J-max','3','--J-step','.5'])
+    assert study.run(args,error=lambda msg:pytest.fail(msg))==0
+    data=json.loads((out/'potential-t4/outcome.json').read_text())
+    assert [c['J'] for c in checks]==[1.,2.,2.]
+    assert checks[-1]['m']==0 and checks[-1]['q']==[0,0,0]
+    assert data['winner_J']==2. and data['reference_J']==1.
+    assert data['fractional_change_from_initial_reference']==.5
+    assert data['matched_spin_fractional_change']==-1.
+    assert data['validated_fractional_improvement'] is None
+    assert (out/'potential-t4/matched_reference.npz').exists()
+
+
+@pytest.mark.parametrize('extra,case', [
+    ([], 'potential-t4'),
+    (['--J-max','3','--J-step','0'], 'potential-t4'),
+    (['--J-max','3','--J-step','.5'], 'boson-k1-t4-e0.1'),
+])
+def test_free_spin_rejects_missing_bounds_and_bosons(tmp_path,extra,case):
+    from grteclyn_wrapper.optimisation import study
+    from grteclyn_wrapper.optimisation.commands.optimize_potential import build_parser
+    config=tmp_path/'study.toml'; config.write_text('version=1\n')
+    args=build_parser().parse_args(['unused.json','--study-config',str(config),
+            '--study-case',case,'--free-J',*extra])
+    def error(msg): raise ValueError(msg)
+    with pytest.raises(ValueError,match='free-J'):
+        study.run(args,error=error)
+
+
+def test_matched_reference_failure_stays_unresolved(monkeypatch,tmp_path):
+    from grteclyn_wrapper.optimisation import study
+    def fail(*a,**kw): raise RuntimeError('no massless continuation')
+    monkeypatch.setattr(study,'continue_to',fail)
+    monkeypatch.setattr(study,'release_solver',lambda:None)
+    result=study.check_matched_reference({},dict(J=1.,m=.2,q=[1,2,3]),2.,
+            (8,4),[(8,4)],('minimal_area',10.),1.,tmp_path,None,
+            max_splits=1,max_iter=2)
+    assert result['status']=='unresolved'
+    assert not (tmp_path/'matched_reference.npz').exists()
+    assert study.compare_results(dict(X_full=4.),dict(X_full=1.),result,
+            free_J=True)['validated_fractional_improvement'] is None

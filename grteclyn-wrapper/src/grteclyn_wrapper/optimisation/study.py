@@ -137,7 +137,7 @@ def source_manifest(solution,cfg,args,case):
     return dict(version=1,sources=sources,code=code,study=cfg,case=case,
                 search={k:getattr(args,k) for k in ('nx','ny','x0','m_min','m_max','q_min','q_max',
                         'maxfev','engine','seed','sigma0','popsize','fatol','m_step',
-                        'walk_max_splits','walk_max_iter')},
+                        'walk_max_splits','walk_max_iter','free_J','J_min','J_max','J_step')},
                 resume_mode='restart_from_best_with_saved_continuation_seeds',
                 stability='not_assessed')
 
@@ -164,7 +164,7 @@ def continue_to(state,start,target,grid,pin,d2,*,max_splits=6,max_iter=24):
     """Bounded bisection continuation; numerical solves never imply acceptance."""
     def blend(a,b,t):
         c=dict(b)
-        for key in ('m','matter_mass','amplitude'):
+        for key in ('m','matter_mass','amplitude','J'):
             if key in a and key in b: c[key]=(1-t)*a[key]+t*b[key]
         c['q']=((1-t)*np.asarray(a['q'])+t*np.asarray(b['q'])).tolist()
         return c
@@ -202,14 +202,64 @@ def seed_attempts(state,config,pin,grid,d2,record):
         release_solver()
 
 
+def check_matched_reference(base,config,J,grid,grids,pin,d2,out,validator,*,max_splits,max_iter):
+    """Compare the winner to V=0 at its own J, with the same true area."""
+    target=dict(config,J=float(J),m=0.,q=[0.,0.,0.])
+    path=out/'matched_reference.npz'
+    if path.exists():
+        _,meta=load_seed(path)
+        if meta['J']==J:
+            return dict(status='validated',J=J,diagnostics=meta['resolution']['records'][-1])
+    directory=out/'matched_reference'
+    suffix=0
+    while directory.exists():
+        suffix+=1; directory=out/f'matched_reference_{suffix}'
+    try:
+        state,_=continue_to(base,config,target,grid,pin,d2,
+                            max_splits=max_splits,max_iter=max_iter)
+        result,checked=check_candidate(state,target,grids,pin,d2,directory,
+                            score_key='X_full',validator=validator,perturb_seed=True)
+        if not result['passed']:
+            return dict(status='unresolved',J=J,checks=result)
+        save_checked(path,checked,target,dict(comparison='matched_spin'),result)
+        return dict(status='validated',J=J,diagnostics=result['records'][-1])
+    except (RuntimeError,ValueError,FloatingPointError,np.linalg.LinAlgError) as err:
+        return dict(status='unresolved',J=J,error=str(err))
+    finally:
+        release_solver()
+
+
+def compare_results(reference,winner,matched_reference=None,*,free_J=False):
+    """A spin-driven gain must not be reported as a matched-spin improvement."""
+    joint=1-winner['X_full']/reference['X_full'] if winner else None
+    control=reference
+    if free_J:
+        control=(matched_reference['diagnostics'] if matched_reference and
+                 matched_reference['status']=='validated' else None)
+    gain=1-winner['X_full']/control['X_full'] if winner and control else None
+    uncertainty=(max(2e-6,control.get('volume_relative_drift',0.)+
+                     winner.get('volume_relative_drift',0.)) if gain is not None else None)
+    return dict(fractional_change_from_initial_reference=joint,
+                matched_spin_fractional_change=gain,
+                validated_fractional_improvement=gain if gain is not None and gain>uncertainty else None)
+
+
 def run(args,*,error):
     cfg=load_config(args.study_config); matrix=cases(cfg)
     if not args.study_case:
         for name in matrix: print(name)
         return 0
     if args.study_case not in matrix: error('unknown study case')
-    if args.stability or args.free_J or args.J_pin is not None or args.no_save:
-        error('study fixes reference J and requires saved fields; stability is unavailable')
+    case=matrix[args.study_case]
+    if args.stability or args.J_pin is not None or args.no_save:
+        error('study requires reference initial J and saved fields; stability is unavailable')
+    if args.free_J:
+        if case['winding'] is not None:
+            error('free-J studies currently support potential-only cases')
+        if (args.J_max is None or args.J_step is None or
+                not np.isfinite([args.J_min,args.J_max,args.J_step]).all() or
+                not 0<=args.J_min<args.J_max or args.J_step<=0):
+            error('free-J study needs finite ordered J bounds and a positive J-step')
     if args.maxfev<1: error('maxfev must be positive')
     x_input=np.array([float(v) for v in args.x0.split(',')])
     if (len(x_input)!=4 or not np.isfinite(x_input).all() or
@@ -248,11 +298,14 @@ def run(args,*,error):
         with log.open('a') as f: f.write(json.dumps(row,allow_nan=False)+'\n')
         print(json.dumps(row,allow_nan=False),flush=True)
     base,basecfg=massless_state(args.solution)
+    if args.free_J and not args.J_min<=basecfg['J']<=args.J_max:
+        error('reference J must lie inside free-J bounds')
     pin=('minimal_area',physical_throat(base)['area_throat'])
     d2=(base['psim']/np.pi)**2
     grid=(args.nx or len(base['sx'])-1,args.ny or len(base['sy'])-1)
     grids=refinement_grids(*grid)
     ref_dir=out/'reference'
+    reference_validator=lambda s,c,r:validate(s,c,r,reference_peak=None,tidal_factor=1.,detailed=True)
     if (out/'reference.npz').exists():
         base,meta=load_seed(out/'reference.npz')
         refrow=meta['resolution']['records'][-1]
@@ -260,7 +313,6 @@ def run(args,*,error):
         # Preserve interrupted diagnostics; rerun into a distinct directory.
         idx=0
         while ref_dir.exists(): idx+=1; ref_dir=out/f'reference_{idx}'
-        reference_validator=lambda s,c,r:validate(s,c,r,reference_peak=None,tidal_factor=1.,detailed=True)
         result,base=check_candidate(base,basecfg,grids,pin,d2,ref_dir,score_key='X_full',
                                     validator=reference_validator,perturb_seed=True)
         if not result['passed']:
@@ -291,6 +343,7 @@ def run(args,*,error):
             if r['verdict']=='PASS': finalists.append((r['X_full'],r['artifact'],r['config']))
     def parameters(c):
         x=[c['m'],*c['q']]
+        if args.free_J: x.append(c['J'])
         if case['winding'] is not None: x += [np.log(c['matter_mass']*ra),np.log(c['amplitude'])]
         return np.asarray(x)
     # Saved potential candidates must be re-solved at the new geometric area.
@@ -357,6 +410,10 @@ def run(args,*,error):
     lo=np.array([args.m_min,*([args.q_min]*3)] + ([np.log(cfg['mass_range'][0]),np.log(1e-5)] if case['winding'] is not None else []))
     hi=np.array([args.m_max,*([args.q_max]*3)] + ([np.log(cfg['mass_range'][1]),np.log(cfg['amplitude_max'])] if case['winding'] is not None else []))
     scales=np.array([args.m_step,.3,.3,.3]+([.3,.3] if case['winding'] is not None else []))
+    if args.free_J:
+        x0=np.r_[x0,basecfg['J']]
+        lo=np.r_[lo,args.J_min]; hi=np.r_[hi,args.J_max]
+        scales=np.r_[scales,args.J_step]
     if case['winding'] is not None:
         start=min(solved,key=lambda item:np.linalg.norm(item[0][:4]-x0))
         x0=np.r_[x0,start[0][4:]]
@@ -377,6 +434,7 @@ def run(args,*,error):
             if np.min(1+x[1]*u+x[2]*u**2+x[3]*u**3)<=0:
                 raise ValueError('potential_positivity')
             c=dict(basecfg,m=float(x[0]),q=list(map(float,x[1:4])))
+            if args.free_J: c['J']=float(x[4])
             if case['winding'] is not None:
                 c.update(matter='cloud' if case['winding']==0 else 'winding',winding_k=case['winding'],
                          matter_mass=float(np.exp(x[4])/ra),amplitude=float(np.exp(x[5])))
@@ -425,7 +483,7 @@ def run(args,*,error):
             if old.get('passed') and (out/'best_clean.npz').exists():
                 _,saved=load_seed(out/'best_clean.npz')
                 if saved.get('candidate_artifact')==artifact:
-                    winner=saved; break
+                    winner=saved['resolution']['records'][-1]; winner_config=c; break
             suffix=1
             while directory.with_name(directory.name+f'_{suffix}').exists(): suffix+=1
             directory=directory.with_name(directory.name+f'_{suffix}')
@@ -433,15 +491,21 @@ def run(args,*,error):
                                        validator=validator,perturb_seed=True)
         if result['passed']:
             save_checked(out/'best_clean.npz',checked,c,
-                         dict(X_reference=refrow['X_full'],candidate_artifact=artifact),result)
-            winner=result['records'][-1]; break
-    improvement=None
-    if winner:
-        gain=1-winner['X_full']/refrow['X_full']
-        uncertainty=max(2e-6,refrow.get('volume_relative_drift',0.)+winner.get('volume_relative_drift',0.))
-        improvement=gain if gain>uncertainty else None
-    outcome=dict(status='validated_candidate' if winner else 'no_validated_improvement',
-                 reference=refrow,winner=winner,validated_fractional_improvement=improvement,
+                         dict(X_reference=refrow['X_full'],reference_J=basecfg['J'],
+                              comparison='initial_reference' if args.free_J else 'matched_spin',
+                              candidate_artifact=artifact),result)
+            winner=result['records'][-1]; winner_config=c; break
+    matched_reference=None
+    if winner and args.free_J:
+        matched_reference=check_matched_reference(
+            base,basecfg,winner_config['J'],grid,grids,pin,d2,out,
+            reference_validator,max_splits=args.walk_max_splits,
+            max_iter=args.walk_max_iter)
+    comparison=compare_results(refrow,winner,matched_reference,free_J=args.free_J)
+    outcome=dict(status='validated_candidate' if winner else 'no_validated_candidate',
+                 reference=refrow,winner=winner,free_J=args.free_J,
+                 reference_J=basecfg['J'],winner_J=winner_config['J'] if winner else None,
+                 matched_reference=matched_reference,**comparison,
                  elapsed_seconds=time.monotonic()-started,search_evaluations=count,
                  stability='not_assessed')
     write_json(out/'outcome.json',outcome)

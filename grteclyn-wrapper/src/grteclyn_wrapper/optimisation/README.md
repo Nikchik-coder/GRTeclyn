@@ -116,7 +116,7 @@ the trace and resolution-check diagnostics are still produced.
 ## Fixed true area, bounded tides and massive bosons
 
 The optional `--study-config` workflow keeps the reference's true minimal
-throat area, positive-end angular momentum and asymptotic redshift fixed.
+throat area, positive-end angular momentum and asymptotic redshift fixed by default.
 The graph `xi(mu) = sum c_l T_l(2 mu^2 - 1)` joins the Newton unknowns;
 stationarity of its area supplies its equations. An independent, higher-order
 surface minimisation checks the area and a positive Hessian, and searches
@@ -168,6 +168,25 @@ No command here reserves a GPU automatically. The existing `--gpu` and
 configuration hashes must match. This is a warm restart, not restoration of
 the optimiser's population. The search evaluation limit is cumulative;
 reference validation and the finite initial seed matrix are separate costs.
+
+For a potential-only geometry search, add `--free-J --J-min 0 --J-max 7.7
+--J-step 0.5` and use `studies/d21_geometry_free_spin.toml` under the research
+optimisation directory. The reference's spin initializes the fifth search
+parameter; true area and asymptotic redshift remain fixed. `--m-min 0.005`
+opens the low-mass regime. The finite spin ceiling is a pilot search bound,
+not a theorem about allowed wormholes. The tidal ceiling always refers to
+the **initial** massless background, so increasing spin cannot relax the cap.
+
+After three-grid finalist validation, a separate massless continuation and
+three-grid check at the winner's spin supplies `matched_reference.npz`.
+`outcome.json` separates the joint change from the initial reference from
+the matched-spin change. Only the latter can populate
+`validated_fractional_improvement`; an unresolved control leaves it null.
+The comparison plot normalizes to the initial reference and shows spin on
+its second panel. Saved fields retain the full angular throat shape and
+scalar gradients. No coordinate-dependent potential or independent prescribed
+throat deformation is introduced; shape is determined by the field equations.
+A small objective alone does not establish traversability or stability.
 
 The mass-only canonical field uses `chi = sqrt(4 pi) phi` and
 `U = m_b^2 |chi|^2`. Its harmonic frequency is solved from the equatorial
