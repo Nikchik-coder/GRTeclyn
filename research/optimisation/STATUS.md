@@ -66,8 +66,8 @@ Checked **2026-10-31 at 21:10 MSK**. **D80 and D90 low-mass searches
 launched on second-node cards 0 and 1**, after pulling `3e11fa5f` and
 checking both cards idle. Jobs `opt-d80-lowmass-20261031` and
 `opt-d90-lowmass-20261031`; outputs `runs/optimisation/low_mass_20261031/`.
-First-node GPU remains free. Both jobs are in initial massless/potential
-continuation; proposal speed and measured ETA are pending. Each has a
+First-node GPU now runs the geometry pilot below. These low-mass jobs
+are progressing through CMA proposals; their measured completion ETA is pending. Each has a
 **4 h cap, ending November 1 at 01:10 MSK**, 400 CMA proposals, four threads
 and a 200 GiB virtual-memory cap. No evolution, plotfiles or AMR checkpoints.
 
@@ -92,7 +92,18 @@ The old free-J D21 scan changed spin, so it is not a fixed-spin comparison.
 Launch-time storage: first node **46 MB cache, 609 GB free**; second node
 **47 MB cache, 529 GB free**. No scratch plotfiles or checkpoints.
 
-### Geometry/free-spin pilot — prepared, launch pending (21:20 MSK)
+### Geometry/free-spin pilot — launched (21:21 MSK)
+
+**Launched 2026-10-31 at 21:21:32 MSK**, first node / GPU 0, after pulling
+`69e9590a` and checking the card idle. Job `opt-d21-geometry-freej-20261031`;
+output `runs/optimisation/geometry_20261031/potential-t4/`, allocation and
+commit in its parent's `launch.json`, exact command/log in `runs/capped_jobs/`.
+Four threads, 220 GiB virtual-address cap (CUDA reservations included),
+Jacobian chunks 512, **4 h hard timeout, November 1 at 01:21 MSK**.
+Reference validation runs first; measured proposal speed and ETA pending.
+Stationary-only: no plotfiles, AMR checkpoints, frames or consumer.
+Launch storage: first node **46 MB cache, 608 GB free**; second node's
+21:19 check **47 MB cache, 539 GB free**. No scratch leftovers.
 
 Authorized: fixed **true minimal throat area** and asymptotic redshift, free J,
 with m >= 0.005. The legacy `--pin area` fixes a constant-eta surface; this pilot
@@ -101,7 +112,7 @@ instead extends the coupled minimal-surface study. Config:
 Initial reference: D21 member 0000, J=1.013799991684, A=204.0268;
 warm seed: the validated factored t4 finalist, X_full=2.188430376060.
 
-Planned box: J in [0,7.7], m in [0.005,1.2], q_i in [-2,8]; seed 211,
+Search box: J in [0,7.7], m in [0.005,1.2], q_i in [-2,8]; seed 211,
 200 CMA evaluations at 150x30, mass step 0.1 and J step 0.5. The upper spin
 bound is a finite pilot choice, not a proven wormhole limit. Tides stay below
 four times the **initial** massless reference; changing spin cannot loosen
@@ -125,8 +136,8 @@ redistribute it, not erase it. The rotating massless family's Kerr limit
 regular traversable X=0 solution. This pilot tests the covariant existing
 model before any further winding-matter extension.
 
-Validation before launch: full optimisation suite **177 passed**; added
-coverage checks J continuation, fifth-parameter propagation, fixed-area
+Validation before launch: full optimisation suite **177 passed**, then **39 focused tests passed**
+including the final matched-control failure case; added coverage checks J continuation, fifth-parameter propagation, fixed-area
 control matching and rejection of spin-only gains. The existing D80/D90
 jobs use the legacy driver and are unaffected by this study extension.
 
