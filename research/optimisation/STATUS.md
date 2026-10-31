@@ -33,8 +33,27 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:01 MSK**. **D46 is evolving; D40 and the
-D21 potential-t4 pilot have finished. Both GPUs on the second node are free.**
+Checked **2026-10-31 at 15:22 MSK**. **The ordinary-boson pilot is running
+on second/card 1; second/card 0 is reserved for refinement diagnostics.**
+D46's last evolution check remains the 15:01 snapshot below.
+The October 31 instruction to continue exploration, run the required tests
+and start the boson search supersedes the previous hold. Routine stationary
+diagnostic and search choices are authorised without another confirmation.
+No dynamical evolution is part of this extension; no AMR checkpoints.
+
+`opt-boson-k0-t4-e1-20261031` started at **15:22:42 MSK** on second/card 1
+after pulling `fd81f1d5` and confirming both cards idle. Case
+`boson-k0-t4-e1`: canonical non-winding complex field, four-times-reference
+tidal cap, ordinary-energy budget E_b/R_A <= 1, mass/amplitude seeds from
+`studies/d21_fixed_area.toml`, 150x30 search and three-grid reference/finalist
+validation, 200 CMA evaluations, seed 17. Four threads, 200 GiB virtual-memory
+cap, 2 h timeout (**17:22 MSK**); measured ETA pending. Output:
+`runs/optimisation/fixed_area/boson_pilot_20261031/boson-k0-t4-e1/`.
+Logs persist under `runs/capped_jobs/opt-boson-k0-t4-e1-20261031/`.
+The companion diagnostic will compare perturbed/unperturbed seeds and fresh
+versus reused Jacobians. Acceptance thresholds remain unchanged.
+Second-node scratch: 47 MB cache only; 476 GB free.
+
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
 
@@ -277,6 +296,7 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
+| `opt-boson-k0-t4-e1-20261031` | second / 1 | reference and seed search starting | measuring | hard timeout Oct 31 17:22 MSK |
 | `opt-d21-area-t4-pilot-20261031` | second / 1, finished | 88 proposals; 10 search-grid passes, no validated finalist | exit 2; 972.8 s | finished Oct 31 14:57 MSK |
 | `opt-d21-area-t2-pilot-r2-20261031` | second / 1, finished | reference PASS; 16 proposals, no accepted candidate | ended, exit 2; 181.6 s | Oct 31 14:37 MSK |
 | `opt-d21-area-t2-pilot-20261031` | second / 1, superseded by r2 | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |
