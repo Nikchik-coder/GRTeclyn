@@ -34,14 +34,25 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:52 MSK**. **Opposite-winding bosons occupy second/card 1; the warm local pilot on
-card 0 was stopped for the corrected CMA restart. The potential-only finalist passes all
+Checked **2026-10-31 at 15:55 MSK**. **Opposite-winding bosons occupy second/card 1; corrected nonrotating
+CMA occupies card 0. The potential-only finalist passes all
 three grids. D46 at the 15:45 snapshot was alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
 (19:22 MSK); its consumer advances.**
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+`opt-boson-k0-joint-cma-20261031` started **15:55 MSK** on second/card 0,
+after pulling `ea97e390` and checking the card free. Config
+`studies/d21_boson_warm_cma.toml`, explicit CMA, seed 57, **96 proposals**
+for this targeted pilot, followed by independent three-grid refinement.
+The warm candidate is re-solved; energy and tidal excesses both guide the
+search. Same total area/J/gamma and t4/energy-one gates; four threads,
+200 GiB, 2 h cap (**17:55 MSK**). Output:
+`runs/optimisation/fixed_area/boson_joint_cma_20261031/boson-k0-t4-e1/`.
+The opposite-winding pilot continues on card 1. Scratch: 47 MB cache,
+476 GB free. No checkpoint or consumer is needed for stationary solves.
 
 The warm NM pilot was stopped at **15:54 MSK** after 58 proposals,
 all rejected. It reaches E_b/R_A = 0.994685 but its peak tide is 0.256794,
@@ -413,6 +424,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
+| `opt-boson-k0-joint-cma-20261031` | second / 0 | reference/seed validation starting | measuring | 2 h cap; Oct 31 17:55 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
 | `opt-boson-kminus1-t4-e1-20261031` | second / 1 | reference/seed search starting | measuring | 2 h cap; Oct 31 17:52 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
