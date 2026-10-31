@@ -28,3 +28,11 @@ order and contraction-time macros are generated from the packed streams.
 `instability_curve.tsv` records the measured growth rates and fitting intervals
 for the classical and potential-bearing models. The figure script regenerates
 it here; `figures/` holds only the rendered plots.
+
+`ledger_physics.tsv` selects the stationary D0/D21/D30 comparison with each
+model's exact massless reference. These are the selected fine-grid fields
+documented in `../physics/sources.json`, not the original search minima.
+The claims checker validates the ledger against `../physics/summary.tsv`
+and generates the physics table and prose macros. The article pairs this
+table with the mechanism profiles; the redundant NEC map and trade-off
+plot have been removed.

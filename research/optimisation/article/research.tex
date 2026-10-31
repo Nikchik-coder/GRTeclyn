@@ -74,7 +74,7 @@
 \date{\today}
 
 \begin{abstract}
-We ask whether a scalar potential can reduce the exotic matter needed to support a rotating Ellis--Bronnikov wormhole while keeping its throat size and angular momentum fixed. An automated search varies the potential and solves the stationary field equations for each trial. Additional Einstein constraints check the resulting geometry. For a selected slowly rotating drainhole, a calculation on a finer grid retains a $\clmDfineReductionRounded\%$ reduction in integrated null-energy violation relative to the massless scalar solution. Three-dimensional evolutions initially show decreasing constraint errors as the grid is refined. The throat later contracts, with onset moving later at higher resolution. The potential therefore lowers the stationary matter requirement for this solution, while its subsequent evolution remains sensitive to numerical resolution.
+We ask whether a scalar potential can reduce the exotic matter needed to support a rotating Ellis--Bronnikov wormhole while keeping its throat size and angular momentum fixed. An automated search varies the potential and solves the stationary field equations for each trial. Additional Einstein constraints check the resulting geometry. For a selected slowly rotating drainhole, a calculation on a finer grid retains a $\clmDfineReductionRounded\%$ reduction in volume-integrated null-energy violation relative to the massless scalar solution. Comparisons of three selected drainholes show that the scalar variation becomes concentrated near the throat: the smaller volume integral accompanies stronger peak violation, stronger peak tides and longer finite-distance light transit. Three-dimensional evolutions initially show decreasing constraint errors as the grid is refined. The throat later contracts, with onset moving later at higher resolution. The potential therefore lowers the stationary matter requirement for this solution, while its subsequent evolution remains sensitive to numerical resolution.
 \end{abstract}
 
 \maketitle
@@ -92,7 +92,7 @@ Ordinary bosonic matter provides another way to modify the throat geometry. Dzhu
 
 Here we vary the phantom potential, solve for the scalar and metric together, and measure the integrated NEC violation. The optimizer uses these measurements to choose further trials (Fig.~\ref{fig:search}). Independent Einstein constraints test whether each numerical solution is consistent with equations that were not used to construct it. Promising candidates are then checked on a finer grid before a selected solution is evolved in three dimensions.
 
-Section~\ref{sec:model} defines the model and the matter measure. Sections~\ref{sec:opt} and \ref{sec:setup} explain the search and evolution methods. Section~\ref{sec:results} presents the results, with numerical checks in Appendices~\ref{app:checks} and \ref{app:conv}. We use units in which Newton's constant and the speed of light satisfy $G=c=1$.
+Section~\ref{sec:model} defines the model and the matter measure. Sections~\ref{sec:opt} and \ref{sec:setup} explain the search and evolution methods. Section~\ref{sec:results} presents the search and evolution results, and Sec.~\ref{sec:physics} examines the matter distribution and physical trade-offs, with numerical checks in Appendices~\ref{app:checks} and \ref{app:conv}. We use units in which Newton's constant and the speed of light satisfy $G=c=1$.
 
 \section{The matter model}
 \label{sec:model}
@@ -305,6 +305,8 @@ At $N=128$, the resolution used for classical D21 in Ref.~\cite{shirokov2026s}, 
 \label{fig:growth}
 \end{figure}
 
+\input{physics.tex}
+
 \section{Conclusions}
 \label{sec:conclusions}
 
@@ -312,10 +314,18 @@ Adding a scalar potential can lower the stationary exotic-matter requirement wit
 
 The D21 evolutions initially show decreasing constraint errors under refinement and later develop contraction. Its onset moves later on finer grids.
 
+The stationary comparisons explain the exoticity reduction: the scalar
+variation is confined to a narrower region near the throat, with little
+change in the throat's overall dimensions. The local violation becomes
+stronger, and the selected solutions have larger peak tides and longer
+finite-distance light transit. Reducing the volume-integrated matter
+requirement therefore carries a trade-off in these measures of passage
+through the wormhole.
+
 \section{Reproducibility}
 \label{sec:data}
 
-The solver, optimization and figure-generation scripts are available in the \texttt{GRTeclyn} research repository~\cite{shirokov2026code}. The archived search traces identify every candidate used in Tables~\ref{tab:models} and \ref{tab:X}; a checked selection ledger generates both tables. The selected D21$^\star$ field arrays and the final evolution diagnostic streams are included with the figure inputs. All article figures rebuild from those tracked data.
+The solver, optimization and figure-generation scripts are available in the \texttt{GRTeclyn} research repository~\cite{shirokov2026code}. The archived search traces identify every candidate used in Tables~\ref{tab:models} and \ref{tab:X}; a checked selection ledger generates both tables. A separate checked ledger supplies Table~\ref{tab:physics} from the saved D0$^\star$, D21$^\star$ and D30$^\star$ fields. Those fields, their massless references, physical profiles and numerical quadrature checks are archived alongside the final evolution diagnostic streams. All article figures and tables rebuild from those tracked data.
 
 \begin{figure*}[t]
 \centering
@@ -340,6 +350,13 @@ and \texttt{GRTeclyn}.
 The massless limit provides a check against the established wormhole solutions. Setting $\mathcal{V}=0$ reduces the spectral equations to the system used in Ref.~\cite{shirokov2026s}. Newton iteration reproduces the saved solutions' global charges, $B=1$, and exoticity values to machine precision.
 
 For nonzero potential, we use two Einstein equations that do not enter the Newton solve: the $\eta\theta$ component and the generalization of the scalar-charge identity of Ref.~\cite{chew2016}. Their residuals, denoted $E_{19}$ and $E_c$, assess the consistency of the computed background independently of the equations solved. For D21$^\star$ on $210\times42$, they are $E_{19}=\clmDfineEoneNine$ and $E_c=\clmDfineEc$, below the selection threshold of Sec.~\ref{sec:setup:criteria}.
+
+For the stationary diagnostics of Sec.~\ref{sec:physics}, doubling the
+radial quadrature and profile sampling, tightening null-ray integration,
+and varying the angular quadrature leave the quoted values unchanged at
+the displayed precision. Exact Ellis limits test the gradient, null NEC,
+transit and tidal normalizations. An independent proper-distance calculation
+of the spherical tidal tensor also agrees with the D0$^\star$ measurement.
 
 The radial screen examines small spherically symmetric perturbations of the static counterpart at the same throat radius. Linearizing the Einstein--Klein--Gordon equations gives three coupled radial wave equations. On a Chebyshev--Lobatto grid these become a generalized eigenvalue problem.
 

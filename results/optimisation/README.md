@@ -54,9 +54,9 @@ fields; these outcomes have not yet been added to the article.
 fixed-J massless references. Optimisation localises the scalar gradients:
 the total exoticity decreases while peak NEC violation, peak tides and
 finite-endpoint light transit increase. See [definitions, results and
-checks](physics/README.md). The reproducible figures are
-`mechanism_d21`, `nec_distribution_d21` and `stationary_tradeoffs` under
-`figures/`; the numerical inputs stay under `physics/`.
+checks](physics/README.md). The article uses `figures/mechanism_d21` and a
+comparison table from `article/ledger_physics.tsv`; the numerical profiles
+stay under `physics/`. The redundant NEC map and trade-off plot are removed.
 
 ## Campaign F measurements
 

@@ -109,8 +109,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.checks.check_
 ```
 
 The six `*_profiles.npz` files contain dimensionless arrays consumed by the
-plotter. Tables, hashes and checks stay in this directory. The three figure
-pairs live in `../figures/`: `mechanism_d21`, `nec_distribution_d21` and
-`stationary_tradeoffs`. They use the same blue/black palette and pass the
-label-overlap audit. No new result from this analysis has been inserted into
-the article yet.
+plotter. Tables, hashes and checks stay in this directory. The article's
+physics section uses `../figures/mechanism_d21.{png,pdf}`, in blue and black,
+and a comparison table generated from `../article/ledger_physics.tsv`.
+The article claims checker compares that ledger against `summary.tsv` and
+checks the source hashes and numerical diagnostics before generating macros.
+The redundant `nec_distribution_d21` map and `stationary_tradeoffs` plot
+were removed; the plotter now produces only the mechanism figure.

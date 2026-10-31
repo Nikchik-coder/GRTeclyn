@@ -463,9 +463,13 @@ No new search or GPU evolution was needed.
 
 Data, definitions, source hashes and reproducible commands:
 [`results/optimisation/physics/README.md`](../../results/optimisation/physics/README.md).
-Three blue/black figure pairs are under `results/optimisation/figures/`:
-`mechanism_d21`, `nec_distribution_d21`, `stationary_tradeoffs`. Numerical
-inputs stay under `physics/`, not `figures/`. Article integration is pending.
+The article now has a dedicated physics section, the blue/black
+`mechanism_d21` figure, and a comparison table generated from
+`article/ledger_physics.tsv`. The redundant `nec_distribution_d21` map and
+`stationary_tradeoffs` plot were removed in both PNG and PDF form, and the
+plotter no longer regenerates them. Numerical inputs stay under `physics/`,
+not `figures/`. The text distinguishes the selected fine-grid D0/D21/D30
+solutions from the earlier search minima and records the stationary trade-offs.
 
 Checks cover radial/angular quadrature, profile sampling, physical scaling,
 exact Ellis limits, independent drainhole transit and an independent
