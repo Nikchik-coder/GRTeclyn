@@ -40,3 +40,9 @@ peak tide 0.256794 versus cap 0.128492: it is rejected, not a winner.
 Only the starting matter seed, this diagnostic candidate, reference fields
 and complete trace/log are archived; other provisional fields remain in the
 stopped cluster run. The new CMA run re-solves 00053 before using it.
+
+`boson-kminus1` (code d9a1044d) was stopped after all 40 seed combinations.
+38 finite solves failed. Two numerical fields are unbound, nonlocalized and
+violate the unused equations by orders of magnitude. They are diagnostic
+failures, not wormhole solutions, and were not passed to a production search.
+A separate continuation route starts from the saved symmetric winding seed.

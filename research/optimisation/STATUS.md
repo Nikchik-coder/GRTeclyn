@@ -34,14 +34,42 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:55 MSK**. **Opposite-winding bosons occupy second/card 1; corrected nonrotating
-CMA occupies card 0. The potential-only finalist passes all
+Checked **2026-10-31 at 16:07 MSK**. **S0-to-D21 continuation occupies
+second/card 1; nonrotating CMA occupies card 0. The potential-only finalist passes all
 three grids. D46 at the 15:45 snapshot was alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
 (19:22 MSK); its consumer advances.**
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+`opt-boson-k0-joint-cma-20261031` was stopped after **32 proposals**
+at **16:07 MSK**. No accepted model. Several proposals failed the off-grid
+scalar equation while their fixed reason penalty outranked tidal violations.
+The corrected scoring uses the measured off-grid excess, surface and tail
+errors as well; no gate is relaxed.
+
+`opt-boson-k0-cma-r2-20261031` started **16:07 MSK** on second/card 0,
+code `8264945e`, explicit CMA, seed 67, 96 proposals. Same saved matter
+seed, fixed area/J/gamma, energy-one and t4 caps; start phantom mass 0.8
+to move away from the excessive-tide basin. Four threads, 200 GiB, 2 h
+cap (**18:07 MSK**). Output:
+`runs/optimisation/fixed_area/boson_cma_r2_20261031/boson-k0-t4-e1/`.
+
+`opt-boson-kminus1-t4-e1-20261031` was stopped at **16:05 MSK** after
+all 40 seed combinations: 38 finite solves failed; two returned fields have
+E19 around 0.08 and 2.86, fail both bound/localization checks, and have
+ordinary energy near 69,000 and 95,000. They are unusable search seeds.
+This is not evidence that every rotating branch is absent.
+
+`opt-boson-s0-to-d21-20261031` started **16:05:05 MSK** on second/card 1,
+after pulling `8264945e` and checking the card free. It re-solves the saved
+S0 winding-amplitude-0.02 seed, reverses its winding, scales to the D21 area,
+then continues spin and asymmetry. Four threads, 200 GiB, 1 h cap
+(**17:05 MSK**), at most 80 solves. Initial solve and three spin steps
+already pass the independent stationary checks. Output:
+`runs/optimisation/fixed_area/s0_to_d21_20261031/`.
+The nonrotating joint CMA continues; scratch 47 MB cache, 475 GB free.
 
 `opt-boson-k0-joint-cma-20261031` started **15:55 MSK** on second/card 0,
 after pulling `ea97e390` and checking the card free. Config
@@ -434,9 +462,11 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
-| `opt-boson-k0-joint-cma-20261031` | second / 0 | reference/seed validation starting | measuring | 2 h cap; Oct 31 17:55 MSK |
+| `opt-boson-k0-cma-r2-20261031` | second / 0 | reference validation, alive | measuring | 2 h cap; Oct 31 18:07 MSK |
+| `opt-boson-k0-joint-cma-20261031` | second / 0 | stopped after 32 proposals for graded off-grid scoring | done | Oct 31 16:07 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
-| `opt-boson-kminus1-t4-e1-20261031` | second / 1 | reference/seed search starting | measuring | 2 h cap; Oct 31 17:52 MSK |
+| `opt-boson-s0-to-d21-20261031` | second / 1 | initial and spin steps PASS, alive | measuring | 1 h cap; Oct 31 17:05 MSK |
+| `opt-boson-kminus1-t4-e1-20261031` | second / 1 | stopped, 40 combinations and no usable seed | done | Oct 31 16:05 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
 | `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |
 | `opt-boson-k0-t4-e1-20261031` | second / 1 | finished, no accepted model | 819 s | done |
