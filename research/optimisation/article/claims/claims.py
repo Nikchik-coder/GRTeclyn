@@ -110,6 +110,9 @@ def generate(rows, data):
     d0 = next(p for p in candidates if p['label'] == 'D0 potential')
     ref0 = next(p for p in points if p['label'] == 'D0')
     macro('clmGrowthDzeroReduction', f"{100*(1-d0['rate']/ref0['rate']):.0f}")
+    d30 = next(p for p in candidates if p['label'] == 'D30 potential')
+    ref30 = next(p for p in points if p['label'] == 'D30')
+    macro('clmGrowthDthirtyReduction', f"{100*(1-d30['rate']/ref30['rate']):.0f}")
     OUT.write_text('\n'.join(chunks)+'\n')
     print(OUT)
 

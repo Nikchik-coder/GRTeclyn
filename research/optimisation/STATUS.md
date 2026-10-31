@@ -33,9 +33,24 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 14:04 MSK**. **D30 finished at t = 100 (exit 0)
-at 13:44 MSK; second/card 1 is free. D40 and D46 are evolving with live
-consumers. D51 remains removed from both queues.**
+Checked **2026-10-31 at 14:30 MSK**. **D40 and D46 are evolving; the
+fixed-area D21 pilot is running on second/card 1. All three GPUs are busy.**
+D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
+both queues.
+
+`opt-d21-area-t2-pilot-20261031` started at 14:29:37 MSK on second/card 1,
+after pulling `c604af3f` (study implementation `2ad280e7`) and checking the
+card was idle. The authorised first pilot is `potential-t2`: true minimal
+area and J fixed, tidal cap twice the matched reference, 150x30 search,
+200 CMA evaluations, seed 7, Jacobian chunks 512; reference and finalist
+refinement use 150x30, 180x36 and 210x42. Capped runner: four threads,
+220 GiB virtual-memory limit, 2 h hard timeout at **16:29 MSK**. This is a
+time limit, not a measured completion ETA; reference validation starts first.
+Persistent output: `runs/optimisation/fixed_area/pilot_20261031/potential-t2/`.
+Stationary fields and diagnostics are saved; this job creates no evolution
+plotfiles or AMR checkpoints. No consumer is needed for stationary solves.
+The remaining potential caps (1 and 4) and bosonic cases wait for the pilot's
+reference checks and measured cost before the larger production matrix.
 
 D30's four evolution diagnostic streams are finite through t = 100; its
 consumer processed the final plotfile. Reaching the chosen stop time is
@@ -51,6 +66,20 @@ Scratch after cleanup: first node 7.2 GB used / 621 GB free; second node
 7.2 GB used / 461 GB free. Three plotfiles each for D40/D46, no checkpoints
 or finished-run plotfiles. Current progress and ETAs are in the table below;
 earlier startup observations below retain their measurement times.
+
+D30 evolution result (2026-10-31): the fixed 0.2–1% areal-contraction
+fit gives tau = 11.873070 (t = 70–83), versus classical tau = 8.314535
+(t = 42–50), a 29.97% lower growth rate at N128. The first sampled 1%
+contraction occurs at t = 84 versus 51; 5% at 99 versus 64. The potential
+run ends with a 5.76% areal-radius decrease at t = 100. Common evolution
+parameters agree; only background and deployment paths differ, with explicit
+checkpoint-off keys added. Initial equatorial radii differ by 0.00033%.
+The figure uses the evolved e0316 field's own stationary throat area for J/A.
+This is a finite-resolution contraction-rate comparison, not proof of
+stability or a continuum rate. Band sensitivity remains: using 0.3–2%
+gives tau = 10.209 versus 8.431 (17.42% lower rate); the figure retains
+its original common 0.2–1% definition. D30 is now included in the growth
+figure and its checked numerical table.
 
 The module entry point is
 `python -m grteclyn_wrapper.optimisation.commands.optimize_potential`.
@@ -174,6 +203,7 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
+| `opt-d21-area-t2-pilot-20261031` | second / 1 | reference validation; pilot started 14:29 MSK | measuring | at most 2 h; timeout Oct 31 16:29 MSK |
 | `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, now free | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 84.72 / 100, alive | 19.98 units/h | 0.76 h; Oct 31 14:50 MSK |
@@ -649,8 +679,9 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 
 ### Implementation — fixed-area studies (2026-10-31)
 
-Infrastructure implemented; **no D21 production search or mixed-field
-evolution has been launched**. Configuration:
+Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot is
+running (Live above); the production matrix and mixed-field evolutions have
+not launched**. Configuration:
 [`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
 definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
 

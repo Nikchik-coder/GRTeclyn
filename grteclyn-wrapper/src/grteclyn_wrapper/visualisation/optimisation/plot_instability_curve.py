@@ -1,4 +1,4 @@
-"""Compare the evolved D0/D21 potentials with the spinning paper at N=128.
+"""Compare the evolved D0/D21/D30 potentials with the spinning paper at N=128.
 
 Reuse the spinning paper's radius-derivative fit, not its plotting style.
 The comparison is between finite-resolution evolutions, not a continuum
@@ -85,7 +85,21 @@ def load():
         assert json.loads(str(d["meta"]))["J"] == 0
     d0 = dict(label="D0 potential", j=0.0, frac=0.0,
               branch="collapses", **measured)
-    return points, [d0, candidate], histories
+    d30_root = REPO / "results/optimisation/completed/2026-10-31/d30"
+    with np.load(d30_root / "fam_a_r1_0005_cma_resolution_20261030_best_clean.npz") as d:
+        meta30 = json.loads(str(d["meta"]))
+        assert meta30["resolution"]["passed"] and meta30["verdict"] == "PASS"
+        sx, dx = lobatto(d["sx"].size - 1)
+        np.testing.assert_allclose(sx, d["sx"], atol=1e-14)
+        geom30 = throat(1.0, ArctanMap(1.0), sx, d["sy"], dx,
+                        d["F"], d["N"], d["B"])
+    area30 = geom30["area_throat"] * meta30["sigma"] ** 2
+    np.testing.assert_allclose(geom30["R_e"] * meta30["sigma"], meta30["R_e"], rtol=1e-9)
+    measured, _ = measure(d30_root / "evolution/small_data/throat_spheres.dat.gz")
+    d30 = dict(label="D30 potential", j=meta30["J"],
+               frac=100 * 8 * np.pi * meta30["J"] / area30,
+               branch="collapses", **measured)
+    return points, [d0, candidate, d30], histories
 
 
 def draw(points, candidates, histories, with_history=False):
@@ -98,27 +112,35 @@ def draw(points, candidates, histories, with_history=False):
     a, b, zero = fitted
     xs = np.linspace(0, zero, 300)
     ax.plot(xs, a - b * xs**2, "--", color=GREY, lw=1, zorder=1)
-    offsets = {"D0": (5, 6), "D21": (-6, -5), "D30": (-6, -2),
-               "D40": (6, 2), "D46": (6, 0), "D51": (6, 2)}
+    potential_fit = fit_zero(candidates)
+    if potential_fit is not None:
+        pa, pb, potential_zero = potential_fit
+        px = np.linspace(min(p["frac"] for p in candidates),
+                         max(p["frac"] for p in candidates), 200)
+        ax.plot(px, pa - pb * px**2, color=BLUE, lw=1, zorder=2)
+        # Continue the same fit as a prediction, ending at zero growth.
+        prediction_end = min(38., potential_zero) if potential_zero is not None else 38.
+        if prediction_end > px[-1]:
+            predicted_x = np.linspace(px[-1], prediction_end, 200)
+            ax.plot(predicted_x, pa - pb * predicted_x**2, ls="--",
+                    color=BLUE, lw=1, zorder=2)
     for p in points:
         ax.scatter(p["frac"], p["rate"], marker="^" if p["branch"] == "inflates" else "o",
                    s=20, color=INK, zorder=3)
-        dx, dy = offsets[p["label"]]
-        ax.annotate(p["label"], (p["frac"], p["rate"]), xytext=(dx, dy),
-                    textcoords="offset points", ha="left" if dx > 0 else "right",
-                    va="center", fontsize=7)
     for candidate in candidates:
-        ax.scatter(candidate["frac"], candidate["rate"], marker="*", s=80,
-                   color=BLUE, zorder=4)
-        ax.annotate(candidate["label"].split()[0],
-                    (candidate["frac"], candidate["rate"]), xytext=(7, -2),
-                    textcoords="offset points", va="center", fontsize=7, color=BLUE)
-    ax.set(xlim=(-1.5, 38), ylim=(-.005, .205), xlabel=r"$8\pi J/A$ [%]",
+        ax.scatter(candidate["frac"], candidate["rate"], marker="s", s=23,
+                   facecolor="white", edgecolor=BLUE, linewidth=.95, zorder=4)
+    ax.set(xlim=(-1.5, 38), ylim=(-.005, .205), xlabel="Reference model",
            ylabel=r"Growth rate $1/\tau$")
+    # Model ticks label the physical spin coordinates; do not make the
+    # samples equally spaced or shift the potential's own J/A coordinate.
+    ax.set_xticks([p["frac"] for p in points], [p["label"] for p in points])
+    ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     entries = [
         (Line2D([], [], marker="o", ls="none", color=INK, ms=4), r"$V=0$, collapse"),
         (Line2D([], [], marker="^", ls="none", color=INK, ms=4), r"$V=0$, expansion"),
-        (Line2D([], [], marker="*", ls="none", color=BLUE, ms=7), "With potential"),
+        (Line2D([], [], marker="s", ls="-", color=BLUE, mfc="white",
+                lw=1, mew=.95, ms=4.8), "With potential"),
         (Line2D([], [], ls="--", color=GREY, lw=1), r"$V=0$ fit"),
     ]
     style.legend_top(ax, entries, ncol=2, fontsize=6.8, columnspacing=.8, borderpad=.6)
