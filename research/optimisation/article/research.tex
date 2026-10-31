@@ -92,7 +92,8 @@ Ordinary bosonic matter provides another way to modify the throat geometry. Dzhu
 
 Here we vary the phantom potential, solve for the scalar and metric together, and measure the integrated NEC violation. The optimizer uses these measurements to choose further trials (Fig.~\ref{fig:search}). Independent Einstein constraints test whether each numerical solution is consistent with equations that were not used to construct it. Promising candidates are then checked on a finer grid before a selected solution is evolved in three dimensions.
 
-Section~\ref{sec:model} defines the model and the matter measure. Sections~\ref{sec:opt} and \ref{sec:setup} explain the search and evolution methods. Section~\ref{sec:results} presents the search and evolution results, and Sec.~\ref{sec:physics} examines the matter distribution and physical trade-offs, with numerical checks in Appendices~\ref{app:checks} and \ref{app:conv}. We use units in which Newton's constant and the speed of light satisfy $G=c=1$.
+Section~\ref{sec:model} defines the model and the matter measure. Sections~\ref{sec:opt} and \ref{sec:setup} explain the search and evolution methods. Section~\ref{sec:results} presents the search and evolution results, and Sec.~\ref{sec:physics} examines the matter distribution and physical trade-offs, with background, analytical and evolution checks in
+Appendices~\ref{app:checks}--\ref{app:conv}. We use units in which Newton's constant and the speed of light satisfy $G=c=1$.
 
 \section{The matter model}
 \label{sec:model}
@@ -104,13 +105,36 @@ S=\frac{1}{16\pi}\int d^4x\,\sqrt{-g}\left(R+2\,g^{\mu\nu}\partial_\mu\psi\,\par
 \end{equation}
 where $g$ is the determinant of the spacetime metric and $R$ is its Ricci scalar. This extends the massless model of Refs.~\cite{kleihaus_kunz2014,chew2016,shirokov2026s}. The reversed kinetic sign permits NEC violation.
 
-Varying the action gives the coupled Einstein--Klein--Gordon equations,
+We use metric signature $(-,+,+,+)$. Defining the matter stress tensor by
+$T_{\mu\nu}=-2(-g)^{-1/2}\delta S_{\mathrm m}/\delta g^{\mu\nu}$ gives
+\begin{equation}
+8\pi T_{\mu\nu}=-2\partial_\mu\psi\partial_\nu\psi
+ +g_{\mu\nu}\big[(\partial\psi)^2+\mathcal V\big],
+\label{eq:stress}
+\end{equation}
+where $(\partial\psi)^2=g^{\mu\nu}\partial_\mu\psi\partial_\nu\psi$.
+Its trace is $8\pi T=2(\partial\psi)^2+4\mathcal V$, and the trace of
+$G_{\mu\nu}=8\pi T_{\mu\nu}$ therefore gives
+\begin{equation}
+R=-2(\partial\psi)^2-4\mathcal V.
+\label{eq:trace}
+\end{equation}
+Subtracting half the stress-tensor trace from Einstein's equation, and
+integrating the scalar variation by parts, yields
 \begin{equation}
 R_{\mu\nu}=-2\,\partial_\mu\psi\,\partial_\nu\psi-\mathcal{V}\,g_{\mu\nu},\qquad
 \Box\psi=\tfrac12\mathcal{V}'(\psi).
 \label{eq:fieldeqs}
 \end{equation}
-Here $R_{\mu\nu}$ is the Ricci tensor, $\Box$ is the covariant wave operator, and a prime denotes a derivative with respect to $\psi$. Without a potential, the scalar has the analytic $\arctan$ profile of Ref.~\cite{chew2016}. With a potential, both the scalar and the metric must respond. In particular, $\mathcal{V}$ supplies a source for the Einstein combination $R^t{}_t+R^\varphi{}_\varphi$. We therefore introduce an additional metric function $B$ beyond the massless ansatz:
+Here $R_{\mu\nu}$ is the Ricci tensor, $\Box$ is the covariant wave operator, and a prime denotes a derivative with respect to $\psi$. Without a potential, the scalar has the analytic $\arctan$ profile of Ref.~\cite{chew2016}. With a potential, both the scalar and the metric must respond. Since
+$\partial_t\psi=\partial_\varphi\psi=0$, the mixed Einstein equations imply
+\begin{equation}
+R^t{}_t+R^\varphi{}_\varphi=-2\mathcal V.
+\label{eq:Bsource}
+\end{equation}
+The massless choice $B=1$ solves the corresponding homogeneous metric equation;
+retaining it for nonzero $\mathcal V$ would discard this source. We therefore
+solve for an additional metric function $B$:
 \begin{equation}
 \begin{split}
 ds^2&=-e^{f}dt^2+B^2e^{-f}\Big[e^{\nu}\left(d\eta^2+h\,d\theta^2\right)\\
@@ -122,6 +146,23 @@ with $h=\eta^2+\eta_0^2$. The coordinates $\eta$ and $\theta$ describe the radia
 
 The two families differ in the relation between their asymptotic ends. We set $f\to0$ at $\eta\to+\infty$ and $f\to\gamma$ at $\eta\to-\infty$. The symmetric family has $\gamma=0$, whereas the drainhole family has $\gamma=-\pi$~\cite{shirokov2026s}. For the latter we use $\eta_0=2$, so its static massless member has unit mass.
 
+The asymptotic data for the five fields are
+\begin{equation}
+\begin{aligned}
+(f,\omega,\nu,B,\psi)_{+\infty}&=(0,0,0,1,0),\\
+(f,\omega,\nu,B,\psi)_{-\infty}&=(\gamma,\omega_-,0,1,\psi_-).
+\end{aligned}
+\label{eq:boundaries}
+\end{equation}
+The constants $\omega_-$ and $\psi_-$ are solved for; $\omega_-$ specifies
+the relative rotation of the asymptotic frames. At the negative end,
+$t_-=e^{\gamma/2}t$ and $\varphi_-=\varphi-\omega_-t$ give the local
+nonrotating time and azimuth. Axis regularity requires $\nu=0$ and
+$\partial_\theta(f,\omega,B,\psi)=0$ at $\theta=0,\pi$, with
+$\nu=O(\sin^2\theta)$. Equatorial reflection symmetry requires
+$\partial_\theta(f,\omega,\nu,B,\psi)=0$ at $\theta=\pi/2$.
+The even angular basis enforces these reflection conditions.
+
 The potential must vanish at both ends so that they remain asymptotically flat. Its derivative must also vanish at the limiting field values. We choose a double-well form with vacua at $\psi=0$ and $\psi=\psi_-$:
 \begin{equation}
 \mathcal{V}(\psi)=\frac{m^2}{\psi_-^2}\,\psi^2(\psi-\psi_-)^2\,Q(u),
@@ -132,12 +173,48 @@ where $Q(u)=1+q_1u+q_2u^2+q_3u^3$. The prefactor fixes the two vacua, while the 
 
 The search varies $(m,q_1,q_2,q_3)$. The parameter $m$ controls the curvature of the potential near the first vacuum, $\mathcal{V}''(0)=2m^2$. The coefficients $q_i$ change the height and asymmetry of the barrier. We require $Q(u)>0$ between the vacua; individual coefficients may be negative. Setting $m=0$ recovers the massless model.
 
+The potential also fixes the asymptotic decay. Write
+$\delta\psi_\pm=\psi-\psi_\pm$, with $\psi_+=0$. Linearization in the
+locally inertial frame at each end gives
+\begin{equation}
+(\Box-\mu_\pm^2)\delta\psi_\pm=0,\qquad
+\mu_+^2=m^2,\quad \mu_-^2=m^2Q(1).
+\label{eq:yukawa}
+\end{equation}
+Thus the two ends generally have different decay lengths. In the leading
+flat-space approximation, the decaying stationary branch behaves as
+$\delta\psi_\pm\propto e^{-\mu_\pm\rho_\pm}/\rho_\pm$, where
+$\rho_+\simeq\eta$ and $\rho_-\simeq e^{-\gamma/2}|\eta|$ are asymptotic
+proper radii. Positive $Q(1)$ also gives positive mass squared for local
+vacuum perturbations. This asymptotic statement does not determine the
+stability of the coupled wormhole. Replacing the massless algebraic tails
+by exponential decay explains how a potential can localize the scalar
+variation; the spectral grid must still resolve that variation.
+
 To compare the matter content of different solutions, we integrate the radial NEC violation and normalize it by the equatorial throat radius $R_e$~\cite{visser2003,shirokov2026s}:
 \begin{equation}
 X=\frac{1}{R_e}\left|\int(\rho+p_\eta)\,dV\right|.
 \label{eq:X}
 \end{equation}
-Here $\rho$ is the energy density, $p_\eta$ is the radial pressure, and $dV$ is the proper spatial volume element. We call $X$ the exoticity. The potential cancels directly from $\rho+p_\eta$, but it changes the scalar gradient and the volume element through the coupled field equations. Solving those equations is therefore essential to finding whether a trial potential lowers $X$.
+Here $\rho$ is the energy density and $p_\eta$ the radial pressure,
+measured by a local zero-angular-momentum
+observer (ZAMO), whose four-velocity and radial unit vector are
+\begin{equation}
+n=e^{-f/2}(\partial_t+\omega\partial_\varphi),\qquad
+ e_{\hat\eta}=B^{-1}e^{(f-\nu)/2}\partial_\eta.
+\label{eq:zamo}
+\end{equation}
+The scalar is stationary in this frame. Contracting Eq.~\eqref{eq:stress}
+with the locally unit-energy radial null vector $n+e_{\hat\eta}$ gives
+\begin{equation}
+\begin{aligned}
+\rho+p_\eta&=-\frac{(\nabla_{\hat\eta}\psi)^2}{4\pi},\\
+dV&=B^3e^{-3f/2+\nu}h\sin\theta\,d\eta\,d\theta\,d\varphi.
+\end{aligned}
+\label{eq:nec-volume}
+\end{equation}
+This remains a radial NEC diagnostic when the scalar has angular gradients.
+We call $X$ the exoticity. The potential cancels directly from $\rho+p_\eta$, but it changes the scalar gradient and the volume element through the coupled field equations. Solving those equations is therefore essential to finding whether a trial potential lowers $X$.
 
 We hold $R_e$ and the angular momentum $J$ at the values of a chosen massless reference solution. This makes the comparison about the potential's effect, rather than a change in throat size or spin.
 
@@ -167,9 +244,9 @@ The search alternates between constructing a wormhole and choosing a new potenti
 \node[stagebox] (exoticity) at (10.6,-2.1)
   {\textbf{Exoticity integral}\\$X=|\mathrm{VIQ}|/R_e$\\Measure the matter cost};
 \node[stagebox] (stability) at (5.3,-2.1)
-  {\textbf{Radial stability screen}\\Re-solve at $J=0$\\Eigenmodes on two grids};
+  {\textbf{Candidate ranking}\\Lower $X$ preferred\\Stationary criteria};
 \node[search] (score) at (0,-2.1)
-  {\textbf{Score and penalties}\\$X$ + stability penalty\\Penalize failed checks};
+  {\textbf{Score and penalties}\\$X$ + constraint penalty\\Penalize failed checks};
 \draw[flow] (cma)--(newton);
 \draw[flow] (newton)--(constraints);
 \draw[flow] (constraints)--(exoticity);
@@ -184,7 +261,7 @@ The search alternates between constructing a wormhole and choosing a new potenti
   {Selected candidates} (grid.west);
 \draw[flow, dashed] (grid)--(evolve);
 \end{tikzpicture}}
-\caption{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity, the radial screen and constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}
+\caption{Optimization of the confining potential at fixed throat size and angular momentum. Each CMA-ES proposal starts Newton iteration from a nearby solved candidate; JAX supplies the Jacobian for the GPU solve. Exoticity and background-constraint penalties feed back into the search; inadmissible or failed solves receive a penalty. Dashed arrows lead to separate resolution and evolution tests. The loop ranks candidates; the subsequent tests assess their reliability.}
 \label{fig:search}
 \end{figure*}
 
@@ -192,6 +269,9 @@ The search alternates between constructing a wormhole and choosing a new potenti
 \label{sec:opt:solver}
 
 The spectral representation covers both asymptotic ends on a finite computational domain. We use $x=(2/\pi)\arctan(\eta/\eta_0)$ to map them to $x=\pm1$, and expand the fields in Chebyshev polynomials radially and even cosine modes angularly. A tensor-product Lobatto grid supplies the points at which the equations are evaluated.
+Larger vacuum masses shorten the physical decay lengths. Under the algebraic
+compactification, exponential radial decay need not give exponential decay
+of Chebyshev coefficients; we monitor the spectral tail directly.
 
 Newton iteration computes a correction to the fields from the residual equations and their Jacobian. Damping reduces the correction when a full step would not improve the solution. We solve for $f$, $\omega$, $\nu/\sin^2\theta$, $B$, and $\psi$; dividing out $\sin^2\theta$ regularizes the metric variable on the symmetry axis. The vacuum value $\psi_-$ and a radial length scale are additional unknowns, with two equations enforcing the chosen $R_e$ and $J$.
 
@@ -202,7 +282,33 @@ The Jacobian describes how the residual changes when the unknowns change. We com
 
 CMA-ES draws a population of trial potentials from a distribution in parameter space. After each population is evaluated, the better candidates guide the location and spread of subsequent proposals. For each trial, Newton iteration starts from the nearest previously solved potential, which supplies an initial guess for the fields.
 
-The score combines exoticity with penalties for failed checks. Potentials that violate $Q>0$, fail to converge, or exceed the background-constraint ceiling receive a large penalty. Smaller constraint violations receive a smaller penalty. The searches also used a radial perturbation screen of the static counterpart, described in Appendix~\ref{app:checks}. The stationary results in this paper are selected by their exoticity and background constraints according to Sec.~\ref{sec:setup:criteria}.
+The score rewards low exoticity subject to numerical admissibility.
+Let $C=\max(|E_{19}|,|E_c|)$ be the larger independent background residual,
+using the dimensionless residuals of Appendix~\ref{app:checks}. The bounded search uses
+\begin{equation}
+S_{\rm bg}=\begin{cases}
+X,&C\le10^{-8},\\
+X+0.1,&10^{-8}<C\le10^{-6},\\
+10^3+\log_{10}(C/10^{-6}),&C>10^{-6},\\
+1010,&\text{invalid trial}.
+\end{cases}
+\label{eq:score}
+\end{equation}
+An invalid trial violates the parameter bounds, fails Newton convergence,
+has nonfinite diagnostics or has a nonpositive sampled $Q$: we evaluate it at
+1001 uniformly spaced values of $u\in[0,1]$. The bounded drainhole and S0 searches use
+$0.15\le m\le1.2$ and $-2\le q_i\le8$, in the length units of their
+reference solutions. CMA-ES starts with parameter scales
+$(0.1,0.3,0.3,0.3)$. The earlier S27, S50 and S85 searches used the same mass
+interval without box bounds on $q_i$; their scoring is specified in
+Appendix~\ref{app:checks}.
+
+For the resolution-screened searches, a proposed new minimum is also
+checked on finer grids. A failed check receives score $1001$; a passing
+one is ranked by its finer-grid $X$. The finalist is passed to the
+independent background validation. Stationary admissibility defines the
+reported sample; dynamical conclusions come from the evolutions, not
+from a radial-stability penalty.
 
 The searches explore different regions of potential space for the two wormhole families (Fig.~\ref{fig:search-regions}). Labels D and S denote drainhole and symmetric reference solutions; the suffix gives $100v_e$, where $v_e$ is the reference equatorial rotation velocity. Each search keeps its own reference throat size and angular momentum fixed.
 
@@ -225,6 +331,26 @@ The stationary solution supplies the initial metric and scalar field for evoluti
 
 The additional metric function $B$ enters the conformal factor through $\chi\to\chi/B^2$. The lapse $\alpha$, shift $\beta^i$, and scalar $\psi$ are read from the stationary data. The extrinsic curvature $K_{ij}$ follows from the stationary shift, and the scalar's initial conjugate momentum vanishes in the corotating frame. The exported data also contain the potential coefficients needed during evolution.
 
+The puncture represents an asymptotic end, rather than a material center.
+Initially, $B\to1$, $\nu\to0$, $\alpha\to e^{\gamma/2}$ and
+\begin{equation}
+\begin{aligned}
+\chi&\sim \frac{16e^\gamma r^4}{\eta_0^4},\qquad
+\ln|\psi-\psi_-|\sim-\frac{c_-}{r},\\
+c_-&=\frac{\mu_-e^{-\gamma/2}\eta_0^2}{4}.
+\end{aligned}
+\label{eq:puncture}
+\end{equation}
+For a massive vacuum, the scalar's spatial derivatives therefore vanish
+at the puncture in the continuum initial data. The massless case instead
+has $\psi-\psi_-=O(r)$. We evolve conformal variables on a cell-centered
+grid, with a positive floor on $\chi$; gauge evolution subsequently changes
+the lapse and conformal factor. Fixed nested refinement boxes are centered
+on $r=0$ and cover the throat as well. They do not refine only a shell at
+$r=\eta_0/2$, which denotes $\eta=0$ and need not be the physical throat.
+The convergence runs use a $\chi$ floor of $10^{-8}$ and exclude the
+puncture region $r<0.125$ from the constraint norms.
+
 \subsection{Evolution scheme}
 \label{sec:setup:scheme}
 
@@ -237,7 +363,7 @@ The scalar evolution includes the potential and its derivative. The Hamiltonian 
 
 A low score identifies a promising trial, but the reported stationary candidates must also satisfy the independent background equations. We distinguish the loose constraint ceiling used during exploration from the stricter threshold used for Tables~\ref{tab:models} and \ref{tab:X}. The former is $10^{-6}$; the latter is $10^{-8}$ for each of the two residuals. Trials between these thresholds receive a constraint penalty.
 
-The tables select the lowest recorded $X$ meeting the stricter threshold in each search. A separate row identifies the D21 candidate re-solved on a finer grid and used for evolution. Perturbative stability requires an additional test: a converged mode must satisfy the independent linearized Einstein constraints as well as its eigenvalue equations.
+The tables select the lowest recorded $X$ meeting the stricter threshold in each search. The selected finer-grid backgrounds are listed separately from the search minima. Perturbative stability requires an additional test: a converged mode must satisfy the independent linearized Einstein constraints as well as its eigenvalue equations.
 
 \section{Results}
 \label{sec:results}
@@ -285,7 +411,12 @@ The search finds lower exoticity at most of the sampled rotations in both famili
 \label{fig:exotic}
 \end{figure}
 
-The reduction is not uniform across spin. In particular, the high-spin D90 search candidate remains above its massless counterpart. The tested potential family and search therefore do not improve on every reference solution.
+The reduction is not uniform across spin. The high-spin D90 candidate
+remains above its massless counterpart and lies close to the imposed
+lower mass bound $m=0.15$. The search excludes the exactly massless point
+$m=0$, even though the analytic potential family includes it. This is a
+minimum found in the restricted search, not evidence that every nonzero
+potential raises exoticity at this spin.
 
 For the selected D21$^\star$ solution, the finer-grid calculation retains a reduction of about $\clmDfineReductionRounded\%$ in exoticity at the same throat radius and angular momentum. Its background residuals satisfy the independent constraints (Appendix~\ref{app:checks}). This is the solution used for the three-dimensional evolution study; it is distinct from the lowest point in the search history.
 
@@ -294,9 +425,19 @@ For the selected D21$^\star$ solution, the finer-grid calculation retains a redu
 
 We evolved D21$^\star$ on three grids to examine how the dynamics change with resolution. The domain and refinement hierarchy were held fixed while the grid spacing decreased. Early in the evolution, the constraint errors near the throat fall approximately at fourth order. Other refinement levels show more variable behavior, as quantified in Appendix~\ref{app:conv}.
 
-The throat later contracts on all three grids, with contraction starting later as resolution increases. Figure~\ref{fig:conv} shows this shift in the radius histories alongside the wave and lapse diagnostics. Thus the early constraint check and the later dynamics have different numerical behavior: the former shows decreasing error, while the contraction onset is still sensitive to grid spacing.
+The throat later contracts on all three grids, with contraction starting later as resolution increases. Figure~\ref{fig:conv} shows this shift in the radius histories alongside the wave and lapse diagnostics. A later onset is consistent with a smaller truncation-error perturbation
+growing exponentially. Appendix~\ref{app:conv} quantifies this interpretation
+using the logarithmic dependence expected for such a perturbation. The
+constraint order and the order of the perturbation amplitude are different
+measurements.
 
-At fixed numerical resolution, the potential-bearing D0, D21$^\star$, D30 and D40 runs reach the same fractional contraction later than their classical counterparts (Fig.~\ref{fig:delay}). We measure the time at which each throat's areal radius first falls by $1\%$ from its own initial value. The difference between these times measures a delay in contraction, separately from the subsequent exponential growth rate. D0, D30 and D40 use their reference throat size, angular momentum and evolution settings. The D21 comparison also changes the background spin slightly and the outer damping: classical D21 uses $J=1$ and drive strength $1$, while D21$^\star$ uses $J=1.0138$ and drive strength $0$.
+At fixed numerical resolution, the potential-bearing D0, D21$^\star$, D30 and D40 runs reach the same fractional contraction later than their classical counterparts (Fig.~\ref{fig:delay}). We measure the time at which each throat's areal radius first falls by $1\%$ from its own initial value. The difference between these times measures a delay in contraction, separately from the subsequent exponential growth rate. D0, D30 and D40 use their reference throat size, angular momentum and evolution settings. The D21 comparison also changes the background spin slightly and the outer
+damping: classical D21 uses $J=1$ and drive strength $1$, while D21$^\star$
+uses $J=1.0138$ and drive strength $0$. Holding area fixed, the classical
+quadratic rate fit predicts only a $\clmSpinSensitivity\%$ change from this
+spin shift. This estimates local spin sensitivity; it does not isolate the
+sponge effect. We therefore interpret the D21 delay as a comparison of
+these two numerical setups rather than a controlled potential-only effect.
 
 \begin{figure}[t]
 \centering
@@ -353,12 +494,18 @@ and \texttt{GRTeclyn}.
 
 \appendix
 
-\section{Solver and stability checks}
+\section{Background checks and search definition}
 \label{app:checks}
 
 The massless limit provides a check against the established wormhole solutions. Setting $\mathcal{V}=0$ reduces the spectral equations to the system used in Ref.~\cite{shirokov2026s}. Newton iteration reproduces the saved solutions' global charges, $B=1$, and exoticity values to machine precision.
 
-For nonzero potential, we use two Einstein equations that do not enter the Newton solve: the $\eta\theta$ component and the generalization of the scalar-charge identity of Ref.~\cite{chew2016}. Their residuals, denoted $E_{19}$ and $E_c$, assess the consistency of the computed background independently of the equations solved. For D21$^\star$ on $210\times42$, they are $E_{19}=\clmDfineEoneNine$ and $E_c=\clmDfineEc$, below the selection threshold of Sec.~\ref{sec:setup:criteria}.
+For nonzero potential, we use two Einstein equations that do not enter the Newton solve: the $\eta\theta$ component and the generalization of the scalar-charge identity of Ref.~\cite{chew2016}. Their residuals, denoted $E_{19}$ and $E_c$, assess the consistency of the computed background independently of the equations solved.
+We report maximum absolute residuals over interior nodes with
+$(1+\hat\eta^2)^{-1}\ge0.05^2$, where $\hat\eta$ is the radial coordinate
+in the solver's unit-throat-parameter grid. The scalar-charge residual
+is divided by the squared charge used to normalize that calculation;
+the angular constraint uses its regularized compact-coordinate form.
+The archived checks retain these conventions for each selected background. For D21$^\star$ on $210\times42$, they are $E_{19}=\clmDfineEoneNine$ and $E_c=\clmDfineEc$, below the selection threshold of Sec.~\ref{sec:setup:criteria}.
 
 For the stationary diagnostics of Sec.~\ref{sec:physics}, doubling the
 radial quadrature and profile sampling, tightening null-ray integration,
@@ -367,9 +514,27 @@ the displayed precision. Exact Ellis limits test the gradient, null NEC,
 transit and tidal normalizations. An independent proper-distance calculation
 of the spherical tidal tensor also agrees with the D0$^\star$ measurement.
 
-The radial screen examines small spherically symmetric perturbations of the static counterpart at the same throat radius. Linearizing the Einstein--Klein--Gordon equations gives three coupled radial wave equations. On a Chebyshev--Lobatto grid these become a generalized eigenvalue problem.
+\subsection{Search scores and dynamical interpretation}
 
-A numerical eigenvalue alone does not identify a physical mode, because gauge modes can also appear in the discretized problem. A physical mode must agree between two grids and have small residuals in the linearized $tt$ and $t\eta$ Einstein constraints. On classical massless backgrounds, the calculation reproduces the published dimensionless growth rates $|\omega_I|\eta_0=0.390$ for the drainhole~\cite{azad2023,azad2024} and $1.182$ for the symmetric Ellis throat. Here $|\omega_I|$ is the exponential growth rate. The stationary candidate selection uses the background constraints specified above.
+For reproducibility, the earlier S27, S50 and S85 searches used $S=X+P(C)$ on
+converged backgrounds, where $P=0,0.1,1$ in the three residual intervals
+of Eq.~\eqref{eq:score}; an inadmissible trial or failed solve received
+$W+1$, where $W$ was the largest previous converged score, initialized to
+the starting $X+1$. In historical searches the total score also included
+$P_{\rm rad}$, a nominal estimate of $\eta_0|\omega_I|$ with unit weight,
+where $|\omega_I|$ denotes an exponential growth rate. It was set to $0.25$ if the static
+counterpart could not be solved. The potential-bearing eigenvalues from
+that screen are unvalidated and do not enter the stationary selection or
+the dynamical claims here. The resolution-screened searches use
+$P_{\rm rad}=0$ by construction. The numerical background checks test the
+stationary equations, not stability.
+
+A physical radial eigenmode must satisfy the linearized Einstein
+constraints as well as its eigenvalue equations and must converge under
+refinement. The known massless instability~\cite{gonzalez2009lin,azad2023,azad2024} is a
+benchmark for that separate calculation. The measured $3+1$ rates in
+Sec.~\ref{sec:results:evol} are fits to the evolved radius, not outputs
+of the radial screen.
 
 \begin{table*}[t]
 \caption{Constraint orders from Eq.~\eqref{eq:order}, using linearly interpolated norms. Each cell gives $96\to128$ / $128\to192$ at the listed time and level. Finest-level orders stay near four; coarser levels vary.}
@@ -383,6 +548,8 @@ constraint & $t=10$ & $t=20$ & $t=30$ & $t=40$ & $t=50$ \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
+
+\input{benchmarks.tex}
 
 \section{Convergence of the D21 evolution}
 \label{app:conv}
@@ -399,6 +566,29 @@ p_{a\to b}(t)=\frac{\ln[C_{N_a}(t)/C_{N_b}(t)]}{\ln(N_b/N_a)},
 where $C_N$ is the Hamiltonian or momentum constraint norm. An order near four means that halving the grid spacing reduces the error by roughly a factor of sixteen. Table~\ref{tab:orders} gives both neighboring-resolution comparisons. The finest level stays close to this behavior, while intermediate levels show mixed orders and transients.
 
 The radius histories give a separate test of the dynamics. Using a one-percent decrease in equatorial radius to mark contraction, the first recorded crossings occur at $t=\clmContractionLow$, $\clmContractionMid$, and $\clmContractionHigh$ in order of increasing resolution.
+
+To interpret this shift, suppose a single unstable mode with growth time
+$\tau$ is excited with amplitude $a_N=a_0N^{-p_{\rm seed}}$. In its linear
+regime, the fractional radius change is $\delta_N(t)\simeq a_Ne^{t/\tau}$.
+For a fixed threshold $\delta_*$, the crossing time then satisfies
+\begin{equation}
+\begin{aligned}
+t_*(N)&=\tau\ln(\delta_*/|a_0|)+p_{\rm seed}\tau\ln N,\\
+t_*(N_b)-t_*(N_a)&=p_{\rm seed}\tau\ln(N_b/N_a).
+\end{aligned}
+\label{eq:onset-scaling}
+\end{equation}
+The two adjacent-resolution slopes from the equatorial-radius crossings
+are $\clmOnsetSlopeLow$ and $\clmOnsetSlopeHigh$. Using the independently
+fitted $N=128$ areal-radius growth time $\tau=\clmGrowthPotentialTau$ gives
+effective amplitude orders $\clmSeedOrderLow$ and $\clmSeedOrderHigh$.
+Their proximity supports truncation-error seeding as an explanation of
+the later onset. This inference assumes that both radius diagnostics
+follow the same mode with a common $\tau$; three crossing times alone do
+not establish a converged growth rate. Initial-data interpolation, AMR
+operations and the evolution discretization all contribute to the
+perturbation amplitude, whose order need not equal the constraint order
+in Table~\ref{tab:orders}.
 
 \begin{thebibliography}{99}
 

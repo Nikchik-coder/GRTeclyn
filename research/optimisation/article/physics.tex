@@ -6,10 +6,31 @@ scalar variation into a narrower region near the throat. It does not weaken
 the NEC violation everywhere. We examine this redistribution in three
 selected $210\times42$ drainholes, denoted D0$^\star$, D21$^\star$ and
 D30$^\star$. These are finer-grid selections, distinct from the search minima
-in Tables~\ref{tab:models} and \ref{tab:X}; D21$^\star$ is the solution already
-identified there. Each has its own massless reference at the same $R_e$, $J$
+in Tables~\ref{tab:models} and \ref{tab:X}. Table~\ref{tab:selected}
+lists their potential parameters and residuals. Selection requires the
+background constraints at the target size and spin on the finer grids;
+a smaller search-grid $X$ alone does not establish that accuracy.
+D0$^\star$ is a rescaled alternative candidate, D21$^\star$ is a separate
+selection from its original search, and D30$^\star$ comes from a fresh
+search with finer-grid screening of each new minimum. Each has its own massless reference at the same $R_e$, $J$
 and asymmetry. In particular, both members of the stationary D21 comparison
 have $J=\clmPhysicsDtwentyoneJ$.
+
+\begin{table*}[t]
+\caption{Selected $210\times42$ backgrounds used for the stationary physics
+comparison. Parameters are in the same convention as Table~\ref{tab:models};
+residuals test the two unused Einstein equations. All three meet the
+$10^{-8}$ background threshold at their matched reference size and spin.}
+\label{tab:selected}
+\small
+\begin{ruledtabular}
+\begin{tabular}{lrrrrrrr}
+model & $m$ & $q_1$ & $q_2$ & $q_3$ & $X$ & $|E_{19}|$ & $|E_c|$ \\
+\hline
+\clmSelectedRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
 
 \begin{figure*}[t]
 \centering
@@ -29,7 +50,7 @@ sharpening the interior redshift profile.}
 
 Figure~\ref{fig:mechanism} compares profiles against physical proper distance,
 rather than the radial coordinates of different numerical solutions. The
-local radial NEC deficit is the squared orthonormal scalar gradient divided
+local radial NEC deficit is the squared radial orthonormal scalar gradient $(\nabla_{\hat\eta}\psi)^2$ divided
 by $4\pi$. Here the radial null vector has unit energy in the local
 zero-angular-momentum observer's frame. The potential cancels from its direct
 null contraction, but changes the scalar and metric through the field equations.
@@ -52,6 +73,28 @@ The equatorial throat radius is fixed, and the throat area changes by at most
 $\clmPhysicsAreaChange\%$. The rotating throats become slightly less oblate.
 Thus the reduction mainly reflects a changed scalar distribution, while the
 overall throat dimensions remain similar.
+
+A simple variational bound helps separate localization from a reduced
+field excursion. In a spherical radial model, let $A(\ell)$ be the area
+of a proper-distance sphere. Cauchy--Schwarz gives
+\begin{equation}
+\int A(\ell)\left(\frac{d\psi}{d\ell}\right)^2d\ell
+\ge \frac{(\Delta\psi)^2}{\displaystyle\int A(\ell)^{-1}d\ell}.
+\label{eq:cs}
+\end{equation}
+At fixed geometry and excursion, narrowing the scalar transition cannot
+lower this integral without limit. Here the excursion itself decreases,
+and the geometry responds. The support also moves toward smaller-area
+surfaces, removing the large-area weighting of the classical tails.
+These changes allow a lower volume integral together with a higher peak.
+
+Equality in Eq.~\eqref{eq:cs} requires $A\,d\psi/d\ell$ to be constant.
+A static massless scalar instead obeys
+$\partial_\ell(\alpha A\,d\psi/d\ell)=0$. The bound is therefore saturated
+by the symmetric ultrastatic Ellis solution, but not generally by a
+redshifted drainhole. For the rotating solutions it supplies radial
+intuition; the measurements use the full axisymmetric volume element
+in Eq.~\eqref{eq:nec-volume}.
 
 \begin{table*}[t]
 \caption{Stationary quantities for each massless reference ($V=0$) and its

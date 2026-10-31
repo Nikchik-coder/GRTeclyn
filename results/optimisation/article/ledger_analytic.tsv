@@ -1,0 +1,10 @@
+quantity	value	digits	basis
+SzeroX	3.141592653589793	5	Exact static solution; independently checked by quadrature; ledger_physics.tsv
+DzeroX	4.8983532414159745	5	Exact static solution; independently checked by quadrature; ledger_physics.tsv
+DzeroPeak	0.08850861971091394	5	Exact static solution; independently checked by quadrature; ledger_physics.tsv
+DzeroRay	0.3038710467743475	5	Exact static solution; independently checked by quadrature; ledger_physics.tsv
+OnsetSlopeLow	31.435164600031786	1	Packed D21 equatorial-radius crossings and instability_curve.tsv
+OnsetSlopeHigh	33.02380336122042	1	Packed D21 equatorial-radius crossings and instability_curve.tsv
+SeedOrderLow	3.3122876044786307	2	Packed D21 equatorial-radius crossings and instability_curve.tsv
+SeedOrderHigh	3.479680667108692	2	Packed D21 equatorial-radius crossings and instability_curve.tsv
+SpinSensitivity	0.49525574709914166	2	Classical quadratic rate fit; J shift only at fixed area; instability_curve.tsv

@@ -32,6 +32,34 @@ were authorized (2026-10-31), checkpoints off for each. D51 authorization
 was withdrawn at 11:03 MSK after its second initialization failure; it is
 removed from both queues. The old D51 export remains rejected.
 
+## Paper revision — analytical checks (2026-10-31)
+
+The model section now derives the stress tensor, trace reversal, radial ZAMO NEC
+and proper volume, states all boundary conditions and distinguishes the vacuum
+masses m and m sqrt(Q(1)). Static S0/D0 exoticity, D0 peak NEC and affine-null
+integrals have independent quadrature checks in the article claims checker.
+The selected D0/D21/D30 parameters and residuals have their own source ledger.
+Claims checks pass; both LuaLaTeX and pdfLaTeX build without overfull boxes or
+undefined references, and the rendered pages have been visually checked.
+The search diagram no longer depicts a validated radial screen; historical
+nominal penalties are documented separately from the stationary selection.
+
+The raw equatorial-radius crossings give logarithmic-resolution slopes 31.435
+and 33.024, corresponding to effective amplitude orders 3.31 and 3.48 if the
+N128 fitted growth time applies to all grids. This supports, but does not prove,
+truncation-error seeding or a continuum growth rate. The classical quadratic
+fit estimates a 0.50% rate change for the D21 J shift at fixed area; it does not
+bound the sponge effect. The spherical Cauchy--Schwarz bound is saturated by
+the ultrastatic Ellis profile, not generally by a redshifted drainhole.
+
+### Runs/analysis still needed for the paper
+
+| Question | Required check | Estimated cost / authorization |
+|---|---|---|
+| D0/D0-star linear versus nonlinear rate | Repair potential scaling and mode constraints; reproduce massless modes, converge potential eigenmode, compare in the same time/length units | Solver development plus a bounded stationary GPU diagnostic; radial screen remains disabled |
+| D21 potential-only dynamical comparison | Evolve the saved V=0 reference at J=1.0138 with drive 0, same R_e, binary, grid and perturbation | One N128 evolution, roughly 6--9 GPU h to t100--150 at 18 units/h; deferred, no new launch authorized here; checkpoint choice needed |
+| Continuum growth rate and onset model | Fit each saved D21 resolution over matched linear intervals, test fit-window sensitivity and a common-tau logarithmic onset law | CPU post-processing of existing streams; no new evolution needed for the first check |
+
 ## Live
 
 Checked **2026-10-31 at 16:14 MSK**. **Strict S0-to-D21 continuation occupies
