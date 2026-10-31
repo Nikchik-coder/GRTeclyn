@@ -429,6 +429,56 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 - [ ] 9. Evolve the winners. D21 X 1.829 triplet dead (N 192 NaN at t 112); D51 parked and uncleared.
 - [ ] 10. Publish.
 
+## Planned physics comparisons from saved solutions
+
+**Priority added 2026-10-31: explain why optimisation lowers X, and what it
+costs in other physical measures.** Prefer a mechanism figure and a compact
+trade-off comparison over more parameter-search scatter plots. These are
+planned analyses, not measured outcomes or evidence of dynamical stability.
+
+**Existing data are sufficient for a first stationary comparison.** The
+validated D0 e0211 handoff, article D21 e140 and completed D30 e0316 archives
+retain F, W, N, B, PSI, spectral nodes and physical scale sigma. The massless
+reference fields are in the spinning pack; the static D0 reference can also
+be reconstructed analytically. Use each candidate's exact reference R_e, J
+and asymmetry, rather than assuming its rounded D label identifies a match.
+In particular, the stationary D21 control is J = 1.0138, not the J = 1
+classical evolution used in the growth-rate figure. Add D40/D46/D51 only
+after their new finalists clear validation.
+
+- **Mechanism:** compare physical scalar gradients, radial and angular NEC
+  violation, and the cumulative contribution to X against proper distance
+  from the throat. Separate weaker gradients, a narrower violating region
+  and changes in the volume weight; a smaller integral need not mean a
+  smaller local peak. The potential cancels directly from null contractions
+  of the stress tensor, so its effect must be traced through the changed
+  scalar profile and geometry. Name the null direction and normalization;
+  the existing radial bill alone is not a complete directional NEC map.
+- **Geometry:** compare throat area, equatorial/polar radii, oblateness and
+  their radial profiles at the same pinned R_e and J. Use physical lengths
+  or proper distance, not raw compactified coordinates from different solves.
+- **Trade-off:** alongside X, compare the equatorial tidal tensor's largest
+  absolute eigenvalue along a crossing, at the same local traveller speeds;
+  show the lapse/local redshift profile and axis/equator integrated null NEC.
+  `exoticity.py` already supplies `throat`, `tidal` and `nec_rays`.
+  `tidal` currently covers the equator, not an arbitrary trajectory or axis.
+  At fixed asymmetry the asymptotic end-to-end redshift is prescribed;
+  distinguish it from changes in the interior redshift profile.
+- **Light transit:** add a stationary null-ray travel-time calculation.
+  `nec_rays` measures integrated NEC, not flight time. Start with the
+  zero-angular-momentum axis/equator rays, matched finite physical endpoints
+  and a common asymptotic clock normalization. An infinity-to-infinity
+  coordinate travel time is not a finite comparison observable.
+
+Cost: CPU post-processing of saved spectral fields; **no new stationary
+search or 3+1 GPU run is needed for these stationary diagnostics**. Allow
+implementation and quadrature/derivative checks before quoting results.
+Respect sigma scaling (length/time, scalar gradients and curvature have
+different dimensions), check the existing exact-limit tidal tests, and
+verify profile/integral convergence. Archive figure inputs under the results
+data directories, not `figures/`. Time-dependent transit or tidal exposure
+during collapse is a separate analysis and is not established by this plan.
+
 ## Future directions
 
 - **Oblate throat and free spin (in, opt-in).** `optimize_potential.py --pin area` holds $A$ so $R_e/R_{\mathrm{pol}}$ can grow; `--free-J` adds $J$ as a fifth CMA-ES knob. Defaults stay the published 4-knob $R_e$+$J$ walk. Still open: $\theta$-dependent scalar profiles / equatorial focusing so the NEC violation is a ring, not a shell.
