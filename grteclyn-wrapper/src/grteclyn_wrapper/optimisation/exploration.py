@@ -161,7 +161,8 @@ def bound_mode(state, config, pin, nx=40, ny=10):
 
 
 def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
-                max_iter=14, stall_ok=1e-9, newton_tol=1e-14, min_updates=0):
+                max_iter=14, stall_ok=1e-9, newton_tol=1e-14, min_updates=0,
+                chord_ratio=.1):
     if not 0 < newton_tol <= stall_ok:
         raise ValueError("Newton stopping tolerance must not exceed acceptance tolerance")
     from .solver.newton import newton
@@ -184,7 +185,8 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     p = make_problem(state, config, nx, ny, pin, frequency=frequency,
                      amplitude=config.get("amplitude") if kind else None)
     u, info = newton(p.residual, p.jacobian, pack_seed(p, state, cloud, frequency),
-                     tol=newton_tol, max_iter=max_iter, min_updates=min_updates)
+                     tol=newton_tol, max_iter=max_iter, min_updates=min_updates,
+                     chord_ratio=chord_ratio)
     residual = float(info["res_scaled_inf"])
     if not np.isfinite(residual) or residual > stall_ok or len(info['newton_steps'])<min_updates:
         raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")
@@ -215,6 +217,11 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     interval_ok = float(np.min(psi/psim)) >= -1e-8 and float(np.max(psi/psim)) <= 1+1e-8
     row = dict(nx=nx, ny=ny, newton=residual, iters=int(info["iters"]),
                newton_updates=len(info['newton_steps']),
+               newton_converged=bool(info['converged']),
+               newton_reason=info.get('reason', 'converged'),
+               newton_history=info['res_history'],
+               newton_steps=info['newton_steps'],
+               jacobian_evals=info['jacobian_evals'],
                X=x["X"], X_A=x["X_A"], VIQ=sigma*x["VIQ"],
                R_e=sigma*x["R_e"], R_A=sigma*x["R_A"], R_pol=sigma*x["R_pol"],
                sigma=sigma, E19=e19, E_c=ec, J_error=jerr, pin_error=pin_error,
