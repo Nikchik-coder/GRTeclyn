@@ -34,7 +34,7 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 16:07 MSK**. **S0-to-D21 continuation occupies
+Checked **2026-10-31 at 16:14 MSK**. **Strict S0-to-D21 continuation occupies
 second/card 1; nonrotating CMA occupies card 0. The potential-only finalist passes all
 three grids. D46 at the 15:45 snapshot was alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
 (19:22 MSK); its consumer advances.**
@@ -42,6 +42,13 @@ The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+`opt-boson-cont-strict-20261031` started **16:14 MSK** on second/card 1,
+after pulling `932053bd` and checking the card free. It resumes the archived
+gamma=-0.883573 state with Newton target 1e-14, preserving amplitude 0.02,
+area, spin and physical gates. Four threads, 200 GiB, at most 80 solves,
+1 h timeout (**17:14 MSK**). Output:
+`runs/optimisation/fixed_area/continuation_strict_20261031/`.
 
 `opt-boson-s0-to-d21-20261031` was stopped at **16:13 MSK** after
 55 attempts, with its last passing state at gamma = -0.883572934 and the
@@ -485,6 +492,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | `opt-boson-k0-cma-r2-20261031` | second / 0 | reference validation, alive | measuring | 2 h cap; Oct 31 18:07 MSK |
 | `opt-boson-k0-joint-cma-20261031` | second / 0 | stopped after 32 proposals for graded off-grid scoring | done | Oct 31 16:07 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
+| `opt-boson-cont-strict-20261031` | second / 1 | strict continuation from gamma -0.8836 | measuring | 1 h cap; Oct 31 17:14 MSK |
 | `opt-boson-s0-to-d21-20261031` | second / 1 | stopped at gamma -0.8836 for stricter Newton | 55 attempts | Oct 31 16:13 MSK |
 | `opt-boson-kminus1-t4-e1-20261031` | second / 1 | stopped, 40 combinations and no usable seed | done | Oct 31 16:05 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
