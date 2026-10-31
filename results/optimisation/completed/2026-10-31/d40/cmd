@@ -1,0 +1,1 @@
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.optimize_potential results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0008.json --x0 0.3,0,0,0 --nx 150 --ny 30 --engine cma --stall-ok 1e-9 --maxfev 400 --q-min -2 --q-max 8 --seed 104 --gpu 0 --refine-best final --out runs/optimisation/opt/fam_a_r1_0008_cma_resolution_20261031.tsv

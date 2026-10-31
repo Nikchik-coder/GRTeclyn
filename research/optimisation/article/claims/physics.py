@@ -42,16 +42,16 @@ def generate(rows, macro):
     models = ('D0', 'D21', 'D30')
     metrics = [
         ('X', 'Total exoticity $X$', 3),
-        ('bill_width90_over_Re', 'Central-90\\% proper width', 4),
-        ('radial_nec_peak_Re2', 'Peak radial NEC violation', 2),
-        ('nec_ray_equator_Re', 'Ray-integrated NEC magnitude', 2),
-        ('tidal_v05_Re2', 'Peak tides, $v=0.5$', 2),
-        ('transit_equator_over_Re', 'Light transit time', 3),
+        ('bill_width90_over_Re', 'Central-90\\% proper width $/R_e$', 2),
+        ('radial_nec_peak_Re2', 'Peak radial NEC violation $\\times R_e^2$', 4),
+        ('nec_ray_equator_Re', 'Ray-integrated NEC magnitude $\\times R_e$', 3),
+        ('tidal_v05_Re2', 'Peak tides $\\times R_e^2$, $v=0.5$', 3),
+        ('transit_equator_over_Re', 'Light transit time $/R_e$', 2),
     ]
     body = []
     for key, label, digits in metrics:
-        ratios = [rows[m, 'potential'][key] / rows[m, 'classical'][key] for m in models]
-        body.append(label + ' & ' + ' & '.join(f'${v:.{digits}f}$' for v in ratios) + r' \\')
+        values = [rows[m, kind][key] for m in models for kind in ('classical', 'potential')]
+        body.append(label + ' & ' + ' & '.join(f'${v:.{digits}f}$' for v in values) + r' \\')
     macro('clmPhysicsRows', '\n'.join(body) + '\n')
     for kind, suffix in [('classical', 'Classical'), ('potential', 'Potential')]:
         r = rows['D21', kind]

@@ -1,4 +1,4 @@
-# Completed D0 evolution and D30 search
+# Completed D0 evolution and D30/D40 searches
 
 D30 completed 400 CMA-ES evaluations on 2026-10-30 at 23:15 MSK (exit 0).
 `d30/*_best_clean.npz` contains the accepted e0316 fields on 210x42. All
@@ -23,3 +23,19 @@ tau = 5.439145, a 30.00% lower growth rate at N128. No continuum claim is made. 
 settings with deployment paths replaced by `<repo>`. The failure log tail
 is included. Frames, slice caches and movies remain on persistent cluster
 storage and are never removed by plotfile cleanup. The optimisation instability figure reads the D0 areal-radius stream directly.
+
+D40 completed 400 CMA-ES evaluations at 09:43 MSK on 2026-10-31 (exit 0).
+`d40/*_best_clean.npz` contains e0362 on 210x42: X = 1.820747219398,
+versus the matched massless X = 4.014901700046 (54.65% reduction).
+All three grids pass the existing Newton and independent-constraint gates.
+The final E19 and E_c are 9.19e-10 and 4.24e-9; R_e = 4.583555081219
+and J = 2.407781150213. No Newton updates were needed on the refined grids,
+so their agreement is an interpolation/constraint check, not an independent
+continuum-convergence demonstration. Stability remains unassessed.
+The archive retains the trace, winning search fields, screened and refined
+winners, all screening decisions and the finalist's three diagnostic fields.
+Screen-only field arrays remain on the cluster. `archive_manifest.json`
+records original and archived hashes; deployment paths are replaced by
+`<repo>` in text and NPZ metadata. Numerical arrays are retained unchanged.
+The D40 N128 evolution is authorized with checkpoints off; live progress
+and its start checks are recorded in the campaign STATUS.

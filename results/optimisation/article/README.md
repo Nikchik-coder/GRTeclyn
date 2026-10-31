@@ -36,3 +36,6 @@ The claims checker validates the ledger against `../physics/summary.tsv`
 and generates the physics table and prose macros. The article pairs this
 table with the mechanism profiles; the redundant NEC map and trade-off
 plot have been removed.
+
+The physics table displays dimensionless V=0 and optimized values side by
+side for each model, rather than ratios alone.
