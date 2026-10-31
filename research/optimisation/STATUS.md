@@ -19,9 +19,10 @@ The potential's sigma² scaling, unmatched-eigenmode handling and independent
 background/eigenmode constraint checks still need repair and revalidation
 before instability screening can be enabled again.
 
-The stationary extension trials are complete and archived as exploratory work;
-their small validated gain does not warrant inclusion in the paper (2026-10-30).
-No further extension runs are planned. D30 evolution authorization was withdrawn
+The October 30 stationary extension trials are archived as exploratory work;
+their small validated gain does not warrant inclusion in the paper. The
+October 31 instruction reopens exploration: fixed true area, bounded tides
+and canonical bosons are now being tested (Live below). D30 evolution authorization was withdrawn
 on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
 search is authorized: cheap finer-grid screening of each new best, then a
 full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 ended with a NaN at t = 88.4175. Evolution of the validated D30 e0316 winner is authorized on 2026-10-31, N128 on card 1, checkpoints off. The 2026-10-30
@@ -47,8 +48,9 @@ after pulling `cb72d5a3` and checking the card idle. The archived numerical
 seed 00046 is re-solved with the vacuum fix; no old verdict is inherited.
 Case boson-k0-t4-e1, config `studies/d21_boson_warm.toml`, seed 37,
 200 CMA evaluations, same area/J/asymmetry and acceptance gates. Four
-threads, 200 GiB, 2 h timeout (**17:44 MSK**). The first reference-grid
-check passes. Output: `runs/optimisation/fixed_area/boson_warm_20261031/`.
+threads, 200 GiB, 2 h timeout (**17:44 MSK**). All three reference grids pass. The warm boson seed and initial proposals
+now pass stationary constraints; their remaining rejection is the ordinary
+energy budget (about 3 versus the limit 1). Output: `runs/optimisation/fixed_area/boson_warm_20261031/`.
 Warm-seed changes pass all 30 fixed-area tests. First scratch: 7.2 GB used,
 619 GB free, three D46 plotfiles, no checkpoints; second: 47 MB, 476 GB free.
 
@@ -377,7 +379,7 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `opt-area-refinement-diagnose-20261031` | second / 0 | three-grid diagnosis | measuring | hard timeout Oct 31 16:26 MSK |
+| `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
 | `opt-boson-k0-warm-20261031` | second / 0 | reference passing, alive | measuring | 2 h cap; Oct 31 17:44 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | finite seed search, alive | measuring | 2 h cap; Oct 31 17:39 MSK |
 | `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |
@@ -421,14 +423,14 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 
 ### Queued stationary studies — fixed area and bosonic matter
 
-**Implementation is complete; production studies are queued, not launched.**
-The infrastructure passed 158 tests and CPU solve/save/refinement/resume
-checks; see [implementation and measured pilot costs](#implementation--fixed-area-studies-2026-10-31).
-The first potential pilot was authorised and run on October 31 (Live above).
-The queued t4 pilot finished without a validated finalist under the October 31 go;
-expanding the matrix awaits a validated pilot and the feasibility diagnosis;
-freeing a card does not trigger an automatic launch. No evolution restart
-checkpoints are needed for these stationary studies.
+**Exploration is authorised and active.** The factored-potential fix passes
+168 optimisation tests and the t4 finalist passes three independent grids.
+The first nonrotating boson pilot failed; rotating and warm nonrotating
+searches are active. Next use freed cards for a corrected t2 potential
+search and targeted boson continuation, guided by the measured failures.
+Do not expand all 27 boson cases blindly before establishing a feasible
+branch. No evolution restart checkpoints are needed. Details and costs:
+[implementation](#implementation--fixed-area-studies-2026-10-31).
 
 1. **D21 reference and fixed-area pilot.** Re-solve the matched massless
    reference with the true minimal throat area, fixing its area, total J and
@@ -890,9 +892,9 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 
 ### Implementation — fixed-area studies (2026-10-31)
 
-Infrastructure implemented; **the D21 potential-t2 GPU pilot cleared the reference
-but ended without a feasible candidate; the t4 pilot also finished without
-a validated finalist (Live above). The production matrix and mixed-field evolutions have not launched**. Configuration:
+Infrastructure implemented; **the corrected t4 potential finalist passes all
+three grids and two boson pilots are active. The full matrix and mixed-field
+evolutions have not launched**. Configuration:
 [`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
 definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
 
