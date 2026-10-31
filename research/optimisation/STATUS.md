@@ -32,8 +32,9 @@ remains rejected; only a newly validated winner can be evolved.
 
 ## Live
 
-Evolutions checked 2026-10-31 at 09:53 MSK; searches and queue at 10:02 MSK:
-**D30 and D40 evolving; D46 searching; revised D51 retry queued behind D46.**
+Checked 2026-10-31 at 11:05 MSK. **D30 and D40 evolving; D46 evolution
+launched on first/card 0 with full preflight in progress. D51 is removed
+from both the search and evolution queue; no further retry is authorized.**
 
 The module entry point is
 `python -m grteclyn_wrapper.optimisation.commands.optimize_potential`.
@@ -53,39 +54,31 @@ The completed search, screens and final fields are archived under
 `results/optimisation/completed/2026-10-31/d40/` (1.6 MB), with source and
 archive hashes. No scratch plotfiles were produced by this search.
 
-D46 retry `opt-d46-resolution-cma-r2` remains alive on first/card 0:
-211/400 evaluations at 10:02 MSK, recent speed about 270 evaluations/h;
-about 0.7 h remaining plus final validation (approximately 10:45 MSK).
-Its initial attempt failed before evaluations because the 160 GiB virtual
-cap blocked CUDA pool reservation. The retry uses 220 GiB, 4 threads and
-a 4-hour cap; actual resident memory is about 2.9 GiB.
+D46 search `opt-d46-resolution-cma-r2` completed all 400 evaluations at
+10:44:46 MSK, exit 0. Winner e0065 passes 150x30, 180x36 and 210x42:
+X = **1.699350508660**, versus V=0 **3.720579504338** (54.33% less).
+Final E19/E_c = 5.58e-9/2.53e-9; R_e = 4.882163848839 and
+J = 3.154107711925 match the classical D46 reference. Refinement required
+zero Newton updates; physical stability remains unassessed.
 
-D51's detached queue launched the search on second/card 0 at 09:44 MSK,
-after D40 finished. Initial continuation failed at m = 0.01875 after six
-bisections (Newton residual 2.7e-7, max_iter); exit 1 at 09:45 MSK.
-**No CMA evaluations or validated winner were produced.** The queue's JSON
-says `search_launched`, not success; the capped-job exit code and log are
-final. A revised retry is authorized (09:57 MSK): 60 mass increments to
-m = 0.3 (step 0.005), 48 Newton iterations per initialization solve and
-24 total bisections per leg. These replace 3/12/6 only for initialization;
-fixed R_e/J, seed 151, search bounds, 400 evaluations, Newton acceptance
-1e-9, independent constraints and finalist validation remain unchanged.
-The new CLI options are covered by bounded-failure, seed-reuse and acceptance
-regressions; 46 search/solver tests pass. The retry uses a fresh r2
-output prefix and waits for D46 to release first/card 0. No GPU is free:
-second/card 0 now runs the already-authorized D40 evolution. No dynamical
-instability conclusion follows from this initialization failure.
+D46 `D46_cma20261031_L64_N128_ml3_spdrv0_t150` launched at 11:04:34 MSK
+on first/card 0, checkpoints off. Shared checkout pulled `bf11c922` before
+launch. Exported the validated 210x42 fields to a 2049x129 seven-component
+potential background, with read-back verification. Template diff against the
+exact classical D46 run changes only background/deployment paths and explicit
+checkpoint-off keys. N128/L64/ml3, drive 0, dt multiplier 0.02, stop t = 150,
+plot interval 100; matter binary 16460fb0. Full preflight and 14-field hold
+consumer, keep-last 3. Start verification is in progress; no measured ETA yet.
 
-The detached retry queue is alive at 10:02 MSK:
-`runs/optimisation/queues/d51_retry_after_d46_20261031/`, job
-`opt-d51-resolution-cma-r2`. Code `c580abd5` was pushed and pulled into the
-shared cluster checkout before scheduling. It waits for D46's exit and an
-idle GPU, verifies source hashes, then starts the capped search (4 threads,
-220 GiB virtual cap, 4-hour runtime limit). It records initialization/search
-progress and terminal exit in `state.json` and its log; no repeated automatic
-retry. Estimated GPU release is in 0.7 h, around 10:45 MSK plus D46 checks;
-D51 completion ETA is unknown until initialization succeeds. The queue
-expires after six hours without a launch. No evolution starts from this queue.
+D51 retry `opt-d51-resolution-cma-r2` ran on first/card 0 from 10:44:50
+to 10:56:17 MSK, exit 1. Even with 60 mass increments, 48 Newton iterations
+and 24 bisections per leg, the initial continuation stalled at the m = 0.005
+endpoint (residual 8.4e-7, line-search stall). No CMA evaluations or winner.
+This is a stationary initialization failure, not measured instability.
+D51 was removed from the search and evolution queue by explicit instruction
+at 11:03 MSK. The detached controller has exited; a STOP marker and cancellation
+record are saved in `runs/optimisation/queues/d51_retry_after_d46_20261031/`,
+and D51 was removed from `matched_20261031.json`. Its failed logs remain.
 
 D40 `D40_cma20261031_L64_N128_ml3_spdrv0_t100` started at 09:49:56 MSK,
 second/card 0, checkpoints off. Its 2049x129 background was exported from
@@ -101,8 +94,7 @@ saved images have different zoom widths); both are centered and nonblank.
 All 14 frame-zero fields and throat/MOTS/wave rows are present. The first
 consumer pass took 157 seconds from plot Header to diagnostic rows, within
 the roughly 180-second plot cadence; subsequent horizon searches can warm
-start. Keep-last 3 is configured; two plotfiles are currently present. D46/D51 evolutions remain authorized after valid finalists;
-D51 currently has none. All these runs start from stationary fields, so no
+start. Keep-last 3 is configured; two plotfiles are currently present. D46 evolution is now launched; D51 has been removed from the queue. All these runs start from stationary fields, so no
 queued evolution requires a restart checkpoint.
 
 Run `D30_e0316_L64_N128_ml3_spdrv0_t100` uses the validated e0316
@@ -153,11 +145,12 @@ Frames, slice caches and movies are retained on persistent storage.
 | `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 22.97 / 100, alive | 20.0 units/h | 3.9 h; Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | about 1 / 100, alive | about 20 units/h | provisional 4.9 h; Oct 31 14:50 MSK |
-| `opt-d46-resolution-cma-r2` | first / 0 | 211/400, alive | about 270 evaluations/h | about 0.7 h; Oct 31 10:45 MSK plus final checks |
+| `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | startup / 150; full preflight | measuring | unknown until evolution advances |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
-| `opt-d51-resolution-cma-r2` | first / 0 after D46 | queued; controller alive, no GPU startup yet | — | expected start in 0.7 h, Oct 31 10:45 MSK plus D46 checks; finish unknown |
-| D46/D51 N128 evolutions | available cards | pending validated finalists; checkpoints off | — | D46 searching; revised D51 retry queued |
+| `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
+| D51 search and evolution | — | removed from queue; no retry authorized | cancelled | Oct 31 11:03 MSK |
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | — | NaN at 88.4175 / 100 | ended; 19.9 units/h | ended Oct 31 02:24 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
@@ -178,7 +171,7 @@ N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R 
 ## Drainhole CMA queue
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished. D40 passed and its evolution is running; D46 is live; the revised D51 initialization retry is queued behind D46.
+`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished. D40 passed and its evolution is running; D46 passed and its evolution has launched; D51 failed initialization again and is removed from the queue.
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
