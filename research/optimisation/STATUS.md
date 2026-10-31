@@ -43,6 +43,13 @@ and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
 
+`opt-boson-s0-to-d21-20261031` was stopped at **16:13 MSK** after
+55 attempts, with its last passing state at gamma = -0.883572934 and the
+full target J/area. All passing fields and diagnostics are archived under
+`validation/2026-10-31-extensions/s0-continuation/` in the results pack.
+The stricter-Newton continuation starts from `step_0052.npz`; no intermediate
+asymmetry is counted as D21, and no hard gate has been relaxed.
+
 `opt-boson-k0-joint-cma-20261031` was stopped after **32 proposals**
 at **16:07 MSK**. No accepted model. Several proposals failed the off-grid
 scalar equation while their fixed reason penalty outranked tidal violations.
@@ -478,7 +485,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | `opt-boson-k0-cma-r2-20261031` | second / 0 | reference validation, alive | measuring | 2 h cap; Oct 31 18:07 MSK |
 | `opt-boson-k0-joint-cma-20261031` | second / 0 | stopped after 32 proposals for graded off-grid scoring | done | Oct 31 16:07 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
-| `opt-boson-s0-to-d21-20261031` | second / 1 | initial and spin steps PASS, alive | measuring | 1 h cap; Oct 31 17:05 MSK |
+| `opt-boson-s0-to-d21-20261031` | second / 1 | stopped at gamma -0.8836 for stricter Newton | 55 attempts | Oct 31 16:13 MSK |
 | `opt-boson-kminus1-t4-e1-20261031` | second / 1 | stopped, 40 combinations and no usable seed | done | Oct 31 16:05 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | 40 seed combinations failed; no CMA | done | ended Oct 31 15:51 MSK |
 | `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |

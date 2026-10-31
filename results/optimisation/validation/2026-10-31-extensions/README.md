@@ -52,3 +52,10 @@ replace fixed off-grid rejection penalties with measured residual excesses.
 No candidate passed. The complete trace and two contrasting fields (tidal
 failure and off-grid failure), plus reference fields, are retained. The next
 run uses the graded checks and a lower initial phantom mass.
+
+`s0-continuation` (code 8264945e) re-solved the old symmetric winding
+seed and reached the target J at fixed true area, then gamma=-0.883573.
+It was stopped after 55 attempts because the 1e-12 Newton stopping target
+caused many unused-equation rejections. All successful fields are retained.
+The restart uses a 1e-14 target from step_0052. These intermediate models
+have different asymmetry from D21 and are not matched D21 results.
