@@ -48,6 +48,16 @@ N128 evolution, which contracted and terminated with NaN in K at t = 88.4175.
 The pack includes complete small diagnostic streams and the validated D30
 fields; these outcomes have not yet been added to the article.
 
+## Stationary mechanism and trade-offs
+
+`physics/` compares saved D0/D21/D30 fields with their exact fixed-R_e,
+fixed-J massless references. Optimisation localises the scalar gradients:
+the total exoticity decreases while peak NEC violation, peak tides and
+finite-endpoint light transit increase. See [definitions, results and
+checks](physics/README.md). The reproducible figures are
+`mechanism_d21`, `nec_distribution_d21` and `stationary_tradeoffs` under
+`figures/`; the numerical inputs stay under `physics/`.
+
 ## Campaign F measurements
 
 | path | what | rebuild |

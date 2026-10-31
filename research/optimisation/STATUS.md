@@ -422,62 +422,60 @@ transfer improves with N, M to ≤ 1.2e-5, J to ≤ 1.2e-6.
 ## Steps
 
 - [x] 1. Phantom unknown with a potential (V → 0 reproduces KK).
-- [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift skipped.
+- [x] 2. Pin R_e and J; bill matches Fig. 3e; tidal gated. Transit/blueshift are not search gates; stationary comparisons measured below.
 - [x] 3. Potential-only science run at three spins; landscape not flat.
 - [x] 4–8. Dropped 2026-10-29 except the bare-field hand-off, which is done.
 - [ ] Revalidate stability and exported backgrounds — **priority; see audit above.**
 - [ ] 9. Evolve the winners. D21 X 1.829 triplet dead (N 192 NaN at t 112); D51 parked and uncleared.
 - [ ] 10. Publish.
 
-## Planned physics comparisons from saved solutions
+## Stationary mechanism and trade-offs — measured 2026-10-31
 
-**Priority added 2026-10-31: explain why optimisation lowers X, and what it
-costs in other physical measures.** Prefer a mechanism figure and a compact
-trade-off comparison over more parameter-search scatter plots. These are
-planned analyses, not measured outcomes or evidence of dynamical stability.
+**Completed on CPU from saved D0 e0211, D21 e140 and D30 e0316 fields.**
+Optimisation concentrates the scalar variation into a narrower region near
+the throat. Total exoticity falls, but local NEC violation and peak tides
+increase. This is a physical trade-off, not evidence that all measures of
+traversability improve.
 
-**Existing data are sufficient for a first stationary comparison.** The
-validated D0 e0211 handoff, article D21 e140 and completed D30 e0316 archives
-retain F, W, N, B, PSI, spectral nodes and physical scale sigma. The massless
-reference fields are in the spinning pack; the static D0 reference can also
-be reconstructed analytically. Use each candidate's exact reference R_e, J
-and asymmetry, rather than assuming its rounded D label identifies a match.
-In particular, the stationary D21 control is J = 1.0138, not the J = 1
-classical evolution used in the growth-rate figure. Add D40/D46/D51 only
-after their new finalists clear validation.
+Each comparison fixes R_e, J and asymmetry to its exact massless reference.
+The stationary D21 reference has J = 1.0138; it is not the J = 1 evolution
+used in the growth-rate figure. D0 uses its analytic static reference.
+No new search or GPU evolution was needed.
 
-- **Mechanism:** compare physical scalar gradients, radial and angular NEC
-  violation, and the cumulative contribution to X against proper distance
-  from the throat. Separate weaker gradients, a narrower violating region
-  and changes in the volume weight; a smaller integral need not mean a
-  smaller local peak. The potential cancels directly from null contractions
-  of the stress tensor, so its effect must be traced through the changed
-  scalar profile and geometry. Name the null direction and normalization;
-  the existing radial bill alone is not a complete directional NEC map.
-- **Geometry:** compare throat area, equatorial/polar radii, oblateness and
-  their radial profiles at the same pinned R_e and J. Use physical lengths
-  or proper distance, not raw compactified coordinates from different solves.
-- **Trade-off:** alongside X, compare the equatorial tidal tensor's largest
-  absolute eigenvalue along a crossing, at the same local traveller speeds;
-  show the lapse/local redshift profile and axis/equator integrated null NEC.
-  `exoticity.py` already supplies `throat`, `tidal` and `nec_rays`.
-  `tidal` currently covers the equator, not an arbitrary trajectory or axis.
-  At fixed asymmetry the asymptotic end-to-end redshift is prescribed;
-  distinguish it from changes in the interior redshift profile.
-- **Light transit:** add a stationary null-ray travel-time calculation.
-  `nec_rays` measures integrated NEC, not flight time. Start with the
-  zero-angular-momentum axis/equator rays, matched finite physical endpoints
-  and a common asymptotic clock normalization. An infinity-to-infinity
-  coordinate travel time is not a finite comparison observable.
+- **Mechanism:** X decreases by 56–62% across the three models. The proper
+  width containing the central 90% of X is only 2–4% of the classical width,
+  including both complete tails. Peak radial NEC violation rises by factors
+  2.5–3.7. Angular gradients remain small; the violation forms a thin radial
+  region rather than an equatorial ring.
+- **Geometry and redshift:** throat areas differ by less than 0.6% at fixed
+  R_e; the rotating throats become slightly less oblate. The interior lapse
+  changes while the asymptotic redshift remains fixed by the asymmetry.
+- **Tides and null NEC:** over proper distances ±10 R_e, the peak equatorial
+  tidal eigenvalue at local speed v = 0.5 rises by factors 3.9–6.6. The
+  magnitude of the complete equatorial null-ray NEC integral rises 33–42%,
+  despite the smaller volume integral. Local NEC and ray integrals use
+  different, explicitly recorded null-energy normalizations.
+- **Light transit:** zero-angular-momentum axis/equator rays now have a
+  separate flight-time calculation. Equatorial transit is 15–18% longer
+  between proper-distance endpoints ±10 R_e, using the positive-infinity
+  clock in both models. It is also longer at ±5 and ±20 R_e; the percentage
+  depends on the endpoints. This is not a flat-space shortcut comparison.
 
-Cost: CPU post-processing of saved spectral fields; **no new stationary
-search or 3+1 GPU run is needed for these stationary diagnostics**. Allow
-implementation and quadrature/derivative checks before quoting results.
-Respect sigma scaling (length/time, scalar gradients and curvature have
-different dimensions), check the existing exact-limit tidal tests, and
-verify profile/integral convergence. Archive figure inputs under the results
-data directories, not `figures/`. Time-dependent transit or tidal exposure
-during collapse is a separate analysis and is not established by this plan.
+Data, definitions, source hashes and reproducible commands:
+[`results/optimisation/physics/README.md`](../../results/optimisation/physics/README.md).
+Three blue/black figure pairs are under `results/optimisation/figures/`:
+`mechanism_d21`, `nec_distribution_d21`, `stationary_tradeoffs`. Numerical
+inputs stay under `physics/`, not `figures/`. Article integration is pending.
+
+Checks cover radial/angular quadrature, profile sampling, physical scaling,
+exact Ellis limits, independent drainhole transit and an independent
+proper-distance check of D0 tides. The existing exact-limit tidal checks
+pass. Archived D0/D30 grid comparisons agree, but those refinements accepted
+interpolated fields without Newton updates: this is not an independent
+continuum-convergence demonstration. D21 uses its selected fine-grid field.
+**The instability screen remains unresolved; these diagnostics do not fix it.**
+Add D40/D46/D51 after validated finalists exist. Tides along general
+trajectories and time-dependent exposure during collapse remain separate work.
 
 ## Future directions
 

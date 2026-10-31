@@ -1,0 +1,254 @@
+[
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 22.319821504048054
+  },
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 22.319821504048047
+  },
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 48.585887954259334
+  },
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 48.58588795425932
+  },
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 103.5426857400144
+  },
+  {
+    "model": "D0",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 103.54268574001436
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.718746663294002
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.718746663294983
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.3074132887826
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.30741328878452
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 114.84324676098385
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 114.84324676098788
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 22.80160777558815
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 22.750278458347694
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 49.298857384624846
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 49.24120305847125
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 104.53283406618596
+  },
+  {
+    "model": "D21",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 104.47136364883599
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.86295458492043
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.83284917289228
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.513750949007644
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.48235898652061
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 115.12063231017267
+  },
+  {
+    "model": "D21",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 115.08859242197926
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 23.347884473669176
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 23.239338697492016
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 50.097383964146154
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 49.97659718644366
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 105.63009134518538
+  },
+  {
+    "model": "D30",
+    "kind": "classical",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 105.50206892129027
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.74293634043051
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 5.0,
+    "transit_over_Re": 28.673552250438263
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.41331983192606
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 10.0,
+    "transit_over_Re": 57.34108799169008
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "equator",
+    "extent_Re": 20.0,
+    "transit_over_Re": 115.04817689882942
+  },
+  {
+    "model": "D30",
+    "kind": "potential",
+    "ray": "axis",
+    "extent_Re": 20.0,
+    "transit_over_Re": 114.97452777771292
+  }
+]

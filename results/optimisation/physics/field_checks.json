@@ -1,0 +1,58 @@
+[
+  {
+    "model": "D0",
+    "grid": "150x30",
+    "source": "results/optimisation/validation/2026-10-30-alternatives/d0/009_e0211/diagnostic_150x30.npz",
+    "sha256": "eacef8573740e648cdfea5ff65f30bc28c6849a1c18da66f4c1d414b5e3b7aba",
+    "relative_difference_from_210": {
+      "X": 3.774758283725532e-15,
+      "radial_nec_peak_Re2": 4.4297898682543746e-14,
+      "tidal_v05_Re2": 5.206945985491984e-13,
+      "nec_ray_equator_Re": 2.9976021664879227e-15,
+      "transit_equator_over_Re": 6.661338147750939e-16,
+      "bill_width90_over_Re": 2.9976021664879227e-15
+    }
+  },
+  {
+    "model": "D0",
+    "grid": "180x36",
+    "source": "results/optimisation/validation/2026-10-30-alternatives/d0/009_e0211/diagnostic_180x36.npz",
+    "sha256": "4a05413c10f0641e82d419de3c7c45ae7d9cb9521a9f37ac03549c68cdfe2b0e",
+    "relative_difference_from_210": {
+      "X": 2.886579864025407e-15,
+      "radial_nec_peak_Re2": 2.398081733190338e-14,
+      "tidal_v05_Re2": 1.637578961322106e-13,
+      "nec_ray_equator_Re": 8.881784197001252e-16,
+      "transit_equator_over_Re": 9.992007221626409e-16,
+      "bill_width90_over_Re": 3.774758283725532e-15
+    }
+  },
+  {
+    "model": "D30",
+    "grid": "150x30",
+    "source": "results/optimisation/completed/2026-10-31/d30/resolution/e0316_refine/diagnostic_150x30.npz",
+    "sha256": "f4696b81a7df4d5cf9e60edfb4735bedbce630820d3a4d4f264d50c907d7d9c8",
+    "relative_difference_from_210": {
+      "X": 3.6637359812630166e-15,
+      "radial_nec_peak_Re2": 1.7985612998927536e-14,
+      "tidal_v05_Re2": 9.869882688917642e-13,
+      "nec_ray_equator_Re": 5.218048215738236e-15,
+      "transit_equator_over_Re": 6.661338147750939e-16,
+      "bill_width90_over_Re": 1.1102230246251565e-15
+    }
+  },
+  {
+    "model": "D30",
+    "grid": "180x36",
+    "source": "results/optimisation/completed/2026-10-31/d30/resolution/e0316_refine/diagnostic_180x36.npz",
+    "sha256": "c07d574fb0cf9b10b84897cc4fbfb2006abe1435779a5f1ec03c431aa4cd3124",
+    "relative_difference_from_210": {
+      "X": 4.440892098500626e-16,
+      "radial_nec_peak_Re2": 8.326672684688674e-15,
+      "tidal_v05_Re2": 2.935873766318764e-12,
+      "nec_ray_equator_Re": 1.9984014443252818e-15,
+      "transit_equator_over_Re": 1.5543122344752192e-15,
+      "bill_width90_over_Re": 1.7763568394002505e-15
+    }
+  }
+]
