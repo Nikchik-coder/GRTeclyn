@@ -30,6 +30,10 @@ Two options change that comparison:
   allowing the throat's shape to change.
 - `--free-J` lets the search vary angular momentum as a fifth parameter.
 
+The legacy `--pin area` uses the smallest **constant-eta surface**. The new
+study workflow below fixes the area of a solved, latitude-dependent minimal
+surface instead; these definitions need not agree on a deformed throat.
+
 The quantity being minimised is called `X` in the code. It is the magnitude of
 the exotic-matter volume integral divided by the throat radius: `X = |VIQ|/R_e`.
 With an area pin, the code uses `X_A = |VIQ|/R_A`, where `R_A` is the radius of a
@@ -108,6 +112,102 @@ The search needs a fresh output prefix. It returns exit code `1` when initial
 continuation fails, `2` when no validated finalist is available, and `0` when a
 validated finalist exists. `--no-save` suppresses the candidate/best NPZ exports;
 the trace and resolution-check diagnostics are still produced.
+
+## Fixed true area, bounded tides and massive bosons
+
+The optional `--study-config` workflow keeps the reference's true minimal
+throat area, positive-end angular momentum and asymptotic redshift fixed.
+The graph `xi(mu) = sum c_l T_l(2 mu^2 - 1)` joins the Newton unknowns;
+stationarity of its area supplies its equations. An independent, higher-order
+surface minimisation checks the area and a positive Hessian, and searches
+for additional graph throats. Multiple or unresolved throats fail this study's
+single-throat acceptance policy. This finite graph search is not a topology proof.
+
+The objective is `X_full = integral |D PSI|^2 dV / (4 pi R_A)`, the integrated
+worst-direction phantom null-energy deficit with local null normalisation
+`-n.k = 1`. It includes radial and angular gradients; ordinary matter never
+cancels it. `X` and `X_A` retain their legacy, constant-eta definitions in
+the output. `X_radial` uses the true throat radius, and `X_angular` records
+the extra contribution. Similarity rescales stresses and tides by inverse
+length squared while leaving `X_full` unchanged.
+
+The tidal cap uses the maximum absolute eigenvalue across latitude, both
+ends and local radial speeds `0, -0.5, +0.5`. It is relative to the same
+diagnostic on the matched massless reference. Compactified-domain sampling,
+local maximisation, an axis limit and asymptotic shells must converge within
+`1e-3`; unresolved peaks fail. It does not bound arbitrary traveller velocities.
+
+The supplied D21 configuration defines three potential-only cases (tidal
+factors 1, 2, 4) and 27 matter cases (three factors, three energy budgets and
+windings -1, 0, +1). List them without starting a solver:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.optimize_potential \
+  results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.json \
+  --study-config research/optimisation/studies/d21_fixed_area.toml
+```
+
+To run one case after its resource allocation is agreed, pass `--study-case`
+and use the capped runner. For example, a CPU pilot (120 GB address-space cap,
+four threads, two-hour timeout; choose a machine with sufficient memory):
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start d21-area-t2 \
+  --threads 4 --mem 120 --timeout 7200 -- \
+  grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.optimize_potential \
+  results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.json \
+  --study-config research/optimisation/studies/d21_fixed_area.toml \
+  --study-case potential-t2 --nx 150 --ny 30 --engine cma --maxfev 200 \
+  --out runs/optimisation/fixed_area
+```
+
+No command here reserves a GPU automatically. The existing `--gpu` and
+`--jac-chunk` options remain available for separately authorised GPU jobs.
+`--out` is a directory in study mode, with one subdirectory per case. Use
+`--resume` to restart from saved candidates; source, implementation and
+configuration hashes must match. This is a warm restart, not restoration of
+the optimiser's population. The search evaluation limit is cumulative;
+reference validation and the finite initial seed matrix are separate costs.
+
+The mass-only canonical field uses `chi = sqrt(4 pi) phi` and
+`U = m_b^2 |chi|^2`. Its harmonic frequency is solved from the equatorial
+mid-column amplitude constraint. This anchor is a coordinate convention,
+not necessarily the throat. Winding uses `sin^abs(k)(theta)` for regularity;
+the phase is `exp(i omega t + i k phi)`. With positive Noether density the
+matter angular momentum is `J_b = -k Q_b`; labels preserve signed winding
+rather than assuming that positive k co-rotates with positive total J.
+
+Linear modes and finite-amplitude seeds from Bondi's **positive** mass-only
+self-gravitating ODE solver are both attempted. The latter are initial
+guesses on a wormhole, not transplanted equilibria. Both-end mass gaps,
+resolved decaying tails and the complete coupled equations are required.
+Failure of both seed routes is recorded as an unresolved nonzero branch.
+Seeds are tried on the massless background and re-pinned potential candidates;
+`candidate_seeds` can include a preceding potential study's `best_clean.npz`.
+
+Ordinary budgets constrain `E_b/R_A`, with `E_b = integral T_nn dV` over
+both ends; this positive proper-volume energy is not an ADM mass. The search
+also records Noether charge, total matter angular momentum, separate
+asymptotic ADM estimates with fit drift, lapse, local phantom NEC, null-ray
+integrals and transit times between proper-distance endpoints `+-10 R_A`.
+Boson mass and amplitude supplement the four existing potential knobs;
+frequency is an eigenvalue, not an independent search knob.
+
+Each case saves `manifest.json`, `evaluations.jsonl`, provisional candidate
+NPZs, the separately refined `reference.npz`, refinement records and
+`outcome.json`. Only a successful final check writes `best_clean.npz`.
+`comparison.png/pdf` compare tides and ordinary energy with `X_full`;
+rebuild them with `python -m grteclyn_wrapper.optimisation.study_report CASE_DIR`.
+NPZ schema 2 preserves canonical fields, frequency and surface coefficients;
+legacy five-field files still load. `SPINBG_V1` export refuses canonical
+fields because that evolution format cannot represent them.
+
+Final validation perturbs the initial metric and requires Newton corrections
+on each finer grid. It repeats every physical constraint, direct off-grid
+Ricci-versus-matter and divergence-form scalar checks, and quadrature checks.
+An objective drift above `1e-6` rejects the finalist. Improvements must exceed
+the combined numerical uncertainty. All results remain stationary;
+self-interactions, multi-throat acceptance and stability are outside this version.
 
 A saved candidate can also be checked separately with `validate_candidate`.
 `select_validated_candidate` checks candidates in order of increasing `X`, using

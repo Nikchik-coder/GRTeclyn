@@ -33,8 +33,9 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked 2026-10-31 at 11:17 MSK (D30/D40 at 11:16 MSK). **D30 and D40 evolving; D46 evolution
-advancing on first/card 0 after full preflight passed. D51 is removed
+Latest supplied cluster check: **2026-10-31 at 11:56 MSK**. All three H100s
+are occupied; **D30, D40 and D46 evolutions and their consumers are alive.
+D51 is removed
 from both the search and evolution queue; no further retry is authorized.**
 
 The module entry point is
@@ -149,9 +150,9 @@ Seven lossless diagnostic streams, parameters and failure evidence are archived
 under `results/optimisation/completed/2026-10-31/d0/`. The archive is 2.9 MB
 including D30's final fields, trace, log and all screening decisions.
 
-Scratch checked at 11:16–11:17 MSK: first node D46 7.1 GB plus 46 MB
-cache, 624 GB free; second node D30 and D40 7.1 GB each plus 47 MB cache,
-447 GB free. Three plotfiles per evolution, no checkpoints or finished-run
+Scratch in the supplied 11:56 MSK check: first node 7.1 GB used, about
+624 GB free; second node 14.2 GB used, 456 GB free.
+Three plotfiles per evolution, no checkpoints or finished-run
 scratch leftovers. All three GPUs are occupied; D51 has no queued work.
 Deleted only the finished D0 and aborted D30 plotfiles (9.5 GB); no checkpoints.
 Cleanup recorded in the October 31 scratch manifest.
@@ -159,11 +160,11 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 50.83 / 100, alive | 20.0 units/h | 2.5 h; Oct 31 13:44 MSK |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 64.05 / 100, alive | 20.0 units/h | 1.8 h; Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
-| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 28.74 / 100, alive | 20.0 units/h | 3.6 h; Oct 31 14:50 MSK |
+| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 41.96 / 100, alive | 20.0 units/h | 2.9 h; Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 3.43 / 150, alive; full preflight passed | about 18.1 units/h | provisional 8.1 h; Oct 31 19:23 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 15.16 / 150, alive; full preflight passed | 18.1 units/h | 7.4 h; Oct 31 19:23 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
@@ -192,6 +193,49 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
+
+### Queued stationary studies — fixed area and bosonic matter
+
+**Implementation is complete; production studies are queued, not launched.**
+The infrastructure passed 158 tests and CPU solve/save/refinement/resume
+checks; see [implementation and measured pilot costs](#implementation--fixed-area-studies-2026-10-31).
+All three H100s are occupied as of the supplied 11:56 MSK check above.
+The sequence below awaits capacity and a separate go for each capped pilot;
+freeing a card does not trigger an automatic launch. No evolution restart
+checkpoints are needed for these stationary studies.
+
+1. **D21 reference and fixed-area pilot.** Re-solve the matched massless
+   reference with the true minimal throat area, fixing its area, total J and
+   asymmetry gamma. Re-pin existing potential candidates to those same
+   constraints. Measure wall time and memory, verify the throat is a local
+   minimum, and perform independent finer-grid re-solves before expanding.
+2. **Potential-only searches:** `potential-t1`, `potential-t2`,
+   `potential-t4` in [the study configuration](studies/d21_fixed_area.toml).
+   Test whether the full phantom integral, including angular gradients,
+   decreases at fixed true area/J/gamma while the maximum tide remains below
+   1, 2 or 4 times the matched massless value. Check both ends, all latitudes
+   and traveller speeds 0, ±0.5; retain the massless reference as the control.
+3. **Mass-only boson pilot, then the 27-case matter matrix:** winding
+   k = −1, 0, +1; ordinary-energy budgets E_b/R_A ≤ 0.1, 0.3, 1;
+   the same three tidal caps. Test whether canonical bosonic matter reduces
+   the phantom integral relative to the matched zero-boson search at the
+   same tidal cap. The k = 0 control isolates the benefit of rotation.
+   Solve the frequency and require decay at both ends; try linear modes,
+   then finite Bondi-profile seeds and amplitude continuation. Record
+   ordinary energy separately from asymptotic masses and phantom accounting.
+
+Expand the matrix only after the pilots establish validated solutions and
+measured costs; production durations are not yet estimated. Acceptance
+requires independent Einstein/scalar checks, true-area and total-J accuracy,
+resolved tidal peaks, energy budgets and converged objective quadrature.
+Finalists require actual Newton updates on finer grids, with the existing
+1e-8 independent-constraint and area gates, 1e-6 J gate and 1e-6 objective-drift
+gate. Interpolation alone remains screening. No new exoticity reduction or
+nonzero bosonic wormhole has yet been validated by this implementation.
+Q-ball self-interactions, multiple throats and dynamical stability remain
+later studies; these searches test stationary trade-offs.
+
+### Existing D30/D40/D46 protocol and validation history
 
 Completed D30 protocol: 400 CMA-ES evaluations, seed 103, kink x0=(0.3,0,0,0),
 at the same classical R_e/J and bounds. New bests get cheap equation checks
@@ -541,9 +585,91 @@ trajectories and time-dependent exposure during collapse remain separate work.
 
 ## Future directions
 
-- **Oblate throat and free spin (in, opt-in).** `optimize_potential.py --pin area` holds $A$ so $R_e/R_{\mathrm{pol}}$ can grow; `--free-J` adds $J$ as a fifth CMA-ES knob. Defaults stay the published 4-knob $R_e$+$J$ walk. Still open: $\theta$-dependent scalar profiles / equatorial focusing so the NEC violation is a ring, not a shell.
-- **Driving $X \to 0$.** Topological censorship forbids $X = 0$ in classical GR, but $X$ can be pushed arbitrarily small toward the thin-shell limit ($m R_e \gg 1$) on finer spectral grids (bounded only by Chebyshev resolution and Ford–Roman quantum inequalities), or cut further by restoring canonical / winding partner fields ($\chi, \Lambda$) to carry mass and angular momentum while the phantom pays solely for the throat flare-out.
-- **Pins.** Throat size ($R_e$ or $R_A$) must stay pinned, otherwise the optimizer shrinks the throat toward a black hole. $J$ stays pinned to isolate the potential's gain at each $v_e$, unless `--free-J` is on.
+**Priority agreed 2026-10-31: fixed-area searches with bounded tides, followed
+by rotating ordinary bosonic matter.** The stationary comparisons above show
+why lowering the volume integral alone is insufficient: peak violation,
+tidal forces and null-ray NEC deficit can increase while $X$ decreases.
+
+- **Fixed area, bounded tides.** Minimise the full-direction phantom integral
+  $X_{\rm full}=\int |D\Psi|^2 dV/(4\pi R_A)$ at fixed
+  throat area, with explicit tidal bounds at specified local speeds and
+  monitored passage width, lapse, redshift and light transit. Hold $J$ fixed
+  for comparisons that isolate the potential's effect; explore $J/R_A^2$ and
+  the asymmetry $\gamma$ separately or jointly with the potential. The current
+  `optimisation.commands.optimize_potential` retains legacy `--pin area`
+  (constant-eta surfaces) and `--free-J`. The new study configuration below
+  fixes the true minimal area and uses explicit reference-relative tidal caps.
+- **Shape and angular distribution.** The stationary solver already allows
+  angular dependence. Let throat shape respond to the matter and boundary
+  parameters through the field equations. Monitor angular as well as radial
+  NEC violation so a smaller radial objective cannot hide a redistribution
+  into angular gradients. Richer positive potentials are another available
+  knob; the small validated extension gain is recorded above.
+- **Rotating ordinary bosonic matter.** Use a canonical complex field with
+  harmonic time dependence and azimuthal winding. Vary its amplitude, mass,
+  self-interaction and integer winding number; solve for the frequency and
+  require localisation at both asymptotic ends. Compare at matched area and
+  total $J$, tracking the phantom contribution separately from the ordinary
+  matter and its mass budget. Cloud and winding equations already exist,
+  but the preliminary trials establish no validated exoticity reduction.
+  Related stationary solutions: [Hoffmann et al. (2018)](https://arxiv.org/abs/1803.11044).
+- **Double throats, later.** Bosonic matter can support two constrictions
+  separated by a wider region within the same two-ended geometry. Assess
+  both constrictions and the complete exoticity integral. Separate wormhole
+  handles require a different topology and solver construction; neither
+  extension is known here to lower the total requirement.
+- **Scaling and momentum.** For geometrically similar solutions, local
+  stress scales as $R^{-2}$, $|\mathrm{VIQ}|$ as $R$, and $X$ is unchanged.
+  Similarity with a potential also requires $m\propto R^{-1}$; fixing the
+  physical scalar mass breaks that scaling. The stationary phantom has
+  $\Pi=0$ and zero momentum density, while its gradients supply stress.
+  Nonzero spacetime angular momentum is compatible with the two-ended
+  geometry; a winding bosonic field adds actual matter angular momentum.
+- **Arbitrarily small $X$ is a conjecture.** No validated sequence establishes
+  $X\to0$ in this smooth scalar family while preserving a finite traversable
+  throat and bounded tides. Thin-shell arguments and topological censorship
+  do not establish that limit for this family. Finer grids can resolve thinner
+  structure, but do not by themselves demonstrate physical admissibility or
+  stability. Any proposed gain still needs independent background checks and
+  finer-grid re-solves; dynamical stability remains a separate question.
+
+### Implementation — fixed-area studies (2026-10-31)
+
+Infrastructure implemented; **no D21 production search or mixed-field
+evolution has been launched**. Configuration:
+[`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
+definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
+
+- The minimal-surface graph joins the Newton solve. Independent higher-order
+  minimisation checks the area and Hessian; multiple or unresolved graph
+  throats are rejected. The full phantom objective includes angular gradients.
+- Tidal factors are **1, 2, 4** relative to the matched massless reference,
+  sampled across latitude and both ends at local radial speeds **0, ±0.5**.
+  Peak refinement, an axis limit and decaying-tail checks gate acceptance.
+- Mass-only bosons use **k = −1, 0, +1**, energy budgets **E_b/R_A = 0.1,
+  0.3, 1**, mass range **m_b R_A = 0.5–8** and amplitude seeds **0.01, 0.03,
+  0.1, 0.3** (upper bound 0.5). Frequency is solved, with both-end mass gaps
+  and localisation checks. Failed linear-mode searches still attempt finite
+  seeds from Bondi's positive self-gravitating mass-only ODE profiles, on
+  both the massless background and re-pinned potential candidates.
+- `--study-config` lists the 30 cases without solving; `--study-case` selects
+  one. Saved source/code hashes protect `--resume`. Search and final
+  refinement share the physical gates; separate reference and candidate
+  archives, rejection reasons and rebuildable comparison plots are retained.
+- Mixed-field saves/refinement preserve the field, frequency and throat
+  shape. Total-J checks include the matter source; SPINBG_V1 export refuses
+  canonical fields. Direct off-grid Ricci and scalar checks supplement the
+  unused Einstein constraints. Perturbed finer-grid seeds must undergo actual
+  Newton updates before certification. Stability remains unassessed.
+
+Validation: the optimisation suite passes **158 tests**. A capped CPU Ellis
+12×6 solve plus the full acceptance diagnostics took **13.2 s**; a complete
+8×4 → 10×5 → 12×6 command/save/refinement/resume smoke test took **85.4 s**
+and correctly reported no exoticity improvement. The actual Bondi ODE seed
+adapter at canonical amplitude 0.1 took **13.7 s** and returned a finite,
+localised seed. These are infrastructure checks, not D21 cost estimates or
+validated nonzero bosonic wormholes. Next: separately authorised, capped D21
+reference/potential pilots; measure their costs before the production matrix.
 
 ## Rules
 

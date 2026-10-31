@@ -48,12 +48,17 @@ def _cuda_backend(jac):
 
 def newton(residual, jacobian, u0, *, tol: float = 1e-12,
            max_iter: int = 12, chord_ratio: float = 0.1,
-           min_damping: float = 1.0 / 64.0, verbose: bool = False):
+           min_damping: float = 1.0 / 64.0, verbose: bool = False,
+           min_updates: int = 0):
     """Solve residual(u) = 0 from u0.  Returns (u, info).
 
     info: converged, iters, res_scaled_inf, res_history, jacobian_evals,
-    newton_steps (the per-step damping factors).
+    newton_steps (the per-step damping factors). min_updates can require
+    recovery from a perturbed seed even when row equilibration makes its
+    initial residual smaller than tol.
     """
+    if not 0 <= min_updates < max_iter:
+        raise ValueError('min_updates must lie in [0, max_iter)')
     u = np.asarray(u0, dtype=np.float64).copy()
     xp, factor, solve = np, lu_factor, lu_solve
     gpu = False
@@ -83,7 +88,7 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
             scale = 1.0 / xp.maximum(xp.max(xp.abs(jac), axis=1), 1e-300)
             lu, piv = factor(scale[:, None] * jac)
         history.append(scaled_inf(r))
-        if history[-1] <= tol:
+        if history[-1] <= tol and len(steps) >= min_updates:
             if verbose:
                 print(f"[newton] converged at iter {it}: "
                       f"|R|_inf,scaled = {history[-1]:.3e}")
@@ -123,7 +128,7 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
                   f"{float(xp.linalg.norm(scale * r)):.3e} (t = {t:g})")
 
     final = scaled_inf(r)
-    return done(u, {"converged": final <= tol, "iters": max_iter,
+    return done(u, {"converged": final <= tol and len(steps)>=min_updates, "iters": max_iter,
                     "res_scaled_inf": final, "res_history": history + [final],
                     "jacobian_evals": jac_evals, "newton_steps": steps,
                     "reason": "max_iter"})

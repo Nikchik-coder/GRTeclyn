@@ -71,7 +71,7 @@ def test_nrow_identity_with_a_winding_cloud_on_the_axis():
     d2eta = 0.3 * rng.standard_normal((3, 1))
     h = eta**2 + 1.2**2
     expm1u = MatterCollocationProblem._expm1u(np)
-    for kz in (1, 2):
+    for kz in (-2, -1, 1, 2):
         E = matter_residual_forms(
             np.exp, eta0=1.2, y=y[None, :], eta=eta, deta=deta,
             d2eta=d2eta, jets=jets, V=0.21, dV=0.43, U=0.17, dU=0.29,

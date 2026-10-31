@@ -157,10 +157,7 @@ def exotic_x(eta0, rmap, sx, sy, Dx, F, N, B, PSI) -> dict:
 
 
 class _Jet:
-    """Value, gradient and Hessian of a scalar in (eta, theta) at one point:
-    enough arithmetic (+, -, *, exp) to carry metric components to second
-    derivatives.  theta-gradients are zero on the equator by reflection
-    symmetry, and the product rule then keeps every mixed Hessian zero."""
+    """Value, gradient and Hessian in (eta, theta), including mixed terms."""
 
     __slots__ = ("v", "g", "H")
 
@@ -192,8 +189,9 @@ class _Jet:
         return _Jet(e, e * self.g, e * (self.H + np.outer(self.g, self.g)))
 
 
-def tidal(eta0, rmap, sx, sy, Dx, Dy, F, W, N, B, xi, v: float = 0.0) -> dict:
-    """The tidal tensor E_ij on the equator (y = -1) at radial position xi,
+def tidal(eta0, rmap, sx, sy, Dx, Dy, F, W, N, B, xi, v: float = 0.0,
+          theta: float = math.pi / 2, *, spectral_jets=None, return_curvature=False) -> dict:
+    """The tidal tensor E_ij at any latitude (equator by default) at radial position xi,
     in the orthonormal frame of a traveler crossing radially with speed v
     relative to the zero-angular-momentum observer u = e^{-f/2}
     (d_t + omega d_phi); frame legs 1, 2, 3 = radial (boosted), theta, phi.
@@ -205,45 +203,61 @@ def tidal(eta0, rmap, sx, sy, Dx, Dy, F, W, N, B, xi, v: float = 0.0) -> dict:
     395, box 2 with b = eta0^2/r): E_rad = 0 and E_theta = E_phi =
     -gamma_L^2 v^2 eta0^2 / h^2, so a throat transit stretches sideways.
 
-    The curvature comes from the metric's exact spectral jets.  On the
-    equator y = cos 2 theta gives, for any even field G, G_theta = 0 and
-    G_thetatheta = 4 G_y, so no second y-derivative enters; nu = N (1 - y)/2
-    has nu_thetatheta = 4 N_y - 2 N.  Christoffels, their derivatives and
-    R^a_bij are assembled numerically in (t, eta, theta, phi), which is
-    regular there (the axis is not: its transit needs a Cartesian chart).
+    Curvature uses spectral jets with the full y = cos(2 theta) chain rule,
+    including angular and mixed second derivatives. At the coordinate axis
+    two even extrapolations give the regular orthonormal limit and its error.
+    Off-axis return_curvature supplies the unboosted orthonormal Ricci tensor
+    for the independent Einstein check instead of the tidal eigenvalues.
     """
-    xi_v, y_eq = np.array([float(xi)]), np.array([-1.0])
+    if not (-1 < v < 1) or not (0 <= theta <= math.pi/2):
+        raise ValueError("tidal: |v| < 1 and 0 <= theta <= pi/2 required")
+    if theta == 0:
+        if return_curvature:
+            raise ValueError('Ricci check requires an off-axis point')
+        # Smooth-axis limit: even diagonal entries; axial symmetry removes
+        # radial/transverse mixing and makes the two transverse entries equal.
+        samples = [tidal(eta0,rmap,sx,sy,Dx,Dy,F,W,N,B,xi,v,t,spectral_jets=spectral_jets)
+                   for t in (.004,.002,.001)]
+        diagonals = [np.diag(s['E']) for s in samples]
+        coarse = (4*diagonals[1]-diagonals[0])/3
+        fine = (4*diagonals[2]-diagonals[1])/3
+        fine[1:] = np.mean(fine[1:])
+        out = dict(samples[-1], E=np.diag(fine), eigs=np.sort(fine),
+                   rad=float(fine[0]), theta=float(fine[1]), phi=float(fine[2]),
+                   max_abs=float(np.max(abs(fine))),
+                   axis_error=float(np.max(abs(fine-coarse))))
+        return out
+    xi_v = np.array([float(xi)])
+    yy = math.cos(2*theta)
+    y_eq = np.array([yy])
+    yt, ytt = -2*math.sin(2*theta), -4*yy
     ep = float(rmap.deta(xi_v)[0])
     epp = float(rmap.d2eta(xi_v)[0])
 
-    def jet(A):
+    def jet(A, index):
         A = np.asarray(A)
-        g0 = _grid_eval(sx, sy, A, xi_v, y_eq)[0, 0]
-        gx = _grid_eval(sx, sy, Dx @ A, xi_v, y_eq)[0, 0]
-        gxx = _grid_eval(sx, sy, Dx @ (Dx @ A), xi_v, y_eq)[0, 0]
-        gy = _grid_eval(sx, sy, A @ Dy.T, xi_v, y_eq)[0, 0]
-        d_eta = gx / ep
-        d_eta2 = (gxx - gx * epp / ep) / ep**2
-        return g0, d_eta, d_eta2, gy
+        def at(a):
+            return _grid_eval(sx,sy,a,xi_v,y_eq)[0,0]
+        if spectral_jets is None:
+            derivatives=(Dx@A,A@Dy.T,Dx@(Dx@A),(Dx@A)@Dy.T,(A@Dy.T)@Dy.T)
+        else:
+            derivatives=spectral_jets[index]
+        gx,gy,gxx,gxy,gyy=map(at,derivatives)
+        return _Jet(at(A), [gx/ep,yt*gy],
+                    [[(gxx-gx*epp/ep)/ep**2,yt*gxy/ep],
+                     [yt*gxy/ep,yt*yt*gyy+ytt*gy]])
 
-    f0, f1, f2, fy = jet(F)
-    w0, w1, w2, wy = jet(W)
-    n0, n1, n2, ny_ = jet(N)
-    b0, b1, b2, by = jet(B)
-
-    def field_jet(g0, d1, d2, gy):
-        return _Jet(g0, [d1, 0.0], [[d2, 0.0], [0.0, 4.0 * gy]])
-
-    fj = field_jet(f0, f1, f2, fy)
-    wj = field_jet(w0, w1, w2, wy)
-    bj = field_jet(b0, b1, b2, by)
-    # nu = N (1 - y)/2: on the equator nu = N, nu_eta = N_eta,
-    # nu_thetatheta = 4 nu_y = 4 (N_y - N/2)
-    nuj = _Jet(n0, [n1, 0.0], [[n2, 0.0], [0.0, 4.0 * ny_ - 2.0 * n0]])
-
+    fj, wj, bj, nj = (jet(a,i) for i,a in enumerate((F,W,B,N)))
+    # A constant azimuthal coordinate rotation sets W=0 at this point while
+    # retaining all its derivatives. It prevents catastrophic cancellation
+    # in g_tt*g_phiphi-g_tphi**2 at the rotating asymptotic end.
+    wj = _Jet(0.,wj.g,wj.H)
+    f0, w0 = fj.v, 0.
+    s2j = _Jet(math.sin(theta)**2, [0.,math.sin(2*theta)],
+               [[0.,0.],[0.,2*math.cos(2*theta)]])
+    nuj = nj*s2j
     eta = float(rmap.eta(xi_v)[0])
-    hj = _Jet(eta**2 + eta0**2, [2.0 * eta, 0.0], [[2.0, 0.0], [0.0, 0.0]])
-    s2j = _Jet(1.0, [0.0, 0.0], [[0.0, 0.0], [0.0, -2.0]])   # sin^2 theta
+    hj = _Jet(eta**2+eta0**2,[2*eta,0.],[[2.,0.],[0.,0.]])
 
     ef = fj.exp()
     pj = bj * bj * (-fj).exp()               # B^2 e^{-f}
@@ -289,6 +303,10 @@ def tidal(eta0, rmap, sx, sy, Dx, Dy, F, W, N, B, xi, v: float = 0.0) -> dict:
     e1 = np.array([0.0, 1.0 / math.sqrt(g4[1, 1]), 0.0, 0.0])
     e2 = np.array([0.0, 0.0, 1.0 / math.sqrt(g4[2, 2]), 0.0])
     e3 = np.array([0.0, 0.0, 0.0, 1.0 / math.sqrt(g4[3, 3])])
+    if return_curvature:
+        frame=np.array([u,e1,e2,e3])
+        ricci=np.einsum('abad->bd',riem)
+        return {'ricci_frame':frame@ricci@frame.T}
     gam_l = 1.0 / math.sqrt(1.0 - v * v)
     ub = gam_l * (u + v * e1)
     legs = [gam_l * (e1 + v * u), e2, e3]

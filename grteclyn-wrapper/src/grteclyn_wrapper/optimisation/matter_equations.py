@@ -60,7 +60,7 @@ __all__ = ["matter_residual_forms", "MATTER_JET_NAMES", "row_matrix",
 #: Every jet the matter forms read: value, d/dxi, d2/dxi2, d/dy, d2/dy2
 #: per field, plus the one mixed jet of E_c.  ``chi`` is the amplitude X
 #: of the canonical layer field chi = X e^{i omega_c t} (campaign step 4);
-#: ``z`` is the REGULARIZED amplitude zeta = Z / sin^k theta of the
+#: ``z`` is the REGULARIZED amplitude zeta = Z / sin^|k| theta of the
 #: winding field Lambda = Z e^{i(omega_z t + k phi)} (campaign step 5).
 #: A caller without one of them passes zeros for its jets.
 MATTER_JET_NAMES = tuple(
@@ -102,8 +102,8 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
     source -4 k Omega e^nu Z^2 / sin^2 theta with Omega = omega_z
     + k omega the frame-dragged frequency, and the harmonic slots carry
     Omega^2 e^{-f} Z^2 where chi carries omega_c^2 e^{-f} X^2.  The
-    centrifugal k^2 / sin^2 theta barrier forces Z ~ sin^k theta on the
-    axis, so the forms take the REGULAR amplitude zeta = Z / sin^k theta
+    centrifugal k^2 / sin^2 theta barrier forces Z ~ sin^|k| theta on the
+    axis, so the forms take the REGULAR amplitude zeta = Z / sin^|k| theta
     (the ``z`` jets): every Z bilinear becomes polynomial in y through
     SK = sin^2 theta = (1 - y)/2, and the one removable (e^nu - 1)/nu
     structure (the KG centrifugal against e^nu, and its E_Nr image)
@@ -111,7 +111,7 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
     at u = 0 (the axis).  ``uz, duz`` are cal U_z(Z) and cal U_z'(Z)/Z
     at the nodes (the ratio stays finite on the axis for the even
     cal U_z the winding field needs), ``oz`` is omega_z and ``kz`` the
-    integer winding number k >= 1; kz = 0 (the default) is the
+    nonzero integer winding number k; kz = 0 (the default) is the
     six-field system unchanged, bit for bit.  All winding terms are
     machine-checked by derive_matter_equations.py (stages wind, forms,
     nrow), transcribed 2026-10-28.
@@ -153,7 +153,8 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
         # frame-dragged frequency; skk z^2 = Z^2 and skm z^2 = Z^2/SK
         # are both polynomial in y for k >= 1
         sk = (1 - y) / 2
-        skm = sk ** (kz - 1)
+        ka = abs(kz)
+        skm = sk ** (ka - 1)
         skk = skm * sk
         enu = exp(N * (1 - y) / 2)
         Om = oz + kz * w
@@ -253,24 +254,24 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
         E_w = E_w - 4 * kz * Om * enu * skm * z * z
         E_B = E_B + 2 * kz * kz * skm * z * z * B * enu
         E_N = (E_N + 2 * A2 * skk * z_x**2 + 8 * oy2 * skk * z_y**2
-               - 4 * kz * oy2 * skm * z * z_y
+               - 4 * ka * oy2 * skm * z * z_y
                + kz * kz * (1 + y) * skm * z * z
                - 6 * kz * kz * skm * z * z * enu)
-        E_c = E_c + 16 * skk * z_x * z_y - 4 * kz * skm * z * z_x
+        E_c = E_c + 16 * skk * z_x * z_y - 4 * ka * skm * z * z_x
         E19 = (E19 + W2 * skk * z_x**2 - 4 * h * oy2 * skk * z_y**2
-               + 2 * kz * h * oy2 * skm * z * z_y
+               + 2 * ka * h * oy2 * skm * z * z_y
                - kz * kz * h * (1 + y) * skm * z * z / 2)
         E_Nr = (E_Nr + 16 * (1 + y) * skk * z_y**2
-                - 8 * kz * (1 + y) * skm * z * z_y
+                - 8 * ka * (1 + y) * skm * z * z_y
                 - 2 * kz * kz * skm * z * z * (1 + N * gz))
-        # the regularized KG row: the sin^k theta shift moves the
+        # the regularized KG row: the sin^|k| theta shift moves the
         # centrifugal barrier into the -kz (kz + 1) z term plus the
         # removable e^nu mismatch N gz
         E_z = (
             A2 * z_xx + A1 * z_x + A2 * (B_x / B) * z_x
-            + 4 * oy2 * z_yy - ((4 * kz + 6) * y + 4 * kz + 2) * z_y
+            + 4 * oy2 * z_yy - ((4 * ka + 6) * y + 4 * ka + 2) * z_y
             + 4 * oy2 * (B_y / B) * z_y
-            - kz * (kz + 1) * z - 2 * kz * (1 + y) * (B_y / B) * z
+            - ka * (ka + 1) * z - 2 * ka * (1 + y) * (B_y / B) * z
             - kz * kz * N * gz * z
             + (Om * Om * ef1 * z - duz * z / 2) * B2 * h * env
         )
@@ -383,8 +384,8 @@ class MatterCollocationProblem:
 
     ``winding = (cal U_z, omega_z, k)`` adds the winding field of
     campaign step 5: Lambda = Z e^{i(omega_z t + k phi)}, canonical like
-    chi, with integer winding number k >= 1.  The grid unknown is the
-    REGULAR amplitude zeta = Z / sin^k theta (zero Dirichlet at
+    chi, with nonzero integer winding number k.  The grid unknown is the
+    REGULAR amplitude zeta = Z / sin^|k| theta (zero Dirichlet at
     xi = +-1, nothing imposed on the axis -- the sin^k shift makes every
     row regular there), seeded through ``dzeta``; zeta = 0 always
     solves.  cal U_z must be EVEN in Z with no linear term
@@ -455,10 +456,11 @@ class MatterCollocationProblem:
         self.mode, self.value = mode, float(value)
         self.border_psi = psi_minus is None
         self.psi_minus_fixed = 0.0 if psi_minus is None else float(psi_minus)
-        if pin is not None and (pin[0] not in ("R_e", "area") or mode != "J"):
-            raise ValueError(f"pin {pin!r}: ('R_e' or 'area', value), with "
+        if pin is not None and (pin[0] not in ("R_e", "area", "minimal_area") or mode != "J"):
+            raise ValueError(f"pin {pin!r}: ('R_e', 'area' or 'minimal_area', value), with "
                              "prescribe = ('J', value)")
         self.pin = None if pin is None else (pin[0], float(pin[1]))
+        self.surface_order = ny if pin is not None and pin[0] == 'minimal_area' else 0
         # the canonical layer field (campaign step 4): chi = (cal U,
         # omega_chi) adds the amplitude X as a sixth grid unknown with
         # zero Dirichlet data (the cloud vanishes at both ends); cal U is
@@ -471,12 +473,12 @@ class MatterCollocationProblem:
             u_pot, omega_chi = chi
             self.chi = (u_pot, float(omega_chi))
         # the winding field (campaign step 5): (cal U_z, omega_z, k); the
-        # grid unknown is zeta = Z / sin^k theta
+        # grid unknown is zeta = Z / sin^|k| theta
         self.winding = None
         if winding is not None:
             uz_pot, omega_z, k_w = winding
-            if int(k_w) < 1:
-                raise ValueError("winding: k must be a positive integer")
+            if int(k_w) != k_w or k_w == 0:
+                raise ValueError("winding: k must be a nonzero integer")
             uz_pot.dV_over(0.0)   # refuses a linear term now, not mid-solve
             self.winding = (uz_pot, float(omega_z), int(k_w))
         if pin_zeta is not None and self.winding is None:
@@ -494,7 +496,7 @@ class MatterCollocationProblem:
                            + (1 if self.border_psi else 0)
                            + (1 if self.pin_zeta is not None else 0)
                            + (1 if self.pin_chi is not None else 0)
-                           + (2 if self.pin is not None else 0))
+                           + (2 if self.pin is not None else 0) + self.surface_order)
 
         xi_i = self.sx[1:-1]
         self.eta_i = self.map.eta(xi_i)[:, None]
@@ -535,8 +537,11 @@ class MatterCollocationProblem:
         self.Cx = cheb_coeffs(np.eye(nx + 1), axis=0)
         self.w_g = w_g
         self.sin2_g = 1.0 - mu_g**2
+        if self.surface_order:
+            from .surfaces import SurfaceFunctional
+            self.surface = SurfaceFunctional(eta0, self.map, self.sx, self.sy, ny)
 
-        # Winding precomputes: sin^k theta on the y nodes (Z = sin^k
+        # Winding precomputes: sin^|k| theta on the y nodes (Z = sin^k
         # theta zeta), h and deta on ALL xi nodes for the twist-source
         # integral j_matter, and the weights of int_0^1 dxi on the
         # Lobatto values through the Chebyshev coefficients.  deta's
@@ -544,7 +549,7 @@ class MatterCollocationProblem:
         # deta diverges there.
         if self.winding is not None:
             k_w = self.winding[2]
-            self.sink_i = np.sqrt((1.0 - self.sy[None, :]) / 2.0) ** k_w
+            self.sink_i = np.sqrt((1.0 - self.sy[None, :]) / 2.0) ** abs(k_w)
             self.h_all = (eta_all**2 + eta0**2)[:, None]
             deta_edge = np.zeros(nx + 1)
             deta_edge[1:-1] = self.map.deta(self.sx[1:-1])
@@ -568,7 +573,7 @@ class MatterCollocationProblem:
 
     def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None,
              sigma=None, xi_t=None, dchi=None, dzeta=None, omega_z=None,
-             omega_chi=None):
+             omega_chi=None, surface_coefficients=None):
         import numpy as np
 
         parts = [np.ravel(df), np.ravel(dw), np.ravel(dN), np.ravel(dB),
@@ -603,6 +608,15 @@ class MatterCollocationProblem:
         if self.pin is not None:
             if sigma is None or xi_t is None:
                 raise ValueError("pinned problem: sigma and xi_t are unknowns")
+            if self.surface_order:
+                c = np.zeros(self.surface_order+1)
+                c[0] = xi_t
+                if surface_coefficients is not None:
+                    supplied = np.asarray(surface_coefficients)
+                    n = min(len(c), len(supplied))
+                    c[:n] = supplied[:n]
+                parts.append(c[1:])
+                xi_t = c[0]
             parts.append(np.array([float(sigma), float(xi_t)]))
         return np.concatenate(parts)
 
@@ -625,6 +639,12 @@ class MatterCollocationProblem:
         if self.pin is None:
             return 1.0, None
         return float(u[-2]), float(u[-1])
+
+    def surface_coefficients(self, u):
+        """Compactified graph coefficients, constant term first."""
+        if not self.surface_order:
+            return self._jnp.atleast_1d(u[-1])
+        return self._jnp.concatenate([u[-1:], u[-2-self.surface_order:-2]])
 
     def omega_z_of(self, u):
         """omega_z: the bordered unknown of a pin_zeta problem, else the
@@ -759,12 +779,19 @@ class MatterCollocationProblem:
                 [out, jnp.atleast_1d(d["z"][self.mid, -1] - self.pin_zeta)])
         if self.pin is not None:
             xi_t = u[-1]
-            dA = self._jax.grad(self._area)(xi_t, F, Nf, B)
-            if self.pin[0] == "R_e":
-                held = sigma * self._r_e(xi_t, F, B)
+            if self.surface_order:
+                c = self.surface_coefficients(u)
+                area = lambda cc: self.surface.area(cc, F, Nf, B, jnp)
+                gradients = self._jax.grad(area)(c)
+                held = sigma**2 * area(c)
+                # Shape rows precede the original two pin rows.
+                out = jnp.concatenate([out, gradients[1:], gradients[:1],
+                                       jnp.atleast_1d(held-self.pin[1])])
             else:
-                held = sigma**2 * self._area(xi_t, F, Nf, B)
-            out = jnp.concatenate([out, jnp.stack([dA, held - self.pin[1]])])
+                dA = self._jax.grad(self._area)(xi_t, F, Nf, B)
+                held = (sigma * self._r_e(xi_t, F, B) if self.pin[0] == 'R_e'
+                        else sigma**2 * self._area(xi_t, F, Nf, B))
+                out = jnp.concatenate([out, jnp.stack([dA, held - self.pin[1]])])
         return out
 
     # -- the throat (pins) ----------------------------------------------------
@@ -805,6 +832,12 @@ class MatterCollocationProblem:
         the area."""
         sigma, xi_t = self.scale(u)
         F, _, Nf, B = self.fields(u)[:4]
+        if self.surface_order:
+            from .surfaces import surface_geometry
+            th = surface_geometry(self.eta0, self.map, self.sx, self.sy,
+                                  F, Nf, B, self.surface_coefficients(u))
+            return dict(sigma=sigma, xi_t=xi_t, eta_t=sigma*th['eta_throat'],
+                        R_e=sigma*th['R_e'], area=sigma**2*th['area_throat'])
         return {"sigma": sigma, "xi_t": xi_t,
                 "eta_t": sigma * float(self._eta_of(xi_t)),
                 "R_e": sigma * float(self._r_e(xi_t, F, B)),
@@ -858,7 +891,7 @@ class MatterCollocationProblem:
         w_g = W @ self.By.T
         zt_g = zeta @ self.By.T
         s2 = self.sin2_g[None, :]
-        integ = ((oz + k * w_g) * s2**k * zt_g**2 * b_g**3 * self.h_all
+        integ = ((oz + k * w_g) * s2**abs(k) * zt_g**2 * b_g**3 * self.h_all
                  * xp.exp(n_g * s2 - 2.0 * f_g)) @ self.w_g
         return self.deta_edge * integ
 

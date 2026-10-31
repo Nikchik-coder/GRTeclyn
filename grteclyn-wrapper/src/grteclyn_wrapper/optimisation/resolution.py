@@ -14,7 +14,7 @@ import time
 
 import numpy as np
 
-from .exploration import FIELDS, make_problem, pack_seed, solve_trial, save_trial
+from .exploration import FIELDS, EXTRA_FIELDS, make_problem, pack_seed, solve_trial, save_trial
 from .exoticity import exotic_x
 from .potentials import PolynomialPotential
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
@@ -33,12 +33,13 @@ def screen_trial(state, config, nx, ny, pin, d2):
     Far-end raw residuals are recorded separately: these coordinate-weighted
     rows cannot be compared directly with Cartesian evolution constraints.
     """
-    p = make_problem(state, config, nx, ny, pin)
+    p = make_problem(state, config, nx, ny, pin, frequency=state.get('frequency'),
+                     amplitude=config.get('amplitude'))
     u = pack_seed(p, state)
     arrays = [np.asarray(v) for v in p.fields(u)]
     if not all(np.isfinite(v).all() for v in arrays):
         raise RuntimeError("nonfinite interpolated fields")
-    F, W, N, B, psi = arrays
+    F, W, N, B, psi = arrays[:5]
     sigma, xi_t = p.scale(u)
     omega, psim = p.unpack(u)[-2:]
     if sigma <= 0 or B.min() <= 0 or psim == 0:
@@ -46,20 +47,23 @@ def screen_trial(state, config, nx, ny, pin, d2):
     diag = p.diagnostics(u)
     mask = diag['C2_i'] >= .05**2
     residual = np.asarray(p.residual(u))
-    blocks = residual[:5*p.n].reshape(5, nx+1, ny+1)
+    blocks = residual[:p.nf*p.n].reshape(p.nf, nx+1, ny+1)
     imposed = {tag: float(np.max(abs(v[1:-1][mask])))
                for tag, v in zip(p.tags, blocks)}
     far = {tag: float(np.max(abs(v[1:-1]))) for tag, v in zip(p.tags, blocks)}
     e19 = float(np.max(abs(diag['E19'][mask])))/d2
     ec = float(np.max(abs(diag['E_c'][mask])))
-    jerr = float(np.max(abs(sigma**2*diag['j_of_x'][mask]-config['J'])))/max(1.,abs(config['J']))
+    jtotal = diag['j_of_x']+diag.get('j_matter_tail',0.)
+    jerr = float(np.max(abs(sigma**2*jtotal[mask]-config['J'])))/max(1.,abs(config['J']))
     x = exotic_x(1., p.map, p.sx, p.sy, p.Dx, F, N, B, psi)
     held = sigma*x['R_e'] if pin[0] == 'R_e' else sigma**2*x['area_throat']
+    if pin[0] == 'minimal_area':
+        held = p.throat(u)['area']
     pinerr = abs(held/pin[1]-1)
     boundary = float(np.max(abs(blocks[:, [0,-1], :])))
-    border = float(np.max(abs(residual[5*p.n:])))
+    border = float(np.max(abs(residual[p.nf*p.n:])))
     tail = max(tail_ratio(v, axis=ax) for v in
-               (F-p.f_bg, W-omega*p.q, N, B-1, psi-psim*p.psi_prof) for ax in (0,1))
+               (F-p.f_bg, W-omega*p.q, N, B-1, psi-psim*p.psi_prof, *arrays[5:]) for ax in (0,1))
     interval = bool(np.min(psi/psim) >= -1e-8 and np.max(psi/psim) <= 1+1e-8)
     ok = (max(e19, ec, *imposed.values()) <= 1e-8 and jerr <= 1e-6
           and pinerr <= 1e-8 and boundary <= 1e-10 and border <= 1e-8
@@ -73,6 +77,20 @@ def screen_trial(state, config, nx, ny, pin, d2):
     result = dict(zip(FIELDS, arrays))
     result.update(sx=p.sx, sy=p.sy, sigma=sigma, xi_t=xi_t, omega=omega,
                   psim=psim, gamma=config['gamma'], map=p.map)
+    if config.get('matter'):
+        key='CHI' if config['matter']=='cloud' else 'Z'
+        result[key]=arrays[5]
+        frequency=p.omega_chi_of(u) if key=='CHI' else p.omega_z_of(u)
+        result['frequency']=frequency
+        k=config.get('winding_k',1) if key=='Z' else 0
+        bound=(0<frequency<config['matter_mass'] and
+               abs(frequency+k*omega/sigma)<config['matter_mass']*np.exp(config['gamma']/2))
+        amp_error=abs(arrays[5][p.mid,-1]/config['amplitude']-1)
+        row.update(frequency=frequency,bound=bool(bound),amplitude_error=float(amp_error))
+        if not bound or amp_error>1e-6:
+            row['verdict']='ABOVE_GATE'
+    if p.surface_order:
+        result['surface_coefficients']=np.asarray(p.surface_coefficients(u))
     return result, row
 
 
@@ -88,7 +106,7 @@ def consistent(records, score_key='X'):
 
 
 def check_candidate(state, config, grids, pin, d2, directory, *,
-                    method='refine', score_key='X'):
+                    method='refine', score_key='X', validator=None, perturb_seed=False):
     """Persist every check, fail closed, and never export a failed candidate."""
     if method not in ('screen', 'refine'):
         raise ValueError(method)
@@ -98,6 +116,7 @@ def check_candidate(state, config, grids, pin, d2, directory, *,
         method=method, config=config, grids=grids, pin=pin,
         newton_acceptance=1e-9, independent_constraint_gate=1e-8,
         relative_bill_tolerance=1e-6, score_key=score_key,
+                perturb_seed=perturb_seed,
         stability='not_assessed'), indent=2)+'\n')
     records, source = [], state
     for nx, ny in grids:
@@ -106,8 +125,24 @@ def check_candidate(state, config, grids, pin, d2, directory, *,
             if method == 'screen':
                 state, row = screen_trial(source, config, nx, ny, pin, d2)
             else:
-                state, row = solve_trial(state, config, nx, ny, pin, d2,
-                                        max_iter=24, newton_tol=1e-9)
+                seed=state
+                if perturb_seed:
+                    # Independent recovery on every grid, including when an
+                    # interpolated polynomial already satisfies Newton's stop.
+                    seed=dict(state)
+                    bump=(1-np.asarray(state['sx'])[:,None]**2)*(
+                          1+.2*np.asarray(state['sy'])[None,:])
+                    seed['F']=state['F']+1e-6*bump
+                kwargs={'min_updates':1} if perturb_seed else {}
+                state, row = solve_trial(seed, config, nx, ny, pin, d2,
+                                        max_iter=24, newton_tol=1e-9, **kwargs)
+                if perturb_seed:
+                    row['seed_perturbation']=1e-6
+                    if row.get('newton_updates',row.get('iters',0))==0:
+                        row['verdict']='ABOVE_GATE'
+                        row['refinement_failure']='no Newton correction after seed perturbation'
+            if validator is not None:
+                row = validator(state, config, row)
             row['seconds'] = time.monotonic()-start
             save_trial(directory/f'diagnostic_{nx}x{ny}.npz', state, config, row, pin)
         except (RuntimeError, ValueError, FloatingPointError) as err:
@@ -143,6 +178,7 @@ def save_checked(path, state, config, metadata, result):
     meta.update(config)
     meta.update(row)
     meta.update(**{k:float(state[k]) for k in ('sigma','xi_t','omega','psim')},
+                schema_version=2,
                 potential_coeffs=list(map(float, pot.coeffs)),
                 radial_map={'class':type(state['map']).__name__, **dataclasses.asdict(state['map'])},
                 resolution=result, stability='not_assessed',
@@ -151,7 +187,10 @@ def save_checked(path, state, config, metadata, result):
     # Replace atomically so an interrupted write cannot destroy the incumbent.
     path = Path(path)
     tmp = path.with_suffix('.tmp.npz')
-    np.savez_compressed(tmp, meta=json.dumps(meta), **{k:state[k] for k in (*FIELDS,'sx','sy')})
+    arrays={k:state[k] for k in (*FIELDS,'sx','sy',*EXTRA_FIELDS) if k in state}
+    if 'frequency' in state:
+        meta['frequency']=float(state['frequency'])
+    np.savez_compressed(tmp, meta=json.dumps(meta), **arrays)
     tmp.replace(path)
 
 

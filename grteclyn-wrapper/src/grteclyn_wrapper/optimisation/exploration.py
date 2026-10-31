@@ -15,14 +15,27 @@ from .exoticity import exotic_x, throat
 from .potentials import BernsteinKinkPotential, PolynomialPotential
 
 FIELDS = ("F", "W", "N", "B", "PSI")
+EXTRA_FIELDS = ("CHI", "Z", "surface_coefficients")
 
 
 def load_seed(path):
     with np.load(path, allow_pickle=False) as z:
         meta = json.loads(str(z["meta"]))
         state = {k: np.array(z[k]) for k in (*FIELDS, "sx", "sy")}
+        state.update({k:np.array(z[k]) for k in EXTRA_FIELDS if k in z})
+        cfg = meta.get('config', meta)
+        if 'cloud' in z and not any(k in state for k in ('CHI','Z')):
+            kind = cfg.get('matter')
+            if kind not in ('cloud','winding'):
+                raise ValueError('cloud archive has no matter type')
+            state['CHI' if kind=='cloud' else 'Z'] = np.array(z['cloud'])
     state.update({k: float(meta[k]) for k in ("sigma", "xi_t", "omega", "psim")})
     state["gamma"] = float(meta["gamma"])
+    frequency = meta.get('frequency',meta.get('diagnostics',{}).get('frequency'))
+    if frequency is not None:
+        state['frequency'] = float(frequency)
+    if any(k in state for k in ('CHI','Z')) and frequency is None:
+        raise ValueError('matter archive has no harmonic frequency')
     params = dict(meta["radial_map"])
     name = params.pop("name")
     params.pop("class", None)
@@ -40,6 +53,10 @@ def physical_throat(state):
     _, dx = lobatto(len(state["sx"])-1)
     th = throat(1.0, state["map"], state["sx"], state["sy"], dx,
                 state["F"], state["N"], state["B"])
+    if 'surface_coefficients' in state:
+        from .surfaces import surface_geometry
+        th = surface_geometry(1.,state['map'],state['sx'],state['sy'],
+                              state['F'],state['N'],state['B'],state['surface_coefficients'])
     for key in ("R_e", "R_A", "R_pol", "eta_throat"):
         th[key] *= state["sigma"]
     th["area_throat"] *= state["sigma"]**2
@@ -55,6 +72,8 @@ def make_problem(state, config, nx, ny, pin, *, frequency=None, amplitude=None):
     extra = {}
     kind = config.get("matter")
     if kind:
+        if frequency is None:
+            frequency = state.get('frequency', .8*config['matter_mass'])
         mass = config["matter_mass"]
         pot = PolynomialPotential((0., 0., mass**2, 0., config.get("quartic", 0.)))
         if kind == "cloud":
@@ -75,13 +94,15 @@ def pack_seed(p, state, cloud=None, frequency=None):
     F += 0.5*(p.gamma-state["gamma"])*(1-p.sx)[:, None]
     kw = {}
     if p.chi is not None:
-        kw.update(dchi=cloud, omega_chi=frequency)
+        kw.update(dchi=cloud if cloud is not None else interpolate(state,p.sx,p.sy,'CHI'),
+                  omega_chi=frequency if frequency is not None else state.get('frequency'))
     if p.winding is not None:
-        kw.update(dzeta=cloud, omega_z=frequency)
+        kw.update(dzeta=cloud if cloud is not None else interpolate(state,p.sx,p.sy,'Z'),
+                  omega_z=frequency if frequency is not None else state.get('frequency'))
     return p.pack(F-p.f_bg, W-state["omega"]*p.q, N, B-1,
                   psi-state["psim"]*p.psi_prof, omega_inf=state["omega"],
                   psi_minus=state["psim"], sigma=state["sigma"],
-                  xi_t=state["xi_t"], **kw)
+                  xi_t=state["xi_t"], surface_coefficients=state.get('surface_coefficients'), **kw)
 
 
 def bound_mode(state, config, pin, nx=40, ny=10):
@@ -140,23 +161,32 @@ def bound_mode(state, config, pin, nx=40, ny=10):
 
 
 def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
-                max_iter=14, stall_ok=1e-9, newton_tol=1e-14):
+                max_iter=14, stall_ok=1e-9, newton_tol=1e-14, min_updates=0):
     if not 0 < newton_tol <= stall_ok:
         raise ValueError("Newton stopping tolerance must not exceed acceptance tolerance")
     from .solver.newton import newton
     kind = config.get("matter")
     frequency = cloud = None
     if kind:
-        if mode is None:
-            raise ValueError("matter trial needs a bound-mode seed")
-        frequency = mode["frequency"]
-        cloud = config["amplitude"] * interpolate(mode, lobatto(nx)[0], lobatto(ny)[0], "cloud")
+        if mode is not None:
+            frequency = mode["frequency"]
+            cloud = config["amplitude"] * interpolate(mode, lobatto(nx)[0], lobatto(ny)[0], "cloud")
+        else:
+            key = 'CHI' if kind=='cloud' else 'Z'
+            if key not in state:
+                raise ValueError("matter trial needs a mode or finite-amplitude seed")
+            frequency = state['frequency']
+            cloud = interpolate(state,lobatto(nx)[0],lobatto(ny)[0],key)
+            anchor = cloud[nx//2,-1]
+            if abs(anchor)<1e-15:
+                raise ValueError('zero matter anchor')
+            cloud = cloud*(config['amplitude']/anchor)
     p = make_problem(state, config, nx, ny, pin, frequency=frequency,
                      amplitude=config.get("amplitude") if kind else None)
     u, info = newton(p.residual, p.jacobian, pack_seed(p, state, cloud, frequency),
-                     tol=newton_tol, max_iter=max_iter)
+                     tol=newton_tol, max_iter=max_iter, min_updates=min_updates)
     residual = float(info["res_scaled_inf"])
-    if not np.isfinite(residual) or residual > stall_ok:
+    if not np.isfinite(residual) or residual > stall_ok or len(info['newton_steps'])<min_updates:
         raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")
     fields = [np.asarray(v) for v in p.fields(u)]
     if not all(np.isfinite(v).all() for v in fields):
@@ -176,10 +206,15 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     th = p.throat(u)
     held = th["R_e"] if pin[0] == "R_e" else th["area"]
     global_held = sigma*x["R_e"] if pin[0] == "R_e" else sigma**2*x["area_throat"]
+    if pin[0] == 'minimal_area':
+        from .surfaces import surface_geometry
+        geometry = surface_geometry(1.,p.map,p.sx,p.sy,F,N,B,p.surface_coefficients(u))
+        global_held = sigma**2*geometry['area_throat']
     pin_error = max(abs(held/pin[1]-1), abs(global_held/pin[1]-1))
     tail = max(tail_ratio(v, axis=ax) for v in (psi-psim*p.psi_prof, B-1, *fields[5:]) for ax in (0, 1))
     interval_ok = float(np.min(psi/psim)) >= -1e-8 and float(np.max(psi/psim)) <= 1+1e-8
     row = dict(nx=nx, ny=ny, newton=residual, iters=int(info["iters"]),
+               newton_updates=len(info['newton_steps']),
                X=x["X"], X_A=x["X_A"], VIQ=sigma*x["VIQ"],
                R_e=sigma*x["R_e"], R_A=sigma*x["R_A"], R_pol=sigma*x["R_pol"],
                sigma=sigma, E19=e19, E_c=ec, J_error=jerr, pin_error=pin_error,
@@ -194,7 +229,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
         row.update(frequency=frequency, cloud_peak=float(np.max(np.abs(fields[5]))),
                    amplitude_error=float(abs(amp/config["amplitude"]-1)), bound=bool(bound))
         if kind == "winding":
-            row["J_matter"] = float(sigma**2*diag["j_matter_tail"][p.mid-1])
+            row["J_matter_positive_half"] = float(sigma**2*diag["j_matter_tail"][p.mid-1])
     acceptable = (max(e19, ec) <= 1e-8 and jerr <= 1e-6 and pin_error <= 1e-8
                   and interval_ok and row.get("bound", True)
                   and row.get("amplitude_error", 0) <= 1e-6)
@@ -204,15 +239,25 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                   gamma=config["gamma"], map=p.map)
     if kind:
         result.update(cloud=fields[5]/config["amplitude"], frequency=frequency)
+        result['CHI' if kind=='cloud' else 'Z'] = fields[5]
+    if p.surface_order:
+        result['surface_coefficients'] = np.asarray(p.surface_coefficients(u))
+        row.update(R_A=sigma*geometry['R_A'], R_e=sigma*geometry['R_e'],
+                   R_pol=sigma*geometry['R_pol'])
     return result, row
 
 
 def save_trial(path, state, config, row, pin):
     import dataclasses
     meta = dict(config=config, diagnostics=row, pin=list(pin),
+                schema_version=2,
                 radial_map=dataclasses.asdict(state["map"]),
                 **{k:state[k] for k in ("sigma", "xi_t", "omega", "psim", "gamma")})
     arrays = {k:state[k] for k in (*FIELDS, "sx", "sy")}
-    if "cloud" in state:
-        arrays["cloud"] = state["cloud"]*config["amplitude"]
-    np.savez_compressed(Path(path), meta=json.dumps(meta, allow_nan=False), **arrays)
+    arrays.update({k:state[k] for k in EXTRA_FIELDS if k in state})
+    if 'frequency' in state:
+        meta['frequency'] = state['frequency']
+    path=Path(path)
+    tmp=path.with_suffix('.tmp.npz')
+    np.savez_compressed(tmp, meta=json.dumps(meta, allow_nan=False), **arrays)
+    tmp.replace(path)

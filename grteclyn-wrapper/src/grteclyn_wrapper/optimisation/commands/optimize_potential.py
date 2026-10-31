@@ -22,6 +22,9 @@ def positive_int(value: str) -> int:
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("solution", help=".npz / .json path of a V = 0 member")
+    ap.add_argument('--study-config', help='fixed true-area study TOML; omit --study-case to list cases')
+    ap.add_argument('--study-case', help='one named case from the study matrix')
+    ap.add_argument('--resume', action='store_true', help='resume a study with identical inputs and implementation')
     ap.add_argument("--x0", default="0.3,0,0,0",
                     help="start (m, q1, q2, q3); the pure kink at the "
                          "mass this grid resolves (2026-10-29: not the "
@@ -136,6 +139,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     ap = build_parser()
     args = ap.parse_args(argv)
+    if args.study_config:
+        from ..study import run
+        return run(args,error=ap.error)
+    if args.study_case or args.resume:
+        ap.error('--study-case and --resume require --study-config')
     from ..search.driver import run
     return run(args, error=ap.error)
 

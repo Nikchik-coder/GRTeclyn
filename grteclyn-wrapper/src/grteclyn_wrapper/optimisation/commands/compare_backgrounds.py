@@ -8,7 +8,6 @@ import time
 
 import numpy as np
 
-from grteclyn_wrapper.core.config import resolve_repo_root
 from ..diagnostics import analyse, classical, potential, spherical_tidal_check, static
 
 SOURCES = {
@@ -26,6 +25,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--out', type=Path, default=Path('results/optimisation/physics'))
     args = ap.parse_args(argv)
+    from grteclyn_wrapper.core.config import resolve_repo_root
     root = resolve_repo_root(); args.out.mkdir(parents=True, exist_ok=True)
     rows, checks, manifest, extent_checks, tidal_checks, angular_checks = [], [], [], [], [], []
     for model, source in SOURCES.items():

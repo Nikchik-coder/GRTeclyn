@@ -98,6 +98,9 @@ def matter_background(solution_path, n_x: int, n_mu: int,
     evolution's potential coefficients, the solve's numbers)."""
     z = np.load(solution_path)
     meta = json.loads(str(z["meta"]))
+    if (any(k in z for k in ('CHI','Z','cloud')) or
+            meta.get('matter') or meta.get('config',{}).get('matter')):
+        raise ValueError('SPINBG_V1 cannot export canonical matter fields')
     sx, sy = np.asarray(z["sx"]), np.asarray(z["sy"])
     _, dx = lobatto(sx.size - 1)
     _, dy = lobatto(sy.size - 1)
