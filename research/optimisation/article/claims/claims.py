@@ -42,11 +42,11 @@ def check(rows):
     for a,b in zip(actual,expected):
         for k in ('p96_128','p128_192'):
             assert np.isclose(float(a[k]),b[k],rtol=1e-12)
-    points, candidate, _ = load_growth()
+    points, candidates, _ = load_growth()
     with (FIGURES/'instability_curve.tsv').open() as f:
         growth = list(csv.DictReader(f, delimiter='\t'))
-    assert len(growth) == len(points) + 1
-    for saved, measured in zip(growth, points + [candidate]):
+    assert len(growth) == len(points) + len(candidates)
+    for saved, measured in zip(growth, points + candidates):
         for key, value in measured.items():
             if isinstance(value, str):
                 assert saved[key] == value, key
@@ -98,11 +98,15 @@ def generate(rows, data):
         g=d['geometry']; first=np.flatnonzero(g[:,1]/g[0,1]<=.99)[0]
         name={96:'Low',128:'Mid',192:'High'}[n]
         macro('clmContraction'+name,f'{g[first,0]:.1f}')
-    points, candidate, _ = load_growth()
+    points, candidates, _ = load_growth()
+    candidate = next(p for p in candidates if p['label'] == 'D21 potential')
     reference = next(p for p in points if p['label'] == 'D21')
     macro('clmGrowthClassicalTau',f"{reference['tau']:.2f}")
     macro('clmGrowthPotentialTau',f"{candidate['tau']:.2f}")
     macro('clmGrowthReduction',f"{100*(1-candidate['rate']/reference['rate']):.0f}")
+    d0 = next(p for p in candidates if p['label'] == 'D0 potential')
+    ref0 = next(p for p in points if p['label'] == 'D0')
+    macro('clmGrowthDzeroReduction', f"{100*(1-d0['rate']/ref0['rate']):.0f}")
     OUT.write_text('\n'.join(chunks)+'\n')
     print(OUT)
 

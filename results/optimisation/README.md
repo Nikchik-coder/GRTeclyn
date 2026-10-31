@@ -40,6 +40,14 @@ are measured through t=50; the later diagnostic histories show contraction.
 The classical evolution has different angular momentum and sponge driving;
 a controlled delay comparison is deferred in the campaign STATUS.
 
+## Completed D0/D30 checks
+
+`completed/2026-10-31/` archives the finished D30 search (400 evaluations,
+final three-grid PASS, X = 1.918733359440, stability unassessed) and D0's
+N128 evolution, which contracted and terminated with NaN in K at t = 88.4175.
+The pack includes complete small diagnostic streams and the validated D30
+fields; these outcomes have not yet been added to the article.
+
 ## Campaign F measurements
 
 | path | what | rebuild |

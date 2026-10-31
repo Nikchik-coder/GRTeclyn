@@ -24,49 +24,51 @@ their small validated gain does not warrant inclusion in the paper (2026-10-30).
 No further extension runs are planned. D30 evolution authorization was withdrawn
 on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
 search is authorized: cheap finer-grid screening of each new best, then a
-full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 continues with checkpoints off; no new D30 evolution is authorized. The 2026-10-30
+full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 ended with a NaN at t = 88.4175. Evolution of the validated D30 e0316 winner is authorized on 2026-10-31, N128 on card 1, checkpoints off. The 2026-10-30
 audit withdraws the zero-instability labels; physical stability is unresolved.
 The D21 3+1 triplet ended in NaNs at every resolution. D51 evolution remains
 parked, and its exported background needs revalidation. Evolutions wait for the go.
 
 ## Live
 
-Stationary extension tests finished at 20:18 MSK on 2026-10-30.
-D0 and D30 stationary validation finished at 21:43 MSK, 2026-10-30.
-Neither original minimum cleared the background gate; alternatives were checked next.
-D0 alternative e0211 cleared all three grids; full preflight passed and the
-N128 evolution started at 21:58 MSK on second-node card 0. Checkpoints off,
-stop t = 100. At 22:40 MSK: t = 13.40, speed 19.4 units/h, about 4.5 h
-remaining (03:10 MSK, October 31). Frame 0 inspected against classical D0;
-all 14 fields rendered. First spectral MOTS, throat and wave rows saved;
-consumer pass 2.7 min versus plot cadence 3.2 min, keeping up.
-`opt-select-d30` ended at 22:12 MSK: no clearance among 30 alternatives.
-D30 e0137 cleared all three grids at 22:21 MSK. Its matched N128 launch
-started on second-node card 1 at 22:22 MSK, checkpoints off,
-then was explicitly aborted at t = 0.54. No D30 evolution workers remain. The fresh `opt-d30-resolution-cma` search
-started on card 1 at 22:37 MSK, code `6990e8d0`, 400-evaluation cap.
-Cheap checks per best and full finalist refinement; no stability penalty.
-At 22:40 MSK, 11 evaluations recorded; roughly 500 evaluations/h after
-continuation warm-up, provisional remaining time 0.8 h (23:30 MSK).
-Screened e0004 has X = 2.16892078855 at the matched R_e/J; saved fields
-are 210x42, explicitly provisional. No `best_clean` file exists yet.
-GPU memory: D0 22.4 GiB, CMA 60.3 GiB. D0 consumer processes t = 13
-while evolution is at 13.40; keep-last 3 and no checkpoints verified.
-Thirteen local tests pass; the new checker also passed the archived e0374
-on all three grids on the cluster CPU, without Newton or a dense Jacobian.
-Second-node scratch: D0 three plotfiles, 7.1 GB; stopped D30 one plotfile,
-2.4 GB (retained); cache 47 MB, 463 GB free. Keep-last 3 active; no checkpoints. The three old
-N192 plotfiles (21 GB) were removed on explicit authorization, 2026-10-30;
-frames and movies retained. Cleanup logged in
-`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-30.md`.
-Dead N96/N128 plotfiles wiped 2026-10-30 (11 GB); frames kept.
+Checked 2026-10-31 at 08:35 MSK: **both cards idle; D30 e0316 authorized and being prepared.**
+
+D30 `opt-d30-resolution-cma` finished all 400 evaluations at 23:15 MSK,
+October 30 (exit 0). Finalist e0316 passes 150x30, 180x36 and 210x42:
+X = **1.918733359440**, versus V=0 X = 4.375652217610 (**56.15% less**),
+at J = 1.605934192814 and R_e = 4.268787555383. Final E19 = 4.16e-9,
+E_c = 3.75e-9; relative X drift = 2.51e-14. The full Newton checks required
+zero updates: each interpolated field already met the 1e-9 residual tolerance.
+This is stationary numerical clearance, **not a repaired instability screen**.
+The accepted fields are in `completed/2026-10-31/d30/` under the results pack.
+
+D0 reached t = 88.4175, then aborted with NaN in K on level 3 (exit 6);
+manifest completion 02:24 MSK, October 31. Last finite diagnostics are at
+88.41; stop t = 100 was not reached. Mean late speed was 19.9 units/h.
+The throat contracts by 0.2% at t = 47.35, 1% at 59.96 and 10% at 78.18.
+The classical D0 reference reaches the same fractions at 36.66, 43.71 and
+56.58. These are finite-N128 contraction times, not a continuum growth-rate
+comparison. The areal-radius derivative fit over 0.2–1% contraction gives
+tau = 7.770715 (t = 48–60), versus classical D0 tau = 5.439145 (t = 37–43):
+a 30.00% lower finite-N128 growth rate. This new point is in the article figure.
+The final Hamiltonian/momentum norms blow up; the terminal data
+must not be presented as an accurate late-time solution or survival time.
+Consumer diagnostics and all 14 field frames reach t = 88; checkpoints off.
+Seven lossless diagnostic streams, parameters and failure evidence are archived
+under `results/optimisation/completed/2026-10-31/d0/`. The archive is 2.9 MB
+including D30's final fields, trace, log and all screening decisions.
+
+Second-node scratch after close-out: clean, cache 47 MB, 464 GB free.
+Deleted only the finished D0 and aborted D30 plotfiles (9.5 GB); no checkpoints.
+Cleanup recorded in the October 31 scratch manifest.
+Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D0_potential_L64_N128_ml3_spdrv0_t100` | second / 0 | 13.40 / 100, alive | 19.4 units/h | 4.5 h; Oct 31 03:10 MSK |
+| `D0_potential_L64_N128_ml3_spdrv0_t100` | — | NaN at 88.4175 / 100 | ended; 19.9 units/h | ended Oct 31 02:24 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |
-| `opt-d30-resolution-cma` | second / 1 | 11 / 400 evaluations; alive | about 500 evaluations/h | about 0.8 h; 23:30 MSK (provisional) |
+| `opt-d30-resolution-cma` | — | 400 / 400; final three-grid PASS | done | ended Oct 30 23:15 MSK |
 | `opt-select-d30-rest` | — | e0137 cleared all three grids; 9 alternatives checked | ended 22:21 MSK | — |
 | `opt-d30-e0374-recheck` | — | both finer grids fail | ended 22:15 MSK | — |
 | `opt-select-d30` | — | 30/30; no clearance with oversolving | ended 22:12 MSK | — |
@@ -83,12 +85,12 @@ N 96 / N 128 / N 192 all died mid-plunge (R_eq −24% / −27% / −30%; MOTS R 
 ## Drainhole CMA queue
 
 D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MSK.
-`opt-d90` finished 16:43 MSK. The new D30 screened rerun is live on card 1; no further searches queued.
+`opt-d90` finished 16:43 MSK. The D30 screened rerun also finished; no further searches queued.
 `opt-s0` finished 18:04 MSK. Symmetric queue empty.
 
 ## Planned (nothing launches without the go)
 
-D30: rerun 400 CMA-ES evaluations, seed 103, kink x0=(0.3,0,0,0),
+Completed D30 protocol: 400 CMA-ES evaluations, seed 103, kink x0=(0.3,0,0,0),
 at the same classical R_e/J and bounds. New bests get cheap equation checks
 on 150x30, 180x36 and 210x42; only the finalist gets full Newton re-solves.
 This replaces the earlier proposal to fully re-solve every new best, explicitly
@@ -96,8 +98,7 @@ confirmed on 2026-10-30. The coarse search and screened best remain provisional.
 The final result requires all three grids PASS, last-two relative X drift <=1e-6,
 Newton acceptance 1e-9 and independent constraints 1e-8. Failed screens penalize
 CMA proposals; failed final refinement produces no validated best or evolution.
-No radial stability penalty: that screen is under repair. No D30 evolution is
-queued. D0 e0211 continues its authorized N128 evolution.
+No radial stability penalty: that screen is under repair. D30 e0316 evolution is authorized on card 1, N128, checkpoints off. D0 e0211 is finished; no rerun or restart is authorized.
 
 **Cost/necessity audit (22:30 MSK).** Evaluating the original e0374 polynomial
 on 150x30, 180x36, 210x42 and 174x35 takes 0.6-0.8 seconds per CPU grid.

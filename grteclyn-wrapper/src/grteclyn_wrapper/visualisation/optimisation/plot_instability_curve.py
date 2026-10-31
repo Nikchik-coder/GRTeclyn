@@ -1,4 +1,4 @@
-"""Compare the evolved D21 potential with the spinning paper at N=128.
+"""Compare the evolved D0/D21 potentials with the spinning paper at N=128.
 
 Reuse the spinning paper's radius-derivative fit, not its plotting style.
 The comparison is between finite-resolution evolutions, not a continuum
@@ -77,10 +77,17 @@ def load():
     candidate = dict(label="D21 potential", j=meta["J"],
                      frac=100 * 8 * np.pi * meta["J"] / area,
                      branch="collapses", **measured)
-    return points, candidate, histories
+    d0_root = REPO / "results/optimisation/completed/2026-10-31/d0"
+    measured, _ = measure(d0_root / "small_data/throat_spheres.dat.gz")
+    # The validated D0 background is static: J/A is exactly zero.
+    with np.load(REPO / "results/optimisation/validation/2026-10-30-alternatives/d0/009_e0211/handoff.npz") as d:
+        assert json.loads(str(d["meta"]))["J"] == 0
+    d0 = dict(label="D0 potential", j=0.0, frac=0.0,
+              branch="collapses", **measured)
+    return points, [d0, candidate], histories
 
 
-def draw(points, candidate, histories, with_history=False):
+def draw(points, candidates, histories, with_history=False):
     style.prd(8.0)
     if with_history:
         fig, (ax, time_ax) = plt.subplots(1, 2, figsize=(7.05, 2.5), layout="constrained")
@@ -99,14 +106,18 @@ def draw(points, candidate, histories, with_history=False):
         ax.annotate(p["label"], (p["frac"], p["rate"]), xytext=(dx, dy),
                     textcoords="offset points", ha="left" if dx > 0 else "right",
                     va="center", fontsize=7)
-    ax.scatter(candidate["frac"], candidate["rate"], marker="*", s=80,
-               color=BLUE, zorder=4)
-    ax.set(xlim=(-1, 38), ylim=(-.005, .205), xlabel=r"$8\pi J/A$ [%]",
+    for candidate in candidates:
+        ax.scatter(candidate["frac"], candidate["rate"], marker="*", s=80,
+                   color=BLUE, zorder=4)
+        ax.annotate(candidate["label"].split()[0],
+                    (candidate["frac"], candidate["rate"]), xytext=(7, -2),
+                    textcoords="offset points", va="center", fontsize=7, color=BLUE)
+    ax.set(xlim=(-1.5, 38), ylim=(-.005, .205), xlabel=r"$8\pi J/A$ [%]",
            ylabel=r"Growth rate $1/\tau$")
     entries = [
         (Line2D([], [], marker="o", ls="none", color=INK, ms=4), r"$V=0$, collapse"),
         (Line2D([], [], marker="^", ls="none", color=INK, ms=4), r"$V=0$, expansion"),
-        (Line2D([], [], marker="*", ls="none", color=BLUE, ms=7), "Potential D21"),
+        (Line2D([], [], marker="*", ls="none", color=BLUE, ms=7), "With potential"),
         (Line2D([], [], ls="--", color=GREY, lw=1), r"$V=0$ fit"),
     ]
     style.legend_top(ax, entries, ncol=2, fontsize=6.8, columnspacing=.8, borderpad=.6)
@@ -131,8 +142,8 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, default=FIGURES / "instability_curve")
     ap.add_argument("--with-history", action="store_true", help="Add the radius-history panel")
     args = ap.parse_args(argv)
-    points, candidate, histories = load()
-    fig = draw(points, candidate, histories, args.with_history)
+    points, candidates, histories = load()
+    fig = draw(points, candidates, histories, args.with_history)
     print(style.save(fig, args.out))
     issues = style.label_audit(fig)
     print("label audit:", issues or "clean")
@@ -140,10 +151,11 @@ def main(argv=None):
     with args.out.with_suffix(".tsv").open("w") as f:
         writer = csv.DictWriter(f, fieldnames=list(points[0]), delimiter="\t", lineterminator="\n")
         writer.writeheader()
-        writer.writerows(points + [candidate])
-    ref = next(p for p in points if p["label"] == "D21")
-    print(f"N=128: tau {ref['tau']:.6f} -> {candidate['tau']:.6f}; "
-          f"rate change {100*(candidate['rate']/ref['rate']-1):.2f}%")
+        writer.writerows(points + candidates)
+    for candidate in candidates:
+        ref = next(p for p in points if p["label"] == candidate["label"].split()[0])
+        print(f"{candidate['label']}, N=128: tau {ref['tau']:.6f} -> {candidate['tau']:.6f}; "
+              f"rate change {100*(candidate['rate']/ref['rate']-1):.2f}%")
     return bool(issues)
 
 
