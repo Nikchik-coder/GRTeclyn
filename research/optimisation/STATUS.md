@@ -33,8 +33,8 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 14:30 MSK**. **D40 and D46 are evolving; the
-fixed-area D21 pilot is running on second/card 1. All three GPUs are busy.**
+Checked **2026-10-31 at 14:32 MSK**. **D40 and D46 are evolving. The
+fixed-area D21 pilot stopped at its reference gate; second/card 1 is free.**
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
 
@@ -49,8 +49,14 @@ time limit, not a measured completion ETA; reference validation starts first.
 Persistent output: `runs/optimisation/fixed_area/pilot_20261031/potential-t2/`.
 Stationary fields and diagnostics are saved; this job creates no evolution
 plotfiles or AMR checkpoints. No consumer is needed for stationary solves.
-The remaining potential caps (1 and 4) and bosonic cases wait for the pilot's
-reference checks and measured cost before the larger production matrix.
+The pilot ended at 14:30:26 MSK (exit 2), before any CMA proposals:
+150x30 passed, while 180x36 and 210x42 rejected an unresolved extra-start
+minimal-surface minimisation. Newton and the independent background residuals
+passed; the saved graph has a tiny area gradient and positive Hessian.
+This identifies the failing check, not a cleared reference. A capped CPU
+probe is inspecting minimiser termination. The remaining potential caps
+(1 and 4) and bosonic cases are blocked by this shared reference check;
+no acceptance threshold has been relaxed.
 
 D30's four evolution diagnostic streams are finite through t = 100; its
 consumer processed the final plotfile. Reaching the chosen stop time is
@@ -203,7 +209,7 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `opt-d21-area-t2-pilot-20261031` | second / 1 | reference validation; pilot started 14:29 MSK | measuring | at most 2 h; timeout Oct 31 16:29 MSK |
+| `opt-d21-area-t2-pilot-20261031` | second / 1, now free | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |
 | `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, now free | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 84.72 / 100, alive | 19.98 units/h | 0.76 h; Oct 31 14:50 MSK |
@@ -679,8 +685,8 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 
 ### Implementation — fixed-area studies (2026-10-31)
 
-Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot is
-running (Live above); the production matrix and mixed-field evolutions have
+Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot failed its
+reference surface gate (Live above); the production matrix and mixed-field evolutions have
 not launched**. Configuration:
 [`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
 definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
