@@ -33,10 +33,17 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 14:32 MSK**. **D40 and D46 are evolving. The
-fixed-area D21 pilot stopped at its reference gate; second/card 1 is free.**
+Checked **2026-10-31 at 14:35 MSK**. **D40 and D46 are evolving; the
+fixed-area D21 pilot retry is running on second/card 1. All GPUs are busy.**
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
+
+`opt-d21-area-t2-pilot-r2-20261031` started at 14:34:54 MSK after pulling
+surface fix `368a445b`. The same potential-t2 settings and resource caps
+are used; output is `runs/optimisation/fixed_area/pilot_r2_20261031/`.
+Reference validation is running. Hard timeout: 2 h, **16:34 MSK**; no
+measured search ETA yet. The fix passed 29 study tests and all three saved
+reference-surface regressions. The original failed attempt stays below.
 
 `opt-d21-area-t2-pilot-20261031` started at 14:29:37 MSK on second/card 1,
 after pulling `c604af3f` (study implementation `2ad280e7`) and checking the
@@ -220,7 +227,8 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `opt-d21-area-t2-pilot-20261031` | second / 1, now free | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |
+| `opt-d21-area-t2-pilot-r2-20261031` | second / 1 | reference validation; retry started 14:34 MSK | measuring | at most 2 h; timeout Oct 31 16:34 MSK |
+| `opt-d21-area-t2-pilot-20261031` | second / 1, superseded by r2 | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |
 | `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, now free | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 84.72 / 100, alive | 19.98 units/h | 0.76 h; Oct 31 14:50 MSK |
@@ -696,8 +704,8 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 
 ### Implementation — fixed-area studies (2026-10-31)
 
-Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot failed its
-reference surface gate (Live above); the production matrix and mixed-field evolutions have
+Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot is retrying
+after the surface minimizer repair (Live above); the production matrix and mixed-field evolutions have
 not launched**. Configuration:
 [`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
 definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
