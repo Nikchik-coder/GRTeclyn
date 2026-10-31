@@ -72,6 +72,13 @@ D90 is still searching (at least 372/400); its screened X=0.61325934 is
 2.29% above V=0 X=0.59954903. Both use second-node cards 0/1, respectively.
 First-node card 0 continues the geometry pilot below.
 
+D80 perturbed recovery launched **21:51 MSK**, second/card 0, job
+`opt-d80-lowmass-recheck-20261031`, source `87d52379`, four threads,
+200 GiB virtual cap, 0.5 h timeout (22:21 MSK). Input coarse e0395;
+output `runs/optimisation/low_mass_20261031/d80_recheck/`.
+The standalone resolution command performs actual Newton corrections
+on 150x30, 180x36 and 210x42 before writing `validated.npz`.
+
 **D90 extension authorized (21:48 MSK).** If the first 400-proposal search
 does not beat V=0, run separate bounded restarts from its final screened
 shape and from a weak pure kink near m=0.01, at the same R_e/J/gamma.
