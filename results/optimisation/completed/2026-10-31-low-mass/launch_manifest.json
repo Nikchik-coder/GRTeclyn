@@ -1,0 +1,64 @@
+{
+  "started_utc": "2026-10-31T18:10:16.643712+00:00",
+  "commit": "3e11fa5f4282401d618f7e1ce222b4d872c2a805",
+  "mass_bounds": [
+    0.001,
+    0.2
+  ],
+  "x0": [
+    0.1,
+    0,
+    0,
+    0
+  ],
+  "m_step": 0.03,
+  "q_bounds": [
+    -2,
+    8
+  ],
+  "engine": "cma",
+  "maxfev": 400,
+  "grids": [
+    [
+      150,
+      30
+    ],
+    [
+      180,
+      36
+    ],
+    [
+      210,
+      42
+    ]
+  ],
+  "refine_best": "final",
+  "pin": "R_e",
+  "free_J": false,
+  "stability": "not_assessed",
+  "threads_each": 4,
+  "virtual_memory_GiB_each": 200,
+  "timeout_hours": 4,
+  "runs": [
+    {
+      "model": "D80",
+      "job": "opt-d80-lowmass-20261031",
+      "gpu": 0,
+      "seed": 205,
+      "reference": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0023.json",
+      "reference_sha256": "6ad789a22567b9259959fb9a316faf77756ef646249b029279bf10448b61e91d",
+      "J": 27.349702159722693,
+      "command": "env PYTHONUNBUFFERED=1 MPLCONFIGDIR=/tmp/grteclyn_scratch/_cache/mpl grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.optimize_potential results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0023.json --x0 0.10,0,0,0 --m-min 0.001 --m-max 0.20 --m-step 0.03 --nx 150 --ny 30 --engine cma --stall-ok 1e-9 --maxfev 400 --q-min -2 --q-max 8 --seed 205 --gpu 0 --refine-best final --out runs/optimisation/low_mass_20261031/d80.tsv"
+    },
+    {
+      "model": "D90",
+      "job": "opt-d90-lowmass-20261031",
+      "gpu": 1,
+      "seed": 207,
+      "reference": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0031.json",
+      "reference_sha256": "1436ae90ea817b61b0e3260cc3d5eb3e82bdc17d4d45d040af09422c2013b283",
+      "J": 138.20051514420075,
+      "command": "env PYTHONUNBUFFERED=1 MPLCONFIGDIR=/tmp/grteclyn_scratch/_cache/mpl grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.optimize_potential results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0031.json --x0 0.10,0,0,0 --m-min 0.001 --m-max 0.20 --m-step 0.03 --nx 150 --ny 30 --engine cma --stall-ok 1e-9 --maxfev 400 --q-min -2 --q-max 8 --seed 207 --gpu 1 --refine-best final --out runs/optimisation/low_mass_20261031/d90.tsv"
+    }
+  ]
+}

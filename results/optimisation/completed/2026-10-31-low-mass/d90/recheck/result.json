@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "method": "refine",
+  "relative_bill_drift": 1.0572764885807828e-11,
+  "records": [
+    {
+      "nx": 150,
+      "ny": 30,
+      "newton": 9.130597251477596e-15,
+      "iters": 2,
+      "newton_updates": 2,
+      "newton_converged": true,
+      "newton_reason": "converged",
+      "newton_history": [
+        3.446764701929757e-07,
+        7.118860907164055e-14,
+        9.130597251477596e-15
+      ],
+      "newton_steps": [
+        1.0,
+        1.0
+      ],
+      "jacobian_evals": 2,
+      "X": 0.6119237535137594,
+      "X_A": 0.7775459836570096,
+      "VIQ": -14.577045491354191,
+      "R_e": 23.82166962411669,
+      "R_A": 18.747502781500323,
+      "R_pol": 16.808933336711824,
+      "sigma": 2.6415508120781634,
+      "E19": 1.6086639548364018e-10,
+      "E_c": 1.6793930525740852e-10,
+      "J_error": 4.392186582457973e-12,
+      "pin_error": 8.104628079763643e-15,
+      "tails": 9.515275343112978e-12,
+      "lapse_min": 0.0967226886078885,
+      "stability": "not_assessed",
+      "scalar_in_vacuum_interval": true,
+      "verdict": "PASS",
+      "seed_perturbation": 1e-06,
+      "seconds": 11.830997206969187
+    },
+    {
+      "nx": 180,
+      "ny": 36,
+      "newton": 5.954276123326522e-15,
+      "iters": 2,
+      "newton_updates": 2,
+      "newton_converged": true,
+      "newton_reason": "converged",
+      "newton_history": [
+        3.504726063390293e-07,
+        6.515544552550921e-14,
+        5.954276123326522e-15
+      ],
+      "newton_steps": [
+        1.0,
+        1.0
+      ],
+      "jacobian_evals": 2,
+      "X": 0.6119237536166804,
+      "X_A": 0.7775459837851507,
+      "VIQ": -14.577045493805741,
+      "R_e": 23.821669624116364,
+      "R_A": 18.74750278156363,
+      "R_pol": 16.808933336791643,
+      "sigma": 2.6415508122159355,
+      "E19": 9.942204150245869e-11,
+      "E_c": 1.8657319597961426e-10,
+      "J_error": 5.756094500932537e-12,
+      "pin_error": 2.1760371282653068e-14,
+      "tails": 1.9751491648897293e-12,
+      "lapse_min": 0.09671360111729657,
+      "stability": "not_assessed",
+      "scalar_in_vacuum_interval": true,
+      "verdict": "PASS",
+      "seed_perturbation": 1e-06,
+      "seconds": 10.827585072955117
+    },
+    {
+      "nx": 210,
+      "ny": 42,
+      "newton": 6.6329398807221e-15,
+      "iters": 2,
+      "newton_updates": 2,
+      "newton_converged": true,
+      "newton_reason": "converged",
+      "newton_history": [
+        3.5750100365868723e-07,
+        6.380033825182831e-14,
+        6.6329398807221e-15
+      ],
+      "newton_steps": [
+        1.0,
+        1.0
+      ],
+      "jacobian_evals": 2,
+      "X": 0.6119237536102107,
+      "X_A": 0.7775459837751041,
+      "VIQ": -14.577045493651246,
+      "R_e": 23.82166962411575,
+      "R_A": 18.74750278160717,
+      "R_pol": 16.808933336847026,
+      "sigma": 2.6415508122827718,
+      "E19": 1.0800189671021607e-10,
+      "E_c": 3.295333915952995e-10,
+      "J_error": 4.72884479454224e-12,
+      "pin_error": 4.7628567756419216e-14,
+      "tails": 3.4603185683962887e-13,
+      "lapse_min": 0.09671363625363301,
+      "stability": "not_assessed",
+      "scalar_in_vacuum_interval": true,
+      "verdict": "PASS",
+      "seed_perturbation": 1e-06,
+      "seconds": 13.875058697070926
+    }
+  ]
+}

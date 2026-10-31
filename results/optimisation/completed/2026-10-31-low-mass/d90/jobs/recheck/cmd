@@ -1,0 +1,1 @@
+env PYTHONUNBUFFERED=1 MPLCONFIGDIR=/tmp/grteclyn_scratch/_cache/mpl grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.resolution runs/optimisation/low_mass_20261031/d90_e0397.npz --method refine --gpu 0 --out runs/optimisation/low_mass_20261031/d90_recheck

@@ -75,9 +75,10 @@ Their `best_clean` labels alone are insufficient independent validation.
 D80's recheck `opt-d80-lowmass-recheck-20261031` ran on second/card 0
 from 21:51 MSK to **21:51:49**, exit 0: all three grids PASS with actual
 Newton corrections, finest X=1.069974516105, E19=1.13e-10, E_c=4.11e-10.
-D90's corresponding recheck launched **21:52:36**, second/card 0,
-job `opt-d90-lowmass-recheck-20261031`, coarse e0397; 0.5 h timeout,
-**22:22 MSK** hard stop. Outputs are `d80_recheck/` and `d90_recheck/`
+D90's corresponding recheck ran **21:52:36–21:53:15**, second/card 0,
+job `opt-d90-lowmass-recheck-20261031`, coarse e0397, exit 0. All three
+grids PASS with 2/2/2 Newton corrections: finest X=0.611923753610,
+E19=1.08e-10, E_c=3.30e-10. It remains 2.06% above V=0. Outputs are `d80_recheck/` and `d90_recheck/`
 under `runs/optimisation/low_mass_20261031/`; originals stay unchanged.
 
 **D90 extension authorized and started.** Warm restart launched
@@ -91,18 +92,29 @@ screens, actual perturbed 150x30/180x36/210x42 finalist recovery.
 Four threads, 200 GiB virtual cap, **4 h timeout, November 1 at 01:52 MSK**;
 measured search speed/ETA pending walk-in. Output
 `runs/optimisation/d90_extension_20261031/warm.tsv`.
-A separate weak-kink restart (m=0.01, q=0, mass step 0.005, seed 227,
-800 proposals, same bounds and gates) is queued for card 0 after D90's recheck.
+A separate weak-kink restart launched **21:53:50 MSK**, second/card 0:
+`opt-d90-extend-weak-20261031`, x0=(0.01,0,0,0), mass step 0.005,
+seed 227, 800 proposals, same bounds and gates. Four threads, 200 GiB
+virtual cap, **4 h timeout, November 1 at 01:53 MSK**; output
+`runs/optimisation/d90_extension_20261031/weak.tsv`. At 21:55 both restarts have entered CMA and are advancing; GPU memory
+is about 61.7 GiB each. A warm proposal reaches X=0.59693 but fails the
+finer scalar residual gate (~7.4e-8). Weak-kink proposals around X=0.586
+also fail independent constraints. These are not validated reductions.
+Measured completion ETA pending a longer search sample; both are detached.
 First-node card 0 continues the geometry pilot below. No evolution,
-plotfiles or AMR checkpoints; no consumer is needed. At 21:48 storage
-was clean: first **46 MB cache / 614 GB free**, second **47 MB / 556 GB free**.
+plotfiles or AMR checkpoints; no consumer is needed. At 21:55 storage
+is clean: first **46 MB cache / 614 GB free**, second **47 MB / 558 GB free**.
 
 The legacy search and standalone resolution command now request a
 perturbed seed, at least one Newton correction and a 1e-14 solve target
 for final refinement, as the true-area study already does. Cheap screens
 remain unchanged. The focused search/resolution/study suites pass **84 tests**.
 Old zero-update labels must not substitute for this recovery test; the
-original files and logs will be retained alongside the recheck.
+original files and logs are retained alongside the recheck in
+[`completed/2026-10-31-low-mass`](../../results/optimisation/completed/2026-10-31-low-mass/README.md).
+The compact pack retains all acceptance records and selected numerical fields,
+with source/archive hashes. Both old searches and both rechecks are closed out;
+there are no stationary scratch plotfiles or checkpoints to prune.
 
 Requested experiment: m in [0.001, 0.20], x0=(0.10,0,0,0), mass step 0.03,
 q_i in [-2,8], seeds 205 (D80) and 207 (D90). Hold each classical reference's
@@ -133,7 +145,11 @@ output `runs/optimisation/geometry_20261031/potential-t4/`, allocation and
 commit in its parent's `launch.json`, exact command/log in `runs/capped_jobs/`.
 Four threads, 220 GiB virtual-address cap (CUDA reservations included),
 Jacobian chunks 512, **4 h hard timeout, November 1 at 01:21 MSK**.
-Reference validation runs first; measured proposal speed and ETA pending.
+At **21:55 MSK**, 41/200 CMA proposals have completed; the job is alive.
+Best provisional full X=1.685086 at J=3.02362, within the initial tidal cap;
+it is not yet a finer-grid winner or a matched-spin potential improvement.
+Recent speed ~88 evaluations/h gives **1.81 h, 23:43 MSK** for the search,
+followed by finalist and matched-reference validation.
 Stationary-only: no plotfiles, AMR checkpoints, frames or consumer.
 Launch storage: first node **46 MB cache, 608 GB free**; second node's
 21:19 check **47 MB cache, 539 GB free**. No scratch leftovers.
