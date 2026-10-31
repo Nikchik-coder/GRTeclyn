@@ -25,3 +25,9 @@ constraint-sensitive scores without relaxing any gate.
 
 Fields and numerical records are retained; text deployment prefixes are
 made repository-relative. No evolution plotfiles or checkpoints are included.
+
+`boson-k1` (code 6020e9f7) completed at 15:51 MSK: 40 linear-mode
+attempts unresolved and 40 finite-seed solves failed, across two backgrounds,
+five masses and four amplitudes. No nonzero solution or CMA evaluation;
+this is initialization failure, not evidence that the branch cannot exist.
+The opposite signed winding is tested separately.
