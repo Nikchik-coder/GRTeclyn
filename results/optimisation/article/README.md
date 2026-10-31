@@ -24,3 +24,7 @@ same selection and row order. The spin figure reads this ledger too.
 Run the wrapper Python with `research/optimisation/article/claims/claims.py
 check`, then `... claims.py tex` to regenerate `numbers.tex`. Evolution
 order and contraction-time macros are generated from the packed streams.
+
+`instability_curve.tsv` records the measured growth rates and fitting intervals
+for the classical and potential-bearing models. The figure script regenerates
+it here; `figures/` holds only the rendered plots.

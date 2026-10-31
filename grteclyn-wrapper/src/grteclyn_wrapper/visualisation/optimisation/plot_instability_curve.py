@@ -31,6 +31,7 @@ from .paper_results import REPO
 CLASSICAL = REPO / "results/spinningwormhole/campaign/drainhole/00_paper_runs"
 POTENTIAL = REPO / "results/optimisation/campaign/D21_X1p829_L64_N128_ml3_spdrv0_t150"
 FIGURES = REPO / "results/optimisation/figures"
+GROWTH_TABLE = REPO / "results/optimisation/article/instability_curve.tsv"
 MODELS = ("D0", "D21", "D30", "D40", "D46", "D51")
 
 
@@ -140,6 +141,8 @@ def draw(points, candidates, histories, with_history=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", type=Path, default=FIGURES / "instability_curve")
+    ap.add_argument("--table-out", type=Path, default=GROWTH_TABLE,
+                    help="Measured growth-rate table (separate from figure outputs)")
     ap.add_argument("--with-history", action="store_true", help="Add the radius-history panel")
     args = ap.parse_args(argv)
     points, candidates, histories = load()
@@ -148,7 +151,8 @@ def main(argv=None):
     issues = style.label_audit(fig)
     print("label audit:", issues or "clean")
     plt.close(fig)
-    with args.out.with_suffix(".tsv").open("w") as f:
+    args.table_out.parent.mkdir(parents=True, exist_ok=True)
+    with args.table_out.open("w") as f:
         writer = csv.DictWriter(f, fieldnames=list(points[0]), delimiter="\t", lineterminator="\n")
         writer.writeheader()
         writer.writerows(points + candidates)

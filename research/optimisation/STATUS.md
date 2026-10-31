@@ -31,7 +31,15 @@ parked, and its exported background needs revalidation. Evolutions wait for the 
 
 ## Live
 
-Checked 2026-10-31 at 08:35 MSK: **both cards idle; D30 e0316 authorized and being prepared.**
+Checked 2026-10-31 at 08:43 MSK: **D30 e0316 launched on second-node card 1; full preflight in progress.**
+
+Run `D30_e0316_L64_N128_ml3_spdrv0_t100` uses the validated e0316
+210x42 background exported to 2049x129. Diff against the previous D30
+template changes only the background and run paths: N128, L64, max_level 3,
+drive 0, dt multiplier 0.02, stop t = 100, plot interval 100. Checkpoints off;
+full 14-field hold consumer with keep-last 3. Same matter binary (16460fb0).
+Code/results pushed as `00ac13e3`, pulled on the node before launch.
+Evolution speed/ETA pending the first steps; frame and consumer checks pending.
 
 D30 `opt-d30-resolution-cma` finished all 400 evaluations at 23:15 MSK,
 October 30 (exit 0). Finalist e0316 passes 150x30, 180x36 and 210x42:
@@ -58,13 +66,15 @@ Seven lossless diagnostic streams, parameters and failure evidence are archived
 under `results/optimisation/completed/2026-10-31/d0/`. The archive is 2.9 MB
 including D30's final fields, trace, log and all screening decisions.
 
-Second-node scratch after close-out: clean, cache 47 MB, 464 GB free.
+Second-node scratch at launch: clean, D30 preflight 2.4 GB, cache 47 MB,
+461 GB free (464 GB after completed-run cleanup).
 Deleted only the finished D0 and aborted D30 plotfiles (9.5 GB); no checkpoints.
 Cleanup recorded in the October 31 scratch manifest.
 Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | full preflight | pending | pending |
 | `D0_potential_L64_N128_ml3_spdrv0_t100` | — | NaN at 88.4175 / 100 | ended; 19.9 units/h | ended Oct 31 02:24 MSK |
 | `opt-select-d0` | — | e0211 cleared 150/180/210; ended 21:56 MSK | done | — |
 | `D30_potential_L64_N128_ml3_spdrv0_t100` | — | stopped at 0.54 on explicit abort | stopped | — |

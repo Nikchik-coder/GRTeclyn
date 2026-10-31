@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from grteclyn_wrapper.visualisation.optimisation.paper_results import REPO, load_models
 from grteclyn_wrapper.visualisation.optimisation.plot_convergence import load, order_rows, PACKED
-from grteclyn_wrapper.visualisation.optimisation.plot_instability_curve import load as load_growth, FIGURES
+from grteclyn_wrapper.visualisation.optimisation.plot_instability_curve import load as load_growth, GROWTH_TABLE
 OUT = Path(__file__).resolve().parents[1] / "numbers.tex"
 
 def check(rows):
@@ -43,7 +43,7 @@ def check(rows):
         for k in ('p96_128','p128_192'):
             assert np.isclose(float(a[k]),b[k],rtol=1e-12)
     points, candidates, _ = load_growth()
-    with (FIGURES/'instability_curve.tsv').open() as f:
+    with GROWTH_TABLE.open() as f:
         growth = list(csv.DictReader(f, delimiter='\t'))
     assert len(growth) == len(points) + len(candidates)
     for saved, measured in zip(growth, points + candidates):
