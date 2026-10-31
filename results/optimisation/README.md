@@ -27,10 +27,21 @@ minimum, and an inset resolving the second half of the recorded search.
 
 ## Campaign M article tables and resolution study
 
-`article/ledger_models.tsv` is the common selection for the parameter table,
-exoticity table and `figures/exotic_spin.{png,pdf}`. Nine search-grid minima
-pass both background constraints at 1e-8; D21 on 210x42 is a separate selected
-candidate. See `article/README.md` for provenance and the claims checker.
+`article/ledger_models.tsv` selects the parameter and exoticity tables and
+the original search-grid points in `figures/exotic_spin.{png,pdf}`. The spin
+figure now replaces D0/D21/D30 with their selected 210x42 fields and adds
+the validated D40/D46 finalists. Filled squares identify these five fine-grid
+solutions; open markers retain the other search-grid selections. Squares and
+solid blue guides denote D; circles and dashed light-blue guides denote S.
+The curves use shape-preserving cubic interpolation (PCHIP) through the
+sampled values, with no extrapolation or inferred fit law. The same
+interpolation smooths the display of the sampled massless reference curves. Individual
+model labels are omitted to keep the single-column figure readable. Its explicit
+`REFINED` source list reads the archived validation and completed searches;
+D21 comes from the article ledger. Rotation is the massless reference's
+value (zero for D0), and each family retains its own static normalization.
+Rebuild with `-m grteclyn_wrapper.visualisation.optimisation.plot_exotic_spin`.
+See `article/README.md` for table provenance and the claims checker.
 
 `campaign/` contains the final D21 N96/N128/N192 diagnostic streams and
 numerical settings. Rebuild `figures/convergence_d21.{png,pdf}` with

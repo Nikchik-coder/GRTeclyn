@@ -20,7 +20,9 @@ classical reference values recorded in STATUS. The paper prints fewer
 significant figures. The rotation label refers to the reference family.
 
 The checked ledger generates both parameter and exoticity tables, with the
-same selection and row order. The spin figure reads this ledger too.
+same selection and row order. The spin figure reads the ledger's remaining
+search-grid points and D21fine, plus the explicitly selected fine-grid
+D0/D30/D40/D46 archives in `plot_exotic_spin.REFINED`.
 Run the wrapper Python with `research/optimisation/article/claims/claims.py
 check`, then `... claims.py tex` to regenerate `numbers.tex`. Evolution
 order and contraction-time macros are generated from the packed streams.
