@@ -33,7 +33,7 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked 2026-10-31 at 11:05 MSK. **D30 and D40 evolving; D46 evolution
+Checked 2026-10-31 at 11:17 MSK (D30/D40 at 11:16 MSK). **D30 and D40 evolving; D46 evolution
 advancing on first/card 0 after full preflight passed. D51 is removed
 from both the search and evolution queue; no further retry is authorized.**
 
@@ -76,10 +76,14 @@ consumer, keep-last 3. Full preflight passed and all 14 initial fields
 rendered. Initial R_eq = 4.88266 versus spectral 4.88216 (0.01%); potential
 coefficients are read by the evolution. The initial chi frame was compared
 visually with the matched classical image (different zooms); both are centered
-and nonblank. First MOTS extraction is still in progress: the first seed
-found a surface, and the remaining seed search is running. Startup consumer
-cost exceeds the plot interval; verify subsequent passes using the saved
-surface before declaring throughput adequate. Early speed is about 18 units/h.
+and nonblank. All 14 frame-zero fields and throat/MOTS/wave diagnostic rows
+are saved. The first consumer pass took 456 seconds, but the next pass reused
+the surface (two Newton iterations) and took 178 seconds, below the measured
+198-second plot interval. The startup backlog is shrinking; keep-last pruning
+has run, leaving three plotfiles. Consumer check passes, with no duplicate or
+backwards rows. At 11:17 MSK: t = 3.43 / 150, about 18.1 units/h, provisional
+ETA 8.1 h (19:23 MSK). GPU allocation about 23 GiB; no checkpoints.
+
 
 D51 retry `opt-d51-resolution-cma-r2` ran on first/card 0 from 10:44:50
 to 10:56:17 MSK, exit 1. Even with 60 mass increments, 48 Newton iterations
@@ -98,15 +102,16 @@ D40 run: only background/deployment paths and explicit checkpoint-off keys
 differ. Numerical controls remain N128/L64/ml3, drive 0, dt multiplier 0.02,
 stop t = 100 and plot interval 100. Same matter binary 16460fb0, full 14-field
 hold consumer, keep-last 3. Full preflight passed with all 14 fields rendered;
-initial R_eq = 4.58284 versus spectral 4.58356. At 09:53 MSK t is about 1,
-about 20 units/h, provisional ETA 4.9 h (14:50 MSK). GPU memory 22.4 GiB.
+initial R_eq = 4.58284 versus spectral 4.58356. At 11:16 MSK t = 28.74,
+about 20 units/h, ETA 3.6 h (14:50 MSK). GPU memory 22.4 GiB.
 The initial chi frame was visually compared with the classical frame (the
 saved images have different zoom widths); both are centered and nonblank.
 All 14 frame-zero fields and throat/MOTS/wave rows are present. The first
 consumer pass took 157 seconds from plot Header to diagnostic rows, within
 the roughly 180-second plot cadence; subsequent horizon searches can warm
-start. Keep-last 3 is configured; two plotfiles are currently present. D46 evolution is now launched; D51 has been removed from the queue. All these runs start from stationary fields, so no
-queued evolution requires a restart checkpoint.
+start. Keep-last 3 is active, with three plotfiles present. D46 is evolving;
+D51 has been removed from the queue. These runs start from stationary fields;
+no queued evolution requires a restart checkpoint.
 
 Run `D30_e0316_L64_N128_ml3_spdrv0_t100` uses the validated e0316
 210x42 background exported to 2049x129. Diff against the previous D30
@@ -116,7 +121,7 @@ full 14-field hold consumer with keep-last 3. Same matter binary (16460fb0).
 Code/results pushed as `00ac13e3`, pulled on the node before launch.
 Full preflight passed; frame 0 compared against the old D30 image, all 14
 fields rendered, throat/MOTS/wave rows present. Consumer keeps up and prunes
-to three plotfiles. At 09:53 MSK: t = 22.97, about 20 units/h, ETA 3.9 h
+to three plotfiles. At 11:16 MSK: t = 50.83, about 20 units/h, ETA 2.5 h
 (13:44 MSK). GPU memory 22.9 GiB.
 
 D30 `opt-d30-resolution-cma` finished all 400 evaluations at 23:15 MSK,
@@ -144,20 +149,21 @@ Seven lossless diagnostic streams, parameters and failure evidence are archived
 under `results/optimisation/completed/2026-10-31/d0/`. The archive is 2.9 MB
 including D30's final fields, trace, log and all screening decisions.
 
-Scratch clean at 09:59 MSK: second node D30 7.1 GB and D40 7.1 GB
-(three plotfiles each), cache 47 MB, 448 GB free; first node at 10:02 MSK
-has only its 46 MB cache, 632 GB free. No checkpoints.
+Scratch checked at 11:16–11:17 MSK: first node D46 7.1 GB plus 46 MB
+cache, 624 GB free; second node D30 and D40 7.1 GB each plus 47 MB cache,
+447 GB free. Three plotfiles per evolution, no checkpoints or finished-run
+scratch leftovers. All three GPUs are occupied; D51 has no queued work.
 Deleted only the finished D0 and aborted D30 plotfiles (9.5 GB); no checkpoints.
 Cleanup recorded in the October 31 scratch manifest.
 Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 22.97 / 100, alive | 20.0 units/h | 3.9 h; Oct 31 13:44 MSK |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1 | 50.83 / 100, alive | 20.0 units/h | 2.5 h; Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
-| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | about 1 / 100, alive | about 20 units/h | provisional 4.9 h; Oct 31 14:50 MSK |
+| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 28.74 / 100, alive | 20.0 units/h | 3.6 h; Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | startup / 150; full preflight | measuring | unknown until evolution advances |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 3.43 / 150, alive; full preflight passed | about 18.1 units/h | provisional 8.1 h; Oct 31 19:23 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
