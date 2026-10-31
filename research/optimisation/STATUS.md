@@ -62,6 +62,38 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 
 ## Live
 
+Checked **2026-10-31 at 21:10 MSK**. **D80 and D90 low-mass searches
+launched on second-node cards 0 and 1**, after pulling `3e11fa5f` and
+checking both cards idle. Jobs `opt-d80-lowmass-20261031` and
+`opt-d90-lowmass-20261031`; outputs `runs/optimisation/low_mass_20261031/`.
+First-node GPU remains free. Both jobs are in initial massless/potential
+continuation; proposal speed and measured ETA are pending. Each has a
+**4 h cap, ending November 1 at 01:10 MSK**, 400 CMA proposals, four threads
+and a 200 GiB virtual-memory cap. No evolution, plotfiles or AMR checkpoints.
+
+Requested experiment: m in [0.001, 0.20], x0=(0.10,0,0,0), mass step 0.03,
+q_i in [-2,8], seeds 205 (D80) and 207 (D90). Hold each classical reference's
+R_e, J and gamma fixed: members 0023 and 0031, respectively. Search grid
+150x30; screen each new best on 180x36 and 210x42, then independently
+re-solve the finalist. Existing positivity, Newton and independent-constraint
+gates are unchanged. Massless references are explicitly recomputed and
+remain the controls. A candidate above the massless bill is not an improvement;
+radial stability remains not assessed. Long tails at very small mass may fail
+resolution checks and require a separate resolution diagnosis.
+
+D90's old m=0.150309 result sits near the old bound and motivates this test;
+it does not establish that lowering the bound must beat V=0. D80 already
+beat its massless reference on the old search grid, with its minimum at
+m=0.234 outside the new narrow box. No quantitative decomposition assigning
+88% of throat support to frame dragging has been verified here. The proposed
+pressure/frame-dragging mechanism remains a hypothesis, not an article result.
+The old free-J D21 scan changed spin, so it is not a fixed-spin comparison.
+
+Launch-time storage: first node **46 MB cache, 609 GB free**; second node
+**47 MB cache, 529 GB free**. No scratch plotfiles or checkpoints.
+
+### Completed evolution and boson closeout (20:35 MSK)
+
 Checked **2026-10-31 at 20:35 MSK**. **All three GPUs idle.** D46 ended
 at **18:56:57 MSK**, exit 6, NaN in K on level 3 near **t=141.43/150**;
 last speed 18.15 units/h. Both remaining boson jobs ended without a validated
@@ -551,6 +583,8 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | finished; diagnosed fine-grid correction failure | done | archived |
+| `opt-d80-lowmass-20261031` | second / 0 | initial continuation, 0/400 | measuring | 4 h cap; Nov 1 01:10 MSK |
+| `opt-d90-lowmass-20261031` | second / 1 | initial continuation, 0/400 | measuring | 4 h cap; Nov 1 01:10 MSK |
 | `opt-boson-k0-cma-r2-20261031` | second / 0 | finished, 96 rejected; no winner | done | ended Oct 31 16:31 MSK |
 | `opt-boson-k0-joint-cma-20261031` | second / 0 | stopped after 32 proposals for graded off-grid scoring | done | Oct 31 16:07 MSK |
 | `opt-boson-k0-warm-20261031` | second / 0 | stopped after 58 NM proposals, tidal rejection | done | Oct 31 15:54 MSK |
