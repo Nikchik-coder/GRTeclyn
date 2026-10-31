@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Python episode runner and failure-atlas tooling for GRTeclyn SupportedWormholeCollapse"
 requires-python = ">=3.10"
 dependencies = [
+    "tomli>=2; python_version < '3.11'",
     "numpy>=1.24",
     "h5py>=3.10",
     "cma>=3.3",
@@ -57,6 +58,7 @@ grteclyn-wrapper = "grteclyn_wrapper.__main__:main"
 # Installed by a plain `uv sync` (uv's default group): the test runner for tests/.
 dev = [
     "pytest>=8",
+    "hatchling",  # installed-wheel regression tests
 ]
 
 [build-system]

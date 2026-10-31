@@ -2,8 +2,8 @@
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).
-Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/` and
-`grteclyn-wrapper/scripts/optimisation/` (layout in its
+Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/`
+(commands, workflows, checks and derivations; layout in its
 [README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md)).
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.

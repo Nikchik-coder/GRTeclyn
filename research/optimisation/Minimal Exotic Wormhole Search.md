@@ -253,7 +253,7 @@ Queued for GPU**0**
 
 - Python · search side**Where the campaign lives**
 
-  The package `grteclyn_wrapper/optimisation/` (its own since 2026-10-28; scripts in `grteclyn-wrapper/scripts/optimisation/`): `matter_equations.py` (matter terms; the R_e, area and J rows), `exoticity.py` (the exoticity observable with the traversability observables beside it), `solver/` (Newton and the JAX Jacobians), and later the knob continuation and the optimizer loop over JAX gradients. CPU by default, seconds per solve on the search grids, parallel under the standing memory caps; the batched GPU search is the aggressive option.
+  The package `grteclyn_wrapper/optimisation/` (its own since 2026-10-28; entry points in `grteclyn_wrapper.optimisation.commands`, with independent `checks` and symbolic `derivations`): `matter_equations.py` (matter terms; the R_e, area and J rows), `exoticity.py` (the exoticity observable with the traversability observables beside it), `solver/` (Newton and the JAX Jacobians), and later the knob continuation and the optimizer loop over JAX gradients. CPU by default, seconds per solve on the search grids, parallel under the standing memory caps; the batched GPU search is the aggressive option.
 - C++ · certificate side**Touched only for winners**
 
   Background-table columns + `RotatingBackgroundTable.hpp` reader; a multi-field `SpinningWormhole` example variant. No new matter physics: `ExoticScalarField<PhantomDecayPotential>`, the signed-pair classes and the winding complex field are already compiled. No GRTresna anywhere.

@@ -9,7 +9,7 @@ where the literature's areal gauge degenerates):
     (F, P, psi)(t, eta) = background(eta) + (dF, dP, dpsi)(eta) e^{lam t}.
 
 The five linearized rows are derived and machine-checked by
-scripts/optimisation/derive_radial_perturbation.py (its stage `forms`
+grteclyn_wrapper.optimisation.derivations.derive_radial_perturbation (its stage `forms`
 verifies the transcription here on every run): E_ee, E_thth and the KG
 row are imposed -- three equations, three unknowns, lam entering ONLY
 as lam^2, the clean quadratic structure rotation breaks -- and E_tt,
@@ -35,7 +35,7 @@ agreed to 0.7 % between grids while every spurious value moved by
 factors.  The monitors are still reported, but on a polluted vector
 they sit at the pollution level (~1e-2), not at round-off: the gate is
 eigenvalue convergence plus the published rate, the campaign's
-calibration discipline.  Gate: scripts/optimisation/check_growth_rate.py
+calibration discipline.  Gate: grteclyn_wrapper.optimisation.checks.check_growth_rate
 reproduces the static drainhole rate |omega_I| eta0 = 0.390 (the
 published second-order value quoted by plot_instability_curve.py,
 arXiv:2301.05243 C = 1 at J = 0).

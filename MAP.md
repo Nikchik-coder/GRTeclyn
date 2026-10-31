@@ -16,6 +16,11 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
 | optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | `runs/optimisation/` (`evolution/` for GRTeclyn runs) | active: [`STATUS.md`](research/optimisation/STATUS.md) |
 
+Optimisation's Python code and command entry points live together in
+[`grteclyn_wrapper.optimisation`](grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md).
+Its README explains the search, validation and outputs. Plots remain in
+`visualisation/optimisation/`; tests remain in `grteclyn-wrapper/tests/optimisation/`.
+
 ## The merger campaign: where to look
 
 | I want to… | go to |

@@ -1,7 +1,7 @@
 """The optimisation package's two dependency rules (decided 2026-10-28).
 
-1. Nothing outside optimisation/ imports it.  develop, the public release
-   line, ships the published packages without it, so one such import (say
+1. Only optimisation and its visualisation package import it. The public release
+   line ships the published packages without it, so one such import (say
    from analysis/spinning_wormhole) would break the release.  The package
    reads the published code, never the other way round.
 2. optimisation/solver/ imports nothing from grteclyn_wrapper: the solver
@@ -18,7 +18,7 @@ WRAPPER = Path(__file__).resolve().parents[2]
 SRC = WRAPPER / "src"
 PKG = SRC / "grteclyn_wrapper" / "optimisation"
 SCRIPTS = WRAPPER / "scripts"
-OWN_SCRIPTS = SCRIPTS / "optimisation"
+PLOTS = SRC / "grteclyn_wrapper" / "visualisation" / "optimisation"
 
 
 def _imports(path: Path) -> set[str]:
@@ -50,10 +50,10 @@ def _within(name: str, package: str) -> bool:
     return name == package or name.startswith(package + ".")
 
 
-def test_nothing_outside_imports_optimisation():
-    outside = [p for p in sorted(SRC.rglob("*.py")) if PKG not in p.parents]
-    outside += [p for p in sorted(SCRIPTS.rglob("*.py"))
-                if OWN_SCRIPTS not in p.parents]
+def test_only_optimisation_and_its_plots_import_optimisation():
+    outside = [p for p in sorted(SRC.rglob("*.py"))
+               if PKG not in p.parents and PLOTS not in p.parents]
+    outside += sorted(SCRIPTS.rglob("*.py"))
     offenders = [f"{p.relative_to(WRAPPER)} imports {name}"
                  for p in outside for name in sorted(_imports(p))
                  if _within(name, "grteclyn_wrapper.optimisation")]

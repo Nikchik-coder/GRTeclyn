@@ -20,7 +20,7 @@ recovered from the constraints afterwards.
 
 The five imposed rows and the two first-order monitors are derived and
 machine-checked by
-scripts/optimisation/derive_matter_equations.py: the mixed
+grteclyn_wrapper.optimisation.derivations.derive_matter_equations: the mixed
 combinations (f: E^t_t + omega E^t_phi; nu: -E^t_t + 2 omega E^t_phi
 - 3 E^phi_phi + E^eta_eta + E^theta_theta; w: E^t_phi; B: the rho
 equation; psi: KG; c13: E^eta_theta; c19: E^eta_eta - E^theta_theta) are
