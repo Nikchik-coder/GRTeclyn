@@ -33,17 +33,43 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 14:35 MSK**. **D40 and D46 are evolving; the
-fixed-area D21 pilot retry is running on second/card 1. All GPUs are busy.**
+Checked **2026-10-31 at 14:41 MSK**. **D40 and D46 are evolving; the
+queued D21 potential-t4 pilot has started on second/card 1. All GPUs are busy.**
 D30 finished at t = 100 (exit 0) at 13:44 MSK. D51 remains removed from
 both queues.
+
+`opt-d21-area-t4-pilot-20261031` started at 14:41 MSK on second/card 1,
+code `368a445b`, after checking the card was idle. This is the next queued
+potential-only pilot: the same area/J/gamma, 150x30 search, seed 7,
+200-evaluation cap and three-grid reference/finalist checks, with the
+configured four-times-reference tidal cap. Four threads, 220 GiB address-space
+limit and 2 h timeout (16:41 MSK); measured completion ETA pending.
+Output: `runs/optimisation/fixed_area/pilot_t4_20261031/potential-t4/`.
+The t2 candidate 00014 cleared stationary, surface and off-grid checks but
+had tidal peak 0.07220 versus its cap 0.06425; it is inside the t4 bound.
+This motivates testing the already-queued t4 case, not changing t2's gate.
+No evolution plotfiles, AMR checkpoints or consumer are involved.
 
 `opt-d21-area-t2-pilot-r2-20261031` started at 14:34:54 MSK after pulling
 surface fix `368a445b`. The same potential-t2 settings and resource caps
 are used; output is `runs/optimisation/fixed_area/pilot_r2_20261031/`.
-Reference validation is running. Hard timeout: 2 h, **16:34 MSK**; no
-measured search ETA yet. The fix passed 29 study tests and all three saved
-reference-surface regressions. The original failed attempt stays below.
+The massless reference passed all three grids. The retry ended at
+**14:37:58 MSK**, exit 2, after 181.6 s and **16/200 CMA proposals**:
+`no_validated_improvement`. Including the re-pinned existing candidate,
+14 rows fail stationary constraints, one fails the tidal cap and two fail
+potential positivity. Typical proposals cost 5–9 s; the first cost 23 s.
+The re-pinned old D21 seed has E19 = 5.96e-5 against the unchanged 1e-8
+limit, despite a small Newton residual. This is not a validated improvement.
+The all-infeasible population terminated early; assigning every rejected
+solution the same score gives the search no direction toward feasibility.
+The exact CMA stop dictionary was not recorded. Before expanding the matrix,
+check the rejected seed's unused equations across resolution and provide
+constraint-sensitive search scores, retaining the hard final acceptance gates.
+The queued t4 pilot is running; other cases are not scheduled automatically. Output, fields and
+checks (2.9 MB) are archived in
+`results/optimisation/validation/2026-10-31-area-pilot/`.
+The surface fix passed 29 study tests and all three saved reference regressions.
+The original failed attempt stays below.
 
 `opt-d21-area-t2-pilot-20261031` started at 14:29:37 MSK on second/card 1,
 after pulling `c604af3f` (study implementation `2ad280e7`) and checking the
@@ -60,10 +86,9 @@ The pilot ended at 14:30:26 MSK (exit 2), before any CMA proposals:
 150x30 passed, while 180x36 and 210x42 rejected an unresolved extra-start
 minimal-surface minimisation. Newton and the independent background residuals
 passed; the saved graph has a tiny area gradient and positive Hessian.
-This identifies the failing check, not a cleared reference. A capped CPU
-probe is inspecting minimiser termination. The remaining potential caps
-(1 and 4) and bosonic cases are blocked by this shared reference check;
-no acceptance threshold has been relaxed.
+The surface failure was repaired and the reference cleared in the retry above.
+The remaining potential caps (1 and 4) and bosonic cases await a functioning
+feasible search; no acceptance threshold has been relaxed.
 
 Surface-gate diagnosis: the auxiliary SLSQP starts reported success on
 area stagnation but left normalized gradients 8.7e-7 (180x36) and 8.8e-6
@@ -86,8 +111,8 @@ The three finished scratch plotfiles (7.1 GiB) were removed after archiving;
 frames, slice caches and movies remain. No checkpoints or queued restart
 need this run. Cleanup is logged in the October 31 scratch manifest.
 
-Scratch after cleanup: first node 7.2 GB used / 621 GB free; second node
-7.2 GB used / 461 GB free. Three plotfiles each for D40/D46, no checkpoints
+Scratch checked at 14:39 MSK: first node 7.2 GB used / 620 GB free; second node
+7.2 GB used / 470 GB free. Three plotfiles each for D40/D46, no checkpoints
 or finished-run plotfiles. Current progress and ETAs are in the table below;
 earlier startup observations below retain their measurement times.
 
@@ -227,13 +252,14 @@ Frames, slice caches and movies are retained on persistent storage.
 
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
-| `opt-d21-area-t2-pilot-r2-20261031` | second / 1 | reference validation; retry started 14:34 MSK | measuring | at most 2 h; timeout Oct 31 16:34 MSK |
+| `opt-d21-area-t4-pilot-20261031` | second / 1 | reference validation; started 14:41 MSK | measuring | at most 2 h; timeout Oct 31 16:41 MSK |
+| `opt-d21-area-t2-pilot-r2-20261031` | second / 1, finished | reference PASS; 16 proposals, no accepted candidate | ended, exit 2; 181.6 s | Oct 31 14:37 MSK |
 | `opt-d21-area-t2-pilot-20261031` | second / 1, superseded by r2 | reference_failed; no CMA evaluations | ended, exit 2 | Oct 31 14:30 MSK |
-| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, now free | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
+| `D30_e0316_L64_N128_ml3_spdrv0_t100` | second / 1, finished | 100 / 100, exit 0 | 20.0 units/h | finished Oct 31 13:44 MSK |
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
-| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 84.72 / 100, alive | 19.98 units/h | 0.76 h; Oct 31 14:50 MSK |
+| `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0 | 96.28 / 100, alive | 19.97 units/h | 0.19 h; Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 53.98 / 150, alive | 18.14 units/h | 5.30 h; Oct 31 19:22 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 64.52 / 150, alive | 18.14 units/h | 4.71 h; Oct 31 19:22 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
@@ -268,8 +294,9 @@ D0 finished 09:06 MSK. `opt-d30` finished 12:17 MSK. `opt-d80` finished 14:15 MS
 **Implementation is complete; production studies are queued, not launched.**
 The infrastructure passed 158 tests and CPU solve/save/refinement/resume
 checks; see [implementation and measured pilot costs](#implementation--fixed-area-studies-2026-10-31).
-All three H100s are occupied as of the supplied 11:56 MSK check above.
-The sequence below awaits capacity and a separate go for each capped pilot;
+The first potential pilot was authorised and run on October 31 (Live above).
+The queued t4 pilot is running under the October 31 go for these studies;
+expanding the matrix awaits a validated pilot and the feasibility diagnosis;
 freeing a card does not trigger an automatic launch. No evolution restart
 checkpoints are needed for these stationary studies.
 
@@ -704,9 +731,9 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 
 ### Implementation — fixed-area studies (2026-10-31)
 
-Infrastructure implemented; **the authorised D21 potential-t2 GPU pilot is retrying
-after the surface minimizer repair (Live above); the production matrix and mixed-field evolutions have
-not launched**. Configuration:
+Infrastructure implemented; **the D21 potential-t2 GPU pilot cleared the reference
+but ended without a feasible candidate; the queued t4 pilot is now running
+(Live above). The production matrix and mixed-field evolutions have not launched**. Configuration:
 [`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
 definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
 
