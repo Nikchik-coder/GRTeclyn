@@ -33,13 +33,24 @@ removed from both queues. The old D51 export remains rejected.
 
 ## Live
 
-Checked **2026-10-31 at 15:43 MSK**. **The rotating-boson pilot is running
-on second/card 1. The potential-only finalist now passes all three grids.**
-D46's last evolution check remains the 15:01 snapshot below.
+Checked **2026-10-31 at 15:45 MSK**. **Rotating and warm nonrotating boson
+searches occupy second/cards 1 and 0. The potential-only finalist passes all
+three grids. D46 is alive at t = 84.38/150, 18.13 units/h, ETA 3.62 h
+(19:22 MSK); its consumer advances.**
 The October 31 instruction to continue exploration, run the required tests
 and start the boson search supersedes the previous hold. Routine stationary
 diagnostic and search choices are authorised without another confirmation.
 No dynamical evolution is part of this extension; no AMR checkpoints.
+
+`opt-boson-k0-warm-20261031` started **15:44:46 MSK** on second/card 0
+after pulling `cb72d5a3` and checking the card idle. The archived numerical
+seed 00046 is re-solved with the vacuum fix; no old verdict is inherited.
+Case boson-k0-t4-e1, config `studies/d21_boson_warm.toml`, seed 37,
+200 CMA evaluations, same area/J/asymmetry and acceptance gates. Four
+threads, 200 GiB, 2 h timeout (**17:44 MSK**). The first reference-grid
+check passes. Output: `runs/optimisation/fixed_area/boson_warm_20261031/`.
+Warm-seed changes pass all 30 fixed-area tests. First scratch: 7.2 GB used,
+619 GB free, three D46 plotfiles, no checkpoints; second: 47 MB, 476 GB free.
 
 The first nonrotating pilot finished at about **15:36 MSK**, exit 2:
 40 seed combinations, three numerical finite-field solutions, nine CMA
@@ -367,6 +378,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | run | card | t | speed | ETA |
 |---|---|---|---|---|
 | `opt-area-refinement-diagnose-20261031` | second / 0 | three-grid diagnosis | measuring | hard timeout Oct 31 16:26 MSK |
+| `opt-boson-k0-warm-20261031` | second / 0 | reference passing, alive | measuring | 2 h cap; Oct 31 17:44 MSK |
 | `opt-boson-k1-t4-e1-20261031` | second / 1 | finite seed search, alive | measuring | 2 h cap; Oct 31 17:39 MSK |
 | `opt-area-factored-refine-20261031` | second / 0 | all three grids PASS, finished | 65 s checks | done |
 | `opt-boson-k0-t4-e1-20261031` | second / 1 | finished, no accepted model | 819 s | done |
@@ -377,7 +389,7 @@ Frames, slice caches and movies are retained on persistent storage.
 | `opt-d40-resolution-cma` | second / 0 | 400/400; three-grid PASS | done | ended Oct 31 09:43 MSK |
 | `D40_cma20261031_L64_N128_ml3_spdrv0_t100` | second / 0, finished | 100 / 100; normal finalization | 19.97 units/h | finished Oct 31 14:50 MSK |
 | `opt-d46-resolution-cma-r2` | first / 0 | 400/400; three-grid PASS | done | ended Oct 31 10:44 MSK |
-| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 71.20 / 150, alive | 18.13 units/h | 4.35 h; Oct 31 19:22 MSK |
+| `D46_cma20261031_L64_N128_ml3_spdrv0_t150` | first / 0 | 84.38 / 150, alive | 18.13 units/h | 3.62 h; Oct 31 19:22 MSK |
 | `opt-d46-resolution-cma` | first / 0 | CUDA pool startup failure, no evaluations | ended | exit 134 |
 | `opt-d51-resolution-cma` | second / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 09:45 MSK |
 | `opt-d51-resolution-cma-r2` | first / 0 | initial continuation failed; no CMA evaluations | ended | exit 1, Oct 31 10:56 MSK |
