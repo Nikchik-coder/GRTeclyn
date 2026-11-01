@@ -1,0 +1,90 @@
+[capped_job] start 2026-11-01T14:35:17Z threads=4 mem=160G timeout=1800s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 2.405e-02 -> 9.766e-04 (t = 1)
+[newton] iter 1: |R| 9.766e-04 -> 2.501e-04 (t = 1)
+[newton] iter 2: |R| 2.493e-04 -> 3.976e-06 (t = 1)
+[newton] iter 3: |R| 3.976e-06 -> 1.842e-07 (t = 1)
+[newton] iter 4: |R| 1.842e-07 -> 3.429e-09 (t = 1)
+[newton] iter 5: |R| 3.429e-09 -> 2.051e-10 (t = 1)
+[newton] iter 6: |R| 2.051e-10 -> 9.987e-12 (t = 1)
+[newton] iter 7: |R| 9.987e-12 -> 2.004e-13 (t = 1)
+[newton] converged at iter 8: |R|_inf,scaled = 4.298e-14
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 18.47009211103432}
+[newton] iter 0: |R| 8.222e-06 -> 1.298e-09 (t = 1)
+[newton] iter 1: |R| 1.298e-09 -> 4.567e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 5.388e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 21.607148933922872}
+[newton] iter 0: |R| 6.214e-06 -> 9.781e-10 (t = 1)
+[newton] iter 1: |R| 9.781e-10 -> 3.441e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.042e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 31.052848605904728}
+[frequency] omega=0.85, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.000e-02 -> 1.626e-03 (t = 1)
+[newton] iter 1: |R| 1.626e-03 -> 5.258e-04 (t = 1)
+[newton] iter 2: |R| 5.248e-04 -> 1.576e-05 (t = 1)
+[newton] iter 3: |R| 1.576e-05 -> 1.103e-06 (t = 1)
+[newton] iter 4: |R| 1.103e-06 -> 3.931e-08 (t = 1)
+[newton] iter 5: |R| 3.931e-08 -> 5.005e-09 (t = 1)
+[newton] iter 6: |R| 5.005e-09 -> 2.391e-15 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 4.602e-16
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 16.532896486110985}
+[newton] iter 0: |R| 8.238e-06 -> 1.325e-09 (t = 1)
+[newton] iter 1: |R| 1.325e-09 -> 4.942e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 5.614e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 19.54575402289629}
+[newton] iter 0: |R| 6.225e-06 -> 9.986e-10 (t = 1)
+[newton] iter 1: |R| 9.986e-10 -> 3.724e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.168e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 28.56419524597004}
+[frequency] omega=0.82, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.000e-02 -> 1.864e-03 (t = 1)
+[newton] iter 1: |R| 1.864e-03 -> 6.301e-04 (t = 1)
+[newton] iter 2: |R| 6.298e-04 -> 2.292e-05 (t = 1)
+[newton] iter 3: |R| 2.292e-05 -> 1.320e-06 (t = 1)
+[newton] iter 4: |R| 1.320e-06 -> 7.999e-08 (t = 1)
+[newton] iter 5: |R| 7.999e-08 -> 9.250e-09 (t = 1)
+[newton] iter 6: |R| 9.248e-09 -> 3.032e-15 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 7.491e-16
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 16.42310781404376}
+[newton] iter 0: |R| 8.255e-06 -> 1.342e-09 (t = 1)
+[newton] iter 1: |R| 1.342e-09 -> 5.339e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 5.799e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 19.127097381046042}
+[newton] iter 0: |R| 6.237e-06 -> 1.011e-09 (t = 1)
+[newton] iter 1: |R| 1.011e-09 -> 4.015e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.265e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 28.480474387062714}
+[frequency] omega=0.79, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.000e-02 -> 2.302e-03 (t = 1)
+[newton] iter 1: |R| 2.302e-03 -> 8.936e-04 (t = 1)
+[newton] iter 2: |R| 8.941e-04 -> 4.399e-05 (t = 1)
+[newton] iter 3: |R| 4.399e-05 -> 2.219e-06 (t = 1)
+[newton] iter 4: |R| 2.219e-06 -> 2.810e-07 (t = 1)
+[newton] iter 5: |R| 2.810e-07 -> 4.241e-12 (t = 1)
+[newton] iter 6: |R| 4.241e-12 -> 1.571e-15 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 2.830e-16
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 16.747875642962754}
+[newton] iter 0: |R| 8.271e-06 -> 1.349e-09 (t = 1)
+[newton] iter 1: |R| 1.349e-09 -> 5.752e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 5.963e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 19.240406044060364}
+[newton] iter 0: |R| 6.250e-06 -> 1.016e-09 (t = 1)
+[newton] iter 1: |R| 1.016e-09 -> 4.334e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.439e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 28.887440795078874}
+[frequency] omega=0.76, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.000e-02 -> 3.091e-03 (t = 1)
+[newton] iter 1: |R| 3.101e-03 -> 3.448e-04 (t = 1)
+[newton] iter 2: |R| 3.442e-04 -> 3.336e-05 (t = 1)
+[newton] iter 3: |R| 3.336e-05 -> 3.010e-06 (t = 1)
+[newton] iter 4: |R| 3.010e-06 -> 8.415e-08 (t = 1)
+[newton] iter 5: |R| 8.415e-08 -> 1.107e-08 (t = 1)
+[newton] iter 6: |R| 1.107e-08 -> 3.409e-15 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 9.262e-16
+{"event": "grid", "grid": [72, 10], "verdict": "REJECT", "reasons": ["constraint_c"], "seconds": 17.1192536088638}
+[frequency] omega=0.73, accepted=False
+[capped_job] end 2026-11-01T14:40:03Z exit=2

@@ -31,13 +31,28 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-frequency-scan-20261101`, second node/card 0,
-code `023f4384`, started **17:35:17 MSK**. First 72x10 Newton solve at
-omega=0.85 converged in eight corrections; independent validation follows.
-At most 21 solves; 0.5 h hard deadline **18:05:17 MSK**. Completion ETA
-is not measured yet. The preceding 31 GPU regressions passed in 24.87 s
+**Live:** none. `railgun-frequency-scan-20261101`, second node/card 0,
+code `023f4384`, ran **17:35:17–17:40:03 MSK (0.0794 h)**, exit 2.
+**Four frequencies 0.85 / 0.82 / 0.79 / 0.76 passed all three grids.**
+At 0.73, Newton converged but the unimposed constraint_c was **3.25009e-8
+against 1e-8 on 72x10**. The scan stopped as approved; 13 solves spent,
+0.70 and 0.67 not attempted. No tolerance was relaxed. This is not a physical
+maximum. Last accepted M=1.313890770182, J=-1.379462933768, minimum sampled
+lapse=0.55817553, maximum shift/lapse=0.25190704 (25.19%); no sampled
+ergoregion. Independent Einstein/KG maxima 2.51e-11 / 2.76e-12 on 128x16.
+The fixed-radius amplitude decreases along the stronger branch; it is
+measured rather than imposed here. Archive: `results/railgun/studies/frequency-scan/`.
+The preceding **31 GPU regressions passed in 24.87 s**
 (**17:34:17–17:34:43 MSK**, code `1f4054a0`); portable report:
 `results/railgun/reports/gpu_frequency_regression.json`.
+
+**Next:** prepare a three-grid resolution recovery of omega=0.73, keeping
+all gates and physics unchanged, before further frequency continuation.
+The current go was to stop on failed validation, so no recovery or new
+strong-ring profile/particle experiment is authorised yet. The earlier
+annular k2=-12 flux failure also remains unresolved. Both cards idle,
+no completion ETA. Scratch clean at **17:41 MSK**: 47 MB in `_cache/` only,
+537 GB free; first node not listed. No AMR checkpoints or plotfiles created.
 
 **Previous scan:** `railgun-compactness-scan-20261101`, second node/card 0,
 code `4445ce44`, ran **17:15:58–17:19:40 MSK (0.0617 h)**, exit 2.
@@ -51,18 +66,6 @@ No sampled ergoregion among accepted points. Archive:
 `results/railgun/studies/compactness-scan/`, including all accepted states
 and the rejected 0.12 state. Frequency-controlled continuation from the
 last accepted state is now explicitly approved.
-**Approved next:** GPU regressions, then frequency-controlled continuation
-from `studies/compactness-scan/amplitude_03/accepted.npz` at omega=0.85,
-0.82, 0.79, 0.76, 0.73, 0.70, 0.67, same three grids and gates. At most
-21 solves and 30 iterations each; four threads, 160 GiB, 0.5 h per job,
-chunks 128, no AMR checkpoints. Require two corrections on every grid,
-nonvacuum component charge and a nodeless scalar; measure the amplitude
-instead of imposing its fixed-radius pin. Stop on rejection or an accepted
-sampled ergoregion. Regression checks passed; the scan is running.
-Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
-Card 0 running the scan; card 1 idle. Scratch clean at **17:35 MSK**: 47 MB in `_cache/` only,
-537 GB free; first node not listed. No completion ETA.
-
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
 raw code `4d40acbc`, **16:52:24–17:07:01 MSK**, followed by the event audit
 code `786cf041`, **17:11:52–17:12:10 MSK**. At common energy

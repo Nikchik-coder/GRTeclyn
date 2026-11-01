@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "21faa3d58cd67dbdf08d38622eb6e5828bbbf64d0baa5be2c443945c2dddae15",
-      "bytes": 10245
+      "sha256": "43e2c9b4af6b1d3fc32faec4575270a67185553451a36b7eca2bc9a625d66b94",
+      "bytes": 10618
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -616,6 +616,190 @@
     "studies/counter-rotation/sha256sums.txt": {
       "sha256": "862ea43d9ac9b2e5ed2f95a2363ccd23721882a65aff2ed84e24e5c332e3451c",
       "bytes": 2714
+    },
+    "studies/frequency-scan/README.md": {
+      "sha256": "af0e90f23395b1c3531be0dcf559122a4e9088139f898ff28e7881e5bbc48104",
+      "bytes": 1367
+    },
+    "studies/frequency-scan/execution.log": {
+      "sha256": "ad9c70a903281ff79147abf9030dfceff44af5963cc4c11a1b4f587f985a9e81",
+      "bytes": 5561
+    },
+    "studies/frequency-scan/frequency_01/accepted.npz": {
+      "sha256": "008377c6fe296fb93cb9d6893d7b874ea433b1dddc25ca2ecde92cee18a3e1b6",
+      "bytes": 78810
+    },
+    "studies/frequency-scan/frequency_01/grid_128x16.json": {
+      "sha256": "10e62867cc7a6af6d839e74206c4c18838181a6a5c657d8595086b5385a69bc6",
+      "bytes": 4070
+    },
+    "studies/frequency-scan/frequency_01/grid_128x16.npz": {
+      "sha256": "22d2632967b8c03b6a7d2abe2c21095860d4680abd3a7b67b580c6695e3477b3",
+      "bytes": 78809
+    },
+    "studies/frequency-scan/frequency_01/grid_72x10.json": {
+      "sha256": "491954270d5ea1693d924c14b211b4d907c80c73048ea8e21363925893fea5e3",
+      "bytes": 4399
+    },
+    "studies/frequency-scan/frequency_01/grid_72x10.npz": {
+      "sha256": "cdedd3dd0ab93f1643cac4a7c0182c667900c4310b70eae2387fe3cf5c62b96f",
+      "bytes": 29653
+    },
+    "studies/frequency-scan/frequency_01/grid_96x12.json": {
+      "sha256": "04bb2d73a4055364e868cedf94bca20228bf4612bda582d1f750d442021552ba",
+      "bytes": 4156
+    },
+    "studies/frequency-scan/frequency_01/grid_96x12.npz": {
+      "sha256": "0bcc925a24d92afd1c8f359beb587a0d060ca0951e5655a17ac3fc551d51ff86",
+      "bytes": 45989
+    },
+    "studies/frequency-scan/frequency_01/manifest.json": {
+      "sha256": "4fdb58b49ede0fd60327d453f061033991b84264f8da3836c6e0e3a285f3e614",
+      "bytes": 1047
+    },
+    "studies/frequency-scan/frequency_01/outcome.json": {
+      "sha256": "8798deaffaeb6ae884f2c2bb9ddc7b4cc295513962fc345d2bcf8211722a8122",
+      "bytes": 14692
+    },
+    "studies/frequency-scan/frequency_02/accepted.npz": {
+      "sha256": "0abfe7f30a209b0b30959b56f90b2cfda2a2f76aea54975944ee48cdc6e71c65",
+      "bytes": 79255
+    },
+    "studies/frequency-scan/frequency_02/grid_128x16.json": {
+      "sha256": "c243af0c452bb324adf431d38bbd0b361eedb63261e2a5589edcd76e6c106437",
+      "bytes": 4057
+    },
+    "studies/frequency-scan/frequency_02/grid_128x16.npz": {
+      "sha256": "d479584f2bf8b9321293e2e39e0732706bafc4ca12c2bf3707fe19896866fdcf",
+      "bytes": 79255
+    },
+    "studies/frequency-scan/frequency_02/grid_72x10.json": {
+      "sha256": "14258c0288077bf8188e2bc8928c37829b5acc4925c4d818e4227798ce2d6724",
+      "bytes": 4354
+    },
+    "studies/frequency-scan/frequency_02/grid_72x10.npz": {
+      "sha256": "49fafafe52a36e028ba387de1b7e5a2a5be58c506bb75a09189c44ed4790ce8b",
+      "bytes": 29743
+    },
+    "studies/frequency-scan/frequency_02/grid_96x12.json": {
+      "sha256": "2566b2afba859f05ab4894e5b2d7e0572c4a5fdbd00bfdec1a8c33afbd6e4a7e",
+      "bytes": 4159
+    },
+    "studies/frequency-scan/frequency_02/grid_96x12.npz": {
+      "sha256": "8a293d6dcf22877770f13d603f6240e87fbb5605df23dd27c546bd8eb959659a",
+      "bytes": 46183
+    },
+    "studies/frequency-scan/frequency_02/manifest.json": {
+      "sha256": "b3e55da4ef44b0e9aad390de126286aa14ae2d68f4a71795f1dd6c16f5f32aba",
+      "bytes": 1047
+    },
+    "studies/frequency-scan/frequency_02/outcome.json": {
+      "sha256": "fb2b7afc8871c81e005dfefc025f7d25b320bcaa8843a238646e08b251133767",
+      "bytes": 14630
+    },
+    "studies/frequency-scan/frequency_03/accepted.npz": {
+      "sha256": "d15cd4240bed6c3c944f5b508adf309998371adc63bee327f214f5d7503cdd61",
+      "bytes": 79373
+    },
+    "studies/frequency-scan/frequency_03/grid_128x16.json": {
+      "sha256": "b6961fd2eeef28949cb0081f5e03a6603e27552df94cdc0517b1ce72368f42f9",
+      "bytes": 4090
+    },
+    "studies/frequency-scan/frequency_03/grid_128x16.npz": {
+      "sha256": "9c30a89e63ed33068f5dfa45684ff24ee48c51e9b848401c3bdbdeeea80daa09",
+      "bytes": 79373
+    },
+    "studies/frequency-scan/frequency_03/grid_72x10.json": {
+      "sha256": "22c0c3bbb9943af790faf582d05a397a4d75fb7d1c42bdb2c2921ab8df90fd27",
+      "bytes": 4384
+    },
+    "studies/frequency-scan/frequency_03/grid_72x10.npz": {
+      "sha256": "9d96c1d946507c815f07981f6ffad3c49e561229c0f45bb1b0af031f7fd07a28",
+      "bytes": 29742
+    },
+    "studies/frequency-scan/frequency_03/grid_96x12.json": {
+      "sha256": "6746c37aded969ed9e15a2849fe634412a8cbe5a35174a392af94626278c6cfd",
+      "bytes": 4162
+    },
+    "studies/frequency-scan/frequency_03/grid_96x12.npz": {
+      "sha256": "14d652fba23ac2fddc2ccba2f5cba4a947177d6214727f67d46bc7164514111c",
+      "bytes": 46246
+    },
+    "studies/frequency-scan/frequency_03/manifest.json": {
+      "sha256": "74c14e1677beda9f03d01efc9706dc92f93b64c206474bb7e3d1fe3ae05a2646",
+      "bytes": 1047
+    },
+    "studies/frequency-scan/frequency_03/outcome.json": {
+      "sha256": "39e6b8fde83cc50a3bf7a4303f19c257ef773daa41631c2abce141a7a5303805",
+      "bytes": 14696
+    },
+    "studies/frequency-scan/frequency_04/accepted.npz": {
+      "sha256": "f230da48dd82882b1357740d50aef1027c81daca5a80ccfc5c544219c4b7be4c",
+      "bytes": 79202
+    },
+    "studies/frequency-scan/frequency_04/grid_128x16.json": {
+      "sha256": "0a54a080fe9c244cd5fd861635829d6511909daa3a9b01e5addfdbb58127d352",
+      "bytes": 4140
+    },
+    "studies/frequency-scan/frequency_04/grid_128x16.npz": {
+      "sha256": "d074df447f5f30a531a2440dd22b4a86c366efd3ddac7b12b76158a96a8f8b3a",
+      "bytes": 79203
+    },
+    "studies/frequency-scan/frequency_04/grid_72x10.json": {
+      "sha256": "996046c9ebd8b384fc123d94f151870331fa4c6ca4e2e4abf8367a0e3e5b991a",
+      "bytes": 4350
+    },
+    "studies/frequency-scan/frequency_04/grid_72x10.npz": {
+      "sha256": "2b55d59b1cdbf2bb62c809bd399b14d402fddc4512a199d403e06cfd9e824c83",
+      "bytes": 29675
+    },
+    "studies/frequency-scan/frequency_04/grid_96x12.json": {
+      "sha256": "54a6c46f9fa2cad0225c6c24106123d717f57b0674425b7d3bd73d10a7368c7f",
+      "bytes": 4175
+    },
+    "studies/frequency-scan/frequency_04/grid_96x12.npz": {
+      "sha256": "56e0f4a9d6830da8c28d5a90aca6a9b80606c792ae9dc703ed42a1478265f2ce",
+      "bytes": 46114
+    },
+    "studies/frequency-scan/frequency_04/manifest.json": {
+      "sha256": "0bf4e0d983be1184dd073543eae3a99347b5160af26b32d9e7ff44ef6d66e85b",
+      "bytes": 1047
+    },
+    "studies/frequency-scan/frequency_04/outcome.json": {
+      "sha256": "90a4bf4d29d57719cc07fda5311518bcb7ae363adbe0f058a3e6b862c67fe6a3",
+      "bytes": 14725
+    },
+    "studies/frequency-scan/frequency_05/grid_72x10.json": {
+      "sha256": "65621d39dff6e7623c5430f27fbe2dd8dc49099de8056d3ade987434fc2787d3",
+      "bytes": 4377
+    },
+    "studies/frequency-scan/frequency_05/grid_72x10.npz": {
+      "sha256": "7772f35fbd72b9ab9bd4753d5eff329b287572a7804a6e452e4f69a461607123",
+      "bytes": 29717
+    },
+    "studies/frequency-scan/frequency_05/manifest.json": {
+      "sha256": "9bcb1f3df3559de583bc4fe112ab24746aee086b1435dadfc2d20093c262ef9b",
+      "bytes": 1047
+    },
+    "studies/frequency-scan/frequency_05/outcome.json": {
+      "sha256": "fb3897be0009674623699c05669ab758e02e91b98a305cfb02d11c6da29ce492",
+      "bytes": 5239
+    },
+    "studies/frequency-scan/manifest.json": {
+      "sha256": "1f5042b5774711d7a156a5b521230121391856b8c8dc46457589df6b1af65c93",
+      "bytes": 658
+    },
+    "studies/frequency-scan/outcome.json": {
+      "sha256": "2d290ab9c69cd7003e903fe4c2a877123aed1a8e77c9f2fc66a9670a99aa8c07",
+      "bytes": 2069
+    },
+    "studies/frequency-scan/progress.json": {
+      "sha256": "5d13014267db82eae3994bc3ee3dccd2bafd427341cda99f58349b87ba571474",
+      "bytes": 1703
+    },
+    "studies/frequency-scan/sha256sums.txt": {
+      "sha256": "63dee558eb5be3790b5ab2f732049c54e61988bbebac48fae09e91a12c014f78",
+      "bytes": 4153
     },
     "studies/ring-profile/axis.tsv": {
       "sha256": "962a8bb725e9cea4b14f60feac88a4f01850b6d228b8446c7c9272a63aea0f38",

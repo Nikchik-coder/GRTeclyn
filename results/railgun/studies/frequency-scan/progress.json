@@ -1,0 +1,59 @@
+[
+  {
+    "frequency": 0.85,
+    "accepted": true,
+    "directory": "frequency_01",
+    "amplitude": 0.09835704470920559,
+    "M_ADM_estimate": 1.2501352142224582,
+    "J_volume": -1.3022872434578865,
+    "lapse_min": 0.7357608206421016,
+    "dragging_max": 0.023881687673432187,
+    "gtt_max": -0.5381767211402916,
+    "shift_norm_over_lapse_max": 0.08669117217797499,
+    "ergoregion_sampled": false
+  },
+  {
+    "frequency": 0.82,
+    "accepted": true,
+    "directory": "frequency_02",
+    "amplitude": 0.08830328022589015,
+    "M_ADM_estimate": 1.2920035806763464,
+    "J_volume": -1.3523506560140945,
+    "lapse_min": 0.6788052616825998,
+    "dragging_max": 0.03591676409971265,
+    "gtt_max": -0.4549783708141943,
+    "shift_norm_over_lapse_max": 0.12661679062315456,
+    "ergoregion_sampled": false
+  },
+  {
+    "frequency": 0.79,
+    "accepted": true,
+    "directory": "frequency_03",
+    "amplitude": 0.06850441549740445,
+    "M_ADM_estimate": 1.3123902451156355,
+    "J_volume": -1.3776019900271124,
+    "lapse_min": 0.619812455020986,
+    "dragging_max": 0.05136495686924609,
+    "gtt_max": -0.3742911467285533,
+    "shift_norm_over_lapse_max": 0.1797180936952503,
+    "ergoregion_sampled": false
+  },
+  {
+    "frequency": 0.76,
+    "accepted": true,
+    "directory": "frequency_04",
+    "amplitude": 0.04691819124687225,
+    "M_ADM_estimate": 1.3138907701823674,
+    "J_volume": -1.379462933768464,
+    "lapse_min": 0.5581755286136367,
+    "dragging_max": 0.07107729403861117,
+    "gtt_max": -0.2954543563393655,
+    "shift_norm_over_lapse_max": 0.2519070390151452,
+    "ergoregion_sampled": false
+  },
+  {
+    "frequency": 0.73,
+    "accepted": false,
+    "directory": "frequency_05"
+  }
+]
