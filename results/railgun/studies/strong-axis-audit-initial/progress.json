@@ -1,0 +1,474 @@
+{
+  "requested_offset": {
+    "zero": {
+      "accepted": false,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.9534877928971,
+          "proper_time": 39.656921553789935,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.95348805288865,
+          "proper_time": 39.65692178265889,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 2.599915518430862e-07,
+      "saved_track_time_difference": 3.5996748692923575e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3069542810388787e-14,
+      "full_mpd_invariant_error": 3.774758283725532e-15
+    },
+    "positive": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.78485763442598,
+          "proper_time": 39.50847732370592,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.78485763442664,
+          "proper_time": 39.5084773237065,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 6.608047442568932e-13,
+      "saved_track_time_difference": 5.133312441785165e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3068386953986947e-14,
+      "full_mpd_invariant_error": 3.1086244689504383e-15
+    },
+    "negative": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999842477459948,
+          "coordinate_time": 58.00426639670092,
+          "proper_time": 39.7016216056,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999842477459948,
+          "coordinate_time": 58.0042663967008,
+          "proper_time": 39.7016216055999,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 1.2079226507921703e-13,
+      "saved_track_time_difference": 4.699955979958759e-10,
+      "height_difference": 8.465761425213714e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3070698667014398e-14,
+      "full_mpd_invariant_error": 1.9984014443252818e-15
+    },
+    "reversed": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.78485763442598,
+          "proper_time": 39.50847732370592,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.78485763442664,
+          "proper_time": 39.5084773237065,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 6.608047442568932e-13,
+      "saved_track_time_difference": 5.133312441785165e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3068386953986947e-14,
+      "full_mpd_invariant_error": 3.1086244689504383e-15
+    }
+  },
+  "between_spin_thresholds": {
+    "zero": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999999999999982,
+          "coordinate_time": 58.003190371205456,
+          "proper_time": 39.70067442025358,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999999999999982,
+          "coordinate_time": 58.00319037120541,
+          "proper_time": 39.70067442025354,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 4.263256414560601e-14,
+      "saved_track_time_difference": 0.0001507070064477034,
+      "height_difference": 1.7763568394002505e-14,
+      "same_classification": true,
+      "marginal": true,
+      "timing_claim": false,
+      "full_mpd_defect": 1.3156965295433759e-14,
+      "full_mpd_invariant_error": 2.886579864025407e-15
+    },
+    "positive": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.790577684174735,
+          "proper_time": 39.51351265808565,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.79057768417583,
+          "proper_time": 39.51351265808661,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 1.0942358130705543e-12,
+      "saved_track_time_difference": 5.2828866614618164e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.306838774272327e-14,
+      "full_mpd_invariant_error": 3.3306690738754696e-15
+    },
+    "negative": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999833258710813,
+          "coordinate_time": 58.004215728770916,
+          "proper_time": 39.701577002837126,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999833258710813,
+          "coordinate_time": 58.004215728770866,
+          "proper_time": 39.70157700283708,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 4.973799150320701e-14,
+      "saved_track_time_difference": 4.6350834281838615e-10,
+      "height_difference": 8.351364044756338e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3070699455737628e-14,
+      "full_mpd_invariant_error": 1.3322676295501878e-15
+    },
+    "reversed": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.790577684174735,
+          "proper_time": 39.51351265808565,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.79057768417583,
+          "proper_time": 39.51351265808661,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 1.0942358130705543e-12,
+      "saved_track_time_difference": 5.2828866614618164e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.306838774272327e-14,
+      "full_mpd_invariant_error": 3.3306690738754696e-15
+    }
+  },
+  "below_all": {
+    "zero": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999824047562928,
+          "coordinate_time": 58.00222329344294,
+          "proper_time": 39.69982310874881,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999824047562928,
+          "coordinate_time": 58.00222329344285,
+          "proper_time": 39.69982310874874,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 8.526512829121202e-14,
+      "saved_track_time_difference": 4.646878437597479e-10,
+      "height_difference": 8.37196978409338e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3025847755052164e-14,
+      "full_mpd_invariant_error": 2.220446049250313e-15
+    },
+    "positive": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999990781787606,
+          "coordinate_time": 58.00119833247509,
+          "proper_time": 39.698920810890286,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999990781787606,
+          "coordinate_time": 58.00119833247518,
+          "proper_time": 39.69892081089036,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 8.526512829121202e-14,
+      "saved_track_time_difference": 4.646238949135295e-10,
+      "height_difference": 8.374101412300661e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3112109830055139e-14,
+      "full_mpd_invariant_error": 2.6645352591003757e-15
+    },
+    "negative": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999657303902817,
+          "coordinate_time": 58.00324865217764,
+          "proper_time": 39.700725690404155,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999657303902817,
+          "coordinate_time": 58.00324865217774,
+          "proper_time": 39.70072569040424,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 9.947598300641403e-14,
+      "saved_track_time_difference": 4.6406967157963663e-10,
+      "height_difference": 8.363798542632139e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3026999745805055e-14,
+      "full_mpd_invariant_error": 1.5543122344752192e-15
+    },
+    "reversed": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "reflected",
+          "final_z": -9.999990781787606,
+          "coordinate_time": 58.00119833247509,
+          "proper_time": 39.698920810890286,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "reflected",
+          "final_z": -9.999990781787606,
+          "coordinate_time": 58.00119833247518,
+          "proper_time": 39.69892081089036,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 8.526512829121202e-14,
+      "saved_track_time_difference": 4.646238949135295e-10,
+      "height_difference": 8.374101412300661e-11,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3112109830055139e-14,
+      "full_mpd_invariant_error": 2.6645352591003757e-15
+    }
+  },
+  "above_all": {
+    "zero": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.786789669291494,
+          "proper_time": 39.510178115931026,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.786789669292155,
+          "proper_time": 39.51017811593161,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 6.608047442568932e-13,
+      "saved_track_time_difference": 5.188236684716685e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3025817746875107e-14,
+      "full_mpd_invariant_error": 3.3306690738754696e-15
+    },
+    "positive": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.69978863528563,
+          "proper_time": 39.43359138418035,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.699788635285614,
+          "proper_time": 39.433591384180346,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 1.4210854715202004e-14,
+      "saved_track_time_difference": 3.686550087422802e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3068372688163553e-14,
+      "full_mpd_invariant_error": 2.6645352591003757e-15
+    },
+    "negative": {
+      "accepted": false,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.95542745022297,
+          "proper_time": 39.65862899153796,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.955427710238546,
+          "proper_time": 39.65862922042807,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 2.6001557529298225e-07,
+      "saved_track_time_difference": 2.214893157770348e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.302696973787789e-14,
+      "full_mpd_invariant_error": 2.6645352591003757e-15
+    },
+    "reversed": {
+      "accepted": true,
+      "quadratures": [
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.69978863528563,
+          "proper_time": 39.43359138418035,
+          "order": 8,
+          "segments": 256
+        },
+        {
+          "classification": "transmitted",
+          "final_z": -10.0,
+          "coordinate_time": 57.699788635285614,
+          "proper_time": 39.433591384180346,
+          "order": 16,
+          "segments": 256
+        }
+      ],
+      "quadrature_time_difference": 1.4210854715202004e-14,
+      "saved_track_time_difference": 3.686550087422802e-08,
+      "height_difference": 0.0,
+      "same_classification": true,
+      "marginal": false,
+      "timing_claim": true,
+      "full_mpd_defect": 1.3068372688163553e-14,
+      "full_mpd_invariant_error": 2.6645352591003757e-15
+    }
+  }
+}

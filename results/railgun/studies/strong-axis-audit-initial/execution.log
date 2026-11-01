@@ -1,0 +1,20 @@
+[capped_job] start 2026-11-01T16:31:31Z threads=4 mem=160G timeout=1800s
+[axis-audit] requested_offset/zero: accepted=False, timing=3.600e-08, defect=1.307e-14
+[axis-audit] requested_offset/positive: accepted=True, timing=5.133e-08, defect=1.307e-14
+grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/axial_reduction.py:92: RuntimeWarning: overflow encountered in expm1
+  stable=-root_lapse*np.expm1(df/2)-LD(spin)*dw
+[axis-audit] requested_offset/negative: accepted=True, timing=4.700e-10, defect=1.307e-14
+[axis-audit] requested_offset/reversed: accepted=True, timing=5.133e-08, defect=1.307e-14
+[axis-audit] between_spin_thresholds/zero: accepted=True, timing=1.507e-04, defect=1.316e-14
+[axis-audit] between_spin_thresholds/positive: accepted=True, timing=5.283e-08, defect=1.307e-14
+[axis-audit] between_spin_thresholds/negative: accepted=True, timing=4.635e-10, defect=1.307e-14
+[axis-audit] between_spin_thresholds/reversed: accepted=True, timing=5.283e-08, defect=1.307e-14
+[axis-audit] below_all/zero: accepted=True, timing=4.647e-10, defect=1.303e-14
+[axis-audit] below_all/positive: accepted=True, timing=4.646e-10, defect=1.311e-14
+[axis-audit] below_all/negative: accepted=True, timing=4.641e-10, defect=1.303e-14
+[axis-audit] below_all/reversed: accepted=True, timing=4.646e-10, defect=1.311e-14
+[axis-audit] above_all/zero: accepted=True, timing=5.188e-08, defect=1.303e-14
+[axis-audit] above_all/positive: accepted=True, timing=3.687e-08, defect=1.307e-14
+[axis-audit] above_all/negative: accepted=False, timing=2.215e-08, defect=1.303e-14
+[axis-audit] above_all/reversed: accepted=True, timing=3.687e-08, defect=1.307e-14
+[capped_job] end 2026-11-01T16:38:26Z exit=2
