@@ -31,17 +31,24 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-frequency-deep-20261101`, second node/card 0,
-code `4d1c4d23`, started **18:13 MSK**. Requested omega=0.70 / 0.67,
-at most six solves on 96x12 / 128x16 / 160x20; 30 iterations each,
-two fresh corrections per grid. Same branch and independent gates,
-four threads, 160 GiB, 0.5 h hard cap, chunks 128, no AMR checkpoints.
-Estimated 0.06 h to finish, around **18:17 MSK** if both points pass;
-hard deadline around **18:43 MSK**. Stop on failed validation or an
-accepted sampled ergoregion. Source: accepted omega=0.73 recovery.
-Core/profile and conditional 32-track stronger-ring sequence await the
-separate go requested in the current session. Card 1 idle.
-Scratch clean at **18:13 MSK**: 47 MB in `_cache/` only, 537 GB free;
+**Live:** `railgun-strong-regression-20261101`, second node/card 0,
+code `d4257cb6`, started **18:17 MSK**. Targeted GPU frequency, uphill,
+transport and core/profile checks. After they pass, the approved sequence
+certifies/profiles the accepted omega=0.73 source, then runs at most 32
+matched-energy uphill tracks only if the core/profile passes. Four threads,
+160 GiB, 0.5 h per job, chunks 128, no AMR checkpoints. Card 1 idle.
+
+**Deep continuation finished:** `railgun-frequency-deep-20261101`, code
+`4d1c4d23`, **18:12:10–18:14:08 MSK (0.0328 h)**, exit 2. Omega=0.70
+passed all three grids 96x12 / 128x16 / 160x20. Omega=0.67 failed Newton
+on 96x12, with independent equation failures, and was retained rejected.
+Four solves spent; no extra frequency or resolution attempted.
+At 0.70, sampled maximum shift/lapse=0.510341166,
+minimum lapse=0.421458671, maximum g_tt=-0.136716030,
+M=1.261072102786, J=-1.306322429244; sampled ergoregion:
+False. No maximum-spin or branch-termination claim.
+Archive: `results/railgun/studies/frequency-deep/`.
+Scratch clean at **18:17 MSK**: 47 MB in `_cache/` only, 537 GB free;
 first node not listed. No AMR checkpoints or plotfiles created.
 
 **Previous recovery:** `railgun-frequency-073-refined-20261101`, second node/card 0,

@@ -1,0 +1,27 @@
+{
+  "scan_completed": false,
+  "records": [
+    {
+      "frequency": 0.7,
+      "accepted": true,
+      "directory": "frequency_01",
+      "amplitude": 0.015689536135570097,
+      "M_ADM_estimate": 1.2610721027861238,
+      "J_volume": -1.3063224292437658,
+      "lapse_min": 0.4214586705249313,
+      "dragging_max": 0.13047193758392522,
+      "gtt_max": -0.13671602957183288,
+      "shift_norm_over_lapse_max": 0.5103411663640276,
+      "ergoregion_sampled": false
+    },
+    {
+      "frequency": 0.67,
+      "accepted": false,
+      "directory": "frequency_02"
+    }
+  ],
+  "solves": 4,
+  "seconds": 115.20377280097455,
+  "stability": "not_assessed",
+  "scope": "Frequency continuation of a nodeless nonvacuum stationary branch. No maximum spin or dynamical stability claim."
+}

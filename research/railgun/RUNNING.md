@@ -255,6 +255,6 @@ After certification, propose the existing bounded uphill config: at most
 32 matched-energy tracks, spin 0 / +/-0.001, z=+1 toward -10, two RK
 tolerances and background/spin reversal; duration cap 250 per track.
 Exact-threshold marginal contacts remain height/conservation controls and
-never timing or selection evidence. Neither job has a go yet. Each uses
+never timing or selection evidence. Core/profile and conditional tracks received a separate go. Each uses
 four threads, 160 GiB, 1800 s, GPU card 0 on the second node; no AMR
 checkpoints, retain profiles, tracks and logs.
