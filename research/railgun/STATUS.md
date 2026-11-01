@@ -31,12 +31,18 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-strong-regression-20261101`, second node/card 0,
-code `d4257cb6`, started **18:17 MSK**. Targeted GPU frequency, uphill,
-transport and core/profile checks. After they pass, the approved sequence
-certifies/profiles the accepted omega=0.73 source, then runs at most 32
-matched-energy uphill tracks only if the core/profile passes. Four threads,
-160 GiB, 0.5 h per job, chunks 128, no AMR checkpoints. Card 1 idle.
+**Live:** `railgun-strong-profile-073-20261101`, second node/card 0,
+code `078ee51f`, started **18:19 MSK**. Approved signed axial/equatorial
+profile and Cartesian core radius 0.4, degrees 6/8, for the accepted
+omega=0.73 source. If it passes, the separately approved 32 matched-energy
+uphill tracks follow; otherwise stop. Four threads, 160 GiB, 0.5 h,
+chunks 128, no AMR checkpoints. Approximate completion in 0.1 h, around
+**18:25 MSK**, hard deadline **18:49 MSK**. Card 1 idle.
+The preceding **21 GPU regressions passed in 76.48 s**,
+**18:17:17–18:18:36 MSK**, code `d4257cb6`; portable report under
+`results/railgun/reports/gpu_strong_regression.json`.
+Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:19 MSK**;
+first node not listed. No AMR checkpoints or plotfiles created.
 
 **Deep continuation finished:** `railgun-frequency-deep-20261101`, code
 `4d1c4d23`, **18:12:10–18:14:08 MSK (0.0328 h)**, exit 2. Omega=0.70

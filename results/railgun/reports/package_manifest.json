@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "855f72d6b23e696bf49535d33250e7d214a3d2955887f123f351219895786cf7",
-      "bytes": 11969
+      "sha256": "c25b4c8e523808f5792686243b7d9803e36eb0feeff7633b594152c9cc673d13",
+      "bytes": 12197
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -108,6 +108,10 @@
     "reports/gpu_regression.json": {
       "sha256": "124426b20333f1ed9889e37ca55d8afe5086f2bac9ed63d1878a0fc771a0d27a",
       "bytes": 7465
+    },
+    "reports/gpu_strong_regression.json": {
+      "sha256": "9e76e20bc4f4286e12423127dcc6baf7d5e887940af5cdb566ea938989201d74",
+      "bytes": 4681
     },
     "reports/gpu_uphill_regression.json": {
       "sha256": "423e24f858881c19e6b795c162823ed346ac291412a60d94b286d7d4a33e6abd",

@@ -1,0 +1,148 @@
+{
+  "commit": "d4257cb6",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "21",
+      "time": "76.474",
+      "timestamp": "2026-11-01T15:17:19.100195+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_vacuum_and_nodal_branch_guards_fail_closed",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_frequency_dry_plan_is_bounded_and_uses_an_accepted_source",
+      "time": "0.005",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_refined_tail_budget_rejects_more_points_or_a_coarser_source",
+      "time": "0.007",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_frequency_border_and_portable_state_preserve_measured_pin",
+      "time": "1.517",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_fixed_frequency_recovers_the_same_saved_rotating_star",
+      "time": "18.663",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_threshold_scan_brackets_all_three_rest_energies",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_dry_plan_refuses_an_unbudgeted_track_count",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_compactness_budget_preserves_three_grid_acceptance",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_turnaround_agrees_with_exact_rindler_geodesic",
+      "time": "2.381",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_flat_transmission_does_not_trigger_a_turnaround",
+      "time": "1.166",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_exact_threshold_contacts_cannot_supply_a_timing_claim",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_flat_spinning_trajectory_and_spin_condition",
+      "time": "0.523",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_zero_spin_and_matched_launch_energy",
+      "time": "0.392",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inner_stop_is_explicit_and_does_not_cross_origin",
+      "time": "0.725",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_rotating_background_spin_force_and_killing_integrals",
+      "time": "2.192",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inward_controls_retain_the_inward_velocity_branch",
+      "time": "0.387",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_certified_cartesian_corridor_crosses_the_origin_with_spin",
+      "time": "30.352",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_signed_flat_profile_is_regular_and_has_zero_curvature",
+      "time": "17.224",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_winding_one_axis_has_gradient_energy_despite_zero_amplitude",
+      "time": "0.221",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_profile_bounds_are_checked_before_sampling",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.028",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T15:17:17Z threads=4 mem=160G timeout=1800s\n.....................                                                    [100%]\n21 passed in 76.48s (0:01:16)\n[capped_job] end 2026-11-01T15:18:36Z exit=0\n"
+}
