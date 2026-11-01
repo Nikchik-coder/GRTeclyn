@@ -31,14 +31,16 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none at 19:27 MSK; corrected methods approved and being synced.
-Card 0: targeted tests then `studies/axial_audit_073.json`, at most 32
-phase quadratures and 656 full Cartesian MPD substitution points against
-saved finest tracks, no new MPD tracks. Card 1: tests then
-`studies/annular_regular_k12.json`, at most three fresh solves on
-192x16 / 224x18 / 256x20, max 30 iterations/minimum two updates, stop on
-rejection. Four threads/160 GiB/0.5 h/chunks 128/no AMR checkpoints per
-job. All original gates retained. Scratch 47 MB in `_cache/`, 535 GB free.
+**Live:** targeted GPU regressions started **19:30:01 MSK**, code `e5096e78`:
+`railgun-axis-audit-gpu-tests-20261101` on second node/card 0 and
+`railgun-regular-gpu-tests-20261101` on card 1. Each 0.5 h cap, hard
+deadline **20:00 MSK**. Both corrected numerical jobs have explicit go
+and follow only passing tests: at most 32 phase quadratures/656 MPD
+substitution points on card 0; at most three 192x16/224x18/256x20 regular
+operator recovery solves on card 1. All existing gates unchanged, four
+threads/160 GiB/chunks 128/no AMR checkpoints. CPU development suite:
+36 passed in 9.15 s. Scratch clean at **19:30 MSK**: 47 MB in `_cache/`,
+535 GB free; first node not listed. No measured numerical-job ETA yet.
 
 **Prior correction jobs completed:**
 
