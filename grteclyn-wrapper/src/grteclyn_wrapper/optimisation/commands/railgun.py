@@ -24,6 +24,7 @@ def main(argv=None):
     homotopy=sub.add_parser('homotopy')
     homotopy.add_argument('config',type=Path)
     homotopy.add_argument('--source',type=Path,required=True)
+    homotopy.add_argument('--resume',type=Path,help='prior unresolved homotopy; carries spent solve/split budgets')
     homotopy.add_argument('--out',type=Path,required=True)
     homotopy.add_argument('--gpu',type=int,required=True)
     homotopy.add_argument('--jac-chunk',type=int,default=128)
@@ -66,7 +67,7 @@ def main(argv=None):
         from ..solver.device import select_device
         select_device(args.gpu,args.jac_chunk)
         from ..railgun.continuation import run_homotopy
-        result=run_homotopy(args.source,config,args.out)
+        result=run_homotopy(args.source,config,args.out,resume=args.resume)
         return 0 if result['accepted'] else 2
     if args.verb == 'profile':
         if args.gpu < 0:

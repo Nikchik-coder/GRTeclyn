@@ -10,7 +10,10 @@ from __future__ import annotations
 
 from dataclasses import replace
 import hashlib
+import json
 from pathlib import Path
+import subprocess
+import time
 
 import numpy as np
 from scipy.linalg import eig
@@ -85,7 +88,25 @@ def linear_bound_seed(problem,u,*,index=1):
                 initialization='bound KG eigenmode on the spherical background')
 
 
-def run_homotopy(source,config,directory):
+def resume_record(directory,config,source_hash):
+    """Resume a previously passing point without resetting either work budget."""
+    directory=Path(directory)
+    manifest=json.loads((directory/'manifest.json').read_text())
+    outcome=json.loads((directory/'outcome.json').read_text())
+    if manifest['config']!=config or manifest['source_sha256']!=source_hash:
+        raise ValueError('resume configuration and spherical source must match')
+    solves,splits=int(outcome['solves']),int(outcome['splits'])
+    if (outcome['accepted'] or not 0<=solves<int(config.get('max_solves',24))
+            or not 0<=splits<=int(config.get('max_splits',6))):
+        raise ValueError('resume requires an unresolved study with remaining solve budget')
+    records=[json.loads(p.read_text()) for p in directory.glob('attempt_*.json')]
+    passing=[r for r in records if r['verdict']=='PASS' and r['attempt']<=solves]
+    if not passing:raise ValueError('resume needs a previously passing continuation point')
+    best=max(passing,key=lambda r:r['progress'])
+    return directory/f'attempt_{best["attempt"]:03d}.npz',float(best['progress']),solves,splits
+
+
+def run_homotopy(source,config,directory,*,resume=None):
     from .problem import RingProblem
     from .workflow import load_state,save_state,write_json,run_study
     from .diagnostics import validate
@@ -102,32 +123,55 @@ def run_homotopy(source,config,directory):
         raise ValueError('invalid bounded homotopy schedule')
     grids=config.get('grids',[[56,8],[72,10],[96,12]])
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=False)
-    write_json(directory/'manifest.json',dict(config=config,source_sha256=hashlib.sha256(Path(source).read_bytes()).hexdigest(),
-                                             stability='not_assessed',winding_interpolation=False))
+    source_hash=hashlib.sha256(Path(source).read_bytes()).hexdigest()
+    git=subprocess.run(['git','rev-parse','HEAD'],capture_output=True,text=True)
+    manifest=dict(config=config,source_sha256=source_hash,commit=git.stdout.strip(),
+                  stability='not_assessed',winding_interpolation=False)
     start=old.fields[0]
     first=RingProblem([start,replace(target,amplitude=epsilon)],nx=grids[0][0],ny=grids[0][1],length=old.length)
-    seed=transfer_fields(first,old,old_u)
-    try:
-        seed,mode=linear_bound_seed(first,seed)
-    except RuntimeError as error:
-        outcome=dict(accepted=False,reason=str(error),solves=0,stability='not_assessed')
-        write_json(directory/'outcome.json',outcome);return outcome
-    write_json(directory/'linear_mode.json',mode)
-    previous=(first,seed);current=None;splits=0;solves=0;records=[]
-    pending=list(np.linspace(0.,1.,steps+1))
+    manifest.update(platform=first.jax.devices()[0].platform,
+                    device_kind=first.jax.devices()[0].device_kind,float64=bool(first.jax.config.jax_enable_x64))
+    if manifest['platform']!='gpu':raise RuntimeError('GPU execution required')
+    print(json.dumps(dict(event='device',platform=manifest['platform'],float64=manifest['float64'])),flush=True)
+    current=None;splits=0;solves=0
+    if resume is not None:
+        path,current,solves,splits=resume_record(resume,config,source_hash)
+        first,seed,_=load_state(path)
+        record=validate(first,seed,dict(converged=True,resumed=True))
+        write_json(directory/'resume_check.json',record)
+        if record['verdict']!='PASS':
+            write_json(directory/'manifest.json',manifest)
+            outcome=dict(accepted=False,reason='resume_revalidation',solves=solves,splits=splits,last_progress=current)
+            write_json(directory/'outcome.json',outcome);return outcome
+        manifest.update(resume_state_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                        previous_solves=solves,previous_splits=splits,resumed_progress=current)
+    else:
+        seed=transfer_fields(first,old,old_u)
+        try:
+            seed,mode=linear_bound_seed(first,seed)
+        except RuntimeError as error:
+            write_json(directory/'manifest.json',manifest)
+            outcome=dict(accepted=False,reason=str(error),solves=0,splits=0,stability='not_assessed')
+            write_json(directory/'outcome.json',outcome);return outcome
+        write_json(directory/'linear_mode.json',mode)
+    write_json(directory/'manifest.json',manifest)
+    previous=(first,seed)
+    pending=[float(t) for t in np.linspace(0.,1.,steps+1) if current is None or t>current]
     while pending and solves<budget:
         t=float(pending.pop(0))
         fields=[replace(start,amplitude=start.amplitude*max(1-t,floor)),
                 replace(target,amplitude=epsilon*(target.amplitude/epsilon)**t)]
         p=RingProblem(fields,nx=grids[0][0],ny=grids[0][1],length=old.length)
         u0=p.transfer(*previous)
+        started=time.monotonic()
         u,info=newton(p.residual,p.jacobian,u0,tol=config.get('newton_tol',1e-12),
                       max_iter=config.get('max_iter',30),verbose=True)
         solves+=1
         save_state(directory/f'attempt_{solves:03d}.npz',p,u)
+        solve_seconds=time.monotonic()-started
         record=validate(p,u,info)
-        record.update(progress=t,attempt=solves)
-        write_json(directory/f'attempt_{solves:03d}.json',record);records.append(record)
+        record.update(progress=t,attempt=solves,solve_seconds=solve_seconds,total_seconds=time.monotonic()-started)
+        write_json(directory/f'attempt_{solves:03d}.json',record)
         print(f'[homotopy] attempt={solves} t={t:g} verdict={record["verdict"]}',flush=True)
         if record['verdict']=='PASS':
             previous=(p,u);current=t

@@ -47,3 +47,22 @@ def test_a_synthetic_binding_well_has_a_pinned_nodeless_linear_mode():
     assert frequencies[1]==info['frequency']
     assert float(p.anchors[1]@values['q1'][:,-1])==pytest.approx(.001,abs=1e-14)
     np.testing.assert_array_equal(values['q1'][[0,-1]],0.)
+
+
+def test_resume_preserves_spent_budgets_and_refuses_changed_experiments(tmp_path):
+    import json
+    from grteclyn_wrapper.optimisation.railgun.continuation import resume_record
+    config=dict(max_solves=24,max_splits=6)
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(config=config,source_sha256='abc')))
+    (tmp_path/'outcome.json').write_text(json.dumps(dict(accepted=False,solves=15,splits=6)))
+    for attempt,progress,verdict in ((4,.375,'PASS'),(5,.5,'REJECT'),(13,.40625,'PASS')):
+        (tmp_path/f'attempt_{attempt:03d}.json').write_text(json.dumps(dict(attempt=attempt,progress=progress,verdict=verdict)))
+    path,progress,solves,splits=resume_record(tmp_path,config,'abc')
+    assert path.name=='attempt_013.npz'
+    assert (progress,solves,splits)==(.40625,15,6)
+    for changed,source in ((dict(config,max_solves=25),'abc'),(config,'different')):
+        with pytest.raises(ValueError,match='must match'):
+            resume_record(tmp_path,changed,source)
+    (tmp_path/'outcome.json').write_text(json.dumps(dict(accepted=False,solves=24,splits=6)))
+    with pytest.raises(ValueError,match='remaining solve budget'):
+        resume_record(tmp_path,config,'abc')

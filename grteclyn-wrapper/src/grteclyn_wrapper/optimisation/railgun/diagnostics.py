@@ -34,6 +34,27 @@ def localized_tail(ratios, tolerance):
             and all(b <= max(a,tolerance) for a,b in zip(ratios,ratios[1:])))
 
 
+def angular_momentum_surfaces(problem, u, radii, *, order=48):
+    """Exact ADM/Komar surface flux on finite coordinate spheres.
+
+    J(R)=-R^4/4 integral_0^1 B^3 exp(-2f) (1-mu^2) partial_R w dmu.
+    The nu factors cancel between the unit normal and area element. This
+    approaches total J outside the scalar tail without truncating a 1/r fit.
+    """
+    arrays,_=problem.unpack(np.asarray(u))
+    radii=np.atleast_1d(np.asarray(radii,dtype=float))
+    if not np.isfinite(radii).all() or np.any(radii<=0):
+        raise ValueError('positive finite surface radii required')
+    mu,weights=np.polynomial.legendre.leggauss(order)
+    mu,weights=(mu+1)/2,weights/2
+    bx=cheb_eval(problem.s,np.eye(problem.nx+1),(radii-problem.length)/(radii+problem.length))
+    by=cheb_eval(problem.y,np.eye(problem.ny+1),2*mu*mu-1)
+    f=bx@arrays['f']@by.T
+    b=1+bx@arrays['b']@by.T
+    wr=(bx@(problem.dx@arrays['w'])@by.T)*2*problem.length/(radii[:,None]+problem.length)**2
+    return -radii**4/4*np.sum(weights[None,:]*(1-mu[None,:]**2)*b**3*np.exp(-2*f)*wr,axis=1)
+
+
 def observables(problem, u):
     arrays, frequencies = problem.unpack(np.asarray(u))
     sample = lambda a: problem.qx@a@problem.qy.T
@@ -89,6 +110,9 @@ def observables(problem, u):
         twist = np.stack([rr**-3, rr**-4, rr**-5], axis=1)
         spins.append(float(np.mean(np.linalg.lstsq(twist, ww[start:], rcond=None)[0][0])/2))
     gtt = -np.exp(f)+b*b*np.exp(-f)*r*r*sk*w*w
+    surface_radii=shells[2:]
+    surface_j=angular_momentum_surfaces(problem,u,surface_radii)
+    surface_fine=angular_momentum_surfaces(problem,u,surface_radii,order=96)
     density = sum(densities) if densities else np.zeros_like(gtt)
     maxdensity = float(np.max(density))
     lowdensity = density <= 1e-6*max(maxdensity, 1e-300)
@@ -102,6 +126,9 @@ def observables(problem, u):
                 M_Komar_volume=komar, M_ADM_estimate=masses[-1], M_lapse_estimate=lapse_masses[-1],
                 M_fit_drift=max(masses)-min(masses), J_asymptotic_estimate=spins[-1],
                 J_fit_drift=max(spins)-min(spins), density_peaks=peaks,
+                J_surface_radii=surface_radii.tolist(),J_surfaces=surface_j.tolist(),
+                J_surface_estimate=float(surface_j[-1]),
+                J_surface_quadrature_drift=float(np.max(abs(surface_j-surface_fine))),
                 lapse_min=float(np.min(np.exp(f/2))), B_min=float(np.min(b)),
                 dragging_max=float(np.max(np.abs(w))), gtt_max=float(np.max(gtt)),
                 ergoregion_sampled=bool(np.any(gtt>0)),
@@ -158,11 +185,18 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
                                   for k in ('J_volume','M_Komar_volume'))
     if not np.isfinite(out['quadrature_drift']) or out['quadrature_drift'] > 1e-6:
         reasons.append('volume_quadrature')
-    if abs(summary['J_volume']-summary['J_asymptotic_estimate']) > equation_tol*max(1., abs(summary['J_volume'])):
+    # Every outer sphere must agree, independently of the low-order asymptotic
+    # coefficient fit. Matter tails or an unresolved flux still fail this gate.
+    jscale=max(1.,abs(summary['J_volume']))
+    out['angular_momentum_surface_error']=max(abs(value-summary['J_volume']) for value in summary['J_surfaces'])
+    if (not np.isfinite(summary['J_surfaces']).all()
+            or not np.isfinite(summary['J_surface_quadrature_drift'])
+            or out['angular_momentum_surface_error'] > equation_tol*jscale
+            or summary['J_surface_quadrature_drift'] > equation_tol*jscale):
         reasons.append('angular_momentum_balance')
     if abs(summary['M_ADM_estimate']-summary['M_Komar_volume']) > 1e-6*max(1., abs(summary['M_ADM_estimate'])):
         reasons.append('mass_balance')
-    if summary['M_fit_drift'] > 1e-6 or summary['J_fit_drift'] > 1e-6:
+    if summary['M_fit_drift'] > 1e-6:
         reasons.append('asymptotic_fit')
     for ratios in summary['scalar_tail_ratios']:
         if not localized_tail(ratios,tail_tol):

@@ -152,6 +152,30 @@ finite outer radius is labelled as such, not as escape to infinity.
 
 ## Three safeguards added after the spherical benchmark
 
+### Angular momentum at finite radius
+
+The exact surface integral for the stated metric and phase convention is
+
+```text
+J(R) = -R^4/4 integral_0^1 B^3 exp(-2f) (1-mu^2) partial_R w dmu,
+mu=cos(theta).
+```
+
+It follows from `(8 pi)^-1 integral K_ij phi^i s^j dA`, with
+`K_rphi=-gamma_phiphi partial_r w/(2 alpha)`. The nu factors cancel between
+the unit normal and area element. For `w=2J/r^3` in the asymptotic flat
+limit the integral gives J, including its sign. All four outer spheres
+R/L=22,30,42,60 must agree with the independently integrated matter J
+within the existing 1e-8 gate; doubled angular quadrature must also agree.
+Nonnegligible matter tails or unresolved flux therefore still fail.
+
+The three-term fit to `w=sum_(n=3)^5 c_n/r^n` is retained as a diagnostic,
+but is no longer used as the angular-momentum balance gate. Its truncation
+error rejected the first ring continuation even though the exact surface
+flux and matter charge agreed. The original rejected records are preserved.
+
+### KG, winding and the regular core
+
 Every off-grid maximum now carries its radius and polar angle. A separate
 intrinsic KG calculation evaluates
 

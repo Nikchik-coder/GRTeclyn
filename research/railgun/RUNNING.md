@@ -88,6 +88,11 @@ linear mode before nonlinear steps, keeps winding integer and stops on a
 missing branch or exhausted budget. Intermediate two-field states are not
 accepted pure rings.
 
+`homotopy --resume <prior unresolved directory>` requires the identical
+configuration and spherical source, rechecks the last passing point, and
+carries forward all spent solves and bisections. It neither resets the work
+budget nor promotes a previously rejected point. Use a new output directory.
+
 `transport --through-centre --speed -.2` selects an inward launch and requests
 a regular Cartesian core. The core must pass independent equations, curvature
 matching and polynomial-order checks; otherwise no trajectory starts. Its

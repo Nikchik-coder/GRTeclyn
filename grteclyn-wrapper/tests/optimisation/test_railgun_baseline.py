@@ -35,3 +35,28 @@ def test_saved_spherical_metric_supplies_a_bound_integer_winding_mode():
     assert record['relative_linear_residual'] < 1e-8
     assert 0 < record['frequency'] < 1.
     assert np.isfinite(seed).all()
+
+
+def test_partial_ring_exact_flux_resolves_the_truncated_asymptotic_fit():
+    import json
+    from grteclyn_wrapper.optimisation.railgun.workflow import load_state
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import validate
+    directory=ARCHIVE.parent.parent/'spherical-to-ring-first'
+    if not directory.exists():pytest.skip('first ring pilot archive not present')
+    old=json.loads((directory/'attempt_005.json').read_text())
+    p,u,_=load_state(directory/'attempt_005.npz')
+    assert old['reasons']==['angular_momentum_balance']
+    assert abs(old['J_volume']-old['J_asymptotic_estimate'])>1e-8
+    measured=validate(p,u,old['newton'],independent=False)
+    assert measured['verdict']=='PASS',measured['reasons']
+    assert measured['angular_momentum_surface_error']<1e-8
+
+
+def test_saved_spherical_flux_preserves_the_accepted_baseline():
+    import json
+    from grteclyn_wrapper.optimisation.railgun.workflow import load_state
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import validate
+    p,u,_=load_state(ARCHIVE)
+    old=json.loads((ARCHIVE.parent/'grid_96x12.json').read_text())
+    row=validate(p,u,old['newton'],independent=False)
+    assert row['verdict']=='PASS',row['reasons']

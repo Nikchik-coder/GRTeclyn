@@ -118,6 +118,22 @@ def test_three_grid_policy_fails_closed():
     assert not converged_records([row,row,dict(row,M_ADM_estimate=float('nan'))])[0]
 
 
+@pytest.mark.parametrize('spin',[-.3,.3])
+def test_surface_angular_momentum_matches_an_analytic_rotational_flux(spin):
+    from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import angular_momentum_surfaces
+    p=RingProblem(nx=16,ny=4,length=2.)
+    arrays={tag:np.zeros(p.shape) for tag in p.tags}
+    arrays['f'][:]=.1;arrays['b'][:]=.02
+    arrays['N'][:]=.3*(1-p.s[:,None]**2)
+    a=.7
+    # w=2J/(r+L)^3 [1+a P2(cos theta)] has a closed surface integral.
+    arrays['w']=spin/(4*p.length**3)*(1-p.s[:,None])**3*(1+a*(1+3*p.y[None,:])/4)
+    radii=np.array([.2,2.,8.,40.])
+    expected=spin*(radii/(radii+p.length))**4*(1-a/5)*1.02**3*np.exp(-.2)
+    np.testing.assert_allclose(angular_momentum_surfaces(p,p.pack(arrays,[]),radii),expected,rtol=2e-11,atol=1e-11)
+
+
 def test_roundoff_fields_do_not_define_a_relative_spectral_scale():
     from grteclyn_wrapper.optimisation.railgun.diagnostics import spectral_diagnostics
     rng=np.random.default_rng(91)

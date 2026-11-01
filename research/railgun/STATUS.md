@@ -82,8 +82,13 @@ The first homotopy reached converged two-field states, but remains unresolved.
 At progress 0.5, off-grid Einstein/KG defects were 9.40e-11 / 6.59e-9;
 the volume/infinity angular-momentum difference was 1.20e-7 against a 1e-8
 gate. Smaller steps did not remove that limit. The original diagnostics and
-all attempted fields are preserved; no tolerance was relaxed. Far-field
-extraction and resolution are being diagnosed before proposing a new run.
+all attempted fields are preserved; no tolerance was relaxed. The exact
+surface flux at R/L=22,30,42,60 instead agrees with the matter integral
+within 4.17e-9 on this same saved state. The finite-order far-field coefficient
+fit caused the rejection. A correction uses exact surface integrals at the
+unchanged 1e-8 gate, retaining the old fit as a diagnostic. GPU regression
+checks precede resuming this experiment from its last passing point; its
+15 spent solves and six bisections will carry forward.
 
 1. **Single ring:** can a self-gravitating canonical complex scalar form a
    resolved stationary ring with appreciable interior frame dragging? Map
@@ -266,8 +271,10 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable:** diagnose the angular-momentum extraction defect in the
-saved first homotopy. Its bound was 24 solves/six bisections/30 Newton steps,
+**Next deliverable:** GPU regression checks of the angular-momentum extraction
+correction, then resume the same homotopy. Its bound remains 24 cumulative
+coupled solves/six cumulative bisections/30 Newton steps,
 with 56x8 / 72x10 / 96x12 final recovery, GPU 0, four CPU threads, 160 GiB,
-chunks of 128 and 0.5 h; no AMR checkpoints. No automatic rerun is queued.
+chunks of 128 and 0.5 h; no AMR checkpoints. A resume carries spent work
+forward and rechecks its seed; no new parameter scan is queued.
 No rotating-ring or axial-ejection result has yet been established.
