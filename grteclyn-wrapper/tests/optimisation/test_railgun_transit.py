@@ -30,3 +30,14 @@ def test_strict_transport_gate_rejects_small_relative_spin_drift():
     track['absolute_drift']['spin2']=0.
     track['stop']='spin_limit'
     assert not strict_gates(track)['accepted']
+
+
+def test_off_axis_flat_transit_retains_its_launch_radius():
+    xp=configure_jax().numpy
+    system=MPDSystem(lambda x:xp.diag(xp.array([-1.,1.,1.,1.])))
+    state=system.initial_state([2.,0.,1.],speed=-.5,spin=.001)
+    track=system.integrate(state,duration=10.,target_z=-1.,samples=101)
+    assert track['success'] and track['stop']=='target_z'
+    np.testing.assert_allclose(track['state'][:,1],2.,atol=1e-13)
+    np.testing.assert_allclose(track['state'][:,2],0.,atol=1e-13)
+    assert track['state'][-1,3]==pytest.approx(-1.,abs=1e-13)

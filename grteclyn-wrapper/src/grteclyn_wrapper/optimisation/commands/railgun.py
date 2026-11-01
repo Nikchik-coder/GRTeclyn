@@ -35,6 +35,8 @@ def main(argv=None):
     transport.add_argument('--out', type=Path, required=True)
     transport.add_argument('--gpu', type=int, required=True)
     transport.add_argument('--z', type=float, default=5.)
+    transport.add_argument('--rho',type=float,default=0.,help='off-axis launch radius, for a between-ring path')
+    transport.add_argument('--target-z',type=float,help='stop on the inward crossing of this signed height')
     transport.add_argument('--spin', type=float, default=1e-3)
     transport.add_argument('--speed', type=float, default=.2)
     transport.add_argument('--duration', type=float, default=10.)
@@ -97,6 +99,8 @@ def main(argv=None):
         if args.study:
             if not args.through_centre or args.profile is None:
                 parser.error('--study requires --through-centre and an accepted --profile')
+            if args.rho!=0.:
+                parser.error('the axial --study requires rho=0; use ordinary transport for off-axis tracks')
             from ..railgun.transit import run_transit
             result=run_transit(args.solution,args.profile,args.out,spin=args.spin,z0=args.z,
                        speed=args.speed,duration=args.duration,rtols=(args.rtol,args.second_rtol),
@@ -123,18 +127,22 @@ def main(argv=None):
                 print('Cartesian core failed certification; no trajectory started',flush=True)
                 return 2
         system = MPDSystem(geometry.metric,regular_origin=args.through_centre)
-        states = matched_controls(system, [0., 0., args.z], spin=args.spin, speed=args.speed)
+        if not np.isfinite(args.rho) or args.rho<0:
+            parser.error('rho must be finite and nonnegative')
+        states = matched_controls(system, [args.rho, 0., args.z], spin=args.spin, speed=args.speed)
         args.out.mkdir(parents=True, exist_ok=False)
         summary = dict(background_schema=metadata['schema'], model=metadata['model'],
                        background_stability='not_assessed', controls={},
                        rtol=args.rtol, max_step=args.max_step,
                        regular_origin=args.through_centre,
+                       launch_rho=args.rho,target_z=args.target_z,
                        interpretation='Finite-radius tracks; no claim of asymptotic escape.')
         if certificate is not None:
             write_json(args.out/'corridor.json',certificate)
         for label, state in states.items():
             track = system.integrate(state, duration=args.duration, rtol=args.rtol,
-                                     max_step=args.max_step,inner_radius=0. if args.through_centre else 1e-4)
+                                     max_step=args.max_step,inner_radius=0. if args.through_centre else 1e-4,
+                                     target_z=args.target_z)
             np.savez_compressed(args.out/f'{label}.npz', time=track['time'], state=track['state'])
             small = {k:v for k,v in track.items() if k not in ('time','state')}
             write_json(args.out/f'{label}.json', small)
