@@ -60,7 +60,8 @@ def main(argv=None):
                                        levels=[.5*np.max(amplitude**2)]).allsegs[0]
         plt.close(temporary)
         phi = np.linspace(0., 2*np.pi, 129)
-        fig = plt.figure(figsize=(8., 6.5), layout='constrained')
+        fig = plt.figure(figsize=(8., 7.))
+        fig.subplots_adjust(left=.02, right=.93, bottom=.16, top=.92)
         ax = fig.add_subplot(projection='3d')
         for contour in contours:
             rr, zz = contour[:, 0]*mass, contour[:, 1]*mass
@@ -76,7 +77,7 @@ def main(argv=None):
                zlim=(-.6*limit, .6*limit), box_aspect=(1., 1., .6))
         ax.view_init(elev=45., azim=-55.)
         ax.set_title(f'Computed scalar ring · k={field["winding"]}', pad=15.)
-        fig.text(.5, .015, 'Surface at 50% of peak scalar amplitude squared; the field has diffuse tails.',
+        fig.text(.5, .025, 'Surface at 50% of peak scalar amplitude squared; the field has diffuse tails.',
                  ha='center', fontsize=10)
     else:
         fig, axes = plt.subplots(1, 2, figsize=(9., 4.5), layout='constrained')
