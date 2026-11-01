@@ -24,6 +24,11 @@ def save_state(path, problem, u, *, validated=False):
                     ny=problem.ny, length=problem.length, target_j=problem.target_j,
                     fields=[f.to_dict() for f in problem.fields], validated=bool(validated),
                     stability='not_assessed')
+    if any(t is not None for t in problem.frequency_targets):
+        metadata['frequency_targets']=list(problem.frequency_targets)
+        arrays,_=problem.unpack(np.asarray(u))
+        metadata['measured_amplitude_pins']=[float(problem.anchors[i]@arrays[f'q{i}'][:,-1])
+                                             for i in range(len(problem.fields))]
     np.savez_compressed(path, metadata=json.dumps(metadata), u=np.asarray(u))
 
 
@@ -35,10 +40,29 @@ def load_state(path):
     if metadata.get('schema') != SCHEMA or metadata.get('model') != 'canonical_regular_centre':
         raise ValueError('unsupported ring solution schema/model')
     p = RingProblem([ScalarField(**f) for f in metadata['fields']], nx=metadata['nx'],
-                    ny=metadata['ny'], length=metadata['length'], target_j=metadata['target_j'])
+                    ny=metadata['ny'], length=metadata['length'], target_j=metadata['target_j'],
+                    frequency_targets=metadata.get('frequency_targets'))
     if u.shape != (p.n_unknowns,) or not np.isfinite(u).all():
         raise ValueError('saved vector is nonfinite or incompatible with its declared model')
     return p, u, metadata
+
+
+def branch_checks(record,problem,u,config):
+    """Do not accept the trivial vacuum during fixed-frequency continuation."""
+    floors=config.get('minimum_charges')
+    if floors is not None:
+        charges=np.asarray(record.get('charges',[]),float);floors=np.asarray(floors,float)
+        if (charges.shape!=floors.shape or not np.isfinite(charges).all()
+                or not np.isfinite(floors).all() or np.any(floors<=0) or np.any(charges<floors)):
+            record['reasons'].append('branch_charge_floor')
+    if config.get('require_nodeless'):
+        arrays,_=problem.unpack(np.asarray(u))
+        for i in range(len(problem.fields)):
+            q=arrays[f'q{i}'];peak=float(np.max(abs(q)));resolved=q[abs(q)>1e-5*peak]
+            if not len(resolved) or np.min(resolved)*np.max(resolved)<0:
+                record['reasons'].append('branch_scalar_nodes');break
+    record['verdict']='PASS' if not record['reasons'] else 'REJECT'
+    return record
 
 
 def run_study(config, directory, *, reference=None, seed_path=None):
@@ -74,7 +98,8 @@ def run_study(config, directory, *, reference=None, seed_path=None):
                     if isinstance(value,np.ndarray)})
     for index, (nx, ny) in enumerate(grids):
         started = time.monotonic()
-        p = RingProblem(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'))
+        p = RingProblem(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'),
+                        frequency_targets=config.get('frequency_targets'))
         if index == 0:
             device = p.jax.devices()[0]
             manifest.update(jax=p.jax.__version__, platform=device.platform,
@@ -102,6 +127,7 @@ def run_study(config, directory, *, reference=None, seed_path=None):
                               tail_tol=config.get('tail_tol', 1e-6))
         except (ValueError, FloatingPointError, np.linalg.LinAlgError) as error:
             record = dict(grid=[nx, ny], newton=info, verdict='REJECT', reasons=[str(error)], stability='not_assessed')
+        branch_checks(record,p,u,config)
         record.update(solve_seconds=solve_elapsed, total_seconds=time.monotonic()-started)
         write_json(directory/f'grid_{nx}x{ny}.json', record)
         records.append(record)

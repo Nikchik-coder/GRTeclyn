@@ -17,8 +17,17 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, loba
 
 
 class RingProblem:
-    def __init__(self, fields=(), *, nx=32, ny=8, length=6., target_j=None, quadrature_order=None):
+    def __init__(self, fields=(), *, nx=32, ny=8, length=6., target_j=None, quadrature_order=None,
+                 frequency_targets=None):
         self.fields = tuple(fields)
+        self.frequency_targets=tuple(frequency_targets) if frequency_targets is not None else (None,)*len(fields)
+        if len(self.frequency_targets)!=len(fields):raise ValueError('one frequency target per field required')
+        if any(value is not None for value in self.frequency_targets):
+            if len(fields)!=1 or target_j is not None:
+                raise ValueError('frequency control currently requires one field and no total-J border')
+            if any(value is not None and (not np.isfinite(value) or not 0<value<field.mass)
+                   for value,field in zip(self.frequency_targets,fields)):
+                raise ValueError('fixed frequency must lie strictly between zero and field mass')
         if isinstance(nx, bool) or int(nx) != nx or nx < 6:
             raise ValueError('nx must be an integer >= 6')
         if isinstance(ny, bool) or int(ny) != ny or ny < 3:
@@ -107,7 +116,7 @@ class RingProblem:
 
     def _residual(self, u):
         xp = self.xp
-        arrays, _ = self.unpack(u)
+        arrays, frequencies = self.unpack(u)
         rows = self.rows(u, xp)
         blocks = []
         for tag in self.tags:
@@ -120,6 +129,9 @@ class RingProblem:
             key = {'f': 'E_f', 'w': 'E_w', 'N': 'E_Nr', 'b': 'E_B'}.get(tag, f'E_{tag}')
             blocks.append(xp.concatenate((a[:1], rows[key], origin)).ravel())
         for i, field in enumerate(self.fields):
+            if self.frequency_targets[i] is not None:
+                blocks.append(xp.atleast_1d(frequencies[i]-self.frequency_targets[i]))
+                continue
             held = self.anchors[i]@arrays[f'q{i}'][:, -1]
             # q is the parity-factored amplitude, including for an odd field.
             amp = (xp.exp(u[-1]) if self.target_j is not None and i == len(self.fields)-1

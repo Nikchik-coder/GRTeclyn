@@ -41,12 +41,19 @@ Last accepted omega=0.874052056468, M=1.198020886933, J=-1.241877125360,
 minimum sampled lapse=0.78022047, peak shift/lapse=0.06178653 (6.18%).
 No sampled ergoregion among accepted points. Archive:
 `results/railgun/studies/compactness-scan/`, including all accepted states
-and the rejected 0.12 state. Next: prepare frequency-controlled continuation
-from the last accepted state; a fresh run-specific go is required before
-changing the continuation parameter. No further physical run is queued.
+and the rejected 0.12 state. Frequency-controlled continuation from the
+last accepted state is now explicitly approved.
+**Approved next:** GPU regressions, then frequency-controlled continuation
+from `studies/compactness-scan/amplitude_03/accepted.npz` at omega=0.85,
+0.82, 0.79, 0.76, 0.73, 0.70, 0.67, same three grids and gates. At most
+21 solves and 30 iterations each; four threads, 160 GiB, 0.5 h per job,
+chunks 128, no AMR checkpoints. Require two corrections on every grid,
+nonvacuum component charge and a nodeless scalar; measure the amplitude
+instead of imposing its fixed-radius pin. Stop on rejection or an accepted
+sampled ergoregion. Prepared, not launched; tests must pass first.
 Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
-Both cards idle. Scratch clean at **17:20 MSK**: 47 MB in `_cache/` only,
-538 GB free; first node not listed. No completion ETA.
+Both cards idle. Scratch clean at **17:33 MSK**: 47 MB in `_cache/` only,
+537 GB free; first node not listed. No completion ETA.
 
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
 raw code `4d40acbc`, **16:52:24–17:07:01 MSK**, followed by the event audit
@@ -67,17 +74,18 @@ resolves an earlier shallow crossing before its terminal turnaround.
 
 **Requested follow-on experiments (November 1):**
 
-- **Uphill finite-endpoint selection:** implementation and bounded config
-  `studies/uphill_transit.json` are ready for GPU regression checks, then a
-  separate go. Launch z=+1 toward z=-10 on the accepted pure ring; spin 0,
+- **Uphill finite-endpoint selection:** completed and accepted after event
+  audit, as reported above. Config: `studies/uphill_transit.json`.
+  Launch z=+1 toward z=-10 on the accepted pure ring; spin 0,
   +/-0.001, equal full spin-corrected Killing energy. Four energies include
   alpha(-10)+1e-7 and brackets derived from measured spin-dependent resting
   endpoint energies; two RK tolerances and background/spin reversal, 32
   tracks maximum. Stop at destination or the first true dz/dtau turnaround.
   Reaching -10 is a finite transit, not escape or long-term trapping. No
   selection effect is assumed in advance.
-- **Compactness continuation:** implementation and
-  `studies/compactness_scan.json` are ready; not launched. Seven increasing
+- **Compactness continuation:** amplitude scan completed with three accepted
+  points and one rejection; the approved frequency scan follows above.
+  Original `studies/compactness_scan.json` specified seven increasing
   pins 0.06..0.23, each freshly solved on 72x10 / 96x12 / 128x16, at most
   21 solves and 30 iterations each. Keep the existing equation/convergence
   gates, measure frequency, lapse, dragging and sampled g_tt, stop on failure

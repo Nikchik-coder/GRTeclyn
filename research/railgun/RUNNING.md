@@ -192,3 +192,23 @@ next seed. A failed point stops the scan; an accepted sampled ergoregion
 also ends it. Each accepted point saves its own fields and diagnostics.
 No frequency, maximum spin, stability or particle-selection outcome is
 presupposed. Mixed-mass and odd-parity seed work stays separately queued.
+
+The amplitude scan accepted pins through 0.095 and stopped at 0.12. The
+separately approved follow-on controls frequency rather than the amplitude
+at a fixed coordinate radius:
+
+```bash
+$PY -m grteclyn_wrapper.optimisation.railgun.frequency_scan \
+  research/railgun/studies/frequency_scan.json \
+  --source results/railgun/studies/compactness-scan/amplitude_03/accepted.npz \
+  --out runs/railgun/frequency-scan --gpu 0 --dry-run
+```
+
+The frequency border replaces the pin condition without adding unknowns.
+Saved states declare `frequency_targets` and their measured amplitude pins;
+older states retain their original amplitude-border interpretation. Every
+point still requires three grids, two fresh corrections, independent equations
+and the original convergence gates. A charge floor of 0.001 times the source
+charge and a nodeless-field check prevent accepting the trivial vacuum or
+switching to an excited branch. At most 21 solves; stop on rejection or a
+validated sampled ergoregion. Use the same capped GPU execution limits.
