@@ -31,7 +31,16 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none while the completed uphill trajectories receive an event audit.
+**Live:** `railgun-uphill-event-audit-20261101`, second node/card 0,
+code `786cf041`, started **17:11 MSK**. Reconstruct first crossings from the
+saved dense samples with degree 5/7 comparison and independently check terminal
+TD-MPD invariants; **zero additional integrated ring tracks**. No evolution t;
+speed/ETA not yet measured; hard cap 0.5 h, **17:41 MSK**. Four threads,
+160 GiB, no AMR checkpoints. Five event/CUDA regression checks passed in
+7.11 s, **17:10:35–17:10:44 MSK**. Exact Rindler crossing time and Killing
+energy agree, and the direct integrator now resolves the earlier target.
+
+Completed raw integration:
 `railgun-uphill-transit-20261101`, second node/card 0, code `4d40acbc`, ran
 **16:52:24–17:07:01 MSK (0.244 h)**, exit 0, 32 tracks. Conservation passed,
 but raw event labels are not sufficient: a shallow destination crossing and
@@ -46,7 +55,7 @@ exit 0, code `4d40acbc`; portable report
 then the seven-point compactness scan, at most 21 solves, card 0.
 Each job: four threads, 160 GiB, chunks 128, 0.5 h cap;
 no AMR checkpoints, retain fields/logs. Mixed-mass/stacked seeds are not
-approved for GPU launch. Scratch clean at **17:07 MSK**: 47 MB in `_cache/`
+approved for GPU launch. Scratch clean at **17:11 MSK**: 47 MB in `_cache/`
 only, 538 GB free; first node not listed. Card 1 idle.
 
 **Requested follow-on experiments (November 1):**
