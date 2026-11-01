@@ -151,9 +151,22 @@ class MPDSystem:
             events=(*events,turnaround);labels=(*labels,'turnaround')
         result = solve_ivp(rhs, (0., duration), state, method='DOP853', rtol=rtol,
                            atol=atol, max_step=max_step, events=events,
-                           dense_output=samples is not None)
-        times=result.t if samples is None else np.linspace(0.,result.t[-1],int(samples))
-        states=result.y.T if samples is None else result.sol(times).T
+                           dense_output=samples is not None or (stop_at_turnaround and target_z is not None))
+        stop = next((label for label, hits in zip(labels,result.t_events) if len(hits)), 'duration')
+        end=float(result.t[-1]);recovered=False
+        if stop=='turnaround' and target_z is not None and result.y[3,-1]<target_z:
+            # A shallow target crossing and recrossing can share one accepted
+            # step and evade sign-change bracketing. The first turnaround
+            # bounds a monotone descent: resolve its earlier destination from
+            # the integrator's own seventh-order dense polynomial.
+            from scipy.optimize import brentq
+            end=brentq(lambda tau:float(result.sol(tau)[3]-target_z),0.,end,xtol=5e-14)
+            stop='target_z';recovered=True
+        if samples is not None:
+            times=np.linspace(0.,end,int(samples));states=result.sol(times).T
+        elif recovered:
+            times=np.r_[result.t[result.t<end],end];states=result.sol(times).T
+        else:times,states=result.t,result.y.T
         history = [self.invariants(y) for y in states]
         first = history[0]
         drifts = {k: max(abs(row[k]-first[k]) for row in history)
@@ -161,8 +174,6 @@ class MPDSystem:
         conservation_ok = all(error <= 1e-7*max(abs(first[k]),1e-12)
                               for k,error in drifts.items())
         conservation_ok = conservation_ok and max(row['ssc_max'] for row in history) <= 1e-8
-        stop = next((label for label, hits in zip(labels,
-                                                result.t_events) if len(hits)), 'duration')
         return dict(time=times, state=states, invariants=history,
                     success=bool(result.success and conservation_ok),
                     integrator_success=bool(result.success), conservation_ok=bool(conservation_ok),

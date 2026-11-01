@@ -31,17 +31,22 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-uphill-transit-20261101`, second node/card 0,
-code `4d40acbc`, started **16:52:24 MSK**. Initial core certification/compilation
-phase; 32 matched-energy tracks maximum. No evolution t; per-track speed and
-completion ETA not measured yet. Hard cap **0.5 h, 17:22 MSK**.
+**Live:** none while the completed uphill trajectories receive an event audit.
+`railgun-uphill-transit-20261101`, second node/card 0, code `4d40acbc`, ran
+**16:52:24–17:07:01 MSK (0.244 h)**, exit 0, 32 tracks. Conservation passed,
+but raw event labels are not sufficient: a shallow destination crossing and
+turnaround can occur within one step, making a transmitted control appear
+reflected just beyond z=-10. Preserve the original data; independently audit
+first crossings before acceptance or a selection claim. No new physical
+tracks are added. The live integration code was left untouched until it ended.
 **37 GPU regression checks passed in 42.32 s**, **16:51:24–16:52:08 MSK**,
 exit 0, code `4d40acbc`; portable report
 `results/railgun/reports/gpu_uphill_regression.json`.
-**Approved next:** seven-point compactness scan, at most 21 solves, card 0
-when uphill finishes. Each job: four threads, 160 GiB, chunks 128, 0.5 h cap;
+**Approved next:** first-crossing verification as part of the uphill study,
+then the seven-point compactness scan, at most 21 solves, card 0.
+Each job: four threads, 160 GiB, chunks 128, 0.5 h cap;
 no AMR checkpoints, retain fields/logs. Mixed-mass/stacked seeds are not
-approved for GPU launch. Scratch clean at **16:54 MSK**: 47 MB in `_cache/`
+approved for GPU launch. Scratch clean at **17:07 MSK**: 47 MB in `_cache/`
 only, 538 GB free; first node not listed. Card 1 idle.
 
 **Requested follow-on experiments (November 1):**
