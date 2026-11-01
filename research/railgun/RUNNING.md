@@ -212,3 +212,27 @@ and the original convergence gates. A charge floor of 0.001 times the source
 charge and a nodeless-field check prevent accepting the trivial vacuum or
 switching to an excited branch. At most 21 solves; stop on rejection or a
 validated sampled ergoregion. Use the same capped GPU execution limits.
+
+### Prepared resolution recovery at omega=0.73
+
+The frequency scan stopped on the 72x10 unimposed constraint at omega=0.73.
+`studies/frequency_073_refined.json` changes only the grids to 96x12 / 128x16 /
+160x20, keeping frequency, model, branch guards and tolerances. Seed from the
+converged but rejected 72x10 field; its use as an initial guess does not accept
+its constraint error. Every new grid must make at least two real corrections
+and pass independently; the three-grid observable test remains mandatory.
+
+Prepared command, **not authorised or launched** (fresh run-specific go required):
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refined-20261101 \
+  --threads 4 --mem 160 --timeout 1800 --gpu -- \
+  env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
+  grteclyn-wrapper/.venv/bin/python -u -m grteclyn_wrapper.optimisation.commands.railgun solve \
+  research/railgun/studies/frequency_073_refined.json \
+  --seed results/railgun/studies/frequency-scan/frequency_05/grid_72x10.npz \
+  --out runs/railgun/frequency-073-refined-20261101 --gpu 0 --jac-chunk 128
+```
+
+Three solves maximum, 30 iterations each, four threads, 160 GiB, 0.5 h.
+No AMR checkpoints or automatic lower-frequency follow-on.

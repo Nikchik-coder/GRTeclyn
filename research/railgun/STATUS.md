@@ -46,8 +46,13 @@ The preceding **31 GPU regressions passed in 24.87 s**
 (**17:34:17–17:34:43 MSK**, code `1f4054a0`); portable report:
 `results/railgun/reports/gpu_frequency_regression.json`.
 
-**Next:** prepare a three-grid resolution recovery of omega=0.73, keeping
-all gates and physics unchanged, before further frequency continuation.
+**Next, prepared but not launched:** `studies/frequency_073_refined.json`,
+a three-grid recovery of omega=0.73 on 96x12 / 128x16 / 160x20, seeded
+from the retained converged 72x10 candidate. At most three solves, 30
+iterations each, at least two fresh corrections per grid; same branch,
+1e-8 equation and 1e-6 tail/observable gates. Keep four threads, 160 GiB,
+0.5 h, chunks 128 and no AMR checkpoints. Test resolution before further
+frequency continuation. The dry run performed no numerical execution.
 The current go was to stop on failed validation, so no recovery or new
 strong-ring profile/particle experiment is authorised yet. The earlier
 annular k2=-12 flux failure also remains unresolved. Both cards idle,
@@ -64,8 +69,9 @@ Last accepted omega=0.874052056468, M=1.198020886933, J=-1.241877125360,
 minimum sampled lapse=0.78022047, peak shift/lapse=0.06178653 (6.18%).
 No sampled ergoregion among accepted points. Archive:
 `results/railgun/studies/compactness-scan/`, including all accepted states
-and the rejected 0.12 state. Frequency-controlled continuation from the
-last accepted state is now explicitly approved.
+and the rejected 0.12 state. The separately approved frequency continuation
+completed with four accepted points, as reported above.
+
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
 raw code `4d40acbc`, **16:52:24–17:07:01 MSK**, followed by the event audit
 code `786cf041`, **17:11:52–17:12:10 MSK**. At common energy
