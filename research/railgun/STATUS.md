@@ -25,26 +25,32 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-annular-recovery-k12-20261101`, second node/card 0,
-implementation `121a9ef7`, started **16:14:12 MSK**, after its run-specific go
-and successful GPU regressions. First 192x16 solve compiling; stationary
-solve, so evolution time t is not applicable. Newton speed and completion
-ETA not measured yet; hard remaining budget at launch **0.5 h, 16:44 MSK**.
-Source `k12_128x16.npz`. Three fresh coupled
-solves at **192x16 / 224x18 / 256x20**, L=50, total J=0, at most 30 Newton
-iterations per solve and at least two corrections on each grid. Same
-1e-8 equations and 1e-6 matter cutoff; require separate charge/edge convergence
-and a sampled finite-height channel z=-10..10 inside the middle half of the gap.
-Four threads, 160 GiB host cap, 0.5 h per job, chunks 128; no AMR checkpoints.
-Dry run: 19,689 / 25,653 / 32,385 unknowns; eight dense buffers estimated
-23.11 / 39.22 / 62.51 GiB. This estimates storage, not measured allocation.
-**22 GPU checks passed in 3.60 s**, **16:13:51–16:13:57 MSK**, exit 0,
-code `121a9ef7`: budgets/provenance/acceptance, correct frequency-to-J-border
-promotion, component densities versus independent Cartesian AD, existing
-gap tests and CUDA float64 placement. No automatic
-fallback to a different grid, winding, potential or tolerance.
-Scratch clean at **16:14 MSK**: 47 MB in `_cache/` only, 539 GB free;
-first node not listed. Card 1 idle. No plotfiles or AMR checkpoints.
+**Live:** none. `railgun-annular-recovery-k12-20261101`, second node/card 0,
+code `121a9ef7`, ran **16:14:11–16:17:10 MSK (0.050 h)**, exit 2.
+All three fresh Newton solves converged (6 / 4 / 4 updates). The 192x16 and
+224x18 grids passed; **256x20 was rejected** by independent angular-momentum
+surface balance: **1.33955e-8 against the unchanged 1e-8 gate**, on the
+outermost R=3000 sphere. Volume J=6.69e-14. The discrepancy is under
+investigation; no accepted background or particle launch follows from it.
+
+**The annular gap survived nonlinear backreaction on every grid:**
+33.29734 < rho < 40.90802, width 7.61068 at the component-wise 1e-6 cutoff.
+The sampled finite-height channel rho=35.20..39.01, z=-10..10 also passed;
+max component densities below 2.90e-7 / 4.42e-7 of their own equatorial peaks.
+Final independent Einstein/KG maxima 5.59e-13 / 2.68e-14. These are promising
+provisional fields, not three-grid accepted data. No tolerance was changed.
+Archive: `results/railgun/annular-recovery-k12/`, all three states, density
+and channel profiles, diagnostics, manifest, log and checksums retained.
+Three solves maximum, L=50, total J=0, grids 192x16 / 224x18 / 256x20;
+four threads, 160 GiB host cap, 0.5 h, chunks 128; no AMR checkpoints.
+No different grid, winding, potential or tolerance is an automatic fallback.
+
+**22 GPU regression checks passed in 3.60 s**, **16:13:51–16:13:57 MSK**,
+exit 0, code `121a9ef7`: budgets/provenance/acceptance, correct J-border
+promotion, component densities versus independent Cartesian AD, prior gap
+tests and CUDA float64 placement. `results/railgun/gpu_annular_regression.json`.
+Scratch clean at **16:20 MSK**: 47 MB in `_cache/` only, 539 GB free;
+first node not listed. Both cards idle; no ETA or queued physical run.
 
 Completed `railgun-annular-gap-screen-20261101`, second node/card 0,
 code `928bde26`, finished **13:22:52 MSK**, exit 0. Eight GPU eigenproblems
@@ -120,7 +126,7 @@ k2=-12 or -16 seed, enforce total J=0 after backreaction, and require three
 fresh grid solves plus the unchanged independent equations and 1e-6
 matter-gap test. Then verify the finite-height annular channel and particle
 trajectories inside it. The k2=-12 seed is the smaller-separation candidate;
-the k2=-12 recovery above is now authorised and running. The completed
+the approved k2=-12 recovery finished with the flux rejection above. The completed
 screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
