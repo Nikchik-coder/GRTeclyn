@@ -9,12 +9,13 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-ring-resumed-20261101`, second node/card 0, code
-`da1280f5`, started **10:56:58 MSK**. Same configuration and spherical source;
-resume rechecks the last passing state and carries 15 solves/six bisections
-forward. Four threads, 160 GiB, chunks of 128, timeout **0.417 h
-(11:21:58 MSK)**; combined nonlinear-job caps remain below 0.5 h.
-Completion ETA is unmeasured. The six targeted GPU flux/resume/device checks
+**Live:** none. `railgun-ring-resumed-20261101`, second node/card 0, code
+`da1280f5`, ran **10:56:58–10:57:42 MSK (0.012 h)**. Seed revalidation and
+progress 0.5 passed. Progress 0.625 was rejected: off-grid KG 1.17e-8 at
+r=0.25, theta=1.3 (also present intrinsically), surface-J error 2.41e-8,
+and mass-fit drift above its gate. Cumulative work: **17 solves, six
+bisections**. No pure ring or trajectories. GPUs idle; no completion ETA.
+The six targeted GPU flux/resume/device checks
 passed in 3.87 s at **10:56:26 MSK**, code `da1280f5`.
 
 `railgun-spherical-to-ring-20261101`, second node/card 0,
@@ -95,8 +96,8 @@ surface flux at R/L=22,30,42,60 instead agrees with the matter integral
 within 4.17e-9 on this same saved state. The finite-order far-field coefficient
 fit caused the rejection. A correction uses exact surface integrals at the
 unchanged 1e-8 gate, retaining the old fit as a diagnostic. GPU regression
-checks precede resuming this experiment from its last passing point; its
-15 spent solves and six bisections will carry forward.
+checks passed before resuming this experiment; the corrected run passed
+progress 0.5 and reached the resolution defect recorded above at 0.625.
 
 1. **Single ring:** can a self-gravitating canonical complex scalar form a
    resolved stationary ring with appreciable interior frame dragging? Map
