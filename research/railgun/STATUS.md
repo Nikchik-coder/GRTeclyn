@@ -35,9 +35,11 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 `e33bd0c8`, on the second GPU node. Card 0:
 `railgun-strong-axis-audit-20261101`, 32 phase quadratures/656 full-MPD
 substitution points, no new MPD tracks. Card 1:
-`railgun-annular-regular-k12-20261101`, first 192x16 solve of at most
-three grids; two updates converge at scaled residual 5.05e-13, independent
-validation running. All gates unchanged. Preceding CUDA suites passed
+`railgun-annular-regular-k12-20261101` stopped **19:32:46 MSK**, exit 2,
+after two updates on 192x16. Infinity angular mode passes; finite-sphere
+J error 1.91575e-8 fails 1e-8. All other checks pass. One Jacobian was
+reused; scaled residual 5.05e-13. Later grids unattempted; card 1 idle.
+Archive: `results/railgun/studies/annular-regular-k12-initial/`. All gates unchanged. Preceding CUDA suites passed
 **15 + 33 = 48 tests** (12.45 / 10.63 s), code `e5096e78`.
 Each job: four threads, 160 GiB, 0.5 h, chunks 128, no AMR checkpoints.
 Hard deadline **20:01 MSK**; no steady-state ETA during compilation.
