@@ -113,6 +113,14 @@
       "sha256": "0952ddbae3fa25b364d515164af22a8242ca40ed22be8eb0237d7d84741ced9d",
       "bytes": 1116
     },
+    "reports/gpu_precision_regression.json": {
+      "sha256": "b05c84920725dbaa7c7c598021f899aa46d12126618119f3f3f75e2c3c984479",
+      "bytes": 4124
+    },
+    "reports/gpu_quintic_regression.json": {
+      "sha256": "8ba00779484d309da3711a55ac6535483839e90611c443a0b1031027a167e939",
+      "bytes": 7656
+    },
     "reports/gpu_refinement_regression.json": {
       "sha256": "0be71e9e6e52df6c37a62d756ba5c80ca6731270e0a6eefb0d80f604de1f5941",
       "bytes": 11006
