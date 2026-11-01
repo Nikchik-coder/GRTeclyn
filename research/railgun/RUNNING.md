@@ -304,3 +304,15 @@ Both jobs have finished rejected: the precision audit retains timing changes
 leading infinity angular equation (80.57967 above 1e-6). No later grids or
 off-axis tracks. Completed archives are under studies/strong-uphill-073-precision
 and studies/annular-quintic-k12. No new numerical run is authorised.
+
+
+### Approved regular-operator recovery and independent phase audit
+
+Configs `studies/annular_regular_k12.json` (card 1) and
+`studies/axial_audit_073.json` (card 0) have a separate go. Each follows
+its targeted GPU tests, four threads, 160 GiB, 1800 s, chunks 128,
+no AMR checkpoints. The former has at most three fresh 192x16/224x18/256x20
+solves, max 30 iterations/minimum two updates, stop on rejection. The latter
+has at most 32 phase quadratures and 656 full MPD substitution points,
+zero new MPD tracks. Source/core hashes and all earlier failed evidence
+are preserved. All existing numerical gates remain unchanged.

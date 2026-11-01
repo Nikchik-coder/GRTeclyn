@@ -31,7 +31,16 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none; both cards idle. The approved correction jobs finished:
+**Live:** none at 19:27 MSK; corrected methods approved and being synced.
+Card 0: targeted tests then `studies/axial_audit_073.json`, at most 32
+phase quadratures and 656 full Cartesian MPD substitution points against
+saved finest tracks, no new MPD tracks. Card 1: tests then
+`studies/annular_regular_k12.json`, at most three fresh solves on
+192x16 / 224x18 / 256x20, max 30 iterations/minimum two updates, stop on
+rejection. Four threads/160 GiB/0.5 h/chunks 128/no AMR checkpoints per
+job. All original gates retained. Scratch 47 MB in `_cache/`, 535 GB free.
+
+**Prior correction jobs completed:**
 
 - Card 0: `railgun-strong-uphill-073-precision-20261101`, code `568eaac8`,
   **19:06:19–19:10:14 MSK (0.0653 h)**, exit 2. Exactly two new tracks

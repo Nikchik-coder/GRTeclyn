@@ -1,4 +1,4 @@
-"""Bounded fresh recovery of the gapped k2=-12 state with cubic dragging falloff."""
+"""Bounded fresh recovery of the gapped k2=-12 state with explicit dragging falloff."""
 from __future__ import annotations
 import argparse
 import hashlib
@@ -26,15 +26,21 @@ def preflight(source,config):
                relative_density_cutoff=1e-6,channel_half_height=10.,perturbation=0.)
     if any(config.get(k)!=v for k,v in fixed.items()):raise ValueError('fixed three-solve falloff recovery budget and unchanged gates required')
     if config.get('falloff_power',3) not in (3,5):raise ValueError('cubic or zero-J quintic profile required')
+    if config.get('regular_operator',False) not in (False,True):raise ValueError('boolean regular-operator flag required')
+    if config.get('regular_operator') and config.get('falloff_power')!=5:raise ValueError('regular operator requires quintic falloff')
     return dict(metadata=meta,source_sha256=digest,max_solves=3,
                 grids=config['grids'],numerical_execution=False,
-                representation=f'w=(1-s)^{config.get("falloff_power",3)} H; omitted outer PDE rows checked independently')
+                representation=('Regular H operator with all interior PDEs and full infinity conditions'
+                    if config.get('regular_operator') else f'w=(1-s)^{config.get("falloff_power",3)} H; omitted outer PDE rows checked independently'))
 
 
 def run_recovery(source,config,directory):
     plan=preflight(source,config)
     from .workflow import load_state as load_canonical,write_json
     from .dragging_falloff import FactoredDraggingProblem,save_state,validate,MODEL
+    if config.get('regular_operator'):
+        from .regular_dragging import RegularDraggingProblem
+        FactoredDraggingProblem=RegularDraggingProblem
     from .annular_recovery import acceptance,measure_channel
     from .gap import equatorial_densities,annular_gap
     from ..solver.newton import newton
@@ -45,7 +51,8 @@ def run_recovery(source,config,directory):
         source_model='canonical_regular_centre',output_model=MODEL,
         commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         platform='gpu',float64=bool(old.jax.config.jax_enable_x64),stability='not_assessed',
-        tau=f'Power {config.get("falloff_power",3)} falloff; every omitted outer PDE row is tested.'))
+        tau=('Regular H operator; all interior PDEs retained; angular and null-mode infinity conditions.'
+             if config.get('regular_operator') else f'Power {config.get("falloff_power",3)} falloff; every omitted outer PDE row is tested.')))
     previous=old,old_u;records=[];started=time.monotonic()
     radius=np.loadtxt(Path('results/railgun/studies/annular-recovery-k12/grid_192x16_density.tsv'),usecols=0)
     for nx,ny in config['grids']:

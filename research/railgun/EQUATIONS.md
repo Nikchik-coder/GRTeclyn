@@ -348,3 +348,40 @@ Fit physical nodal w in the constrained basis with relative SVD cutoff
 1e-12; this is only a starting guess and is retained explicitly. Fresh
 Newton updates and all independent acceptance tests still follow. No
 quintic GPU result exists at this implementation stage.
+
+
+### Regular zero-J dragging operator and independent axial phase audit
+
+The tau falloff prototypes failed literal-infinity gates. The corrected
+operator writes w=t^5 H, t=1-s, with H degree nx rather than nx-5, and imposes
+all nx-1 interior momentum equations divided analytically by t^5. No outer
+PDE rows are dropped. For a=(1+s)^2/4, b=2-t^2/2 and c=-2 f_s+3 B_s/B,
+the radial part is t^2 a H_ss + [t(b-10a)+t^2 ac] H_s +
+[20a-5b-5tac]H. Angular derivatives and the matter source are unchanged
+after division. Physical residuals, Cartesian flux and unused constraints
+retain their existing independent acceptance checks.
+
+At infinity let L=4(1-y^2)d_yy-(10y+6)d_y and q=(5y+3)/2.
+The leading condition is (L+10)H=0. Its one-dimensional null mode needs
+the projected next-order relation
+P[8 H_s+(20+5c)H+4(1-y^2)c_y H_y]=0. P is the self-adjoint projection
+with weight (1-mu^2)dmu onto q=5mu^2-1. Non-null angular equations plus
+this projected radial equation form one full boundary row. The physical
+w polynomial can have degree nx+5; every metric is evaluated using its
+explicit representation, and old archived formats keep their old meaning.
+
+For unit-mass, aligned-spin motion on the symmetry axis, write
+A=-g_tt, C=g_xx=g_yy=g_zz. With the implemented Killing-energy convention,
+S^xy=s/C, E=A p^t+s w, u=p, and
+(p^z)^2=[(E-s w)^2-A]/(A C). The first turning barrier is sqrt(A)+s w.
+Coordinate and proper times follow by integrating p^t/p^z and 1/p^z.
+This reduction is checked by substitution into the full Cartesian TD-MPD
+equations, including transverse curvature, at 41 points per saved control.
+It is not a linear-spin approximation. Extended-precision Chebyshev values,
+turning-point differences evaluated without subtracting nearby values, and
+z=z_end+u^2 remove numerical cancellation in the phase integrals. Orders
+8/16 on 256 subintervals check quadrature convergence. Both their mutual
+timing change and the saved finest track's timing error must remain below
+1e-7 for every nonmarginal control; height 1e-8 and conservation/full-MPD
+substitution 1e-9 remain unchanged. Failed older RK comparisons are retained
+as failed evidence; an independent cross-method audit is a separate study.

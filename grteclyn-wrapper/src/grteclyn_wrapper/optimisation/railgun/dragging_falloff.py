@@ -47,6 +47,7 @@ class FactoredDraggingProblem(RingProblem):
         self.representation=REPRESENTATION if power==3 else 'dragging_quintic_zeroJ_tau_v1'
         super().__init__(*args,**kwargs)
         self.h_count=self.nx+1-power
+        self.h_degree=self.nx-power
         eye=np.eye(self.h_count)
         self.h_basis=np.polynomial.chebyshev.chebvander(self.s,self.nx-self.power)
         self.h_first=np.column_stack([np.polynomial.chebyshev.chebval(self.s,
@@ -109,24 +110,25 @@ class FactoredDraggingProblem(RingProblem):
         c=np.asarray(self.raw_dragging(np.asarray(u))[:self.h_count])
         from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval
         by=cheb_eval(self.y,np.eye(self.ny+1),y)
-        h=np.polynomial.chebyshev.chebvander(s,self.nx-self.power)@c@by.T
+        h=np.polynomial.chebyshev.chebvander(s,self.h_degree)@c@by.T
         t=(1-s if one_minus_s is None else np.atleast_1d(one_minus_s))[:,None]
         if not derivative:return t**self.power*h
         dc=np.polynomial.chebyshev.chebder(c,axis=0)
-        hx=np.polynomial.chebyshev.chebvander(s,self.nx-self.power-1)@dc@by.T
+        hx=np.polynomial.chebyshev.chebvander(s,self.h_degree-1)@dc@by.T
         return t**self.power*hx-self.power*t**(self.power-1)*h
 
 
 class FactoredDraggingGeometry(RingGeometry):
     def __init__(self,problem,u):
         self.power=problem.power
+        self.h_degree=problem.h_degree
         super().__init__(problem,u)
         self.h_coefficients=self.xp.asarray(cheb_coeffs(
             np.asarray(problem.raw_dragging(np.asarray(u))[:problem.h_count]),1))
 
     def sample(self,name,s,y):
         if name!='w':return super().sample(name,s,y)
-        return (1-s)**self.power*self.xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-self.power,self.xp),
+        return (1-s)**self.power*self.xp.einsum('i,ij,j->',chebyshev_basis(s,self.h_degree,self.xp),
             self.h_coefficients,chebyshev_basis(y,self.ny,self.xp))
 
 
@@ -136,7 +138,7 @@ class FactoredDraggingGeometry(RingGeometry):
         xp=self.xp;r2=xp.sum(x[1:]**2);r=xp.sqrt(r2)
         t=2*self.length/(r+self.length);s=1-t;y=2*x[3]**2/r2-1
         f,n,b=(self.sample(k,s,y) for k in ('f','N','b'))
-        w=t**self.power*xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-self.power,xp),
+        w=t**self.power*xp.einsum('i,ij,j->',chebyshev_basis(s,self.h_degree,xp),
                           self.h_coefficients,chebyshev_basis(y,self.ny,xp))
         rho2=x[1]**2+x[2]**2;nu=n*rho2/r2
         c=(1+b)**2*xp.exp(-f);a=c*xp.exp(nu);v=xp.array([-x[2],x[1],0.])
@@ -195,9 +197,13 @@ def load_state(path):
     with np.load(path,allow_pickle=False) as data:
         metadata=json.loads(str(data['metadata']));value=np.array(data['u'])
         physical=np.array(data['physical_u'])
-    if metadata.get('model')!=MODEL or metadata.get('representation') not in (REPRESENTATION,'dragging_quintic_zeroJ_tau_v1'):
+    if metadata.get('model')!=MODEL or metadata.get('representation') not in (REPRESENTATION,'dragging_quintic_zeroJ_tau_v1','dragging_quintic_regular_operator_v2'):
         raise ValueError('explicit factored-dragging format required')
-    problem=FactoredDraggingProblem([ScalarField(**f) for f in metadata['fields']],
+    cls=FactoredDraggingProblem
+    if metadata['representation']=='dragging_quintic_regular_operator_v2':
+        from .regular_dragging import RegularDraggingProblem
+        cls=RegularDraggingProblem
+    problem=cls([ScalarField(**f) for f in metadata['fields']],
         nx=metadata['nx'],ny=metadata['ny'],length=metadata['length'],target_j=metadata['target_j'],power=metadata.get('falloff_power',3))
     if problem.representation!=metadata['representation']:raise ValueError('falloff representation mismatch')
     if value.shape!=(problem.n_unknowns,) or not np.isfinite(value).all():raise ValueError('invalid factored state')
@@ -228,7 +234,9 @@ def validate(problem,u,info,*,equation_tol=1e-8,tail_tol=1e-6):
         Cartesian_J_surfaces=independent.tolist(),Cartesian_J_surface_crosscheck=cross,
         representation=problem.representation)
     residual=np.asarray(problem.residual(u));rows=problem.rows(u)
-    omitted=float(np.max(abs(rows['E_w'][:problem.power-1])/(1+problem.ri[:problem.power-1]**2)))
+    omitted_count=getattr(problem,'omitted_row_count',problem.power-1)
+    omitted=float(np.max(abs(rows['E_w'][:omitted_count])/(1+problem.ri[:omitted_count]**2))) if omitted_count else 0.
+    row['omitted_outer_w_equation_count']=omitted_count
     row['omitted_outer_w_equation_max']=omitted
     row['factored_tau_residual_max']=float(np.max(abs(residual)))
     if not np.isfinite(omitted) or omitted>equation_tol:reasons.append('omitted_outer_w_equations')
