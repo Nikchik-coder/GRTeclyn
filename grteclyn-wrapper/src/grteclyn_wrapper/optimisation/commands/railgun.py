@@ -44,6 +44,9 @@ def main(argv=None):
                            help='certify a Cartesian core before removing the inner stop')
     transport.add_argument('--corridor-radius', type=float)
     transport.add_argument('--corridor-degree', type=int, default=6)
+    transport.add_argument('--study', action='store_true',help='four controls, two RK tolerances and near-threshold finite transits')
+    transport.add_argument('--profile',type=Path,help='accepted signed profile directory for this background')
+    transport.add_argument('--second-rtol',type=float,default=2e-12)
     profile = sub.add_parser('profile')
     profile.add_argument('solution', type=Path)
     profile.add_argument('--out', type=Path, required=True)
@@ -91,6 +94,14 @@ def main(argv=None):
             parser.error('gpu must be nonnegative')
         from ..solver.device import select_device
         select_device(args.gpu, 128)
+        if args.study:
+            if not args.through_centre or args.profile is None:
+                parser.error('--study requires --through-centre and an accepted --profile')
+            from ..railgun.transit import run_transit
+            result=run_transit(args.solution,args.profile,args.out,spin=args.spin,z0=args.z,
+                       speed=args.speed,duration=args.duration,rtols=(args.rtol,args.second_rtol),
+                       max_step=args.max_step)
+            return 0 if result['accepted'] else 2
         from ..railgun.workflow import load_state, write_json
         from ..railgun.geometry import RingGeometry
         from ..railgun.transport import MPDSystem, matched_controls

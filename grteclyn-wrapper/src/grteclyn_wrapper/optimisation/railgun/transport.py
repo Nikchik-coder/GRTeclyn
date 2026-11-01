@@ -3,7 +3,7 @@
 The momentum--velocity relation is used without a linear-spin truncation.
 A stationary background conserves spin-corrected Killing energy; this module
 neither injects energy nor treats a scalar wave as a polarised spinning body.
-Trajectories stop before the unresolved exact-origin interpolation point.
+Crossing the origin requires a separately certified regular Cartesian metric.
 """
 from __future__ import annotations
 
@@ -110,7 +110,8 @@ class MPDSystem:
         return state
 
     def integrate(self, state, *, duration=20., rtol=1e-9, atol=1e-11,
-                  max_step=.2, outer_radius=100., inner_radius=1e-4):
+                  max_step=.2, outer_radius=100., inner_radius=1e-4,
+                  target_z=None, samples=None):
         if not (duration > 0 and 0 <= inner_radius < outer_radius and max_step > 0
                 and rtol > 0 and atol > 0):
             raise ValueError('positive time/tolerances/step and ordered radii required')
@@ -122,6 +123,10 @@ class MPDSystem:
         radius = np.linalg.norm(state[1:4])
         if not inner_radius < radius < outer_radius:
             raise ValueError('initial position must lie between the stopping radii')
+        if target_z is not None and (not np.isfinite(target_z) or target_z>=state[3]):
+            raise ValueError('target_z must be finite and below the launch point')
+        if samples is not None and (samples!=int(samples) or samples<2):
+            raise ValueError('samples must be an integer >=2')
         def rhs(t, y):
             out = np.asarray(self._rhs_jit(self.xp.asarray(y)))
             if not np.isfinite(out).all():
@@ -134,9 +139,16 @@ class MPDSystem:
             event.terminal, event.direction = True, -1
         events=(outside,centre,spin_bound) if inner_radius else (outside,spin_bound)
         labels=('outer_radius','inner_radius','spin_limit') if inner_radius else ('outer_radius','spin_limit')
+        if target_z is not None:
+            def destination(t,y):return y[3]-target_z
+            destination.terminal,destination.direction=True,-1
+            events=(*events,destination);labels=(*labels,'target_z')
         result = solve_ivp(rhs, (0., duration), state, method='DOP853', rtol=rtol,
-                           atol=atol, max_step=max_step, events=events)
-        history = [self.invariants(y) for y in result.y.T]
+                           atol=atol, max_step=max_step, events=events,
+                           dense_output=samples is not None)
+        times=result.t if samples is None else np.linspace(0.,result.t[-1],int(samples))
+        states=result.y.T if samples is None else result.sol(times).T
+        history = [self.invariants(y) for y in states]
         first = history[0]
         drifts = {k: max(abs(row[k]-first[k]) for row in history)
                   for k in ('mass2', 'spin2', 'energy', 'angular_momentum')}
@@ -145,7 +157,7 @@ class MPDSystem:
         conservation_ok = conservation_ok and max(row['ssc_max'] for row in history) <= 1e-8
         stop = next((label for label, hits in zip(labels,
                                                 result.t_events) if len(hits)), 'duration')
-        return dict(time=result.t, state=result.y.T, invariants=history,
+        return dict(time=times, state=states, invariants=history,
                     success=bool(result.success and conservation_ok),
                     integrator_success=bool(result.success), conservation_ok=bool(conservation_ok),
                     stop=stop, message=result.message,
@@ -157,7 +169,7 @@ class MPDSystem:
 def matched_controls(system, position, *, spin=1e-3, speed=.2):
     """Positive/negative/zero spin with the same spin-corrected Killing energy.
 
-    Match the outward-speed root. A missing root is reported, rather than
+    Match the chosen inward/outward speed branch. A missing root is reported, rather than
     comparing unequal launch energies and calling the difference an accelerator.
     """
     from scipy.optimize import brentq
