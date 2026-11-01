@@ -31,13 +31,19 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** targeted GPU regressions started **19:05:10 MSK**, code `153c53c6`,
-second node/card 0 (`railgun-precision-gpu-tests-20261101`) and card 1
-(`railgun-quintic-gpu-tests-20261101`). Each capped at 0.5 h; hard deadline
-**19:35 MSK**. Numerical correction jobs follow only after passing tests.
-Both correction sequences have explicit go: two new particle tracks on card 0
-and at most three quintic recovery solves on card 1. No AMR checkpoints.
-Scratch clean at **19:05 MSK**: 47 MB in `_cache/`, 535 GB free.
+**Live:** two approved numerical jobs started **19:06:19 MSK**, code
+`568eaac8`, on the second GPU node:
+
+- Card 0: `railgun-strong-uphill-073-precision-20261101`, two tighter tracks
+  only (34 cumulative), compiling the certified Cartesian particle system.
+- Card 1: `railgun-annular-quintic-k12-20261101`, first 192x16 Newton solve
+  of at most three grids; zero-J quintic dragging representation.
+
+The preceding targeted CUDA suites passed **18 + 34 = 52 tests** (18.02 /
+16.63 s), code `153c53c6`. Each numerical job: four CPU threads, 160 GiB,
+0.5 h maximum, chunks 128, no AMR checkpoints. Hard deadline **19:36 MSK**;
+no measured steady-state ETA during compilation. Scratch clean at
+**19:06 MSK**: 47 MB in `_cache/` only, 535 GB free; first node not listed.
 
 **Previous:** Strong-ring particles completed all 32
 tracks, but the study is **rejected**: two nonmarginal timing comparisons
@@ -653,4 +659,4 @@ retain all 32 originals; at most two new tracks, cumulative 34. Unchanged
 iterations/minimum two updates, all old gates plus omitted PDEs and the
 leading angular-mode check. Approved GPU 0 precision audit and GPU 1
 quintic recovery, following targeted GPU regressions; each four threads,
-160 GiB, 0.5 h, chunks 128, no AMR checkpoints. GPU regressions launched at 19:05 MSK; numerical jobs queued on passing tests.
+160 GiB, 0.5 h, chunks 128, no AMR checkpoints. All 52 GPU checks passed; both numerical jobs launched at 19:06:19 MSK.
