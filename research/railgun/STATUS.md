@@ -38,13 +38,20 @@ two RK tolerances, z=+1 toward -10. Four threads, 160 GiB, 0.5 h,
 chunks 128, no AMR checkpoints. Estimated 0.35 h, around **18:50 MSK**;
 hard deadline **18:58:40 MSK**.
 
-**Also live:** `railgun-falloff-regression-20261101`, second node/card 1,
-started **18:41 MSK**, code `dc576c85`. Approved manufactured-field,
-tau-row, state-format and existing annular checks. If they pass, the
-approved three-grid falloff recovery follows on card 1 while particles
-continue on card 0. Same four threads, 160 GiB, 0.5 h per job, chunks 128,
-no AMR checkpoints. Combined caps eight threads / 320 GiB remain below
-24 CPUs / 488 GiB. Card 1 use is explicitly authorised.
+**Also live:** `railgun-annular-falloff-k12-20261101`, second node/card 1,
+code `1f32594c`, started **18:42 MSK**. Approved three fresh solves on
+192x16 / 224x18 / 256x20 using cubic Frobenius dragging falloff, max 30
+iterations and minimum two updates per grid. Original equation, flux, gap,
+channel and convergence gates unchanged; omitted PDEs, Cartesian flux and
+literal-infinity modes are extra checks. Four threads, 160 GiB, 0.5 h,
+chunks 128, no AMR checkpoints. Estimated 0.1 h, around **18:48 MSK**;
+hard deadline around **19:12 MSK**. Combined caps eight threads / 320 GiB
+remain below the 24-CPU / 488 GiB quota. Card 1 explicitly authorised.
+The preceding **25 GPU regressions passed in 6.68 s**,
+**18:40:46–18:40:54 MSK**, code `dc576c85`; portable report:
+`results/railgun/reports/gpu_falloff_regression.json`.
+Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:42 MSK**;
+first node not listed. No AMR checkpoints or plotfiles created.
 
 **Seed screen completed:** `railgun-branch-seeds-20261101`, second node/card 1,
 code `dc576c85`, **18:39:30–18:39:42 MSK**, exit 0. All six mode problems
