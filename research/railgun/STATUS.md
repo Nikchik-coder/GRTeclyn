@@ -9,19 +9,19 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-spherical-to-ring-20261101`, second node/card 0, started
-**10:46:17 MSK**, code `389c8762`. Approved November 1: at most 24 coupled
-solves, six bisections, 30 Newton iterations per grid, final pure-ring recovery
-on 56x8 / 72x10 / 96x12. Four CPU threads, 160 GiB, chunks of 128, hard timeout
-**0.5 h (11:16:17 MSK)**. First attempt is compiling; speed and completion ETA
-are unmeasured. No particle trajectories are running. Scratch is clean: **47 MB**, only `_cache/`,
+**Live:** none. `railgun-spherical-to-ring-20261101`, second node/card 0,
+code `389c8762`, ran **10:46:17–10:49:52 MSK (0.060 h)**. It stopped normally
+with `homotopy_unresolved` after 15 solves and six bisections; last passing
+progress 0.40625. The angular-momentum balance gate blocked continuation.
+No pure ring or trajectories were produced. GPUs are idle; no completion ETA.
+Scratch is clean: **47 MB**, only `_cache/`,
 **545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
 
 The authorised regression tests and spherical pilots have completed. The
-spherical-to-ring homotopy now has a go and is live as recorded above. No
+spherical-to-ring homotopy had a go and has stopped as recorded above. No
 counter-rotation, stacked-ring or physical transport job is queued for
 automatic dispatch. Regression work on the
 three newly identified safeguards completed under the same four-thread,
@@ -77,6 +77,13 @@ in 140.43 s**, code `303bdab5`, ending **10:43 MSK**. Portable reports are
    remains. Inward spin controls now retain the inward velocity branch.
 
 ## Questions to test
+
+The first homotopy reached converged two-field states, but remains unresolved.
+At progress 0.5, off-grid Einstein/KG defects were 9.40e-11 / 6.59e-9;
+the volume/infinity angular-momentum difference was 1.20e-7 against a 1e-8
+gate. Smaller steps did not remove that limit. The original diagnostics and
+all attempted fields are preserved; no tolerance was relaxed. Far-field
+extraction and resolution are being diagnosed before proposing a new run.
 
 1. **Single ring:** can a self-gravitating canonical complex scalar form a
    resolved stationary ring with appreciable interior frame dragging? Map
@@ -259,10 +266,8 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Current deliverable (go received November 1):** the single-ring initialization
-experiment using `studies/spherical_to_ring.json`: at most 24 coupled solves,
-six bisections, 30 Newton iterations per grid; final pure-ring recovery on
-56x8 / 72x10 / 96x12. Proposed limits remain GPU 0, four CPU threads,
-160 GiB, chunks of 128, 0.5 h, no AMR checkpoints; preserve logs and solved
-fields. No further parameter scan or automatic rerun is queued.
+**Next deliverable:** diagnose the angular-momentum extraction defect in the
+saved first homotopy. Its bound was 24 solves/six bisections/30 Newton steps,
+with 56x8 / 72x10 / 96x12 final recovery, GPU 0, four CPU threads, 160 GiB,
+chunks of 128 and 0.5 h; no AMR checkpoints. No automatic rerun is queued.
 No rotating-ring or axial-ejection result has yet been established.
