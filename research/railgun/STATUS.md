@@ -9,12 +9,12 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-refinement-regression-20261101`, second node/card 0,
-code `91786ff2`, started **11:55:53 MSK**. Full regression suite, including
-endpoint mass, independent Cartesian ADM flux, refined-resume budget checks,
-fresh small-grid Newton recovery and saved-state rejection. Four threads,
-160 GiB, chunks of 128; timeout **0.5 h (12:25:53 MSK)**. Completion ETA is
-unmeasured. No production ring solve or particle trajectory is running.
+**Live:** none. `railgun-refinement-regression-20261101`, second node/card 0,
+code `91786ff2`, ran **11:55:53–11:59:39 MSK**: **63 GPU tests passed in
+222.93 s**. Includes endpoint mass, independent Cartesian ADM flux,
+refined-resume budget checks, fresh small-grid Newton recovery and saved-state
+rejection. Four threads, 160 GiB, chunks of 128; no AMR checkpoints.
+Both cards are idle; no completion ETA or queued production run.
 
 `railgun-ring-resumed-20261101`, second node/card 0, code
 `da1280f5`, ran **10:56:58–10:57:42 MSK (0.012 h)**. Seed revalidation and
@@ -31,7 +31,7 @@ with `homotopy_unresolved` after 15 solves and six bisections; last passing
 progress 0.40625. The angular-momentum balance gate blocked continuation.
 No pure ring or trajectories were produced by that first leg.
 Scratch is clean: **47 MB**, only `_cache/`,
-**544 GB free** at the 11:55 MSK check. No plotfiles or AMR checkpoints. The first node was not listed.
+**544 GB free** at the 11:59 MSK check. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
@@ -289,7 +289,8 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
 **Current implementation:** endpoint ADM/lapse mass extraction and an explicit
-grid-only refined resume are implemented; GPU regressions are live above. The
+grid-only refined resume are implemented; all **63 GPU regressions passed**.
+Report: `results/railgun/gpu_refinement_regression.json`. The
 mass coefficient fit has drift 1.02e-6 at progress 0.625; the endpoint estimate
 agrees with the volume mass within 1.73e-8. Original records stay unchanged.
 The KG and exact surface-J failures remain unresolved. The prepared config
@@ -297,6 +298,9 @@ is `studies/spherical_to_ring_refined.json`, with grids
 72x10 / 96x12 / 128x16; adding 128x16 requires a fresh go.
 Carry the 17 spent coupled solves and six bisections forward, keep the same
 physical amplitudes and 1e-8 equation/charge gates, then require fresh pure-ring
-recovery on all three grids. GPU 0, four threads, 160 GiB and chunks of 128;
-no AMR checkpoints. No new run is authorised or queued.
+recovery on all three grids. The refined seed recovery consumes one of the
+seven remaining coupled solves; four scheduled continuation points follow.
+At most three pure-ring solves follow successful continuation. Proposed cap:
+GPU 0, four threads, 160 GiB, chunks of 128, 0.5 h; no AMR checkpoints.
+Preserve logs and all solved fields. No new production run is authorised or queued.
 No rotating-ring or axial-ejection result has yet been established.
