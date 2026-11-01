@@ -31,7 +31,14 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-frequency-073-refined-20261101`, second node/card 0,
+**Live:** none; direct instruction received for the bounded 0.70 / 0.67
+continuation, at most six solves on 96x12 / 128x16 / 160x20. Prepared
+config: `studies/frequency_deep.json`. Same four threads, 160 GiB, 0.5 h,
+chunks 128, no AMR checkpoints; stop on rejection or an accepted sampled
+ergoregion. Source: accepted `studies/frequency-073-refined/accepted.npz`.
+Core/profile and stronger-ring particle jobs require their separate go.
+
+**Previous recovery:** `railgun-frequency-073-refined-20261101`, second node/card 0,
 code `e7fed22c`, ran **17:45:27–17:47:04 MSK (0.0269 h)**, exit 0.
 **omega=0.73 accepted on 96x12 / 128x16 / 160x20.** All three solves made
 two fresh corrections; observable drift 1.16e-9 against 1e-6. The unimposed

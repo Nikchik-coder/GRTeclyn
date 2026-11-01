@@ -238,3 +238,23 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refi
 
 Three solves maximum, 30 iterations each, four threads, 160 GiB, 0.5 h.
 No AMR checkpoints or automatic lower-frequency follow-on.
+
+### Deep frequency continuation and stronger-ring transport
+
+The November 1 direct instruction authorises `studies/frequency_deep.json`:
+omega=0.70 then 0.67, three grids 96x12 / 128x16 / 160x20, at most six
+solves, max 30 Newton iterations each, at least two updates per grid. Keep
+all independent gates and branch guards. Stop on first rejection or a
+three-grid-validated sampled ergoregion. Source is the accepted omega=0.73
+recovery. Use the `railgun.frequency_scan` command with that config.
+
+Separate proposed core/profile job for the accepted omega=0.73 source:
+signed z=-15..15, 301 samples; equatorial rho=0..30, 601 samples; core
+radius 0.4, degree 6 compared against degree 8. Stop on failed certification.
+After certification, propose the existing bounded uphill config: at most
+32 matched-energy tracks, spin 0 / +/-0.001, z=+1 toward -10, two RK
+tolerances and background/spin reversal; duration cap 250 per track.
+Exact-threshold marginal contacts remain height/conservation controls and
+never timing or selection evidence. Neither job has a go yet. Each uses
+four threads, 160 GiB, 1800 s, GPU card 0 on the second node; no AMR
+checkpoints, retain profiles, tracks and logs.

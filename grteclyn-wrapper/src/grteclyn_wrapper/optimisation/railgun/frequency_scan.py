@@ -18,12 +18,17 @@ def preflight(source,config):
             or fields[0]['parity']!='even' or fields[0]['mass']!=1.
             or meta.get('target_j') is not None or meta['length']!=5.):
         raise ValueError('accepted pure even k=1, m=1 source at L=5 required')
-    if (targets!=[.85,.82,.79,.76,.73,.70,.67] or omega<=targets[0]
-            or grids!=[[72,10],[96,12],[128,16]] or config['max_solves']!=21
-            or config['max_iter']!=30 or config['equation_tol']!=1e-8
+    profiles=[([.85,.82,.79,.76,.73,.70,.67],[[72,10],[96,12],[128,16]],21),
+              ([.70,.67],[[96,12],[128,16],[160,20]],6)]
+    if (not any(targets==t and grids==g and config['max_solves']==n for t,g,n in profiles)
+            or omega<=targets[0] or config['max_iter']!=30 or config['equation_tol']!=1e-8
             or config['tail_tol']!=1e-6 or config['observable_tol']!=1e-6):
-        raise ValueError('fixed seven-frequency, 21-solve continuation budget required')
-    return dict(metadata=meta,frequencies=targets,grids=grids,max_solves=21,numerical_execution=False)
+        raise ValueError('one of the bounded frequency/grid continuation profiles is required')
+    if targets==[.70,.67] and (abs(omega-.73)>1e-12 or meta.get('frequency_targets')!=[.73]
+                              or [meta['nx'],meta['ny']]!=[160,20]):
+        raise ValueError('refined tail continuation requires the accepted 160x20 omega=0.73 source')
+    return dict(metadata=meta,frequencies=targets,grids=grids,
+                max_solves=config['max_solves'],numerical_execution=False)
 
 
 def run_scan(source,config,directory):
@@ -55,7 +60,7 @@ def run_scan(source,config,directory):
         print(f'[frequency] omega={frequency}, accepted={row["accepted"]}',flush=True)
         if not result['accepted'] or row.get('ergoregion_sampled'):break
         p.jax.clear_caches()
-    result=dict(scan_completed=bool(records[-1]['accepted'] and (len(records)==7 or records[-1].get('ergoregion_sampled'))),
+    result=dict(scan_completed=bool(records[-1]['accepted'] and (len(records)==len(config['frequencies']) or records[-1].get('ergoregion_sampled'))),
         records=records,solves=solves,seconds=time.monotonic()-started,stability='not_assessed',
         scope='Frequency continuation of a nodeless nonvacuum stationary branch. No maximum spin or dynamical stability claim.')
     write_json(directory/'outcome.json',result);return result

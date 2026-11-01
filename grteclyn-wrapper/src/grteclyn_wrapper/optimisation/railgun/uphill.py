@@ -30,6 +30,23 @@ def energy_regimes(thresholds,margin):
                 below_all=float(np.min(values)-margin),above_all=float(np.max(values)+margin))
 
 
+def compare_rk_controls(first,second):
+    """Exact-threshold contacts have ill-conditioned arrival times, not a timing claim."""
+    errors={};accepted=True
+    for label in ('zero','positive','negative'):
+        a,b=first[label],second[label]
+        marginal=bool(a['marginal'] and b['marginal'])
+        time_error=abs(a['coordinate_time']-b['coordinate_time'])
+        height_error=abs(a['final_z']-b['final_z'])
+        same=a['classification']==b['classification']
+        good=bool(np.isfinite([time_error,height_error]).all() and height_error<1e-8 and same
+                  and a['marginal']==b['marginal'] and (marginal or time_error<1e-7))
+        errors[label]=dict(time=time_error,final_z=height_error,same_classification=same,
+                           marginal=marginal,timing_claim=not marginal,accepted=good)
+        accepted=accepted and good
+    return errors,accepted
+
+
 def run_uphill(source,profile,config,directory):
     validate_config(config)
     from scipy.optimize import brentq
@@ -101,11 +118,9 @@ def run_uphill(source,profile,config,directory):
     comparisons={};selection=[]
     for regime in energies:
         a,b=[records[f'{regime}_rk{i}']['controls'] for i in range(2)]
-        errors={k:dict(time=abs(a[k]['coordinate_time']-b[k]['coordinate_time']),
-                      final_z=abs(a[k]['final_z']-b[k]['final_z']),
-                      same_classification=a[k]['classification']==b[k]['classification']) for k in spins}
+        errors,consistent=compare_rk_controls(a,b)
         comparisons[regime]=errors
-        all_ok=all_ok and all(r['time']<1e-7 and r['final_z']<1e-8 and r['same_classification'] for r in errors.values())
+        all_ok=all_ok and consistent
         if {b[k]['classification'] for k in ('positive','negative')}=={'transmitted','reflected'}:
             # Require a margin larger than the observed conservation error;
             # an unresolved or marginal event cannot become a selection claim.

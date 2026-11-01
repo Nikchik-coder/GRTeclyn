@@ -63,3 +63,20 @@ def test_flat_transmission_does_not_trigger_a_turnaround():
     with pytest.raises(ValueError,match='initially decreasing'):
         state=system.initial_state([2.,0.,1.],speed=.2)
         system.integrate(state,inner_radius=0.,stop_at_turnaround=True)
+
+
+def test_exact_threshold_contacts_cannot_supply_a_timing_claim():
+    from grteclyn_wrapper.optimisation.railgun.uphill import compare_rk_controls
+    from copy import deepcopy
+    rows={k:dict(coordinate_time=80.,final_z=-10.,classification='transmitted',marginal=False)
+          for k in ('zero','positive','negative')}
+    rows['zero'].update(classification='marginal',marginal=True)
+    other=deepcopy(rows);other['zero']['coordinate_time']=81.
+    errors,ok=compare_rk_controls(rows,other)
+    assert ok and not errors['zero']['timing_claim']
+    other['positive']['coordinate_time']+=1e-5
+    assert not compare_rk_controls(rows,other)[1]
+    other=deepcopy(rows);other['zero']['final_z']+=1e-5
+    assert not compare_rk_controls(rows,other)[1]
+    other=deepcopy(rows);other['zero']['coordinate_time']=float('nan')
+    assert not compare_rk_controls(rows,other)[1]

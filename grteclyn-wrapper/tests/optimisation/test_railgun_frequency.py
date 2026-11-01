@@ -29,6 +29,17 @@ def test_frequency_dry_plan_is_bounded_and_uses_an_accepted_source():
     with pytest.raises(ValueError):preflight(source,config)
 
 
+def test_refined_tail_budget_rejects_more_points_or_a_coarser_source():
+    from grteclyn_wrapper.optimisation.railgun.frequency_scan import preflight
+    source=ROOT/'results/railgun/studies/frequency-073-refined/accepted.npz'
+    config=json.loads((ROOT/'research/railgun/studies/frequency_deep.json').read_text())
+    assert preflight(source,config)['max_solves']==6
+    assert preflight(source,config)['frequencies']==[.70,.67]
+    with pytest.raises(ValueError):preflight(ROOT/'results/railgun/studies/compactness-scan/amplitude_03/accepted.npz',config)
+    config['frequencies'].append(.64)
+    with pytest.raises(ValueError):preflight(source,config)
+
+
 def test_frequency_border_and_portable_state_preserve_measured_pin(tmp_path):
     from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
     from grteclyn_wrapper.optimisation.railgun.model import ScalarField
