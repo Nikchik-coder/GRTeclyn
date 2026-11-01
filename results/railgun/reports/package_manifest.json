@@ -2,12 +2,16 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "9c1174a87d0fcf343f4c6be6fa98f4a372051b46e8e3d9d63de9999b7ba5e92d",
-      "bytes": 9702
+      "sha256": "28d24c3d9895afc2fe34a36ea8b4117cb7baa0d7639aaf7023e8ab76c42ab85f",
+      "bytes": 10022
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
       "bytes": 390676
+    },
+    "figures/compactness-scan.png": {
+      "sha256": "1ef286fd85707c08334a0e98f0c003f948762eea864f2fdf23674948ccca3ad9",
+      "bytes": 170828
     },
     "figures/counter-dragging.png": {
       "sha256": "0834b69726a1058b017dff531af772a5b1d731009d66d88a4120c9e5be496df3",

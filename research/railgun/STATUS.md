@@ -31,7 +31,11 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-compactness-scan-20261101`, second node/card 0,
+**Live:** `railgun-frequency-regression-20261101`, second node/card 0,
+code `1f4054a0`, started **17:35 MSK**. GPU checks precede the approved
+frequency scan; 0.5 h hard cap, completion ETA not measured yet.
+
+**Previous scan:** `railgun-compactness-scan-20261101`, second node/card 0,
 code `4445ce44`, ran **17:15:58–17:19:40 MSK (0.0617 h)**, exit 2.
 Three pins **0.06 / 0.075 / 0.095 passed all three grids** (nine accepted
 solves). The next pin 0.12 failed Newton line search on 72x10 and failed
@@ -50,9 +54,9 @@ from `studies/compactness-scan/amplitude_03/accepted.npz` at omega=0.85,
 chunks 128, no AMR checkpoints. Require two corrections on every grid,
 nonvacuum component charge and a nodeless scalar; measure the amplitude
 instead of imposing its fixed-radius pin. Stop on rejection or an accepted
-sampled ergoregion. Prepared, not launched; tests must pass first.
+sampled ergoregion. Regression checks launched; scan waits for a passing report.
 Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
-Both cards idle. Scratch clean at **17:33 MSK**: 47 MB in `_cache/` only,
+Card 0 reserved for regression checks; card 1 idle. Scratch clean at **17:35 MSK**: 47 MB in `_cache/` only,
 537 GB free; first node not listed. No completion ETA.
 
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
