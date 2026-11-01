@@ -9,11 +9,14 @@ Axial spin-dependent transit is validated; counter-rotation, stacked states and 
 
 ## Live and queue
 
-**Live:** `railgun-counter-regression-20261101`, second node/card 0,
-code `73b2aa30`; rotating KG quadratic eigenproblem, angular coupling,
-flat no-bound-mode refusal and CUDA/float64 placement. Four threads,
-160 GiB, 0.5 h cap, chunks 128; no AMR checkpoints. Initial tests;
-no measured completion ETA. Scratch clean: 47 MB, 543 GB free.
+**Live:** `railgun-counter-rotation-20261101`, second node/card 0,
+implementation `73b2aa30` (launch checkout `71a12837`). The three rotating
+bound-mode/CUDA regression checks passed in 1.71 s at **12:55:20 MSK**.
+Full 2D KG mode, then bounded amplitude continuation and zero-J border;
+96x12 continuation, 72x10 / 96x12 / 128x16 final recovery.
+Four threads, 160 GiB, 0.5 h cap, chunks 128; no AMR checkpoints.
+Initial bound-mode calculation; speed and completion ETA not measured.
+Scratch clean: 47 MB, 543 GB free; first node not listed.
 
 Run B `railgun-ring-transit-20261101`, second node/card 0,
 code `96c81edc`, ran **12:41:00–12:53:33 MSK (0.209 h)**, exit 0.
