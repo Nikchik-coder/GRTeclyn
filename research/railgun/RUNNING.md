@@ -65,6 +65,7 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
   grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_continuation.py \
+  grteclyn-wrapper/tests/optimisation/test_railgun_baseline.py \
   grteclyn-wrapper/tests/optimisation/test_solver_core.py \
   grteclyn-wrapper/tests/optimisation/test_winding_field.py \
   grteclyn-wrapper/tests/optimisation/test_layout.py

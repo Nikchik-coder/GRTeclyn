@@ -9,11 +9,11 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-baseline-guards-20261101`, second node/card 0, started
-**10:41 MSK**, code `303bdab5`, four threads, 160 GiB, timeout **0.5 h
-(11:11 MSK)**. These are two read-only checks against the saved spherical
-solution: intrinsic KG/core certification and the integer-winding bound mode.
-Completion ETA is unmeasured. Scratch is clean: **47 MB**, only `_cache/`,
+**Live:** none. `railgun-baseline-guards-20261101` finished on the second
+node/card 0 at **10:43:52 MSK**: **two tests passed in 140.43 s**, code
+`303bdab5`. Its checks against the saved spherical star passed intrinsic KG,
+Cartesian core certification and the integer-winding bound mode. Both cards
+are idle; there is no completion ETA. Scratch is clean: **47 MB**, only `_cache/`,
 **545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
@@ -22,7 +22,7 @@ through `myfork`; code and validation archives were transferred that way.
 The authorised regression tests and spherical pilots have completed. No
 single-ring, homotopy, counter-rotation, stacked-ring or physical transport
 job is authorised or queued for automatic dispatch. Regression work on the
-three newly identified safeguards continues under the same four-thread,
+three newly identified safeguards completed under the same four-thread,
 160 GiB, 0.5 h job cap, GPU 0 and Jacobian chunks of 128. No AMR checkpoints.
 
 ## Completed baseline — November 1
@@ -53,8 +53,10 @@ three newly identified safeguards continues under the same four-thread,
 ## Current implementation checks
 
 The November 1 safeguards passed **51 GPU regressions in 55.99 s**, code
-`fd15f724`, ending **10:37 MSK**. Checks against the saved nonflat baseline are
-live as recorded above; no nonlinear ring solve has started.
+`fd15f724`, ending **10:37 MSK**, followed by **two saved-baseline GPU checks
+in 140.43 s**, code `303bdab5`, ending **10:43 MSK**. Portable reports are
+`results/railgun/gpu_guards_regression.json` and
+`results/railgun/gpu_baseline_regression.json`. No nonlinear ring solve has started.
 
 1. Off-grid reports include worst KG/Einstein **radius and theta**, with a
    separate intrinsic divergence-form KG evaluation and Cartesian/intrinsic
@@ -135,7 +137,7 @@ residuals. `diagnostics.py` and `workflow.py` implement charge/mass balances,
 doubled quadrature and three-grid Newton recovery. `reference.py` supplies an
 independent spherical BVP. `transport.py` implements TD-MPD motion and matched
 energy spin controls; `profiles.py` measures axial magnetic tidal curvature.
-`commands/railgun.py` exposes solve/profile/transport, with four study configs
+`commands/railgun.py` exposes solve/homotopy/profile/transport, with study configs
 under `studies/`. See [equations](EQUATIONS.md) and [execution](RUNNING.md).
 GPU baseline acceptance is recorded above. Through-centre transport requires
 a separately certified Cartesian core; ordinary transport keeps the explicit
@@ -255,6 +257,10 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable:** GPU checks of intrinsic KG, discrete-winding seeding and
-the through-origin core; then a bounded single-ring initialization proposal.
+**Next deliverable (requires a separate go):** the single-ring initialization
+experiment using `studies/spherical_to_ring.json`: at most 24 coupled solves,
+six bisections, 30 Newton iterations per grid; final pure-ring recovery on
+56x8 / 72x10 / 96x12. Proposed limits remain GPU 0, four CPU threads,
+160 GiB, chunks of 128, 0.5 h, no AMR checkpoints; preserve logs and solved
+fields. This is a proposal, not an authorised or automatically queued run.
 No rotating-ring or axial-ejection result has yet been established.
