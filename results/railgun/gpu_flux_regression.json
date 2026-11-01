@@ -1,0 +1,46 @@
+{
+  "commit": "da1280f5",
+  "platform": "cuda",
+  "float64": true,
+  "suites": [
+    {
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.861"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_surface_angular_momentum_matches_an_analytic_rotational_flux[-0.3]",
+      "time": "0.821"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_surface_angular_momentum_matches_an_analytic_rotational_flux[0.3]",
+      "time": "0.004"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_continuation",
+      "name": "test_resume_preserves_spent_budgets_and_refuses_changed_experiments",
+      "time": "0.002"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_baseline",
+      "name": "test_partial_ring_exact_flux_resolves_the_truncated_asymptotic_fit",
+      "time": "1.115"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_baseline",
+      "name": "test_saved_spherical_flux_preserves_the_accepted_baseline",
+      "time": "1.243"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.025"
+    }
+  ]
+}

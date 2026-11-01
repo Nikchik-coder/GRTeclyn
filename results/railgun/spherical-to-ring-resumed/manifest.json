@@ -1,0 +1,41 @@
+{
+  "config": {
+    "ring_field": {
+      "winding": 1,
+      "mass": 1.0,
+      "amplitude": 0.05,
+      "anchor_radius": 5.0
+    },
+    "initial_amplitude": 0.001,
+    "old_amplitude_floor": 0.001,
+    "steps": 8,
+    "max_solves": 24,
+    "max_splits": 6,
+    "max_iter": 30,
+    "grids": [
+      [
+        56,
+        8
+      ],
+      [
+        72,
+        10
+      ],
+      [
+        96,
+        12
+      ]
+    ]
+  },
+  "source_sha256": "0657d72339b9877a3b60299628335179f2ab8b3cec783a9fdac3dba290e70f33",
+  "commit": "da1280f53e015f90678a90de7d79315193f15fa8",
+  "stability": "not_assessed",
+  "winding_interpolation": false,
+  "platform": "gpu",
+  "device_kind": "NVIDIA H100 80GB HBM3",
+  "float64": true,
+  "resume_state_sha256": "447cb08ed8a62b6dd962c84e8cb81d9cdf8ef3b4f3aff3b2aedef7d81fd5c50f",
+  "previous_solves": 15,
+  "previous_splits": 6,
+  "resumed_progress": 0.40625
+}
