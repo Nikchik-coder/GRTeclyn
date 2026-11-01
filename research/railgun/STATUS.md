@@ -9,9 +9,12 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live: none.** The designated second node's two H100s are idle. Scratch is
-clean: **47 MB**, only `_cache/`, **546 GB free**. No plotfiles or AMR checkpoints.
-ETA none. The first node was not listed. Host/checkout details stay in the
+**Live:** `railgun-guards-regression-20261101`, second node/card 0, started
+**10:36 MSK**, code `fd15f724`, four threads, 160 GiB, timeout **0.5 h
+(11:06 MSK)**. It is alive, compiling/executing the extended GPU test suite;
+completion ETA is unmeasured. Scratch is clean: **47 MB**, only `_cache/`,
+**546 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
+Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
 
