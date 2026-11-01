@@ -1,0 +1,14 @@
+{
+  "stage": "diagnosis_of_rejected_finest_grid",
+  "source_state_sha256": "0e77cfb4b5d9b4a1e0faf5295d89ef5d44ba761efa5574e356ab861d884c01b7",
+  "method": "Direct rational barycentric derivative, stored Lobatto nodes, long-double arithmetic, 96-point angular Gauss quadrature; no field alteration.",
+  "radii": [1100, 1500, 2100, 3000],
+  "long_double_flux": {
+    "192x16": [8.529232402229461e-10, 1.0122221880110341e-10, -5.65463498304518e-11, 1.3045083458615786e-9],
+    "224x18": [2.2745917529103426e-9, 2.833840196478554e-9, 5.991882586277446e-9, 7.159624555080772e-9],
+    "256x20": [-1.6719512018369392e-9, -2.6427944858349157e-9, -3.597558103038967e-9, -1.2987546417023706e-8]
+  },
+  "equation_tolerance": 1e-8,
+  "original_rejection_preserved": true,
+  "conclusion": "Arithmetic precision alone did not remove the finest-grid flux mismatch. A fresh nonlinear correction is a separate test."
+}

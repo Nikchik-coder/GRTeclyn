@@ -25,7 +25,16 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-annular-recovery-k12-20261101`, second node/card 0,
+**Live:** `railgun-annular-correction-k12-20261101`, second node/card 0,
+code `8946f146`, started **16:26:58 MSK** after its specific go and
+**24 GPU checks passed in 3.37 s**, **16:26:27–16:26:32 MSK**, exit 0.
+One additional 256x20 correction only; same physical settings and gates,
+four threads, 160 GiB, chunks 128, 0.5 h cap, no AMR checkpoints.
+Stationary solve: t not applicable; speed and completion ETA not yet measured.
+Hard launch budget **0.5 h, 16:56 MSK**. Scratch clean at **16:26 MSK**:
+47 MB in `_cache/` only, 539 GB free; first node not listed. Card 1 idle.
+
+Completed `railgun-annular-recovery-k12-20261101`, second node/card 0,
 code `121a9ef7`, ran **16:14:11–16:17:10 MSK (0.050 h)**, exit 2.
 All three fresh Newton solves converged (6 / 4 / 4 updates). The 192x16 and
 224x18 grids passed; **256x20 was rejected** by independent angular-momentum
@@ -33,14 +42,14 @@ surface balance: **1.33955e-8 against the unchanged 1e-8 gate**, on the
 outermost R=3000 sphere. Volume J=6.69e-14. The discrepancy is under
 investigation; no accepted background or particle launch follows from it.
 
-**Approved next:** one corrective 256x20 solve from the saved finest state,
-after regression checks, second node/card 0. Rebuild the Jacobian; at least
+**Approved correction above:** one corrective 256x20 solve from the saved finest state.
+Rebuild the Jacobian; at least
 two further updates, at most 30 iterations. Keep the original two passing
 grids and repeat the full equations, charge, gap and channel gates. Same
 physics, tolerances and resource caps; cumulative solve cap four. No
 particle run is authorised. Higher-precision direct barycentric evaluation
 still gives an outermost flux defect about 1.30e-8, so arithmetic precision
-alone did not remove the rejection. The correction is prepared, not launched.
+alone did not remove the rejection. The correction is running.
 
 **The annular gap survived nonlinear backreaction on every grid:**
 33.29734 < rho < 40.90802, width 7.61068 at the component-wise 1e-6 cutoff.
