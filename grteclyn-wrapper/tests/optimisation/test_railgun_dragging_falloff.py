@@ -83,3 +83,17 @@ def test_quintic_zero_j_flux_and_omitted_rows_are_explicit():
     np.testing.assert_allclose(residual[5:-1],p.rows(u)['E_w'][4:],rtol=1e-12,atol=1e-15)
     assert np.max(abs(p.rows(u)['E_w'][:4]))>0
     with pytest.raises(ValueError):FactoredDraggingProblem(nx=12,ny=4,power=5)
+
+
+def test_flat_asymptotic_momentum_equation_selects_the_zero_j_octupole():
+    from grteclyn_wrapper.optimisation.railgun.model import canonical_rows
+    r=np.array([[16.],[32.],[64.]]);y=np.array([[-.5,0.,.5]])
+    for power,angular,angular_y in [(3,np.ones_like(y),np.zeros_like(y)),
+                                    (5,(5*y+3)/2,np.full_like(y,2.5))]:
+        jets={name:np.zeros((3,3)) for field in ('f','w','N','B')
+              for name in (field,field+'_x',field+'_xx',field+'_y',field+'_yy')}
+        jets['B']=np.ones((3,3));jets['B_xy']=np.zeros((3,3))
+        jets.update(w=r**-power*angular,w_x=-power*r**(-power-1)*angular,
+            w_xx=power*(power+1)*r**(-power-2)*angular,w_y=r**-power*angular_y)
+        rows=canonical_rows(jets,[],[],r=r,dr=np.ones_like(r),ddr=np.zeros_like(r),y=y,xp=np)
+        np.testing.assert_allclose(rows['E_w'],0.,atol=1e-18)
