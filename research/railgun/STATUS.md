@@ -31,27 +31,28 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-strong-uphill-073-20261101`, second node/card 0,
-code `0fd3b1e4`, started **18:28 MSK**. Approved 32 matched-energy uphill
-tracks on the accepted omega=0.73 source, spin 0 / +/-0.001, reversal,
-two RK tolerances, z=+1 toward -10. Four threads, 160 GiB, 0.5 h,
-chunks 128, no AMR checkpoints. Estimated 0.35 h, around **18:50 MSK**;
-hard deadline **18:58:40 MSK**.
+**Live:** none; both cards idle. Strong-ring particles completed all 32
+tracks, but the study is **rejected**: two nonmarginal timing comparisons
+are 2.70803e-7 / 2.68702e-7 against 1e-7. All track conservation, reversal
+and classification checks pass; worst normalised invariant drift 1.55e-10.
+Code `0fd3b1e4`, **18:28:40–18:45:49 MSK (0.286 h)**, exit 2.
+Archive: `results/railgun/studies/strong-uphill-073-initial/`. Prepare an
+accuracy audit of only the two failed controls at tighter RK tolerance;
+the original failed study stays rejected, and no timing limit is relaxed.
 
-**Also live:** `railgun-annular-falloff-k12-20261101`, second node/card 1,
-code `1f32594c`, started **18:42 MSK**. Approved three fresh solves on
-192x16 / 224x18 / 256x20 using cubic Frobenius dragging falloff, max 30
-iterations and minimum two updates per grid. Original equation, flux, gap,
-channel and convergence gates unchanged; omitted PDEs, Cartesian flux and
-literal-infinity modes are extra checks. Four threads, 160 GiB, 0.5 h,
-chunks 128, no AMR checkpoints. Estimated 0.1 h, around **18:48 MSK**;
-hard deadline around **19:12 MSK**. Combined caps eight threads / 320 GiB
-remain below the 24-CPU / 488 GiB quota. Card 1 explicitly authorised.
-The preceding **25 GPU regressions passed in 6.68 s**,
-**18:40:46–18:40:54 MSK**, code `dc576c85`; portable report:
-`results/railgun/reports/gpu_falloff_regression.json`.
-Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:42 MSK**;
-first node not listed. No AMR checkpoints or plotfiles created.
+The cubic annular falloff study is also **rejected** at its first 192x16
+solve, despite finite-sphere J error 7.01e-10, Cartesian crosscheck 2.55e-14
+and all original field/gap/channel checks passing. Its literal-infinity
+coefficient gives J=2.32964e-4 and anisotropy=1.60936e-4, failing the added
+asymptotic gate. Code `1f32594c`, **18:42:49–18:44:10 MSK (0.0225 h)**,
+exit 2, one solve; later grids were not attempted. Archive:
+`results/railgun/studies/annular-falloff-k12-cubic/`. Diagnose the correct
+zero-total-J asymptotic representation before a new recovery; no particles
+on this rejected background. All original constraints stay in force.
+The preceding 25 GPU regressions passed in 6.68 s; report under reports/.
+
+Scratch clean at **18:47 MSK**: 47 MB in `_cache/` only, 536 GB free;
+first node not listed. No AMR checkpoints or plotfiles created. No ETA.
 
 **Seed screen completed:** `railgun-branch-seeds-20261101`, second node/card 1,
 code `dc576c85`, **18:39:30–18:39:42 MSK**, exit 0. All six mode problems
