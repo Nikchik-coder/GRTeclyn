@@ -44,7 +44,7 @@ def test_spectral_energy_density_matches_archived_cartesian_derivatives():
     import json
     from pathlib import Path
     from grteclyn_wrapper.optimisation.railgun.gap import equatorial_densities
-    root=Path(__file__).resolve().parents[3]/'results/railgun'
+    root=Path(__file__).resolve().parents[3]/'results/railgun/studies'
     if not (root/'ring-profile/equator.tsv').exists():pytest.skip('saved Cartesian profile unavailable')
     data=np.loadtxt(root/'ring-profile/equator.tsv')[1:]
     with np.load(root/'ring-validated/accepted.npz') as archive:

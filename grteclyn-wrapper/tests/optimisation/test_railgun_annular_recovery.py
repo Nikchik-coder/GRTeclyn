@@ -68,7 +68,7 @@ def test_an_accepted_state_cannot_masquerade_as_a_linear_screen(tmp_path):
 
 
 def test_correction_has_one_additional_solve_and_cannot_change_the_model():
-    prior=ROOT/'results/railgun/annular-recovery-k12'
+    prior=ROOT/'results/railgun/studies/annular-recovery-k12'
     plan=correction_plan(prior,config())
     assert plan['max_additional_solves']==1 and plan['cumulative_solve_cap']==4
     assert plan['corrected_grid']==[256,20] and plan['minimum_new_updates']==2
@@ -78,7 +78,7 @@ def test_correction_has_one_additional_solve_and_cannot_change_the_model():
 
 def test_correction_verifies_prior_archive_before_reusing_passing_grids(tmp_path):
     import shutil
-    prior=ROOT/'results/railgun/annular-recovery-k12'
+    prior=ROOT/'results/railgun/studies/annular-recovery-k12'
     shutil.copytree(prior,tmp_path/'prior');prior=tmp_path/'prior'
     with (prior/'grid_192x16.json').open('a') as stream:stream.write(' ')
     with pytest.raises(ValueError,match='checksum'):correction_plan(prior,config())

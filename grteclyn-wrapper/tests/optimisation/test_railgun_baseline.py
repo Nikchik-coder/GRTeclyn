@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-ARCHIVE=Path(__file__).resolve().parents[3]/'results/railgun/spherical-validated/accepted.npz'
+ARCHIVE=Path(__file__).resolve().parents[3]/'results/railgun/studies/spherical-validated/accepted.npz'
 pytestmark=pytest.mark.skipif(not ARCHIVE.exists(),reason='spherical validation archive not present')
 
 

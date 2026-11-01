@@ -20,7 +20,7 @@ def equatorial_density(source,*,extent=25.,samples=2001):
     return r,equatorial_densities(meta,u,r)
 
 
-def plot_density(source,out,*,extent=25.):
+def plot_density(source,out,*,extent=25.,data_directory=None):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -41,9 +41,11 @@ def plot_density(source,out,*,extent=25.):
     ax.legend(loc='lower center',bbox_to_anchor=(.5,1.02),ncol=3,frameon=False);ax.grid(alpha=.2)
     fig.suptitle('Annular gap passes the matter screen' if summary['annular_gap']['accepted']
                  else 'No annular gap at the 10⁻⁶ density threshold',fontsize=13)
-    out=Path(out);fig.savefig(out,dpi=180);plt.close(fig)
-    out.with_suffix('.json').write_text(json.dumps(summary,indent=2)+'\n')
-    np.savetxt(out.with_suffix('.tsv'),np.column_stack([r,*density,total]),
+    out=Path(out);out.parent.mkdir(parents=True,exist_ok=True);fig.savefig(out,dpi=180);plt.close(fig)
+    data=Path(data_directory)/out.stem if data_directory is not None else out.with_suffix('')
+    data.parent.mkdir(parents=True,exist_ok=True)
+    data.with_suffix('.json').write_text(json.dumps(summary,indent=2)+'\n')
+    np.savetxt(data.with_suffix('.tsv'),np.column_stack([r,*density,total]),
                header='rho\tfield1_density\tfield2_density\ttotal_density',delimiter='\t')
     return summary
 
@@ -115,8 +117,9 @@ def main():
     parser.add_argument('--extent',type=float,default=25.)
     parser.add_argument('--diagnostic',action='store_true',help='label a passing single-grid candidate explicitly')
     parser.add_argument('--density-out',type=Path,help='also plot the equatorial energy density overlap')
+    parser.add_argument('--density-data-dir',type=Path,help='write companion JSON/TSV here, separately from the figure')
     args=parser.parse_args();plot_two_rings(args.source,args.out,extent=args.extent,diagnostic=args.diagnostic)
-    if args.density_out:print(json.dumps(plot_density(args.source,args.density_out,extent=args.extent)))
+    if args.density_out:print(json.dumps(plot_density(args.source,args.density_out,extent=args.extent,data_directory=args.density_data_dir)))
 
 
 if __name__=='__main__':main()

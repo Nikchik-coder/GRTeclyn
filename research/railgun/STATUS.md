@@ -8,6 +8,12 @@ rings. The spherical baseline, pure k=1 ring and a zero-net-spin k1=1/k2=-2
 state are validated. Single-ring axial spin-dependent transit is validated;
 between-ring transport, stacked states and stability remain to test.
 
+**Results packaging:** rendered figures live in `results/railgun/figures/`,
+standalone JSON/TSV and regression reports in `results/railgun/reports/`,
+and complete self-contained run archives in `results/railgun/studies/`.
+`verify_pack.py` checks the package inventory and original study checksums.
+The reorganisation preserved every archived file's contents.
+
 **Primary target — clarified November 1:** two coplanar, concentric rings
 with a shared centre and a resolved annular matter gap. The particle channel
 must lie **outside the inner ring's outer edge and inside the outer ring's
@@ -32,10 +38,10 @@ Two additional Newton updates reduced the scaled residual to 9.95e-17;
 against 1e-8 at R=3000. Volume J=2.22e-16. The original and corrected
 studies remain rejected; no accepted gapped background or particle launch.
 Four cumulative solves; the extra correction budget is spent.
-Archive: `results/railgun/annular-correction-k12/`, all corrected fields,
+Archive: `results/railgun/studies/annular-correction-k12/`, all corrected fields,
 diagnostics, profiles, log and provenance retained. **24 GPU regression checks
 passed in 3.37 s**, **16:26:27–16:26:32 MSK**, exit 0; report
-`results/railgun/gpu_annular_correction_regression.json`.
+`results/railgun/reports/gpu_annular_correction_regression.json`.
 Same physics and gates, four threads, 160 GiB, chunks 128, 0.5 h cap,
 no AMR checkpoints. Both cards idle, no completion ETA or queued launch.
 Scratch clean at **16:31 MSK**: 47 MB in `_cache/` only, 539 GB free;
@@ -53,8 +59,8 @@ Higher-precision direct barycentric flux evaluation still failed, and extra
 Newton corrections did not repair it. Endpoint diagnostics show tiny nonzero
 first/second compactified derivatives of w; contamination of its required
 r^-3 asymptotics is a hypothesis to test, not an established repair.
-Reports: `results/railgun/annular-flux-diagnostic.json` and
-`results/railgun/annular-endpoint-diagnostic.json`. No tolerance was changed.
+Reports: `results/railgun/reports/annular-flux-diagnostic.json` and
+`results/railgun/reports/annular-endpoint-diagnostic.json`. No tolerance was changed.
 
 **The annular gap survived nonlinear backreaction on every grid:**
 33.29734 < rho < 40.90802, width 7.61068 at the component-wise 1e-6 cutoff.
@@ -62,7 +68,7 @@ The sampled finite-height channel rho=35.20..39.01, z=-10..10 also passed;
 max component densities below 2.90e-7 / 4.42e-7 of their own equatorial peaks.
 Final independent Einstein/KG maxima 5.59e-13 / 2.68e-14. These are promising
 provisional fields, not three-grid accepted data. No tolerance was changed.
-Archive: `results/railgun/annular-recovery-k12/`, all three states, density
+Archive: `results/railgun/studies/annular-recovery-k12/`, all three states, density
 and channel profiles, diagnostics, manifest, log and checksums retained.
 Three solves maximum, L=50, total J=0, grids 192x16 / 224x18 / 256x20;
 four threads, 160 GiB host cap, 0.5 h, chunks 128; no AMR checkpoints.
@@ -71,7 +77,7 @@ No different grid, winding, potential or tolerance is an automatic fallback.
 **22 GPU regression checks passed in 3.60 s**, **16:13:51–16:13:57 MSK**,
 exit 0, code `121a9ef7`: budgets/provenance/acceptance, correct J-border
 promotion, component densities versus independent Cartesian AD, prior gap
-tests and CUDA float64 placement. `results/railgun/gpu_annular_regression.json`.
+tests and CUDA float64 placement. `results/railgun/reports/gpu_annular_regression.json`.
 Scratch clean at **16:19 MSK**: 47 MB in `_cache/` only, 539 GB free;
 first node not listed. Both cards idle; no ETA or queued physical run.
 
@@ -88,7 +94,7 @@ changes 6.23e-11 / 6.08e-8. These are linear modes on the accepted inner
 metric, with charge scaled to cancel the fixed inner spin. **They are not
 accepted coupled two-field backgrounds.** Backreaction, three-grid nonlinear
 validation and through-annulus particle passage remain uncomputed.
-Archive: `results/railgun/annular-gap-screen/`; all eight seeds, density
+Archive: `results/railgun/studies/annular-gap-screen/`; all eight seeds, density
 profiles, manifests, logs and checksums retained. Four threads, 160 GiB,
 0.5 h cap; no AMR checkpoints. No scratch plotfiles were created.
 Scratch clean at **15:56 MSK**: 47 MB in `_cache/` only, 539 GB free;
@@ -111,7 +117,7 @@ every recovery grid. Final observable drift 7.62e-10; component-charge drift
 no sampled ergoregion. Independent Einstein/KG maxima 1.86e-11 / 3.69e-12.
 The exterior coordinate octupole decay order increases from 4.96 to 4.99;
 this is a coordinate harmonic measurement, not an invariant moment claim.
-Archive: `results/railgun/counter-rotation/`. Three bound-mode/CUDA tests passed.
+Archive: `results/railgun/studies/counter-rotation/`. Three bound-mode/CUDA tests passed.
 Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 13:00 MSK;
 first node not listed. Both cards idle, no ETA or queued physical run.
@@ -125,7 +131,7 @@ Reversing ring and spin gave zero measured axial/time difference.
 At spin magnitude 0.001, fast transit t(+z spin)-t(-z spin)=-0.000581712663.
 All sampled near-threshold controls transmitted: no spin valve demonstrated.
 These are finite-radius transits, not numerical demonstrations of escape.
-Archive: `results/railgun/ring-transit/`; 16 GPU regression checks passed.
+Archive: `results/railgun/studies/ring-transit/`; 16 GPU regression checks passed.
 Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:54 MSK;
 first node not listed.
@@ -135,7 +141,7 @@ code `4c1e2085`, passed at **12:37:19 MSK**, after 0.072 h including compilation
 The degree 6/8 Cartesian core at radius 0.4 passed: maximum parent curvature
 mismatch 2.88e-10; independent axial Einstein/KG maximum 4.73e-12.
 Signed z=-15..15 and equatorial matter profiles are archived in
-`results/railgun/ring-profile/`. Density wall rho=6.25 (sampling 0.05),
+`results/railgun/studies/ring-profile/`. Density wall rho=6.25 (sampling 0.05),
 minimum sampled lapse 0.88496, peak |omega|=0.0043558,
 max shift/lapse=0.020482. max(g_tt)=-0.78289: no sampled ergoregion.
 The scalar vanishes on the axis, but its transverse gradients carry energy.
@@ -152,7 +158,7 @@ Then validate the gapped background and run matched off-axis particles within
 its finite-height channel. No further physical run is authorised or queued.
 The completed screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
-13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
+13:02:40 MSK: `results/railgun/reports/gpu_offaxis_regression.json`.
 No physical between-ring trajectory is authorised or running.
 
 **Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
@@ -205,13 +211,13 @@ three newly identified safeguards completed under the same four-thread,
   independent Einstein/KG defects **1.58e-11 / 3.92e-12**, final observable
   drift **3.52e-10**. Pure-grid solve/check times **18.86 / 21.50 / 32.53 s**.
   This validates a stationary solution, not dynamical stability or ejection.
-  Archive: `results/railgun/ring-validated/`.
+  Archive: `results/railgun/studies/ring-validated/`.
 
 - **45 GPU regression tests passed**, 22.34 s, ending 10:21 MSK, code
   `732ed60e`. CUDA placement and float64 are asserted. The tests include
   canonical sources/parity, charge normalization, flat/Schwarzschild/Kerr
   curvature, TD-MPD conservation, the existing Newton/winding regressions and
-  fail-closed validation. Portable report: `results/railgun/gpu_regression.json`.
+  fail-closed validation. Portable report: `results/railgun/reports/gpu_regression.json`.
 - **The spherical three-grid pilot passed**, 56x8 / 72x10 / 96x12, code
   `732ed60e`, ending **10:22 MSK**. Actual recovery: 1/2/2 Newton updates;
   full solve/check times 11.88/13.60/15.51 s. Final observable drift 1.18e-13.
@@ -219,7 +225,7 @@ three newly identified safeguards completed under the same four-thread,
   **mass 5.48e-8, frequency 1.12e-8**. This is a stationary numerical baseline,
   not dynamical stability or evidence of a rotating ring.
 - The accepted fields, ODE reference, manifests, diagnostics and checksums are
-  tracked in `results/railgun/spherical-validated/`; rejected initial and
+  tracked in `results/railgun/studies/spherical-validated/`; rejected initial and
   diagnostic studies are retained beside it. Archive commit `236aa328`.
 - The rejected 40x6 grid's off-grid KG error was 5.23e-8; it shrank to
   1.14e-10 / 1.29e-12 on 56x8 / 72x10. That is radial under-resolution,
@@ -235,8 +241,8 @@ three newly identified safeguards completed under the same four-thread,
 The November 1 safeguards passed **51 GPU regressions in 55.99 s**, code
 `fd15f724`, ending **10:37 MSK**, followed by **two saved-baseline GPU checks
 in 140.43 s**, code `303bdab5`, ending **10:43 MSK**. Portable reports are
-`results/railgun/gpu_guards_regression.json` and
-`results/railgun/gpu_baseline_regression.json`. The subsequent nonlinear ring
+`results/railgun/reports/gpu_guards_regression.json` and
+`results/railgun/reports/gpu_baseline_regression.json`. The subsequent nonlinear ring
 attempts and their stopping conditions are recorded in Live and queue above.
 
 1. Off-grid reports include worst KG/Einstein **radius and theta**, with a
@@ -452,7 +458,7 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
 
 **Current implementation:** endpoint ADM/lapse mass extraction and an explicit
 grid-only refined resume are implemented; all **63 GPU regressions passed**.
-Report: `results/railgun/gpu_refinement_regression.json`. The
+Report: `results/railgun/reports/gpu_refinement_regression.json`. The
 mass coefficient fit has drift 1.02e-6 at progress 0.625; the endpoint estimate
 agrees with the volume mass within 1.73e-8. Original records stay unchanged.
 The old KG and exact surface-J failures shrank under the approved refinement;

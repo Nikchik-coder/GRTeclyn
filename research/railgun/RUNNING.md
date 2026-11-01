@@ -80,7 +80,7 @@ The spherical-to-ring branch has a separate bounded initializer:
 
 ```bash
 $PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring.json \
-  --source results/railgun/spherical-validated/accepted.npz \
+  --source results/railgun/studies/spherical-validated/accepted.npz \
   --gpu 0 --out runs/railgun/spherical-to-ring --dry-run
 ```
 
@@ -106,8 +106,8 @@ the grids to 72x10 / 96x12 / 128x16:
 ```bash
 # Lists the proposal; initialises no GPU. The actual pilot needs its own go.
 $PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring_refined.json \
-  --source results/railgun/spherical-validated/accepted.npz \
-  --resume results/railgun/spherical-to-ring-resumed --refine-resume \
+  --source results/railgun/studies/spherical-validated/accepted.npz \
+  --resume results/railgun/studies/spherical-to-ring-resumed --refine-resume \
   --gpu 0 --jac-chunk 128 --out runs/railgun/spherical-to-ring-refined --dry-run
 ```
 
@@ -127,7 +127,7 @@ The separated-ring screen has a dedicated nonlinear recovery, with its own go:
 ```bash
 $PY -m grteclyn_wrapper.optimisation.railgun.annular_recovery \
   research/railgun/studies/annular_recovery_k12.json \
-  --source results/railgun/annular-gap-screen/k12_128x16.npz \
+  --source results/railgun/studies/annular-gap-screen/k12_128x16.npz \
   --out runs/railgun/annular-recovery-k12 --gpu 0 --dry-run
 ```
 
@@ -150,7 +150,7 @@ sampled channel is still separate from an actual confined particle trajectory.
 
 If only the finest grid's angular-momentum balance fails, an explicitly
 approved **one-solve** correction can use `--correct-from
-results/railgun/annular-recovery-k12` with a new output directory. It verifies
+results/railgun/studies/annular-recovery-k12` with a new output directory. It verifies
 the original archive checksums and identical configuration, starts from the
 saved finest state with a fresh Jacobian and at least two updates, and repeats
 all gates. The earlier two passing grids remain evidence. This raises the
