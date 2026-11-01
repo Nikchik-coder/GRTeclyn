@@ -31,14 +31,22 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-compactness-scan-20261101`, second node/card 0,
-code `4445ce44`, started **17:15 MSK**. Seven pins 0.06..0.23, at most
-21 fresh Newton solves on 72x10 / 96x12 / 128x16, max 30 iterations each.
-Stop at the first rejected point or an independently validated sampled
-ergoregion. Stationary solve: t not applicable; per-point speed/ETA not yet
-measured; hard cap **0.5 h, 17:45 MSK**. Four threads, 160 GiB, chunks 128;
-no AMR checkpoints. Scratch clean: 47 MB `_cache/` only, 538 GB free;
-first node not listed. Card 1 idle. No other physical run is queued.
+**Live:** none. `railgun-compactness-scan-20261101`, second node/card 0,
+code `4445ce44`, ran **17:15:58–17:19:40 MSK (0.0617 h)**, exit 2.
+Three pins **0.06 / 0.075 / 0.095 passed all three grids** (nine accepted
+solves). The next pin 0.12 failed Newton line search on 72x10 and failed
+independent equations; the scan stopped, with ten solves spent. Later
+0.15 / 0.19 / 0.23 points were not attempted. This is not a physical maximum.
+Last accepted omega=0.874052056468, M=1.198020886933, J=-1.241877125360,
+minimum sampled lapse=0.78022047, peak shift/lapse=0.06178653 (6.18%).
+No sampled ergoregion among accepted points. Archive:
+`results/railgun/studies/compactness-scan/`, including all accepted states
+and the rejected 0.12 state. Next: prepare frequency-controlled continuation
+from the last accepted state; a fresh run-specific go is required before
+changing the continuation parameter. No further physical run is queued.
+Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
+Both cards idle. Scratch clean at **17:20 MSK**: 47 MB in `_cache/` only,
+538 GB free; first node not listed. No completion ETA.
 
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
 raw code `4d40acbc`, **16:52:24–17:07:01 MSK**, followed by the event audit

@@ -1,0 +1,63 @@
+[capped_job] start 2026-11-01T14:15:58Z threads=4 mem=160G timeout=1800s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 1.000e-02 -> 1.993e-04 (t = 1)
+[newton] iter 1: |R| 1.993e-04 -> 3.150e-05 (t = 1)
+[newton] iter 2: |R| 3.126e-05 -> 4.509e-08 (t = 1)
+[newton] iter 3: |R| 4.509e-08 -> 1.427e-10 (t = 1)
+[newton] iter 4: |R| 1.427e-10 -> 3.138e-13 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 5.468e-14
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 18.957472634967417}
+[newton] iter 0: |R| 8.194e-06 -> 1.182e-09 (t = 1)
+[newton] iter 1: |R| 1.182e-09 -> 1.178e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.473e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 20.638890953967348}
+[newton] iter 0: |R| 6.195e-06 -> 8.905e-10 (t = 1)
+[newton] iter 1: |R| 8.905e-10 -> 8.903e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 8.300e-16
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 30.83297070604749}
+[compactness] amplitude=0.06, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 1.500e-02 -> 4.442e-04 (t = 1)
+[newton] iter 1: |R| 4.442e-04 -> 9.469e-05 (t = 1)
+[newton] iter 2: |R| 9.399e-05 -> 2.968e-07 (t = 1)
+[newton] iter 3: |R| 2.968e-07 -> 1.588e-09 (t = 1)
+[newton] iter 4: |R| 1.588e-09 -> 6.257e-12 (t = 1)
+[newton] iter 5: |R| 6.257e-12 -> 4.034e-14 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 7.801e-15
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 16.98949039587751}
+[newton] iter 0: |R| 8.199e-06 -> 1.215e-09 (t = 1)
+[newton] iter 1: |R| 1.215e-09 -> 1.389e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.862e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 19.090869550127536}
+[newton] iter 0: |R| 6.198e-06 -> 9.159e-10 (t = 1)
+[newton] iter 1: |R| 9.159e-10 -> 1.049e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.055e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 29.356111397966743}
+[compactness] amplitude=0.075, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 2.000e-02 -> 9.756e-04 (t = 1)
+[newton] iter 1: |R| 9.756e-04 -> 3.905e-04 (t = 1)
+[newton] iter 2: |R| 3.887e-04 -> 2.044e-05 (t = 1)
+[newton] iter 3: |R| 2.044e-05 -> 3.506e-06 (t = 1)
+[newton] iter 4: |R| 3.505e-06 -> 4.470e-09 (t = 1)
+[newton] iter 5: |R| 4.470e-09 -> 1.040e-11 (t = 1)
+[newton] iter 6: |R| 1.040e-11 -> 2.502e-14 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 3.853e-15
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 16.54592049284838}
+[newton] iter 0: |R| 8.211e-06 -> 1.268e-09 (t = 1)
+[newton] iter 1: |R| 1.268e-09 -> 2.713e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.750e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 19.27684584609233}
+[newton] iter 0: |R| 6.206e-06 -> 9.555e-10 (t = 1)
+[newton] iter 1: |R| 9.555e-10 -> 2.040e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.123e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 29.089757506968454}
+[compactness] amplitude=0.095, accepted=True
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 2.500e-02 -> 8.728e-03 (t = 1)
+[newton] iter 1: |R| 8.695e-03 -> 3.065e-03 (t = 1)
+[newton] iter 2: |R| 3.060e-03 -> 3.033e-03 (t = 0.25)
+[newton] iter 3: |R| 3.033e-03 -> 2.998e-03 (t = 0.03125)
+{"event": "grid", "grid": [72, 10], "verdict": "REJECT", "reasons": ["newton", "constraint_c", "constraint_19", "equation_max", "angular_momentum_balance", "mass_balance", "independent_equations", "intrinsic_kg_crosscheck"], "seconds": 16.4590174369514}
+[compactness] amplitude=0.12, accepted=False
+[capped_job] end 2026-11-01T14:19:40Z exit=2

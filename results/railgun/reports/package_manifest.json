@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "d7fbfcf02dba5555b9c2614932a300b72224e1016957221086aef03dcf29c5a2",
-      "bytes": 9314
+      "sha256": "9c1174a87d0fcf343f4c6be6fa98f4a372051b46e8e3d9d63de9999b7ba5e92d",
+      "bytes": 9702
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -324,6 +324,154 @@
     "studies/annular-recovery-k12/sha256sums.txt": {
       "sha256": "046a2854c94233f55493eac2b8c1eb9da17448adc4cc5d51584f1a60822afb20",
       "bytes": 1349
+    },
+    "studies/compactness-scan/amplitude_01/accepted.npz": {
+      "sha256": "a652c7d6b245a7f8ef98d1affdbcacf56105ca27fcb5053852dd83d88f078eae",
+      "bytes": 78571
+    },
+    "studies/compactness-scan/amplitude_01/grid_128x16.json": {
+      "sha256": "1fbe3adfec1706b5f3e749206c032f7dac12cc0d99b702ef3c255c645afdb3f1",
+      "bytes": 4067
+    },
+    "studies/compactness-scan/amplitude_01/grid_128x16.npz": {
+      "sha256": "251fbab25bc30917832a13330001746ba8a17755035eef49ba3215ad731fd9a7",
+      "bytes": 78571
+    },
+    "studies/compactness-scan/amplitude_01/grid_72x10.json": {
+      "sha256": "99a0f39344f78bf27ea5252f82d4728083b1bc4d676c4d08ec8ebb2bdfcb9633",
+      "bytes": 4307
+    },
+    "studies/compactness-scan/amplitude_01/grid_72x10.npz": {
+      "sha256": "5acbf45e6d00ac19e2c5f90c9c8bc4b7013fef91bdcc2a6535dc2483f489701a",
+      "bytes": 29542
+    },
+    "studies/compactness-scan/amplitude_01/grid_96x12.json": {
+      "sha256": "7d6dfd67bf4efbad08f4d5029685c5d3f8c03d385777dc98565e96896a7f69db",
+      "bytes": 4150
+    },
+    "studies/compactness-scan/amplitude_01/grid_96x12.npz": {
+      "sha256": "c1ab7511cd3e23f13f6c98ac8a3e0a28ad2824ea85796139deb00071f514c020",
+      "bytes": 45817
+    },
+    "studies/compactness-scan/amplitude_01/manifest.json": {
+      "sha256": "27f24d02c634af51598e863fdab545a75a6b545a5912a2330a33882b17daab40",
+      "bytes": 911
+    },
+    "studies/compactness-scan/amplitude_01/outcome.json": {
+      "sha256": "0087d1b30dc906a5a69aadb462b92cea91a5d604deed88b54eca324c86485aa2",
+      "bytes": 14568
+    },
+    "studies/compactness-scan/amplitude_02/accepted.npz": {
+      "sha256": "c58f785023fb7b16712106bab8c05e9451efeeebbe37c7841b2816686f4c4da3",
+      "bytes": 78585
+    },
+    "studies/compactness-scan/amplitude_02/grid_128x16.json": {
+      "sha256": "e5c58bdd282bba852a115248d6fda52506a205a5ac04fddc77b591d10608ff54",
+      "bytes": 4055
+    },
+    "studies/compactness-scan/amplitude_02/grid_128x16.npz": {
+      "sha256": "f518f5a4ad3bf23ca08e48defb347b915ab9092852f52b54a36cd955c83d852a",
+      "bytes": 78585
+    },
+    "studies/compactness-scan/amplitude_02/grid_72x10.json": {
+      "sha256": "c969fdaf5f64b57d219ebd8c1c89039f23040423b4759cdd0f589f09a4af9683",
+      "bytes": 4341
+    },
+    "studies/compactness-scan/amplitude_02/grid_72x10.npz": {
+      "sha256": "b21eda141f206e881616b1385546d1a429ed6da56cb0b29396ca2516f675ab92",
+      "bytes": 29535
+    },
+    "studies/compactness-scan/amplitude_02/grid_96x12.json": {
+      "sha256": "fbfc94b620984c9b79859c5b4e3ab968eded0383d9e1c7429ba911f28dd3aabe",
+      "bytes": 4129
+    },
+    "studies/compactness-scan/amplitude_02/grid_96x12.npz": {
+      "sha256": "df01bcf22410308fecf064a575f906c82ad41b1b1be4336287842a2edfa42bcd",
+      "bytes": 45832
+    },
+    "studies/compactness-scan/amplitude_02/manifest.json": {
+      "sha256": "4083d0fddf459392cc1c02206c7c5b22b868bc442f22fb56c67ab5cff2edbfd2",
+      "bytes": 912
+    },
+    "studies/compactness-scan/amplitude_02/outcome.json": {
+      "sha256": "b133a12e886fad94f1a5fa85f8e7faf0cde70860730cd7d00abbd24121573374",
+      "bytes": 14576
+    },
+    "studies/compactness-scan/amplitude_03/accepted.npz": {
+      "sha256": "832541f9e970a0ae2d1086a758792ff4c21f352ecf7565615921a45678a588c1",
+      "bytes": 78861
+    },
+    "studies/compactness-scan/amplitude_03/grid_128x16.json": {
+      "sha256": "c64c70ba6cdbd229638f4348ead39c6429021c2cdc5f60f71ca2e35fa79b970e",
+      "bytes": 4074
+    },
+    "studies/compactness-scan/amplitude_03/grid_128x16.npz": {
+      "sha256": "686a5f77830d17f62100a0023ce5383a9a4575cf86ea8707f848d9bc3bee2a9d",
+      "bytes": 78861
+    },
+    "studies/compactness-scan/amplitude_03/grid_72x10.json": {
+      "sha256": "dd15da8888847bcbece8b779e6bf8a98aefb8a61ea35ca0298320e5b661567b7",
+      "bytes": 4377
+    },
+    "studies/compactness-scan/amplitude_03/grid_72x10.npz": {
+      "sha256": "98f878275f6ec3b0d4a7a2fdce5a03d6f643cf6a8bb12333f87eb648da8b48fd",
+      "bytes": 29633
+    },
+    "studies/compactness-scan/amplitude_03/grid_96x12.json": {
+      "sha256": "e7360c97195075d947e003ea1f433aacbfa0e4bb7a712e9b11c18b028183df77",
+      "bytes": 4161
+    },
+    "studies/compactness-scan/amplitude_03/grid_96x12.npz": {
+      "sha256": "dfe42652b42bb0476a401a62eb3fd09654f04f3f6deb683f231c1b3658c85a38",
+      "bytes": 45969
+    },
+    "studies/compactness-scan/amplitude_03/manifest.json": {
+      "sha256": "2c0bf675fa624f74428ebccb8e74074682bd7a747878787173b532b6815b6c93",
+      "bytes": 912
+    },
+    "studies/compactness-scan/amplitude_03/outcome.json": {
+      "sha256": "778ea4e80a24a54a74de5f7c542798a77f93f2ea40b1a221c424565799d67f48",
+      "bytes": 14671
+    },
+    "studies/compactness-scan/amplitude_04/grid_72x10.json": {
+      "sha256": "c698850af7d89f7ab935d69af43caca270aa5a564d6731b16dca7b71c8c50350",
+      "bytes": 4463
+    },
+    "studies/compactness-scan/amplitude_04/grid_72x10.npz": {
+      "sha256": "ca111f94aafdbaf5cd6b30ca755ec79f120551ec5a6eaebd09abb998872055bc",
+      "bytes": 29567
+    },
+    "studies/compactness-scan/amplitude_04/manifest.json": {
+      "sha256": "38887a85858540cb9cae79c98092fb3203781c7e7bad0ea72f44cad5ce3168df",
+      "bytes": 911
+    },
+    "studies/compactness-scan/amplitude_04/outcome.json": {
+      "sha256": "acbb317e73d920cad6d1b04e1110b55b31039b63c2594a08dc120fddf6779ae9",
+      "bytes": 5333
+    },
+    "studies/compactness-scan/execution.json": {
+      "sha256": "a6213c038ea242aeb774082f97857c94d7aa948497e7ade0d6a577184c182ec9",
+      "bytes": 325
+    },
+    "studies/compactness-scan/manifest.json": {
+      "sha256": "662f44e4c22caabc06615337fab80accdbd6c4a57302e61e7a46a688ad7bcda1",
+      "bytes": 589
+    },
+    "studies/compactness-scan/outcome.json": {
+      "sha256": "7d5f908224347c550e7eceef48b5910683869bbede0cae8402c2dceea17b0dd6",
+      "bytes": 1623
+    },
+    "studies/compactness-scan/progress.json": {
+      "sha256": "8da754b6d4b262a04d7b27964a11c9498392aab1ee6a6b430f7d8699acdcdbad",
+      "bytes": 1304
+    },
+    "studies/compactness-scan/run.log": {
+      "sha256": "19bc131d63e86285dad0813ad0354d6f9dbe93f3f25dc2431150dca46dc587a4",
+      "bytes": 4133
+    },
+    "studies/compactness-scan/sha256sums.txt": {
+      "sha256": "0c6c2ac49750a5a631e7b6311539bfc4a94e2420b735dafb92c66072f6b0f1fe",
+      "bytes": 3306
     },
     "studies/counter-rotation/accepted.npz": {
       "sha256": "b7a5580331e4ffa726ed75146da8ded10d84f1d1cea28af9da677e5f1fff6b85",
