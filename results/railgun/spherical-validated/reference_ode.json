@@ -1,0 +1,9 @@
+{
+  "mass": 0.5325633174905171,
+  "omega": 0.9366516994675206,
+  "central_amplitude": 0.1,
+  "scalar_mass": 1.0,
+  "extent": 100.0,
+  "bvp_residual": 9.837271331113713e-10,
+  "outer_amplitude": 5.13359064053244e-16
+}

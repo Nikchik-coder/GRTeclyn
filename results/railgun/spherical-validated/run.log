@@ -1,0 +1,15 @@
+[capped_job] start 2026-11-01T07:21:48Z threads=4 mem=160G timeout=1800s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 1.287e-06 -> 6.945e-14 (t = 1)
+[newton] converged at iter 1: |R|_inf,scaled = 1.700e-14
+{"event": "grid", "grid": [56, 8], "verdict": "PASS", "reasons": [], "seconds": 11.882544323103502}
+[newton] iter 0: |R| 1.032e-05 -> 1.329e-09 (t = 1)
+[newton] iter 1: |R| 1.329e-09 -> 9.170e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.115e-15
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 13.59734985488467}
+[newton] iter 0: |R| 8.191e-06 -> 1.052e-09 (t = 1)
+[newton] iter 1: |R| 1.052e-09 -> 7.303e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 6.655e-16
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 15.509084748104215}
+{"accepted": true, "observable_relative_drift": 1.1820124833638134e-13, "grids_attempted": 3, "stability": "not_assessed", "reasons": [], "spherical_reference_errors": {"mass_relative": 5.479479614489691e-08, "frequency_relative": 1.117415804330335e-08}}
+[capped_job] end 2026-11-01T07:22:31Z exit=0

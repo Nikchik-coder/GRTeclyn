@@ -1,0 +1,7 @@
+[capped_job] start 2026-11-01T07:10:36Z threads=4 mem=160G timeout=1800s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 7.526e-07 -> 1.059e-13 (t = 1)
+[newton] converged at iter 1: |R|_inf,scaled = 3.212e-14
+{"event": "grid", "grid": [40, 6], "verdict": "REJECT", "reasons": ["spectral_tail", "scalar_localization", "independent_equations"], "seconds": 9.583654667949304}
+{"accepted": false, "observable_relative_drift": null, "grids_attempted": 1, "stability": "not_assessed", "reasons": ["background_or_three_grid_validation"]}
+[capped_job] end 2026-11-01T07:10:47Z exit=2
