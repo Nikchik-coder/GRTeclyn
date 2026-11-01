@@ -9,10 +9,11 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
-**Live:** `railgun-profile-regression-20261101`, second node/card 0,
-code `4c1e2085`; targeted signed-profile, stress-energy, diagnostics and
-transport checks. Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
-Initialisation/compilation; no measured speed or completion ETA yet.
+**Live:** `railgun-ring-profile-20261101`, second node/card 0,
+code `4c1e2085`; core certification followed by signed-axis/equatorial
+profiling. Started after all 11 targeted GPU tests passed in 53.32 s
+(12:31:36–12:32:31 MSK). Four threads, 160 GiB, 0.5 h cap, no AMR
+checkpoints. Initialisation/compilation; no measured speed or completion ETA yet.
 Scratch at launch: clean, 47 MB in `_cache/` only, 543 GB free; first
 node not listed.
 
