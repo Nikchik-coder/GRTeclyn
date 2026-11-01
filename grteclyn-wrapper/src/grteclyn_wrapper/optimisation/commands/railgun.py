@@ -21,6 +21,13 @@ def main(argv=None):
     solve.add_argument('--jac-chunk', type=int, default=128)
     solve.add_argument('--seed', type=Path)
     solve.add_argument('--dry-run', action='store_true')
+    homotopy=sub.add_parser('homotopy')
+    homotopy.add_argument('config',type=Path)
+    homotopy.add_argument('--source',type=Path,required=True)
+    homotopy.add_argument('--out',type=Path,required=True)
+    homotopy.add_argument('--gpu',type=int,required=True)
+    homotopy.add_argument('--jac-chunk',type=int,default=128)
+    homotopy.add_argument('--dry-run',action='store_true')
     transport = sub.add_parser('transport')
     transport.add_argument('solution', type=Path)
     transport.add_argument('--out', type=Path, required=True)
@@ -31,6 +38,10 @@ def main(argv=None):
     transport.add_argument('--duration', type=float, default=10.)
     transport.add_argument('--rtol', type=float, default=1e-9)
     transport.add_argument('--max-step', type=float, default=.2)
+    transport.add_argument('--through-centre', action='store_true',
+                           help='certify a Cartesian core before removing the inner stop')
+    transport.add_argument('--corridor-radius', type=float)
+    transport.add_argument('--corridor-degree', type=int, default=6)
     profile = sub.add_parser('profile')
     profile.add_argument('solution', type=Path)
     profile.add_argument('--out', type=Path, required=True)
@@ -44,6 +55,19 @@ def main(argv=None):
     if not getattr(args, 'dry_run', False):
         os.environ.setdefault('XLA_PYTHON_CLIENT_ALLOCATOR', 'platform')
         os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE', 'false')
+    if args.verb=='homotopy':
+        config=json.loads(args.config.read_text())
+        from ..railgun.model import ScalarField
+        ScalarField(**config['ring_field'])
+        if args.gpu < 0 or args.jac_chunk <= 0:
+            parser.error('gpu must be nonnegative and jac-chunk positive')
+        if args.dry_run:
+            print(json.dumps(dict(config=config,numerical_execution=False),indent=2));return 0
+        from ..solver.device import select_device
+        select_device(args.gpu,args.jac_chunk)
+        from ..railgun.continuation import run_homotopy
+        result=run_homotopy(args.source,config,args.out)
+        return 0 if result['accepted'] else 2
     if args.verb == 'profile':
         if args.gpu < 0:
             parser.error('gpu must be nonnegative')
@@ -77,16 +101,29 @@ def main(argv=None):
         if p.jax.devices()[0].platform != 'gpu':
             parser.error('GPU execution required')
         geometry = RingGeometry(p, u)
-        system = MPDSystem(geometry.metric)
+        certificate=None
+        if args.through_centre:
+            from ..railgun.corridor import CartesianCorridor
+            geometry=CartesianCorridor(geometry,radius=args.corridor_radius,degree=args.corridor_degree)
+            certificate=geometry.certify()
+            if not certificate['accepted']:
+                args.out.mkdir(parents=True,exist_ok=False)
+                write_json(args.out/'corridor.json',certificate)
+                print('Cartesian core failed certification; no trajectory started',flush=True)
+                return 2
+        system = MPDSystem(geometry.metric,regular_origin=args.through_centre)
         states = matched_controls(system, [0., 0., args.z], spin=args.spin, speed=args.speed)
         args.out.mkdir(parents=True, exist_ok=False)
         summary = dict(background_schema=metadata['schema'], model=metadata['model'],
                        background_stability='not_assessed', controls={},
                        rtol=args.rtol, max_step=args.max_step,
+                       regular_origin=args.through_centre,
                        interpretation='Finite-radius tracks; no claim of asymptotic escape.')
+        if certificate is not None:
+            write_json(args.out/'corridor.json',certificate)
         for label, state in states.items():
             track = system.integrate(state, duration=args.duration, rtol=args.rtol,
-                                     max_step=args.max_step)
+                                     max_step=args.max_step,inner_radius=0. if args.through_centre else 1e-4)
             np.savez_compressed(args.out/f'{label}.npz', time=track['time'], state=track['state'])
             small = {k:v for k,v in track.items() if k not in ('time','state')}
             write_json(args.out/f'{label}.json', small)

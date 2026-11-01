@@ -1,0 +1,49 @@
+"""Discrete-winding transfer and the bound-mode gate before nonlinear homotopy."""
+import numpy as np
+import pytest
+from grteclyn_wrapper.optimisation.railgun.model import ScalarField
+from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
+from grteclyn_wrapper.optimisation.railgun.continuation import transfer_fields,linear_bound_seed
+
+
+def test_new_winding_field_keeps_its_own_regular_origin_and_frequency():
+    old=RingProblem([ScalarField(winding=0)],nx=16,ny=4)
+    u=old.seed()
+    arrays,_=old.unpack(u)
+    assert np.max(arrays['q0'][-1]) > 0
+    pair=RingProblem([old.fields[0],ScalarField(winding=1,amplitude=.001)],nx=16,ny=4)
+    transferred=transfer_fields(pair,old,u)
+    new,freq=pair.unpack(transferred)
+    np.testing.assert_allclose(new['q0'],arrays['q0'],atol=1e-14)
+    assert np.max(abs(new['q1'][-1]))==0.
+    assert np.max(abs(new['q1'][1:-1])) > 0.
+    assert len(freq)==2
+    pure=RingProblem([pair.fields[1]],nx=16,ny=4)
+    alone=transfer_fields(pure,pair,transferred)
+    single,frequency=pure.unpack(alone)
+    np.testing.assert_allclose(single['q0'],new['q1'],atol=1e-14)
+    assert frequency[0]==freq[1]
+
+
+def test_flat_space_does_not_supply_a_self_bound_massive_seed():
+    p=RingProblem([ScalarField(winding=0),ScalarField(winding=1,amplitude=.001)],nx=32,ny=4)
+    arrays,freq=p.unpack(p.seed())
+    for tag in ('f','w','N','b'):arrays[tag]*=0.
+    with pytest.raises(RuntimeError,match='no resolved nodeless bound'):
+        linear_bound_seed(p,p.pack(arrays,freq))
+
+
+def test_a_synthetic_binding_well_has_a_pinned_nodeless_linear_mode():
+    # A manufactured external metric tests the linear eigensolver only. It is
+    # not supplied as an Einstein solution or an accepted boson-star seed.
+    p=RingProblem([ScalarField(winding=0),ScalarField(winding=1,amplitude=.001)],nx=48,ny=4,length=5.)
+    arrays,freq=p.unpack(p.seed())
+    for tag in ('w','N','b'):arrays[tag]*=0.
+    arrays['f'][1:]=-.8/np.sqrt(1+(p.r[1:,None]/5)**2)
+    seeded,info=linear_bound_seed(p,p.pack(arrays,freq))
+    values,frequencies=p.unpack(seeded)
+    assert 0 < info['frequency'] < 1.
+    assert info['relative_linear_residual'] < 1e-8
+    assert frequencies[1]==info['frequency']
+    assert float(p.anchors[1]@values['q1'][:,-1])==pytest.approx(.001,abs=1e-14)
+    np.testing.assert_array_equal(values['q1'][[0,-1]],0.)

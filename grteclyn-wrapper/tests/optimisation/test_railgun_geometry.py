@@ -77,3 +77,15 @@ def test_metric_interpolation_retains_coordinate_derivatives():
     off = xp.array([0.,1.,0.,3.])
     np.testing.assert_allclose(np.asarray(geom.metric(off))[0,1:],
                                -np.asarray(reverse.metric(off))[0,1:],atol=1e-14)
+
+
+def test_intrinsic_and_cartesian_kg_agree_with_winding_and_odd_parity():
+    from grteclyn_wrapper.optimisation.railgun.model import ScalarField
+    from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
+    p=RingProblem([ScalarField(winding=1,parity='odd'),ScalarField(winding=-2)],nx=16,ny=4)
+    u=p.seed();arrays,freq=p.unpack(u)
+    for tag in ('f','w','N','b'):arrays[tag]*=0.
+    geom=RingGeometry(p,p.pack(arrays,freq))
+    for point in ([.2,.3,.4,1.],[.2,.3,.4,-1.],[0.,.02,.03,.1]):
+        row=geom.independent(point)
+        assert row['kg_coordinate_difference'] < 1e-11

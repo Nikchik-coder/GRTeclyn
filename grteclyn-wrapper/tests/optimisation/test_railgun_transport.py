@@ -64,3 +64,30 @@ def test_rotating_background_spin_force_and_killing_integrals():
     assert max(track['absolute_drift'].values()) < 1e-8
     assert track['ssc_max'] < 1e-8
     assert track['norm_error'] < 1e-12
+
+
+def test_inward_controls_retain_the_inward_velocity_branch():
+    system=MPDSystem(flat)
+    for state in matched_controls(system,[0.,0.,1.],spin=.01,speed=-.2).values():
+        assert state[7] < 0.
+
+
+def test_certified_cartesian_corridor_crosses_the_origin_with_spin():
+    from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
+    from grteclyn_wrapper.optimisation.railgun.geometry import RingGeometry
+    from grteclyn_wrapper.optimisation.railgun.corridor import CartesianCorridor
+    p=RingProblem(nx=8,ny=4)
+    core=CartesianCorridor(RingGeometry(p,np.zeros(p.n_unknowns)),radius=.5,degree=3)
+    certificate=core.certify()
+    assert certificate['accepted'],certificate['maxima']
+    np.testing.assert_allclose(core.metric(xp.zeros(4)),np.diag([-1.,1.,1.,1.]),atol=1e-13)
+    assert np.isfinite(core.tensors(xp.zeros(4))[2]).all()
+    system=MPDSystem(core.metric,regular_origin=True)
+    state=system.initial_state([0.,0.,.3],speed=-.3,spin=.001)
+    track=system.integrate(state,duration=2.,inner_radius=0.,max_step=.1)
+    assert track['success']
+    assert track['state'][-1,3] < 0.
+    assert track['stop']=='duration'
+    assert track['ssc_max'] < 1e-10
+    with pytest.raises(ValueError):
+        MPDSystem(flat).integrate(state,inner_radius=0.)

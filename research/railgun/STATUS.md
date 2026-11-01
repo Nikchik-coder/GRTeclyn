@@ -2,78 +2,69 @@
 
 Updated **2026-11-01 (MSK)**. Branch: `feature/optimisation`.
 
-**Decision:** pause the minimal-exotic-matter optimisation campaign and develop
-this separate ring-spacetime study using its JAX/Newton infrastructure. The
-implementation is now present; numerical GPU validation is pending. The previous text in
-this file was a research proposal; it supplied no validated solutions, timing
-measurements or evidence of a jet, a hidden vortex or a finite Tipler tube.
+**Decision:** the minimal-exotic-matter optimisation campaign is paused. This
+separate study reuses its JAX/Newton infrastructure for regular-centre scalar
+rings. The spherical baseline is validated; ring, counter-rotation, stacked
+states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Authorised November 1:** GPU 0 regression tests, followed by the spherical
-reference pilot on 40x6, 56x8 and 72x10, at most 30 Newton iterations per grid.
-Each job has four CPU threads, 160 GiB host address space and a 0.5 h timeout;
-Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained.
-**Live: none.** `railgun-spherical-pilot-r2-20261101` finished **10:17 MSK**,
-second node/card 0, commit `c6b4bc67`. It recovered the 40x6/56x8/72x10 grids
-in 9.40/10.63/13.99 s, with 1/2/2 actual Newton updates. Off-grid KG residuals
-are **5.23e-8 / 1.14e-10 / 1.29e-12**; the first grid fails the unchanged
-1e-8 gate. The finest mass estimates differ by 1.78e-12. Near-zero w and N
-(3e-14/7e-14) still triggered relative-tail checks despite absolute tails
-below 1e-15; a mixed absolute/relative coefficient test is being installed,
-with a 64 eps absolute floor. The rejected coarse grid is not accepted.
-Scratch clean: 47 MB / 546 GB free. No AMR checkpoints; ETA none.
+**Live: none.** The designated second node's two H100s are idle. Scratch is
+clean: **47 MB**, only `_cache/`, **546 GB free**. No plotfiles or AMR checkpoints.
+ETA none. The first node was not listed. Host/checkout details stay in the
+untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
+through `myfork`; code and validation archives were transferred that way.
 
-**Fresh go received:** `studies/spherical_refined.json`, 56x8/72x10/96x12,
-GPU 0, 30 Newton iterations per grid, four threads, 160 GiB and 0.5 h,
-Jacobian chunks 128, no AMR checkpoints. It follows the updated regressions.
+The authorised regression tests and spherical pilots have completed. No
+single-ring, homotopy, counter-rotation, stacked-ring or physical transport
+job is authorised or queued for automatic dispatch. Regression work on the
+three newly identified safeguards continues under the same four-thread,
+160 GiB, 0.5 h job cap, GPU 0 and Jacobian chunks of 128. No AMR checkpoints.
 
-`railgun-regression-r3-20261101` passed **all 44 tests** in **22.87 s** on
-GPU 0, ending **10:15 MSK**, commit `c6b4bc67`. The two added checks cover
-roundoff-only fields and resolved tails. JUnit: `runs/railgun/regression-r3.xml`.
-`railgun-regression-r2-20261101` passed **all 42 tests** on
-second node/card 0 in **22.40 s**, ending **10:09 MSK**, commit `5a27e82f`.
-CUDA placement and float64 were asserted. JUnit: `runs/railgun/regression-r2.xml`.
+## Completed baseline — November 1
 
-`railgun-spherical-pilot-20261101` ran **10:10 MSK**, commit `7991987a`.
-The 40x6 solve took 4.75 s and one Newton update (scaled residual 3.21e-14),
-then failed validation: no accepted background. M_ADM=0.532563289276 and
-the independent Komar integral=0.532563289090. Off-grid Einstein residual
-is 9.96e-10; KG is **5.23e-8**, above the 1e-8 gate. Its N field is only
-1.54e-16: dividing its roundoff tail by that value gave a false 0.116 relative
-tail. All sampled scalar tails are below 4e-9; tiny sub-threshold fluctuations
-also caused a false localization rejection. Roundoff handling is being fixed;
-the KG rejection remains. The approved 56x8/72x10 recovery will diagnose it,
-without changing any acceptance threshold. Output: `runs/railgun/spherical-pilot-20261101/`.
-That first pilot is finished. Scratch clean: 47 MB cache / 546 GB free.
+- **45 GPU regression tests passed**, 22.34 s, ending 10:21 MSK, code
+  `732ed60e`. CUDA placement and float64 are asserted. The tests include
+  canonical sources/parity, charge normalization, flat/Schwarzschild/Kerr
+  curvature, TD-MPD conservation, the existing Newton/winding regressions and
+  fail-closed validation. Portable report: `results/railgun/gpu_regression.json`.
+- **The spherical three-grid pilot passed**, 56x8 / 72x10 / 96x12, code
+  `732ed60e`, ending **10:22 MSK**. Actual recovery: 1/2/2 Newton updates;
+  full solve/check times 11.88/13.60/15.51 s. Final observable drift 1.18e-13.
+  Relative discrepancies with the independently solved areal-radius ODE:
+  **mass 5.48e-8, frequency 1.12e-8**. This is a stationary numerical baseline,
+  not dynamical stability or evidence of a rotating ring.
+- The accepted fields, ODE reference, manifests, diagnostics and checksums are
+  tracked in `results/railgun/spherical-validated/`; rejected initial and
+  diagnostic studies are retained beside it. Archive commit `236aa328`.
+- The rejected 40x6 grid's off-grid KG error was 5.23e-8; it shrank to
+  1.14e-10 / 1.29e-12 on 56x8 / 72x10. That is radial under-resolution,
+  not a measured stability issue. The old failed grid stays rejected.
+  Relative spectra of nearly zero fields and sub-threshold tail noise were
+  repaired using mixed absolute/relative roundoff handling; physical equation
+  gates remain 1e-8 and observable convergence 1e-6. CUDA platform allocation
+  without preallocation fits the 160 GiB address-space cap; the async allocator
+  aborted during initialisation under that cap.
 
-`railgun-regression-20261101` launched **10:05 MSK**, second node/card 0,
-commit `fad3d846`. It aborted at **10:05 MSK**, exit 134, during CUDA backend
-initialisation after 16 algebra tests; no GPU numerical result was produced.
-The platform allocator with preallocation disabled works under the same cap:
-`railgun-regression-platform-20261101` ran **10:06–10:07 MSK**, 22.80 s,
-40 passed / one failed. Flat, Schwarzschild, Kerr, TD-MPD, parity and existing
-solver/winding tests passed. The Gaussian analytic-charge fixture missed its
-2e-8 tolerance by a 2.60e-8 interpolation error on 64 radial points; its grid
-is being refined to 96 without relaxing the tolerance. Both
-cards are idle; scratch remains 47 MB cache / 546 GB free. Persistent log:
-`runs/capped_jobs/railgun-regression-20261101/log`. These two earlier jobs are finished.
-No single-ring, counter-rotation, stacked-ring or
-transport experiment is authorised by this go. Speed is unmeasured; the
-timeout is a budget, not an ETA. Numerical experiments belong on cluster GPUs.
+## Current implementation checks
 
-The designated second GPU node was inspected over SSH on November 1: both
-H100 80 GB cards had no compute processes and zero reported utilisation.
-Scratch was clean: **47 MB**, entirely `_cache/`, with **547 GB free** on its
-filesystem; no run folders, plotfiles or AMR checkpoints were present.
-Availability must be checked again before launching. The first node was not
-listed in this session.
+The November 1 safeguards are implemented and await GPU regression checks:
 
-The cluster checkout is also on `feature/optimisation`, at `485f8d443`; the
-workstation baseline inspected here is `ec12706e`. Sync the intended tested
-commit before any experiment. The SSH alias and checkout path are recorded
-in the untracked `runs/railgun/NODES.local.md`; keep machine identity out of
-tracked files. No cluster checkout or environment was changed in this audit.
+1. Off-grid reports include worst KG/Einstein **radius and theta**, with a
+   separate intrinsic divergence-form KG evaluation and Cartesian/intrinsic
+   discrepancy. The existing spherical convergence result is retained.
+2. `continuation.py` supplies a **bound-mode-seeded two-field homotopy**.
+   Winding stays integer; the new k=1 component starts from a solved KG
+   eigenmode on the spherical metric. Its pin rises as the k=0 pin falls.
+   Missing bound states or failed nonlinear steps remain unresolved; no path
+   is guaranteed. At the endpoint the residual k=0 field and its frequency
+   are explicitly removed, then the pure ring needs fresh three-grid recovery.
+   `studies/spherical_to_ring.json` caps this at 24 solves and six bisections.
+3. `corridor.py` fits a regular **two-dimensional Cartesian core in rho²,z²**,
+   retaining transverse derivatives. A C2 join, polynomial-order comparison,
+   independent equations and curvature checks certify it before
+   `transport --through-centre` removes the inner stop. Otherwise the stop
+   remains. Inward spin controls now retain the inward velocity branch.
 
 ## Questions to test
 
@@ -130,7 +121,7 @@ explains the existing workflow; the
   diagnostics. Reuse their validation approach, with equations and boundaries
   appropriate to the new model.
 
-**Implemented November 1, awaiting numerical acceptance:**
+**Implemented November 1; spherical acceptance above, ring acceptance pending:**
 `railgun/model.py` and `problem.py` provide the regular-centre domain, separate
 winding fields, analytic parity factors, frequency borders and optional total-J
 condition. `geometry.py` reconstructs Cartesian curvature and all Einstein/KG
@@ -140,9 +131,9 @@ independent spherical BVP. `transport.py` implements TD-MPD motion and matched
 energy spin controls; `profiles.py` measures axial magnetic tidal curvature.
 `commands/railgun.py` exposes solve/profile/transport, with four study configs
 under `studies/`. See [equations](EQUATIONS.md) and [execution](RUNNING.md).
-The 17 local algebra/policy tests pass; no GPU or physical acceptance is claimed.
-Exact-origin Cartesian interpolation and through-centre trajectories remain
-excluded, with an explicit inner stopping sphere. Stability is unassessed.
+GPU baseline acceptance is recorded above. Through-centre transport requires
+a separately certified Cartesian core; ordinary transport keeps the explicit
+inner stop. Stability is unassessed.
 
 Existing bosonic *wormhole* experiments have not certified a nonzero canonical
 matter finalist. Their archived failures can guide initialization, but cannot
@@ -258,6 +249,6 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable:** GPU regression results and the independent spherical
-three-grid pilot, with any failed gates diagnosed before a ring experiment.
-No railgun physics result has yet been established.
+**Next deliverable:** GPU checks of intrinsic KG, discrete-winding seeding and
+the through-origin core; then a bounded single-ring initialization proposal.
+No rotating-ring or axial-ejection result has yet been established.

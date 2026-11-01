@@ -173,12 +173,20 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
         checks = []
         for radius in problem.length*np.array([.02, .05, .15, .5, 1., 2., 4.]):
             for theta in (.25, .8, 1.3):
-                checks.append(geom.independent([0., radius*np.sin(theta), 0., radius*np.cos(theta)]))
-            checks.append(geom.independent([0.,0.,0.,radius]))
+                checks.append(dict(geom.independent([0., radius*np.sin(theta), 0., radius*np.cos(theta)]),
+                                   radius=float(radius),theta=theta))
+            checks.append(dict(geom.independent([0.,0.,0.,radius]),radius=float(radius),theta=0.))
         out['offgrid_einstein_max'] = max(v['einstein_max'] for v in checks)
         out['offgrid_kg_max'] = max(v['kg_max'] for v in checks)
+        for name,key in (('worst_kg_point','kg_max'),('worst_einstein_point','einstein_max')):
+            worst=max(checks,key=lambda row:row[key])
+            out[name]={k:worst[k] for k in ('radius','theta',key)}
+        out['offgrid_intrinsic_kg_max']=max(v.get('kg_intrinsic_max',0.) for v in checks)
+        out['kg_coordinate_difference']=max(v.get('kg_coordinate_difference',0.) for v in checks)
         if max(out['offgrid_einstein_max'], out['offgrid_kg_max']) > equation_tol:
             reasons.append('independent_equations')
+        if max(out['offgrid_intrinsic_kg_max'],out['kg_coordinate_difference']) > equation_tol:
+            reasons.append('intrinsic_kg_crosscheck')
     if not all(np.isfinite(out[k]) for k in ('M_ADM_estimate', 'M_Komar_volume', 'J_volume', 'J_asymptotic_estimate', 'gtt_max')):
         reasons.append('nonfinite_observables')
     out.update(verdict='PASS' if not reasons else 'REJECT', reasons=reasons)

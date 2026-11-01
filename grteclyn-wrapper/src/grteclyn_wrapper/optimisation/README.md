@@ -351,3 +351,14 @@ The workflow tests replace expensive solves and process launches with controlled
 fixtures. The numerical tests also run real CPU solves and check the independent
 constraints. Packaging tests check the commands and configuration from an
 installed wheel, outside the source checkout.
+
+## Regular-centre scalar rings
+
+The separate `railgun/` study reuses the generic Newton core while replacing
+the wormhole domain and boundary rows. It supports independent canonical
+winding fields and parity, independent Cartesian/intrinsic KG checks, a
+bounded two-field branch initializer, and certified regular-core MPD transport.
+Current acceptance and launch permissions live in
+[the ring status](../../../../research/railgun/STATUS.md); equations and commands
+are documented beside it. No rotating-ring or stability result follows from
+the validated spherical baseline.

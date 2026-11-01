@@ -62,6 +62,7 @@ class RingGeometry:
         self.metric = self.jax.jit(self._metric)
         self.tensors = self.jax.jit(curvature(self._metric, self.jax))
         self._einstein = self.jax.jit(self._independent)
+        self._intrinsic_jit = self.jax.jit(self._intrinsic_kg)
 
     def sample(self, name, s, y):
         xp = self.xp
@@ -126,9 +127,40 @@ class RingGeometry:
             kg.append(xp.einsum('ab,iab->i', xp.linalg.inv(g), hess)-eff*value)
         return ricci-source, xp.stack(kg) if kg else xp.zeros((0, 2))
 
+    def _intrinsic_kg(self, rt):
+        """Covariant divergence-form KG in (r,theta), independent of Cartesian AD."""
+        xp = self.xp
+        def local(coords):
+            r,theta = coords
+            s=(r-self.length)/(r+self.length)
+            y=xp.cos(2*theta)
+            return tuple(self.sample(t,s,y) for t in ('f','w','N','b'))
+        r,theta=rt
+        f,w,n,b=local(rt);b=1+b
+        determinant=b**3*xp.exp(n*xp.sin(theta)**2-f)*r*r*xp.sin(theta)
+        rows=[]
+        for i,field in enumerate(self.fields):
+            def amplitude(coords):
+                rr,th=coords
+                q=self.sample(f'q{i}',(rr-self.length)/(rr+self.length),xp.cos(2*th))
+                return q*xp.sin(th)**abs(field.winding)*(xp.cos(th) if field.parity=='odd' else 1.)
+            def flux(coords):
+                rr,th=coords
+                bb=1+local(coords)[3]
+                gradient=self.jax.jacfwd(amplitude)(coords)
+                return bb*xp.sin(th)*xp.array([rr*rr*gradient[0],gradient[1]])
+            derivative=self.jax.jacfwd(flux)(rt)
+            a=amplitude(rt)
+            effective=field.mass**2+2*field.quartic*a*a+3*field.sextic*a**4
+            harmonic=((self.frequencies[i]+field.winding*w)**2*xp.exp(-f)
+                      -field.winding**2*xp.exp(f)/(b*b*r*r*xp.sin(theta)**2))
+            rows.append((derivative[0,0]+derivative[1,1])/determinant+(harmonic-effective)*a)
+        return xp.stack(rows) if rows else xp.zeros(0)
+
     def independent(self, point):
         point = np.asarray(point, dtype=float)
-        if point.shape != (4,) or not np.isfinite(point).all() or np.linalg.norm(point[1:]) == 0:
+        if (point.shape != (4,) or not np.isfinite(point).all()
+                or (np.linalg.norm(point[1:]) == 0 and not getattr(self,'regular_origin',False))):
             raise ValueError('a finite Cartesian point away from the origin is required')
         e, kg = self._einstein(self.xp.asarray(point))
         # Cartesian orthonormal projection, independent of collocation row weights.
@@ -139,5 +171,16 @@ class RingGeometry:
         tetrad[0] = np.r_[1., -beta]/alpha
         tetrad[1:, 1:] = np.linalg.inv(np.linalg.cholesky(g[1:, 1:]))
         orth = tetrad@np.asarray(e)@tetrad.T
-        return dict(einstein_max=float(np.max(np.abs(orth))),
+        result=dict(einstein_max=float(np.max(np.abs(orth))),
                     kg_max=float(np.max(np.abs(kg))) if np.size(kg) else 0.)
+        rho=np.hypot(point[1],point[2]);r=np.linalg.norm(point[1:])
+        if self.fields and rho > 0:
+            theta=np.arctan2(rho,abs(point[3]))
+            intrinsic=np.asarray(self._intrinsic_jit(self.xp.asarray([r,theta])))
+            phase=self.frequencies*point[0]+np.array([f.winding for f in self.fields])*np.arctan2(point[2],point[1])
+            # Negative-z odd parity changes the signed amplitude too.
+            signs=np.array([-1. if point[3]<0 and f.parity=='odd' else 1. for f in self.fields])
+            predicted=intrinsic[:,None]*signs[:,None]*np.stack([np.cos(phase),np.sin(phase)],axis=1)
+            result.update(kg_intrinsic_max=float(np.max(abs(intrinsic))),
+                          kg_coordinate_difference=float(np.max(abs(np.asarray(kg)-predicted))))
+        return result

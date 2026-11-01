@@ -130,10 +130,9 @@ Off-grid fields use differentiable Chebyshev interpolation. The metric is
 reconstructed in Cartesian coordinates. The combination
 `(1-exp(N rho^2/r^2))/rho^2` is evaluated using its analytic axis limit.
 Scalar components use `[(x+i sign(k)y)/r]^abs(k)` rather than an azimuthal
-angle, preserving their Cartesian derivatives on the axis. The exact origin
-is excluded from this interpolant: profiles start at positive radius and
-trajectories have an explicit inner stopping sphere. No track through that
-unvalidated point is exported.
+angle, preserving their Cartesian derivatives on the axis. The base interpolant excludes the exact origin. Ordinary profiles start at
+positive radius and trajectories retain an inner stop. The separately
+certified Cartesian core described below can extend a trajectory through it.
 
 The Riemann convention is
 `R^a_bcd=partial_c Gamma^a_bd-partial_d Gamma^a_bc+Gamma^a_ec Gamma^e_bd-Gamma^a_ed Gamma^e_bc`.
@@ -150,3 +149,44 @@ It monitors mass, spin, supplementary condition, Killing energy/angular momentum
 and timelike velocity. A spin/curvature bound and an inner/outer radius stop
 the integration. Controls have equal spin-corrected launch energy. Reaching a
 finite outer radius is labelled as such, not as escape to infinity.
+
+## Three safeguards added after the spherical benchmark
+
+Every off-grid maximum now carries its radius and polar angle. A separate
+intrinsic KG calculation evaluates
+
+```text
+[partial_r(B r² sin(theta) partial_r A)
+ + partial_theta(B sin(theta) partial_theta A)] / [B³ exp(nu-f) r² sin(theta)]
++ [(omega+k w)² exp(-f) - k² exp(f)/(B² r² sin²(theta)) - U'(A)/(2A)] A.
+```
+
+This is compared with the Cartesian covariant KG residual, including the phase
+and odd-parity sign. The intrinsic check is used off-axis; the Cartesian check
+retains the analytic axis limit. Neither is substituted for a failing result.
+
+Winding is a discrete model choice. A k=0 amplitude is never relabelled as a
+k=1 amplitude. The two-field initializer solves a nodeless, bound radial KG
+eigenmode of integer degree on the accepted spherical background. The coupled
+homotopy then uses separate amplitude/frequency borders. A bound linear mode
+and a connected nonlinear path both need to exist; neither follows just from
+adding a second field. Hydrogenic states are not exact self-consistent
+Schrödinger–Poisson seeds. The final small k=0 block is removed together with
+its eigenfrequency before a pure-ring solve. The broader multistate setting
+has precedents, e.g. [rotating multistate boson stars](https://arxiv.org/abs/1906.00420).
+
+For transport across the centre, the regular core fits f, C=B²exp(-f), w and
+H=C*N*exprel(nu)/r², as functions of (rho²,z²). It reconstructs
+
+```text
+g_ij = (C+H rho²) delta_ij - H v_i v_j, v=(-y,x,0),
+g_ti = -C w v_i, g_tt=-exp(f)+C w² rho².
+```
+
+Scalar coefficients q/r^(|k|+parity) multiply the Cartesian polynomial
+`(x+i sign(k)y)^|k| z^parity`. Thus both transverse and axial derivatives exist
+at the origin. A smooth join alone does not solve Einstein's equations:
+independent equations, curvature matching, polynomial-order comparison and
+metric signature are checked on the centre, axis and joining region. A failed
+certificate retains the inner stopping sphere. This is more information than
+a one-dimensional signed-z metric curve, which cannot determine all MPD forces.

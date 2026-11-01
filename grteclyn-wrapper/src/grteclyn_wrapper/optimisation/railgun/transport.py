@@ -16,10 +16,11 @@ from ..solver.device import configure_jax
 
 
 class MPDSystem:
-    def __init__(self, metric, *, spin_limit=0.1):
+    def __init__(self, metric, *, spin_limit=0.1, regular_origin=False):
         self.jax = configure_jax()
         self.xp = self.jax.numpy
         self.metric = metric
+        self.regular_origin=bool(regular_origin)
         if not np.isfinite(spin_limit) or spin_limit <= 0:
             raise ValueError('spin_limit must be positive')
         self.spin_limit = spin_limit
@@ -85,7 +86,8 @@ class MPDSystem:
         if mass <= 0 or not np.isfinite([mass, spin, speed]).all() or abs(speed) >= 1:
             raise ValueError('finite mass>0, spin and |speed|<1 required')
         position = np.asarray(position, float)
-        if position.shape != (3,) or not np.isfinite(position).all() or np.linalg.norm(position) == 0:
+        if (position.shape != (3,) or not np.isfinite(position).all()
+                or (np.linalg.norm(position) == 0 and not self.regular_origin)):
             raise ValueError('finite position away from origin required')
         x = np.r_[0., position]
         g = np.asarray(self.metric(self.xp.asarray(x)))
@@ -109,9 +111,11 @@ class MPDSystem:
 
     def integrate(self, state, *, duration=20., rtol=1e-9, atol=1e-11,
                   max_step=.2, outer_radius=100., inner_radius=1e-4):
-        if not (duration > 0 and 0 < inner_radius < outer_radius and max_step > 0
+        if not (duration > 0 and 0 <= inner_radius < outer_radius and max_step > 0
                 and rtol > 0 and atol > 0):
             raise ValueError('positive time/tolerances/step and ordered radii required')
+        if inner_radius==0 and not self.regular_origin:
+            raise ValueError('removing the inner stop requires a certified regular-origin metric')
         state = np.asarray(state, float)
         if state.shape != (24,) or not np.isfinite(state).all():
             raise ValueError('a finite 24-component MPD state is required')
@@ -128,8 +132,10 @@ class MPDSystem:
         def spin_bound(t, y): return self.spin_limit-self.invariants(y)['spin_curvature_ratio']
         for event in (outside, centre, spin_bound):
             event.terminal, event.direction = True, -1
+        events=(outside,centre,spin_bound) if inner_radius else (outside,spin_bound)
+        labels=('outer_radius','inner_radius','spin_limit') if inner_radius else ('outer_radius','spin_limit')
         result = solve_ivp(rhs, (0., duration), state, method='DOP853', rtol=rtol,
-                           atol=atol, max_step=max_step, events=(outside, centre, spin_bound))
+                           atol=atol, max_step=max_step, events=events)
         history = [self.invariants(y) for y in result.y.T]
         first = history[0]
         drifts = {k: max(abs(row[k]-first[k]) for row in history)
@@ -137,7 +143,7 @@ class MPDSystem:
         conservation_ok = all(error <= 1e-7*max(abs(first[k]),1e-12)
                               for k,error in drifts.items())
         conservation_ok = conservation_ok and max(row['ssc_max'] for row in history) <= 1e-8
-        stop = next((label for label, hits in zip(('outer_radius', 'inner_radius', 'spin_limit'),
+        stop = next((label for label, hits in zip(labels,
                                                 result.t_events) if len(hits)), 'duration')
         return dict(time=result.t, state=result.y.T, invariants=history,
                     success=bool(result.success and conservation_ok),
@@ -162,6 +168,7 @@ def matched_controls(system, position, *, spin=1e-3, speed=.2):
         def energy_error(v):
             state = system.initial_state(position, spin=value, speed=v)
             return system.invariants(state)['energy']-target
-        root = brentq(energy_error, 0., .95, xtol=1e-13)
+        interval=(-.95,0.) if speed < 0 else (0.,.95)
+        root = brentq(energy_error, *interval, xtol=1e-13)
         states[label] = system.initial_state(position, spin=value, speed=root)
     return states

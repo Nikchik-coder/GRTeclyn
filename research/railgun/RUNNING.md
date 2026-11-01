@@ -64,6 +64,7 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
   "$PY" -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_model.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
+  grteclyn-wrapper/tests/optimisation/test_railgun_continuation.py \
   grteclyn-wrapper/tests/optimisation/test_solver_core.py \
   grteclyn-wrapper/tests/optimisation/test_winding_field.py \
   grteclyn-wrapper/tests/optimisation/test_layout.py
@@ -72,3 +73,22 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
 Preserve NFS logs, configs, manifests, rejected diagnostics and accepted fields.
 Pack verified results into `results/railgun/` only after reviewing their gates.
 Do not prune scratch or discard frames as part of a test run.
+
+The spherical-to-ring branch has a separate bounded initializer:
+
+```bash
+$PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring.json \
+  --source results/railgun/spherical-validated/accepted.npz \
+  --gpu 0 --out runs/railgun/spherical-to-ring --dry-run
+```
+
+An actual homotopy requires its own go and capped job. It tests for a bound
+linear mode before nonlinear steps, keeps winding integer and stops on a
+missing branch or exhausted budget. Intermediate two-field states are not
+accepted pure rings.
+
+`transport --through-centre --speed -.2` selects an inward launch and requests
+a regular Cartesian core. The core must pass independent equations, curvature
+matching and polynomial-order checks; otherwise no trajectory starts. Its
+certificate is saved as `corridor.json`. Merely removing the inner stop on the
+original spherical-coordinate interpolant is refused.
