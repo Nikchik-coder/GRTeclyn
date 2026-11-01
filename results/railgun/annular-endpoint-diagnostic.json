@@ -1,0 +1,18 @@
+{
+  "method": "Stored Lobatto nodes; long-double differentiation; integral (1-mu^2) dmu with 96 Gauss nodes.",
+  "records": [
+    {
+      "state": "annular-recovery-k12",
+      "weighted_endpoint_w": 0.0,
+      "weighted_endpoint_ws": -3.1557207307095275e-17,
+      "weighted_endpoint_wss": -9.97053712203627e-13
+    },
+    {
+      "state": "annular-correction-k12",
+      "weighted_endpoint_w": 0.0,
+      "weighted_endpoint_ws": -3.5901755753045215e-17,
+      "weighted_endpoint_wss": -1.1300766330623102e-12
+    }
+  ],
+  "interpretation": "Nonzero first or second endpoint derivatives can contaminate r^-3 extraction. This is a diagnostic hypothesis, not a corrected background."
+}

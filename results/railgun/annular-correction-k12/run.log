@@ -1,0 +1,7 @@
+[capped_job] start 2026-11-01T13:27:12Z threads=4 mem=160G timeout=1800s
+[annular] solving 256x20, unknowns=32385, target_J=0
+[newton] iter 0: |R| 5.821e-13 -> 6.761e-16 (t = 1)
+[newton] iter 1: |R| 6.761e-16 -> 6.604e-16 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 9.945e-17
+[annular] 256x20: REJECT, reasons=['angular_momentum_balance']
+[capped_job] end 2026-11-01T13:28:22Z exit=2

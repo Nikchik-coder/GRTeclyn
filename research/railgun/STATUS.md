@@ -25,14 +25,21 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-annular-correction-k12-20261101`, second node/card 0,
-code `8946f146`, started **16:26:58 MSK** after its specific go and
-**24 GPU checks passed in 3.37 s**, **16:26:27–16:26:32 MSK**, exit 0.
-One additional 256x20 correction only; same physical settings and gates,
-four threads, 160 GiB, chunks 128, 0.5 h cap, no AMR checkpoints.
-Stationary solve: t not applicable; speed and completion ETA not yet measured.
-Hard launch budget **0.5 h, 16:56 MSK**. Scratch clean at **16:26 MSK**:
-47 MB in `_cache/` only, 539 GB free; first node not listed. Card 1 idle.
+**Live:** none. `railgun-annular-correction-k12-20261101`, second node/card 0,
+code `8946f146`, ran **16:27:12–16:28:22 MSK (0.0194 h)**, exit 2.
+Two additional Newton updates reduced the scaled residual to 9.95e-17;
+**the finest-grid angular-momentum surface check still failed**, 1.36332e-8
+against 1e-8 at R=3000. Volume J=2.22e-16. The original and corrected
+studies remain rejected; no accepted gapped background or particle launch.
+Four cumulative solves; the extra correction budget is spent.
+Archive: `results/railgun/annular-correction-k12/`, all corrected fields,
+diagnostics, profiles, log and provenance retained. **24 GPU regression checks
+passed in 3.37 s**, **16:26:27–16:26:32 MSK**, exit 0; report
+`results/railgun/gpu_annular_correction_regression.json`.
+Same physics and gates, four threads, 160 GiB, chunks 128, 0.5 h cap,
+no AMR checkpoints. Both cards idle, no completion ETA or queued launch.
+Scratch clean at **16:31 MSK**: 47 MB in `_cache/` only, 539 GB free;
+first node not listed.
 
 Completed `railgun-annular-recovery-k12-20261101`, second node/card 0,
 code `121a9ef7`, ran **16:14:11–16:17:10 MSK (0.050 h)**, exit 2.
@@ -42,14 +49,12 @@ surface balance: **1.33955e-8 against the unchanged 1e-8 gate**, on the
 outermost R=3000 sphere. Volume J=6.69e-14. The discrepancy is under
 investigation; no accepted background or particle launch follows from it.
 
-**Approved correction above:** one corrective 256x20 solve from the saved finest state.
-Rebuild the Jacobian; at least
-two further updates, at most 30 iterations. Keep the original two passing
-grids and repeat the full equations, charge, gap and channel gates. Same
-physics, tolerances and resource caps; cumulative solve cap four. No
-particle run is authorised. Higher-precision direct barycentric evaluation
-still gives an outermost flux defect about 1.30e-8, so arithmetic precision
-alone did not remove the rejection. The correction is running.
+Higher-precision direct barycentric flux evaluation still failed, and extra
+Newton corrections did not repair it. Endpoint diagnostics show tiny nonzero
+first/second compactified derivatives of w; contamination of its required
+r^-3 asymptotics is a hypothesis to test, not an established repair.
+Reports: `results/railgun/annular-flux-diagnostic.json` and
+`results/railgun/annular-endpoint-diagnostic.json`. No tolerance was changed.
 
 **The annular gap survived nonlinear backreaction on every grid:**
 33.29734 < rho < 40.90802, width 7.61068 at the component-wise 1e-6 cutoff.
@@ -139,13 +144,13 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Next:** recover a self-consistent gapped two-field solution from the
-k2=-12 or -16 seed, enforce total J=0 after backreaction, and require three
-fresh grid solves plus the unchanged independent equations and 1e-6
-matter-gap test. Then verify the finite-height annular channel and particle
-trajectories inside it. The k2=-12 seed is the smaller-separation candidate;
-the approved k2=-12 recovery finished with the flux rejection above. The completed
-screen configuration is `studies/annular_gap_screen.json`.
+**Next:** diagnose and repair the distant-exterior angular-momentum accuracy
+before another coupled recovery. Keep the independent 1e-8 balance gate.
+The k2=-12 geometry already has a converged low-density annulus; changing
+masses or adding repulsion is not the immediate response to this flux failure.
+Then validate the gapped background and run matched off-axis particles within
+its finite-height channel. No further physical run is authorised or queued.
+The completed screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
 No physical between-ring trajectory is authorised or running.

@@ -1,0 +1,17 @@
+{
+  "run": "railgun-annular-correction-k12-20261101",
+  "node": "second GPU node",
+  "card": 0,
+  "code": "8946f146",
+  "start_utc": "2026-11-01T13:27:12Z",
+  "end_utc": "2026-11-01T13:28:22Z",
+  "exit_code": 2,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "jacobian_chunk": 128,
+  "amr_checkpoints": false,
+  "accepted": false,
+  "additional_solves": 1,
+  "cumulative_solves": 4
+}
