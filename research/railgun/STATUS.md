@@ -9,10 +9,13 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
-**Live:** `railgun-transit-regression-20261101`, second node/card 0,
-code `96c81edc`; exact crossing event, dense trajectory output, 1e-9
-conservation gates and prior transport/curvature regressions. Four threads,
-160 GiB, 0.5 h cap; no AMR checkpoints. Compiling; ETA not measured.
+**Live:** `railgun-ring-transit-20261101`, second node/card 0,
+code `96c81edc`, following **16 passing GPU tests in 48.29 s**
+(12:39:55–12:40:46 MSK). Four controls at z=10, spin magnitude 0.001;
+fast v=-0.5 plus E=1-2e-5 / 1 / 1+2e-5; signed destination z=-10.
+RK tolerances 2e-11 / 2e-12, max step 0.4, proper duration <=120.
+Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
+Core reconstruction/compilation; speed and completion ETA not measured.
 Scratch clean: 47 MB, 543 GB free; first node not listed.
 
 Run A `railgun-ring-profile-20261101`, second node/card 0,
