@@ -31,12 +31,18 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none; direct instruction received for the bounded 0.70 / 0.67
-continuation, at most six solves on 96x12 / 128x16 / 160x20. Prepared
-config: `studies/frequency_deep.json`. Same four threads, 160 GiB, 0.5 h,
-chunks 128, no AMR checkpoints; stop on rejection or an accepted sampled
-ergoregion. Source: accepted `studies/frequency-073-refined/accepted.npz`.
-Core/profile and stronger-ring particle jobs require their separate go.
+**Live:** `railgun-frequency-deep-20261101`, second node/card 0,
+code `4d1c4d23`, started **18:13 MSK**. Requested omega=0.70 / 0.67,
+at most six solves on 96x12 / 128x16 / 160x20; 30 iterations each,
+two fresh corrections per grid. Same branch and independent gates,
+four threads, 160 GiB, 0.5 h hard cap, chunks 128, no AMR checkpoints.
+Estimated 0.06 h to finish, around **18:17 MSK** if both points pass;
+hard deadline around **18:43 MSK**. Stop on failed validation or an
+accepted sampled ergoregion. Source: accepted omega=0.73 recovery.
+Core/profile and conditional 32-track stronger-ring sequence await the
+separate go requested in the current session. Card 1 idle.
+Scratch clean at **18:13 MSK**: 47 MB in `_cache/` only, 537 GB free;
+first node not listed. No AMR checkpoints or plotfiles created.
 
 **Previous recovery:** `railgun-frequency-073-refined-20261101`, second node/card 0,
 code `e7fed22c`, ran **17:45:27–17:47:04 MSK (0.0269 h)**, exit 0.
