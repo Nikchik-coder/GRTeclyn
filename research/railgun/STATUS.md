@@ -45,6 +45,8 @@ is near rho=1.44861. This is not a maximum-spin or stability result.
 Archive: `results/railgun/studies/frequency-073-refined/`, including the
 accepted field, all three grid states, provenance, diagnostics and log.
 The original coarse rejection remains immutable in `studies/frequency-scan/`.
+Figure: `results/railgun/figures/frequency-073-recovery.png`; every original
+and refined constraint value is shown, including small nonmonotonic changes.
 
 **Next:** lower frequencies 0.70 / 0.67 would need fresh bounded continuation
 on the refined grids; stronger-ring profile/core certification and particle
