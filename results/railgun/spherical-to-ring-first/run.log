@@ -1,0 +1,101 @@
+[capped_job] start 2026-11-01T07:46:17Z threads=4 mem=160G timeout=1800s
+[newton] iter 0: |R| 1.581e-06 -> 2.167e-10 (t = 1)
+[newton] iter 1: |R| 2.167e-10 -> 6.224e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.108e-14
+[homotopy] attempt=1 t=0 verdict=PASS
+[newton] iter 0: |R| 1.123e-02 -> 1.122e-04 (t = 1)
+[newton] iter 1: |R| 1.122e-04 -> 1.003e-05 (t = 1)
+[newton] iter 2: |R| 1.003e-05 -> 9.891e-07 (t = 1)
+[newton] iter 3: |R| 9.891e-07 -> 1.783e-07 (t = 1)
+[newton] iter 4: |R| 1.803e-07 -> 4.605e-11 (t = 1)
+[newton] iter 5: |R| 4.605e-11 -> 4.433e-14 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 7.829e-15
+[homotopy] attempt=2 t=0.125 verdict=PASS
+[newton] iter 0: |R| 1.126e-02 -> 1.096e-04 (t = 1)
+[newton] iter 1: |R| 1.096e-04 -> 1.119e-05 (t = 1)
+[newton] iter 2: |R| 1.124e-05 -> 9.682e-09 (t = 1)
+[newton] iter 3: |R| 9.682e-09 -> 3.457e-11 (t = 1)
+[newton] iter 4: |R| 3.457e-11 -> 2.196e-13 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 3.664e-14
+[homotopy] attempt=3 t=0.25 verdict=PASS
+[newton] iter 0: |R| 1.134e-02 -> 1.135e-04 (t = 1)
+[newton] iter 1: |R| 1.135e-04 -> 1.408e-05 (t = 1)
+[newton] iter 2: |R| 1.416e-05 -> 2.296e-08 (t = 1)
+[newton] iter 3: |R| 2.296e-08 -> 1.273e-10 (t = 1)
+[newton] iter 4: |R| 1.273e-10 -> 7.977e-13 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 1.321e-13
+[homotopy] attempt=4 t=0.375 verdict=PASS
+[newton] iter 0: |R| 1.154e-02 -> 1.296e-04 (t = 1)
+[newton] iter 1: |R| 1.296e-04 -> 2.171e-05 (t = 1)
+[newton] iter 2: |R| 2.175e-05 -> 7.721e-08 (t = 1)
+[newton] iter 3: |R| 7.721e-08 -> 3.071e-10 (t = 1)
+[newton] iter 4: |R| 3.071e-10 -> 1.825e-12 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 3.197e-13
+[homotopy] attempt=5 t=0.5 verdict=REJECT
+[newton] iter 0: |R| 5.733e-03 -> 3.188e-05 (t = 1)
+[newton] iter 1: |R| 3.188e-05 -> 2.555e-06 (t = 1)
+[newton] iter 2: |R| 2.555e-06 -> 2.361e-07 (t = 1)
+[newton] iter 3: |R| 2.361e-07 -> 4.038e-08 (t = 1)
+[newton] iter 4: |R| 4.046e-08 -> 3.075e-13 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 6.725e-14
+[homotopy] attempt=6 t=0.4375 verdict=REJECT
+[newton] iter 0: |R| 2.859e-03 -> 7.932e-06 (t = 1)
+[newton] iter 1: |R| 7.932e-06 -> 3.139e-07 (t = 1)
+[newton] iter 2: |R| 3.139e-07 -> 1.449e-08 (t = 1)
+[newton] iter 3: |R| 1.449e-08 -> 9.067e-10 (t = 1)
+[newton] iter 4: |R| 9.067e-10 -> 1.593e-10 (t = 1)
+[newton] iter 5: |R| 1.595e-10 -> 1.956e-16 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 3.088e-17
+[homotopy] attempt=7 t=0.40625 verdict=REJECT
+[newton] iter 0: |R| 1.428e-03 -> 1.979e-06 (t = 1)
+[newton] iter 1: |R| 1.979e-06 -> 3.899e-08 (t = 1)
+[newton] iter 2: |R| 3.899e-08 -> 9.024e-10 (t = 1)
+[newton] iter 3: |R| 9.024e-10 -> 2.460e-11 (t = 1)
+[newton] iter 4: |R| 2.460e-11 -> 2.031e-12 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 2.876e-13
+[homotopy] attempt=8 t=0.390625 verdict=PASS
+[newton] iter 0: |R| 1.431e-03 -> 2.020e-06 (t = 1)
+[newton] iter 1: |R| 2.020e-06 -> 4.126e-08 (t = 1)
+[newton] iter 2: |R| 4.126e-08 -> 9.561e-10 (t = 1)
+[newton] iter 3: |R| 9.561e-10 -> 2.825e-11 (t = 1)
+[newton] iter 4: |R| 2.825e-11 -> 2.269e-12 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 3.260e-13
+[homotopy] attempt=9 t=0.40625 verdict=REJECT
+[newton] iter 0: |R| 7.152e-04 -> 5.043e-07 (t = 1)
+[newton] iter 1: |R| 5.043e-07 -> 5.136e-09 (t = 1)
+[newton] iter 2: |R| 5.136e-09 -> 5.965e-11 (t = 1)
+[newton] iter 3: |R| 5.965e-11 -> 8.249e-13 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 1.296e-13
+[homotopy] attempt=10 t=0.398438 verdict=PASS
+[newton] iter 0: |R| 7.161e-04 -> 5.098e-07 (t = 1)
+[newton] iter 1: |R| 5.098e-07 -> 5.293e-09 (t = 1)
+[newton] iter 2: |R| 5.293e-09 -> 6.156e-11 (t = 1)
+[newton] iter 3: |R| 6.156e-11 -> 8.847e-13 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 1.400e-13
+[homotopy] attempt=11 t=0.40625 verdict=REJECT
+[newton] iter 0: |R| 3.579e-04 -> 1.274e-07 (t = 1)
+[newton] iter 1: |R| 1.274e-07 -> 6.600e-10 (t = 1)
+[newton] iter 2: |R| 6.600e-10 -> 3.843e-12 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.278e-13
+[homotopy] attempt=12 t=0.402344 verdict=PASS
+[newton] iter 0: |R| 3.582e-04 -> 1.281e-07 (t = 1)
+[newton] iter 1: |R| 1.281e-07 -> 6.703e-10 (t = 1)
+[newton] iter 2: |R| 6.703e-10 -> 3.908e-12 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.489e-13
+[homotopy] attempt=13 t=0.40625 verdict=PASS
+[newton] iter 0: |R| 2.875e-03 -> 8.293e-06 (t = 1)
+[newton] iter 1: |R| 8.293e-06 -> 3.568e-07 (t = 1)
+[newton] iter 2: |R| 3.568e-07 -> 1.655e-08 (t = 1)
+[newton] iter 3: |R| 1.655e-08 -> 1.214e-09 (t = 1)
+[newton] iter 4: |R| 1.214e-09 -> 2.007e-10 (t = 1)
+[newton] iter 5: |R| 2.010e-10 -> 2.030e-16 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 3.794e-17
+[homotopy] attempt=14 t=0.4375 verdict=REJECT
+[newton] iter 0: |R| 1.435e-03 -> 2.066e-06 (t = 1)
+[newton] iter 1: |R| 2.066e-06 -> 4.399e-08 (t = 1)
+[newton] iter 2: |R| 4.399e-08 -> 1.024e-09 (t = 1)
+[newton] iter 3: |R| 1.024e-09 -> 3.262e-11 (t = 1)
+[newton] iter 4: |R| 3.262e-11 -> 2.536e-12 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 3.684e-13
+[homotopy] attempt=15 t=0.421875 verdict=REJECT
+[capped_job] end 2026-11-01T07:49:52Z exit=2
