@@ -308,3 +308,27 @@ solved. The explicit GPU eigensolver uses
 [`jax.lax.linalg.eig` with cuSOLVER](https://docs.jax.dev/en/latest/_autosummary/jax.lax.linalg.eig.html),
 with right eigenvectors only. CPU-reference agreement is a regression check;
 the screen requires GPU eigendecomposition.
+
+### Experimental cubic dragging falloff
+
+`dragging_falloff.py` represents w=(1-s)^3 H(s,y), with H of radial degree
+nx-3. The physical w still has degree nx. Three zero auxiliary coordinates
+preserve the vector size. They replace the infinity and two outermost
+interior w-PDE rows; the regular-origin derivative condition remains.
+All printed PDEs, including the two omitted rows, must pass independently.
+This is a spectral tau boundary treatment, not an accepted repair yet.
+
+Finite-sphere angular momentum uses the original Komar formula, with an
+analytic derivative of the factored polynomial, and a separate Cartesian
+metric-ratio AD derivative. At phi=0, w=-g_ty/(rho*g_yy) and the integrand
+factor B^3 exp(-2f)=g_yy^(3/2)/alpha. Require their agreement, every sphere's
+balance with volume J, and the original 1e-8 limit. The leading coefficient
+at literal infinity must also give the same J and have no anisotropic r^-3
+part. Cartesian curvature and intrinsic KG checks use the factored metric.
+Use 1-s=2L/(r+L) directly when evaluating the far tail.
+
+The explicit factored state format has its own model identifier and loader;
+the standard loader refuses it. It retains both the factored coordinates
+and physical nodal vector. No prior rejected archive is changed. The
+planned recovery retains the original three grids, density gap and finite
+height channel, and all earlier acceptance limits.

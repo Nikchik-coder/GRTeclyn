@@ -31,17 +31,17 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-strong-profile-073-20261101`, second node/card 0,
-code `078ee51f`, started **18:19 MSK**. Approved signed axial/equatorial
-profile and Cartesian core radius 0.4, degrees 6/8, for the accepted
-omega=0.73 source. If it passes, the separately approved 32 matched-energy
-uphill tracks follow; otherwise stop. Four threads, 160 GiB, 0.5 h,
-chunks 128, no AMR checkpoints. Approximate completion in 0.1 h, around
-**18:25 MSK**, hard deadline **18:49 MSK**. Card 1 idle.
-The preceding **21 GPU regressions passed in 76.48 s**,
-**18:17:17–18:18:36 MSK**, code `d4257cb6`; portable report under
-`results/railgun/reports/gpu_strong_regression.json`.
-Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:19 MSK**;
+**Live:** `railgun-strong-uphill-073-20261101`, second node/card 0,
+code `0fd3b1e4`, started **18:28 MSK**. Approved 32 matched-energy uphill
+tracks on the accepted omega=0.73 source, spin 0 / +/-0.001, reversal,
+two RK tolerances, z=+1 toward -10. Four threads, 160 GiB, 0.5 h,
+chunks 128, no AMR checkpoints. Estimated 0.35 h, around **18:50 MSK**;
+hard deadline around **18:58 MSK**. Card 1 idle.
+The core/profile passed at radius 0.4, degrees 6/8: code `078ee51f`,
+**18:19:33–18:26:09 MSK**, 390 s numerical work. Core order-curvature
+difference 2.65e-10, independent Einstein/KG maxima 1.70e-11 / 2.90e-12.
+The preceding 21 targeted GPU checks passed in 76.48 s.
+Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:28 MSK**;
 first node not listed. No AMR checkpoints or plotfiles created.
 
 **Deep continuation finished:** `railgun-frequency-deep-20261101`, code
@@ -597,3 +597,11 @@ grids passed, as recorded above.
 
 **Next:** plot the validated counter-rotating fields. Between-ring
 particle trajectories, asymptotic ejection and dynamical stability remain untested.
+
+**Prepared flux representation experiment:** `studies/annular_falloff_k12.json`,
+three fresh solves 192x16 / 224x18 / 256x20 from the saved finest correction,
+max 30 iterations each, minimum two updates. Cubic Frobenius w falloff,
+explicit factored model/loader, all original gates plus omitted outer PDEs,
+Cartesian metric-ratio flux and infinity-mode crosschecks. Prototype and
+pure-data checks only; GPU manufactured checks and nonlinear recovery need
+a run-specific go. No off-axis particles are included in this proposal.
