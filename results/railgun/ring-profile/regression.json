@@ -1,0 +1,72 @@
+{
+  "commit": "4c1e208531626e4ec421da0dca715cabf785cd63",
+  "platform": "cuda",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "11",
+      "time": "53.319",
+      "timestamp": "2026-11-01T09:31:37.289949+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_signed_flat_profile_is_regular_and_has_zero_curvature",
+      "time": "17.467"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_winding_one_axis_has_gradient_energy_despite_zero_amplitude",
+      "time": "0.229"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_profiles",
+      "name": "test_profile_bounds_are_checked_before_sampling",
+      "time": "0.001"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_diagnostics",
+      "name": "test_endpoint_mass_agrees_with_the_cartesian_ADM_surface_integral",
+      "time": "1.277"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_diagnostics",
+      "name": "test_flat_endpoint_mass_is_zero",
+      "time": "0.004"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_flat_spinning_trajectory_and_spin_condition",
+      "time": "0.975"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_zero_spin_and_matched_launch_energy",
+      "time": "0.613"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inner_stop_is_explicit_and_does_not_cross_origin",
+      "time": "0.734"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_rotating_background_spin_force_and_killing_integrals",
+      "time": "2.340"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inward_controls_retain_the_inward_velocity_branch",
+      "time": "0.387"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_certified_cartesian_corridor_crosses_the_origin_with_spin",
+      "time": "28.650"
+    }
+  ]
+}

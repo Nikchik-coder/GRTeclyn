@@ -9,22 +9,27 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
-**Live:** `railgun-ring-profile-20261101`, second node/card 0,
-code `4c1e2085`; core certification followed by signed-axis/equatorial
-profiling. Started after all 11 targeted GPU tests passed in 53.32 s
-(12:31:36–12:32:31 MSK). Four threads, 160 GiB, 0.5 h cap, no AMR
-checkpoints. Initialisation/compilation; no measured speed or completion ETA yet.
-Scratch at launch: clean, 47 MB in `_cache/` only, 543 GB free; first
-node not listed.
+**Live:** none. Run A `railgun-ring-profile-20261101`, second node/card 0,
+code `4c1e2085`, passed at **12:37:19 MSK**, after 0.072 h including compilation.
+The degree 6/8 Cartesian core at radius 0.4 passed: maximum parent curvature
+mismatch 2.88e-10; independent axial Einstein/KG maximum 4.73e-12.
+Signed z=-15..15 and equatorial matter profiles are archived in
+`results/railgun/ring-profile/`. Density wall rho=6.25 (sampling 0.05),
+minimum sampled lapse 0.88496, peak |omega|=0.0043558,
+max shift/lapse=0.020482. max(g_tt)=-0.78289: no sampled ergoregion.
+The scalar vanishes on the axis, but its transverse gradients carry energy.
+All 11 targeted GPU profile/diagnostics/transport tests passed in 53.32 s.
+Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
+Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
+the first node was not listed.
 
-**Authorised next:** Run A profiles the accepted 128x16 ring on second
-node/card 0 after targeted GPU regression tests. Signed axis z=-15..15,
-301 samples, Cartesian join radius 0.4, degrees 6/8, unchanged 1e-8
-certification gate. Four threads, 160 GiB, 0.5 h, no AMR checkpoints;
-retain logs and profiles. Run B follows only after core certification and
-archiving A; counter-rotating Run C follows the single-ring transport archive.
-The November 1 request authorises this A-to-B-to-C sequence; spin selection
-and persistent internal dragging at zero total J remain hypotheses.
+**Authorised next:** Run B tests finite axial transits with zero/positive/
+negative spin and the reversed-background control, at two RK tolerances.
+High-speed plus three energies around E=1; conservation gate 1e-9.
+Spin parallel to this negative-J ring is the negative-z spin control.
+Equal energy and mass imply equal speeds at infinity; finite transit times
+can differ. Neither spin-selective escape nor radial ordering of future
+counter-rotating fields is guaranteed. Archive B before starting Run C.
 
 **Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
