@@ -1,0 +1,8 @@
+{
+  "max_new_quadratures": 2,
+  "order": 32,
+  "segments": 256,
+  "timing_tol": 1e-07,
+  "height_tol": 1e-08,
+  "conservation_tol": 1e-09
+}

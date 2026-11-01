@@ -82,7 +82,10 @@ class AxialMetric:
         result=self.barrier(endpoint,spin)-self.barrier(z,spin)
         if endpoint>=-self.radius:return result
         near=(z< -self.radius)&(abs(z-endpoint)<LD('.01'))
-        r=-z;re=-endpoint;s=(r-self.length)/(r+self.length);se=(re-self.length)/(re+self.length)
+        # np.where evaluates both branches: keep the unused divided-difference
+        # evaluation inside its negative-z spectral domain as well.
+        safe_z=np.where(near,z,endpoint)
+        r=-safe_z;re=-endpoint;s=(r-self.length)/(r+self.length);se=(re-self.length)/(re+self.length)
         ds=2*self.length*(r-re)/((r+self.length)*(re+self.length))
         cheb=np.polynomial.chebyshev
         qf=cheb.chebdiv(self.parent['f'],np.array([-se,LD(1)]))[0]

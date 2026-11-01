@@ -385,3 +385,24 @@ timing change and the saved finest track's timing error must remain below
 1e-7 for every nonmarginal control; height 1e-8 and conservation/full-MPD
 substitution 1e-9 remain unchanged. Failed older RK comparisons are retained
 as failed evidence; an independent cross-method audit is a separate study.
+
+
+The regular quintic prototype still fails finite-radius flux after fresh
+Jacobians reduce the scaled Newton residual to roundoff. The next regular
+cubic profile retains H degree nx and every interior equation, with p=3.
+For arbitrary p=3 or 5 replace 10,20,5 in the radial coefficients above by
+2p,p(p-1),p respectively. The infinity angular operator is L+p(p-3),
+with constant null mode for p=3. Its projected next-order condition is
+P[(2p-2)H_s+(p(p-1)+pc)H+4(1-y^2)c_y H_y]=0.
+The cubic profile allows the r^-3 angular-momentum coefficient to be measured,
+then requires its independent agreement with the zero volume J at 1e-8;
+it does not impose its value through the falloff representation. Constant
+angular leading data and the next-order radial condition are tested, including
+the printed momentum equation on the linear-Kerr/Schwarzschild metric.
+
+The initial phase audit's full MPD checks and all finest saved track timings
+pass, but its two most sensitive order-8 integrals are insufficient. The
+bounded phase polish compares their saved order-16 values with order 32,
+keeping 256 subintervals and the same 1e-7 timing gate. All other passing
+phase and MPD checks are reused only after verifying the complete archives
+and exact source/core hashes. No new MPD track or substitution point is run.

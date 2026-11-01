@@ -22,7 +22,7 @@ def preflight(source,config):
     result=json.loads((source.parent/'outcome.json').read_text())
     with np.load(source,allow_pickle=False) as data:meta=json.loads(str(data['metadata']))
     if (not result.get('accepted') or not meta.get('validated') or result.get('solves')!=3
-            or meta.get('representation')!='dragging_quintic_regular_operator_v2'
+            or meta.get('representation') not in ('dragging_quintic_regular_operator_v2','dragging_cubic_regular_operator_v2')
             or [f['winding'] for f in meta['fields']]!=[1,-12] or meta.get('target_j')!=0.
             or [r.get('grid') for r in result['records']]!=[[192,16],[224,18],[256,20]]
             or any(r.get('verdict')!='PASS' for r in result['records'])):

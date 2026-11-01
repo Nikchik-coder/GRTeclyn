@@ -73,3 +73,32 @@ def test_refinement_preserves_h_coefficients_instead_of_refitting_tiny_w():
     np.testing.assert_array_equal(old.transfer(old,u),u)
     v=new.transfer(old,u);s=np.array([.99,.99999]);y=np.array([-.3,.4])
     np.testing.assert_allclose(new.dragging_sample(v,s,y),old.dragging_sample(u,s,y),rtol=2e-14,atol=0)
+
+
+def test_cubic_boundary_leaves_total_j_free_for_independent_measurement(tmp_path):
+    from grteclyn_wrapper.optimisation.railgun.regular_dragging import RegularDraggingProblem
+    from grteclyn_wrapper.optimisation.railgun.dragging_falloff import surface_flux,save_state,load_state
+    from grteclyn_wrapper.optimisation.railgun.model import ScalarField
+    p=RegularDraggingProblem([ScalarField(),ScalarField(winding=-2)],nx=12,ny=4,length=3.,target_j=0.,power=3)
+    u=np.zeros(p.n_unknowns);raw=p.raw_dragging(u);c=1e-5
+    raw[0]=2.5*c;raw[1]=-1.5*c
+    np.testing.assert_allclose(p.infinity_boundary(u),0,atol=1e-15)
+    assert abs(surface_flux(p,u,[1e9])[0]-4*p.length**3*c)<1e-10
+    path=tmp_path/'cubic.npz';save_state(path,p,u);other,v,meta=load_state(path)
+    assert other.power==3 and meta['representation']=='dragging_cubic_regular_operator_v2'
+    np.testing.assert_array_equal(v,u)
+
+
+def test_printed_momentum_equation_matches_linear_kerr_on_schwarzschild():
+    from grteclyn_wrapper.optimisation.railgun.model import canonical_rows
+    r=np.array([[4.],[8.],[16.],[32.]])
+    y=np.array([[-.9,0.,.9]]);shape=(4,3);zero=np.zeros(shape)
+    mass=.7;angular=.13;a=mass/2
+    w=2*angular*r**3/(r+a)**6
+    logder=3/r-6/(r+a)
+    jets={tag+suffix:zero.copy() for tag in ('f','w','B','N') for suffix in ('','_x','_xx','_y','_yy')}
+    jets.update(f=2*np.log((r-a)/(r+a))+zero,f_x=4*a/(r*r-a*a)+zero,
+                B=1-a*a/r**2+zero,B_x=2*a*a/r**3+zero,B_xy=zero,
+                w=w+zero,w_x=w*logder+zero,w_xx=w*(logder**2-3/r**2+6/(r+a)**2)+zero)
+    row=canonical_rows(jets,[],[],r=r,dr=np.ones_like(r),ddr=np.zeros_like(r),y=y,xp=np)['E_w']
+    np.testing.assert_allclose(row,0,atol=2e-17)

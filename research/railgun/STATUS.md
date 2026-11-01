@@ -31,12 +31,23 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-annular-polish-gpu-tests-20261101`, second node/card 1,
-started **19:41:56 MSK**, code `48b7d577`, 0.5 h hard cap to **20:11 MSK**.
-Then the approved fresh-Jacobian 1e-14 three-grid recovery; only if accepted,
-the separately approved eight-track off-axis annular experiment follows.
-Card 0 idle. Scratch clean at **19:42 MSK**: 47 MB `_cache/`, 534 GB free;
-first node not listed. No measured numerical-job ETA yet.
+**Live:** none; both cards idle. Fresh-Jacobian quintic recovery finished
+**19:44:04–19:45:20 MSK**, code `8b592e9f`, exit 2. Three updates/four
+Jacobians give scaled residual 6.65e-17 on 192x16, but finite-sphere J error
+4.97200e-8 fails 1e-8. All other gates, including infinity modes, pass.
+Later grids unattempted; no off-axis particle launch. Archive:
+`results/railgun/studies/annular-regular-polish-k12/`.
+Preceding 37 GPU tests pass. Scratch clean at **19:45 MSK**:
+47 MB `_cache/`, 534 GB free; first node not listed. No ETA.
+
+**Approved, syncing before GPU regressions:** two order-32 scalar phase integrals only
+(`studies/axial_phase_polish_073.json`, card 0), and regular-cubic recovery
+(`studies/annular_regular_cubic_k12.json`, card 1), at most three solves on
+192x16/224x18/256x20, fresh Jacobians/1e-14/minimum two updates/max 30.
+All physical acceptance gates unchanged. Four threads/160 GiB/0.5 h/chunks
+128/no AMR checkpoints per job, targeted GPU tests first. The conditional
+eight-track annular pilot is already approved but stays blocked until the
+entire field study passes. No new MPD track in the two-integral phase audit.
 
 **Independent particle phase audit completed:** code `e33bd0c8`,
 **19:31:31–19:38:26 MSK (0.1153 h)**, exit 2. All 656 full Cartesian MPD

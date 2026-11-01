@@ -336,6 +336,21 @@ two RK tolerances 2e-11/2e-12, duration 100, step 0.4, 1001 samples. Require
 Cartesian Eulerian component densities below 1e-6 of their own source peaks
 at every sample. Trajectories must remain inside the validated rho interval
 and reach z=-10. This is off-axis finite passage, not escape or energy gain.
-No core patch is needed for the annular tube. These jobs now have a
+No core patch is needed for the annular tube. These jobs have a
 separate run-specific go; four threads/160 GiB/0.5 h/chunks 128/no AMR
 checkpoints per job. GPU regressions precede any production execution.
+
+
+### Prepared regular-cubic and two-integral phase polish
+
+`studies/annular_regular_cubic_k12.json` changes only the regular operator's
+falloff power to 3, allowing independent infinity J measurement; original
+source, grids, all physical gates and fresh-Jacobian 1e-14 settings stay fixed.
+At most three solves, stop on rejection. `studies/axial_phase_polish_073.json`
+adds only two order-32 scalar integrals against saved order-16 values;
+all 656 full MPD checks and the existing particle tracks are reused with
+hash verification. No new tracks or MPD checks; cumulative phase budget 34.
+Both configurations pass non-GPU preflight. Fifteen development tests pass,
+including the exact linear-Kerr momentum equation. The separate go for both jobs is received.
+The conditional eight-track annular experiment remains approved, and cannot
+start before complete three-grid field acceptance.

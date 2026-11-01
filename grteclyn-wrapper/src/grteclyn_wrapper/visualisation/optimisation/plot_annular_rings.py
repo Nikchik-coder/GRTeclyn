@@ -22,7 +22,7 @@ def plot(directory,out,*,diagnostic=False):
     if not gap['accepted'] or not channel['accepted']:raise ValueError('accepted matter channel required')
     name='grid_'+str(final['grid'][0])+'x'+str(final['grid'][1])
     with np.load(directory/('accepted.npz' if accepted else name+'.npz'),allow_pickle=False) as data:
-        meta=json.loads(str(data['metadata']));u=np.asarray(data['u'])
+        meta=json.loads(str(data['metadata']));u=np.asarray(data['physical_u'] if 'physical_u' in data else data['u'])
     if accepted and not meta.get('validated'):raise ValueError('accepted fields required')
     profile=np.loadtxt(directory/f'{name}_density.tsv')
     peak=np.array([edge['peak_density'] for edge in gap['edges']])

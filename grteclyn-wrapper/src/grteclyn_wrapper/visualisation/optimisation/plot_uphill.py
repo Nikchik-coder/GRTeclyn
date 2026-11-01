@@ -18,7 +18,7 @@ def plot(directory,out,*,title=None):
     manifest=json.loads((directory/'manifest.json').read_text())
     config=manifest['config']
     if 'target_z' not in config:
-        config=json.loads((directory/'original/manifest.json').read_text())['config']
+        config=manifest.get('physical_config') or json.loads((directory/'original/manifest.json').read_text())['config']
     target=config['target_z']
     fig,(overview,zoom)=plt.subplots(1,2,figsize=(11,4.8));fig.subplots_adjust(left=.09,right=.98,bottom=.22,top=.74,wspace=.3)
     curves=[]

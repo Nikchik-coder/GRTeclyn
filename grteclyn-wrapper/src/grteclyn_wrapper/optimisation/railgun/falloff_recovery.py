@@ -30,7 +30,7 @@ def preflight(source,config):
     if any(config.get(k)!=v for k,v in fixed.items()):raise ValueError('fixed three-solve falloff recovery budget and unchanged gates required')
     if config.get('falloff_power',3) not in (3,5):raise ValueError('cubic or zero-J quintic profile required')
     if config.get('regular_operator',False) not in (False,True):raise ValueError('boolean regular-operator flag required')
-    if config.get('regular_operator') and config.get('falloff_power')!=5:raise ValueError('regular operator requires quintic falloff')
+    if config.get('regular_operator') and config.get('falloff_power') not in (3,5):raise ValueError('regular operator requires cubic or quintic falloff')
     return dict(metadata=meta,source_sha256=digest,max_solves=3,
                 grids=config['grids'],numerical_execution=False,
                 representation=('Regular H operator with all interior PDEs and full infinity conditions'

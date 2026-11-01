@@ -197,10 +197,10 @@ def load_state(path):
     with np.load(path,allow_pickle=False) as data:
         metadata=json.loads(str(data['metadata']));value=np.array(data['u'])
         physical=np.array(data['physical_u'])
-    if metadata.get('model')!=MODEL or metadata.get('representation') not in (REPRESENTATION,'dragging_quintic_zeroJ_tau_v1','dragging_quintic_regular_operator_v2'):
+    if metadata.get('model')!=MODEL or metadata.get('representation') not in (REPRESENTATION,'dragging_quintic_zeroJ_tau_v1','dragging_quintic_regular_operator_v2','dragging_cubic_regular_operator_v2'):
         raise ValueError('explicit factored-dragging format required')
     cls=FactoredDraggingProblem
-    if metadata['representation']=='dragging_quintic_regular_operator_v2':
+    if metadata['representation'] in ('dragging_quintic_regular_operator_v2','dragging_cubic_regular_operator_v2'):
         from .regular_dragging import RegularDraggingProblem
         cls=RegularDraggingProblem
     problem=cls([ScalarField(**f) for f in metadata['fields']],
@@ -219,6 +219,26 @@ def validate(problem,u,info,*,equation_tol=1e-8,tail_tol=1e-6):
     base,physical=problem.physical_vector(u)
     row=canonical_validate(base,physical,info,equation_tol=equation_tol,tail_tol=tail_tol,independent=False)
     reasons=[r for r in row['reasons'] if r!='angular_momentum_balance']
+    # The stored physical nodal field has a lower polynomial degree than
+    # t^p H. Independently check the volume charge on the actual factored
+    # field before comparing it with the surface flux.
+    arrays,frequencies=problem.unpack(np.asarray(u))
+    sample=lambda a:problem.qx@a@problem.qy.T
+    f,n,b=(sample(arrays[k]) for k in ('f','N','b'))
+    radii=problem.rg;s=(radii-problem.length)/(radii+problem.length)
+    w=problem.dragging_sample(u,s,2*problem.mg**2-1,one_minus_s=2*problem.length/(radii+problem.length))
+    sk=1-problem.mg[None,:]**2
+    measure=problem.wr[:,None]*problem.wm[None,:]*radii[:,None]**2*(1+b)**3*np.exp(n*sk-2*f)
+    charges=[]
+    for i,(field,omega) in enumerate(zip(problem.fields,frequencies)):
+        amp2=sk**abs(field.winding)*sample(arrays[f'q{i}'])**2
+        if field.parity=='odd':amp2=amp2*problem.mg[None,:]**2
+        charges.append(float(np.sum(measure*(omega+field.winding*w)*amp2)))
+    charge_error=float(np.max(abs(np.asarray(charges)-row['charges'])))
+    row['nodal_volume_J']=row['J_volume'];row['factored_charge_crosscheck']=charge_error
+    row['charges']=charges;row['matter_J']=[-f.winding*q for f,q in zip(problem.fields,charges)]
+    row['J_volume']=float(sum(row['matter_J']))
+    if not np.isfinite(charge_error) or charge_error>equation_tol:reasons.append('factored_volume_charge')
     row['physical_nodal_interpolation_J_surfaces']=row['J_surfaces']
     radii=np.array(row['J_surface_radii']);flux=surface_flux(problem,u,radii)
     coarse=surface_flux(problem,u,radii,order=48)
