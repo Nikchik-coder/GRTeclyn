@@ -31,15 +31,19 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** targeted GPU checks started **19:56:40 MSK**, code `f898960d`,
-second node/card 0 (`railgun-phase-polish-gpu-tests-20261101`) and card 1
-(`railgun-regular-cubic-gpu-tests-20261101`). Each 0.5 h cap, deadline
-**20:26 MSK**. Explicit go covers the two order-32 phase integrals and
-three-grid regular-cubic recovery after passing tests. Conditional eight-track
-annular particles are already approved and require full field acceptance.
-All gates unchanged; four threads/160 GiB/chunks 128/no AMR checkpoints.
-Scratch clean at **19:56 MSK**: 47 MB `_cache/`, 534 GB free; first node
-not listed. No production ETA during test/compilation.
+**Live:** both approved numerical jobs started **19:58:10 MSK**, code
+`4e0af89a`, second GPU node. Card 0:
+`railgun-strong-phase-polish-20261101`, exactly two order-32 scalar
+phase integrals, no new MPD tracks or substitution points. Card 1:
+`railgun-annular-regular-cubic-k12-20261101`, at most three fresh solves
+on 192x16/224x18/256x20, full regular cubic momentum equations,
+independently measured infinity J, fresh Jacobians/Newton 1e-14.
+The preceding GPU suites passed **6 + 39 = 45 tests** (3.74 / 10.61 s),
+code `f898960d`. All acceptance gates unchanged. Four threads/160 GiB/
+0.5 h/chunks 128/no AMR checkpoints per job; deadline **20:28 MSK**.
+Only complete field acceptance unlocks the approved eight annular tracks.
+Scratch clean at **19:58 MSK**: 47 MB `_cache/`, 534 GB free; first node
+not listed. Production rate/ETA pending compilation.
 
 **Latest failed field correction:** fresh-Jacobian quintic recovery ran
 **19:44:04–19:45:20 MSK**, code `8b592e9f`, exit 2. Three updates/four
