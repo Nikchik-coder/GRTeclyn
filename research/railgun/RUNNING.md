@@ -147,3 +147,13 @@ to each component's own equatorial peak. Acceptance additionally requires
 the last two grids. Failed states and diagnostics remain saved; no overlap,
 changed potential or weaker tolerance is an automatic fallback. A certified
 sampled channel is still separate from an actual confined particle trajectory.
+
+If only the finest grid's angular-momentum balance fails, an explicitly
+approved **one-solve** correction can use `--correct-from
+results/railgun/annular-recovery-k12` with a new output directory. It verifies
+the original archive checksums and identical configuration, starts from the
+saved finest state with a fresh Jacobian and at least two updates, and repeats
+all gates. The earlier two passing grids remain evidence. This raises the
+cumulative budget from three to four solves; a corrected study cannot reset
+that extra budget. No acceptance tolerance changes, and the original rejected
+study remains untouched.

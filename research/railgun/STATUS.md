@@ -33,6 +33,15 @@ surface balance: **1.33955e-8 against the unchanged 1e-8 gate**, on the
 outermost R=3000 sphere. Volume J=6.69e-14. The discrepancy is under
 investigation; no accepted background or particle launch follows from it.
 
+**Approved next:** one corrective 256x20 solve from the saved finest state,
+after regression checks, second node/card 0. Rebuild the Jacobian; at least
+two further updates, at most 30 iterations. Keep the original two passing
+grids and repeat the full equations, charge, gap and channel gates. Same
+physics, tolerances and resource caps; cumulative solve cap four. No
+particle run is authorised. Higher-precision direct barycentric evaluation
+still gives an outermost flux defect about 1.30e-8, so arithmetic precision
+alone did not remove the rejection. The correction is prepared, not launched.
+
 **The annular gap survived nonlinear backreaction on every grid:**
 33.29734 < rho < 40.90802, width 7.61068 at the component-wise 1e-6 cutoff.
 The sampled finite-height channel rho=35.20..39.01, z=-10..10 also passed;
@@ -49,7 +58,7 @@ No different grid, winding, potential or tolerance is an automatic fallback.
 exit 0, code `121a9ef7`: budgets/provenance/acceptance, correct J-border
 promotion, component densities versus independent Cartesian AD, prior gap
 tests and CUDA float64 placement. `results/railgun/gpu_annular_regression.json`.
-Scratch clean at **16:20 MSK**: 47 MB in `_cache/` only, 539 GB free;
+Scratch clean at **16:19 MSK**: 47 MB in `_cache/` only, 539 GB free;
 first node not listed. Both cards idle; no ETA or queued physical run.
 
 Completed `railgun-annular-gap-screen-20261101`, second node/card 0,

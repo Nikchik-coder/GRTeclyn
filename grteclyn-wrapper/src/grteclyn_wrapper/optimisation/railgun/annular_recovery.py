@@ -110,8 +110,45 @@ def measure_channel(meta,u,gap,half_height,directory,name):
                 scope='Sampled finite-height matter channel; no particle trajectory certified.')
 
 
-def run_recovery(source,config,directory):
+def correction_plan(prior,config):
+    """One extra finest-grid solve, preserving the original rejected study.
+
+    This requires a separate run-specific go. The two previously passing
+    recovery grids remain evidence; only the failed finest state is corrected.
+    An already corrected study cannot reset this one-solve budget.
+    """
+    prior=Path(prior)
+    checked=set()
+    for line in (prior/'sha256sums.txt').read_text().splitlines():
+        digest,name=line.split('  ',1)
+        if (Path(name).name!=name or name in checked
+                or hashlib.sha256((prior/name).read_bytes()).hexdigest()!=digest):
+            raise ValueError('prior recovery archive checksum mismatch')
+        checked.add(name)
+    required={'manifest.json','outcome.json'}|{f'grid_{nx}x{ny}.{ext}'
+              for nx,ny in config['grids'] for ext in ('npz','json')}
+    if not required<=checked:raise ValueError('prior recovery checksum list is incomplete')
+    manifest=json.loads((prior/'manifest.json').read_text())
+    outcome=json.loads((prior/'outcome.json').read_text());rows=outcome.get('records',[])
+    if (manifest.get('stage')!='nonlinear_annular_recovery' or manifest.get('config')!=config
+            or outcome.get('accepted') is not False or outcome.get('solves')!=3 or len(rows)!=3
+            or [r.get('grid') for r in rows]!=config['grids']
+            or any(r.get('verdict')!='PASS' for r in rows[:2])
+            or rows[-1].get('verdict')!='REJECT'
+            or rows[-1].get('reasons')!=['angular_momentum_balance']
+            or not rows[-1].get('newton',{}).get('converged')):
+        raise ValueError('only the original finest-grid flux rejection can receive one correction')
+    nx,ny=config['grids'][-1];name=f'grid_{nx}x{ny}.npz'
+    return dict(max_additional_solves=1,prior_solves=3,cumulative_solve_cap=4,
+                corrected_grid=[nx,ny],source_state=name,
+                prior_outcome_sha256=hashlib.sha256((prior/'outcome.json').read_bytes()).hexdigest(),
+                source_state_sha256=hashlib.sha256((prior/name).read_bytes()).hexdigest(),
+                reused_grids=config['grids'][:2],perturbation=0.,minimum_new_updates=2)
+
+
+def run_recovery(source,config,directory,*,correct_from=None):
     plan=preflight(source,config)
+    correction=correction_plan(correct_from,config) if correct_from is not None else None
     from .problem import RingProblem
     from .continuation import transfer_fields
     from .workflow import load_state,save_state,write_json
@@ -119,7 +156,8 @@ def run_recovery(source,config,directory):
     from .gap import equatorial_densities,annular_gap
     from .counter_rotation import dragging_profile
     from ..solver.newton import newton
-    old,old_u,_=load_state(source)
+    state=Path(correct_from)/correction['source_state'] if correction else source
+    old,old_u,_=load_state(state)
     device=old.jax.devices()[0]
     if device.platform!='gpu' or not old.jax.config.jax_enable_x64:
         raise ValueError('GPU float64 execution required; no CPU fallback')
@@ -128,16 +166,24 @@ def run_recovery(source,config,directory):
         configuration_sha256=hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest(),
         commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         platform=device.platform,device_kind=device.device_kind,jax=old.jax.__version__,float64=True,
-        stage='nonlinear_annular_recovery',storage_plan={k:plan[k] for k in
+        stage='annular_finest_grid_correction' if correction else 'nonlinear_annular_recovery',
+        correction=correction,storage_plan={k:plan[k] for k in
         ('unknowns','eight_dense_buffers_GiB')},stability='not_assessed')
     write_json(directory/'manifest.json',manifest)
-    records=[];started=time.monotonic();previous=old,old_u
+    records=(json.loads((Path(correct_from)/'outcome.json').read_text())['records'][:2]
+             if correction else [])
+    started=time.monotonic();previous=old,old_u
     # Keep the source screen's radial sampling, including both complete tails.
     radius=np.loadtxt(Path(source).with_name(Path(source).stem+'_density.tsv'),usecols=0)
-    for index,(nx,ny) in enumerate(config['grids']):
+    grids=[config['grids'][-1]] if correction else config['grids']
+    for index,(nx,ny) in enumerate(grids):
         tick=time.monotonic();name=f'grid_{nx}x{ny}'
         p=RingProblem(old.fields,nx=nx,ny=ny,length=config['length'],target_j=0.)
-        if index==0:
+        if correction:
+            # Correct the saved converged state with a newly assembled LU;
+            # no interpolation perturbation or changed physical tolerance.
+            guess=p.transfer(*previous,perturb=0.)
+        elif index==0:
             # An unbordered seed ends in omega_2, not log(amplitude_2).
             # Repack species explicitly before a same-model perturbation.
             border=transfer_fields(p,*previous)
@@ -174,7 +220,9 @@ def run_recovery(source,config,directory):
         # executables before compiling the next, rather than retaining all three.
         p.jax.clear_caches()
     outcome=acceptance(records,tolerance=config['observable_tol'])
-    outcome.update(records=records,grids_attempted=len(records),solves=len(records),
+    new_solves=len(records)-(2 if correction else 0)
+    outcome.update(records=records,grids_attempted=len(records),solves=new_solves,
+                   prior_solves=3 if correction else 0,cumulative_solves=new_solves+(3 if correction else 0),
                    seconds=time.monotonic()-started,stability='not_assessed',
                    reasons=[] if outcome['accepted'] else ['coupled_fields_charges_or_annular_channel'])
     if outcome['accepted']:
@@ -188,17 +236,19 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('config',type=Path);parser.add_argument('--source',type=Path,required=True)
     parser.add_argument('--out',type=Path,required=True);parser.add_argument('--gpu',type=int,required=True)
+    parser.add_argument('--correct-from',type=Path,help='separately approved one-solve correction of the original finest-grid flux rejection')
     parser.add_argument('--dry-run',action='store_true');args=parser.parse_args()
     if args.gpu<0:parser.error('GPU must be nonnegative')
     config=json.loads(args.config.read_text())
     plan=preflight(args.source,config)
+    if args.correct_from is not None:plan['correction']=correction_plan(args.correct_from,config)
     if args.dry_run:
         plan.pop('metadata');print(json.dumps(plan,indent=2));return 0
     os.environ.setdefault('XLA_PYTHON_CLIENT_ALLOCATOR','platform')
     os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE','false')
     from ..solver.device import select_device
     select_device(args.gpu,128)
-    return 0 if run_recovery(args.source,config,args.out)['accepted'] else 2
+    return 0 if run_recovery(args.source,config,args.out,correct_from=args.correct_from)['accepted'] else 2
 
 
 if __name__=='__main__':raise SystemExit(main())

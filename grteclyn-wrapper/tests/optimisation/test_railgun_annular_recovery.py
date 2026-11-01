@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import numpy as np
 import pytest
-from grteclyn_wrapper.optimisation.railgun.annular_recovery import preflight,acceptance,measure_channel
+from grteclyn_wrapper.optimisation.railgun.annular_recovery import preflight,acceptance,measure_channel,correction_plan
 from grteclyn_wrapper.optimisation.railgun.model import ScalarField
 
 ROOT=Path(__file__).resolve().parents[3]
@@ -65,6 +65,23 @@ def test_seed_checksum_and_screen_provenance_are_required(tmp_path):
 def test_an_accepted_state_cannot_masquerade_as_a_linear_screen(tmp_path):
     source,cfg=seed(tmp_path,validated=True)
     with pytest.raises(ValueError,match='unaccepted'):preflight(source,cfg)
+
+
+def test_correction_has_one_additional_solve_and_cannot_change_the_model():
+    prior=ROOT/'results/railgun/annular-recovery-k12'
+    plan=correction_plan(prior,config())
+    assert plan['max_additional_solves']==1 and plan['cumulative_solve_cap']==4
+    assert plan['corrected_grid']==[256,20] and plan['minimum_new_updates']==2
+    cfg=config();cfg['equation_tol']=2e-8
+    with pytest.raises(ValueError,match='original finest-grid'):correction_plan(prior,cfg)
+
+
+def test_correction_verifies_prior_archive_before_reusing_passing_grids(tmp_path):
+    import shutil
+    prior=ROOT/'results/railgun/annular-recovery-k12'
+    shutil.copytree(prior,tmp_path/'prior');prior=tmp_path/'prior'
+    with (prior/'grid_192x16.json').open('a') as stream:stream.write(' ')
+    with pytest.raises(ValueError,match='checksum'):correction_plan(prior,config())
 
 
 def records():
