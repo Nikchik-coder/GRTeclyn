@@ -51,6 +51,9 @@ def main(argv=None):
     profile.add_argument('--z-min', type=float, default=.1)
     profile.add_argument('--z-max', type=float, default=30.)
     profile.add_argument('--samples', type=int, default=101)
+    profile.add_argument('--certify-core', action='store_true')
+    profile.add_argument('--corridor-radius', type=float, default=.4)
+    profile.add_argument('--corridor-degree', type=int, default=6)
     args = parser.parse_args(argv)
     # The async CUDA pool reserves more virtual address space than the bounded
     # 160 GiB pilots allow. Platform allocation succeeded under that same cap.
@@ -78,19 +81,11 @@ def main(argv=None):
             parser.error('gpu must be nonnegative')
         from ..solver.device import select_device
         select_device(args.gpu, 128)
-        from ..railgun.workflow import load_state, write_json
-        from ..railgun.geometry import RingGeometry
-        from ..railgun.profiles import axial_profile
-        import numpy as np
-        p, u, metadata = load_state(args.solution)
-        if not metadata.get('validated') or p.jax.devices()[0].platform != 'gpu':
-            parser.error('profile requires a three-grid accepted background and GPU')
-        data, description = axial_profile(RingGeometry(p,u), z_min=args.z_min,
-                        z_max=args.z_max, samples=args.samples)
-        args.out.mkdir(parents=True, exist_ok=False)
-        np.savetxt(args.out/'axis.tsv', data, delimiter='\t',header='\t'.join(description['columns']))
-        write_json(args.out/'profile.json',description)
-        return 0
+        from ..railgun.profiles import run_profile
+        result=run_profile(args.solution,args.out,z_min=args.z_min,z_max=args.z_max,
+                           samples=args.samples,certify_core=args.certify_core,
+                           corridor_radius=args.corridor_radius,corridor_degree=args.corridor_degree)
+        return 0 if result['accepted'] else 2
     if args.verb == 'transport':
         if args.gpu < 0:
             parser.error('gpu must be nonnegative')

@@ -155,6 +155,8 @@ def observables(problem, u):
                 J_surface_quadrature_drift=float(np.max(abs(surface_j-surface_fine))),
                 lapse_min=float(np.min(np.exp(f/2))), B_min=float(np.min(b)),
                 dragging_max=float(np.max(np.abs(w))), gtt_max=float(np.max(gtt)),
+                gtt_min=float(np.min(gtt)),
+                shift_norm_over_lapse_max=float(np.max(b*np.exp(-f)*r*np.sqrt(sk)*np.abs(w))),
                 ergoregion_sampled=bool(np.any(gtt>0)),
                 low_density_threshold_relative=1e-6,
                 low_density_ergoregion_sampled=bool(np.any((gtt>0)&lowdensity)),

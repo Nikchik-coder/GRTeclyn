@@ -9,6 +9,15 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
+**Authorised next:** Run A profiles the accepted 128x16 ring on second
+node/card 0 after targeted GPU regression tests. Signed axis z=-15..15,
+301 samples, Cartesian join radius 0.4, degrees 6/8, unchanged 1e-8
+certification gate. Four threads, 160 GiB, 0.5 h, no AMR checkpoints;
+retain logs and profiles. Run B follows only after core certification and
+archiving A; counter-rotating Run C follows the single-ring transport archive.
+The November 1 request authorises this A-to-B-to-C sequence; spin selection
+and persistent internal dragging at zero total J remain hypotheses.
+
 **Live:** none. `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
 **Pure k=1 ring accepted on 72x10 / 96x12 / 128x16**, with two fresh Newton
@@ -176,7 +185,7 @@ explains the existing workflow; the
   diagnostics. Reuse their validation approach, with equations and boundaries
   appropriate to the new model.
 
-**Implemented November 1; spherical acceptance above, ring acceptance pending:**
+**Implemented November 1; spherical and pure k=1 ring acceptance complete:**
 `railgun/model.py` and `problem.py` provide the regular-centre domain, separate
 winding fields, analytic parity factors, frequency borders and optional total-J
 condition. `geometry.py` reconstructs Cartesian curvature and all Einstein/KG
@@ -314,8 +323,7 @@ the original failed records stay rejected. The refined config completed with
 unchanged physical amplitudes and 1e-8 equation/charge gates. All three pure-ring
 grids passed, as recorded above.
 
-**Next:** certify the accepted ring's Cartesian core, measure its axial force
-profile, then compare matched inward positive/negative/zero-spin trajectories
-through the centre with step/tolerance refinement. This needs its own bounded
-run-specific go. No particle transport or automatic follow-on job is queued.
+**Next:** execute the authorised profile/core check, then compare matched
+inward positive/negative/zero-spin trajectories through the centre with
+step/tolerance refinement. Archive each stage before starting the next.
 No axial-ejection or stability result has yet been established.

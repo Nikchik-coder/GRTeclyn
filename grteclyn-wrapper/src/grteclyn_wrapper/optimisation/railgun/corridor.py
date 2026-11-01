@@ -133,7 +133,7 @@ class CartesianCorridor(RingGeometry):
         keys=('einstein_max','kg_max','kg_intrinsic_max','kg_coordinate_difference',
               'order_metric_difference','order_curvature_difference',
               'parent_metric_difference','parent_curvature_difference')
-        maxima={key:max(row.get(key,0.) for row in rows) for key in keys}
+        maxima={key:float(np.max([row.get(key,0.) for row in rows])) for key in keys}
         accepted=(all(np.isfinite(value) and value <= tolerance for value in maxima.values())
                   and all(row['positive_spatial_metric'] and row['timelike_normal'] for row in rows))
         self.certificate=dict(accepted=bool(accepted),radius=self.radius,degree=self.degree,
