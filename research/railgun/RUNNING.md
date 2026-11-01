@@ -316,3 +316,26 @@ solves, max 30 iterations/minimum two updates, stop on rejection. The latter
 has at most 32 phase quadratures and 656 full MPD substitution points,
 zero new MPD tracks. Source/core hashes and all earlier failed evidence
 are preserved. All existing numerical gates remain unchanged.
+
+
+### Prepared final Newton polish and conditional annular particles
+
+`studies/annular_regular_polish_k12.json` tightens only the Newton solve:
+1e-14, a fresh Jacobian every update, minimum two updates; three grids
+192x16/224x18/256x20, at most three solves/max 30 iterations. The source,
+physics and every original acceptance gate stay unchanged. Direct H-coefficient
+transfer preserves the solved infinity data on refinement instead of refitting
+tiny physical w values. The previous first-grid flux rejection remains archived.
+
+`studies/annular_transit_k12.json` is a conditional eight-track pilot that
+refuses any unvalidated or non-archived background. Launch at the midpoint
+of the common three-grid matter channel, z=+10, axial speed -0.5; match the
+full Killing energy for spin 0/+0.001/-0.001 and a background/spin reversal,
+two RK tolerances 2e-11/2e-12, duration 100, step 0.4, 1001 samples. Require
+1e-9 conservation, 1e-7 timing/position/reversal agreement and both actual
+Cartesian Eulerian component densities below 1e-6 of their own source peaks
+at every sample. Trajectories must remain inside the validated rho interval
+and reach z=-10. This is off-axis finite passage, not escape or energy gain.
+No core patch is needed for the annular tube. These jobs now have a
+separate run-specific go; four threads/160 GiB/0.5 h/chunks 128/no AMR
+checkpoints per job. GPU regressions precede any production execution.

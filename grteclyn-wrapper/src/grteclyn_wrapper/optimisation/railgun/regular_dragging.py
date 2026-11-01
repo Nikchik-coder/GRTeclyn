@@ -55,6 +55,20 @@ class RegularDraggingProblem(FactoredDraggingProblem):
         value[self.n:2*self.n]=coeff.ravel()
         return value
 
+    def transfer(self,old,u,*,perturb=0.):
+        if isinstance(old,RegularDraggingProblem) and self.length==old.length and not perturb:
+            if self.shape==old.shape:return np.array(u,copy=True)
+            value=RingProblem.transfer(self,old,u,perturb=0.)
+            # Transfer H itself. Fitting tiny physical w values again would
+            # discard the already determined infinity coefficients.
+            by=cheb_eval(old.y,np.eye(old.ny+1),self.y)
+            coeff=np.asarray(old.raw_dragging(u))@by.T
+            target=np.zeros(self.shape);count=min(len(coeff),len(target))
+            target[:count]=coeff[:count]
+            value[self.n:2*self.n]=target.ravel()
+            return value
+        return RingProblem.transfer(self,old,u,perturb=perturb)
+
     def regular_rows(self,u,xp=np):
         arrays,freq=self.unpack(u);jets=RingProblem.jets(self,arrays,xp)
         c=self.raw_dragging(u);h=xp.asarray(self.h_basis)@c

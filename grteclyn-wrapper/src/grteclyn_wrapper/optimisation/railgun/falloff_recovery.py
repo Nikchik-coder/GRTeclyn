@@ -21,7 +21,10 @@ def preflight(source,config):
             or [f['winding'] for f in meta['fields']]!=[1,-12]
             or original.get('reasons')!=['angular_momentum_balance']):
         raise ValueError('original corrected 256x20 flux rejection required')
-    fixed=dict(grids=[[192,16],[224,18],[256,20]],max_solves=3,max_iter=30,newton_tol=1e-12,
+    if config.get('fresh_jacobian',False) and not config.get('regular_operator'):
+        raise ValueError('fresh-Jacobian profile requires the regular operator')
+    fixed=dict(grids=[[192,16],[224,18],[256,20]],max_solves=3,max_iter=30,
+               newton_tol=1e-14 if config.get('fresh_jacobian') else 1e-12,
                equation_tol=1e-8,tail_tol=1e-6,observable_tol=1e-6,edge_tol=1e-6,
                relative_density_cutoff=1e-6,channel_half_height=10.,perturbation=0.)
     if any(config.get(k)!=v for k,v in fixed.items()):raise ValueError('fixed three-solve falloff recovery budget and unchanged gates required')
@@ -61,7 +64,8 @@ def run_recovery(source,config,directory):
         guess=p.transfer(*previous,perturb=0.)
         save_state(directory/f'{name}_initial.npz',p,guess)
         print(f'[falloff] solve {nx}x{ny}, unknowns={p.n_unknowns}',flush=True)
-        value,info=newton(p.residual,p.jacobian,guess,tol=1e-12,max_iter=30,min_updates=2,verbose=True)
+        value,info=newton(p.residual,p.jacobian,guess,tol=config['newton_tol'],max_iter=30,min_updates=2,
+                         chord_ratio=0. if config.get('fresh_jacobian') else .1,verbose=True)
         save_state(directory/f'{name}.npz',p,value)
         try:
             row=validate(p,value,info,equation_tol=1e-8,tail_tol=1e-6)

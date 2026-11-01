@@ -44,7 +44,14 @@ Archive: `results/railgun/studies/annular-regular-k12-initial/`. All gates uncha
 Each job: four threads, 160 GiB, 0.5 h, chunks 128, no AMR checkpoints.
 Hard deadline **20:01 MSK**; no steady-state ETA during compilation.
 Scratch clean at **19:31 MSK**: 47 MB in `_cache/`, 535 GB free;
-first node not listed. No off-axis particle job approved or queued.
+first node not listed. A separate go now covers GPU regressions, then the tighter regular recovery
+on card 1 (same grids/budget, fresh Jacobian every update, Newton 1e-14,
+direct H transfer), and only after complete field acceptance eight
+matched-energy off-axis annular tracks. Configs:
+`studies/annular_regular_polish_k12.json` and
+`studies/annular_transit_k12.json`. No off-axis track may start on a rejected
+background. Each job retains four threads/160 GiB/0.5 h/chunks 128/no
+AMR checkpoints and every original physical gate.
 
 **Prior correction jobs completed:**
 

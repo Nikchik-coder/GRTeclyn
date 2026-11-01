@@ -60,3 +60,16 @@ def test_regular_state_round_trip_has_an_explicit_distinct_representation(tmp_pa
     assert m['representation']=='dragging_quintic_regular_operator_v2'
     assert other.h_degree==p.nx
     np.testing.assert_array_equal(v,u)
+
+
+def test_refinement_preserves_h_coefficients_instead_of_refitting_tiny_w():
+    from grteclyn_wrapper.optimisation.railgun.regular_dragging import RegularDraggingProblem
+    from grteclyn_wrapper.optimisation.railgun.model import ScalarField
+    fields=[ScalarField(),ScalarField(winding=-2)]
+    old=RegularDraggingProblem(fields,nx=12,ny=4,length=3.,target_j=0.)
+    new=RegularDraggingProblem(fields,nx=16,ny=6,length=3.,target_j=0.)
+    u=np.zeros(old.n_unknowns);raw=u[old.n:2*old.n].reshape(old.shape)
+    raw[0]=1e-5*(old.y+1);raw[-1]=1e-9*(2-old.y)
+    np.testing.assert_array_equal(old.transfer(old,u),u)
+    v=new.transfer(old,u);s=np.array([.99,.99999]);y=np.array([-.3,.4])
+    np.testing.assert_allclose(new.dragging_sample(v,s,y),old.dragging_sample(u,s,y),rtol=2e-14,atol=0)
