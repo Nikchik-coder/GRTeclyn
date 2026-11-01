@@ -31,27 +31,29 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** both corrected numerical jobs started **19:31:31 MSK**, code
-`e33bd0c8`, on the second GPU node. Card 0:
-`railgun-strong-axis-audit-20261101`, 32 phase quadratures/656 full-MPD
-substitution points, no new MPD tracks. Card 1:
-`railgun-annular-regular-k12-20261101` stopped **19:32:46 MSK**, exit 2,
-after two updates on 192x16. Infinity angular mode passes; finite-sphere
-J error 1.91575e-8 fails 1e-8. All other checks pass. One Jacobian was
-reused; scaled residual 5.05e-13. Later grids unattempted; card 1 idle.
-Archive: `results/railgun/studies/annular-regular-k12-initial/`. All gates unchanged. Preceding CUDA suites passed
-**15 + 33 = 48 tests** (12.45 / 10.63 s), code `e5096e78`.
-Each job: four threads, 160 GiB, 0.5 h, chunks 128, no AMR checkpoints.
-Hard deadline **20:01 MSK**; no steady-state ETA during compilation.
-Scratch clean at **19:31 MSK**: 47 MB in `_cache/`, 535 GB free;
-first node not listed. A separate go now covers GPU regressions, then the tighter regular recovery
-on card 1 (same grids/budget, fresh Jacobian every update, Newton 1e-14,
-direct H transfer), and only after complete field acceptance eight
-matched-energy off-axis annular tracks. Configs:
-`studies/annular_regular_polish_k12.json` and
-`studies/annular_transit_k12.json`. No off-axis track may start on a rejected
-background. Each job retains four threads/160 GiB/0.5 h/chunks 128/no
-AMR checkpoints and every original physical gate.
+**Live:** `railgun-annular-polish-gpu-tests-20261101`, second node/card 1,
+started **19:41:56 MSK**, code `48b7d577`, 0.5 h hard cap to **20:11 MSK**.
+Then the approved fresh-Jacobian 1e-14 three-grid recovery; only if accepted,
+the separately approved eight-track off-axis annular experiment follows.
+Card 0 idle. Scratch clean at **19:42 MSK**: 47 MB `_cache/`, 534 GB free;
+first node not listed. No measured numerical-job ETA yet.
+
+**Independent particle phase audit completed:** code `e33bd0c8`,
+**19:31:31–19:38:26 MSK (0.1153 h)**, exit 2. All 656 full Cartesian MPD
+substitution/invariant checks pass (maximum equation defect about 1.32e-14).
+All nonmarginal finest saved tracks agree with the order-16 phase times
+within 1e-7. The two difficult controls still fail only the order-8 versus
+order-16 quadrature check (2.59992e-7 / 2.60016e-7). Study rejected pending
+a bounded higher-order quadrature audit; no new MPD tracks were computed.
+Archive: `results/railgun/studies/strong-axis-audit-initial/`.
+
+**Regular infinity recovery completed:** `railgun-annular-regular-k12-20261101`,
+code `e33bd0c8`, **19:31:31–19:32:46 MSK**, exit 2. Its first 192x16
+solve now passes the infinity angular-mode gate. Finite-sphere J error
+1.91575e-8 exceeds 1e-8; all other gates pass. Two updates/one Jacobian,
+scaled residual 5.05e-13. Later grids unattempted. Archive:
+`results/railgun/studies/annular-regular-k12-initial/`.
+Preceding corrected-method GPU suites: **48 passed** (15+33).
 
 **Prior correction jobs completed:**
 
