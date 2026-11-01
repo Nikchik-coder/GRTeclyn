@@ -24,7 +24,7 @@ with `homotopy_unresolved` after 15 solves and six bisections; last passing
 progress 0.40625. The angular-momentum balance gate blocked continuation.
 No pure ring or trajectories were produced by that first leg.
 Scratch is clean: **47 MB**, only `_cache/`,
-**545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
+**544 GB free** at the 11:44 MSK check. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
@@ -67,7 +67,8 @@ The November 1 safeguards passed **51 GPU regressions in 55.99 s**, code
 `fd15f724`, ending **10:37 MSK**, followed by **two saved-baseline GPU checks
 in 140.43 s**, code `303bdab5`, ending **10:43 MSK**. Portable reports are
 `results/railgun/gpu_guards_regression.json` and
-`results/railgun/gpu_baseline_regression.json`. No nonlinear ring solve has started.
+`results/railgun/gpu_baseline_regression.json`. The subsequent nonlinear ring
+attempts and their stopping conditions are recorded in Live and queue above.
 
 1. Off-grid reports include worst KG/Einstein **radius and theta**, with a
    separate intrinsic divergence-form KG evaluation and Cartesian/intrinsic
@@ -280,10 +281,15 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable:** GPU regression checks of the angular-momentum extraction
-correction, then resume the same homotopy. Its bound remains 24 cumulative
-coupled solves/six cumulative bisections/30 Newton steps,
-with 56x8 / 72x10 / 96x12 final recovery, GPU 0, four CPU threads, 160 GiB,
-chunks of 128 and 0.5 h; no AMR checkpoints. A resume carries spent work
-forward and rechecks its seed; no new parameter scan is queued.
+**Next deliverable:** finish checking the mass extraction and prepare a
+finer-grid continuation proposal. The mass coefficient fit has drift 1.02e-6
+at progress 0.625; an offline compactified-endpoint estimate agrees with the
+volume mass within 1.73e-8, so its extraction also needs review before using
+fit drift to diagnose the fields. This endpoint method is not yet implemented
+or regression-tested. The KG and exact surface-J failures remain unresolved.
+Proposed grids are 72x10 / 96x12 / 128x16; adding 128x16 requires a fresh go.
+Carry the 17 spent coupled solves and six bisections forward, keep the same
+physical amplitudes and 1e-8 equation/charge gates, then require fresh pure-ring
+recovery on all three grids. GPU 0, four threads, 160 GiB and chunks of 128;
+no AMR checkpoints. No new run is authorised or queued.
 No rotating-ring or axial-ejection result has yet been established.
