@@ -9,6 +9,13 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
+**Live:** `railgun-profile-regression-20261101`, second node/card 0,
+code `4c1e2085`; targeted signed-profile, stress-energy, diagnostics and
+transport checks. Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
+Initialisation/compilation; no measured speed or completion ETA yet.
+Scratch at launch: clean, 47 MB in `_cache/` only, 543 GB free; first
+node not listed.
+
 **Authorised next:** Run A profiles the accepted 128x16 ring on second
 node/card 0 after targeted GPU regression tests. Signed axis z=-15..15,
 301 samples, Cartesian join radius 0.4, degrees 6/8, unchanged 1e-8
@@ -18,13 +25,13 @@ archiving A; counter-rotating Run C follows the single-ring transport archive.
 The November 1 request authorises this A-to-B-to-C sequence; spin selection
 and persistent internal dragging at zero total J remain hypotheses.
 
-**Live:** none. `railgun-ring-refined-20261101`, second node/card 0, code
+**Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
 **Pure k=1 ring accepted on 72x10 / 96x12 / 128x16**, with two fresh Newton
 updates on each pure-ring grid. Final observable drift **3.52e-10**.
 Cumulative work: 22 coupled solves (five in this leg), six bisections and
 three pure-ring solves. Four threads, 160 GiB, chunks of 128; no AMR checkpoints.
-Both cards are idle; no completion ETA or queued particle trajectory.
+No physical trajectory has run yet.
 
 `railgun-refinement-regression-20261101`, second node/card 0,
 code `91786ff2`, ran **11:55:53–11:59:39 MSK**: **63 GPU tests passed in
