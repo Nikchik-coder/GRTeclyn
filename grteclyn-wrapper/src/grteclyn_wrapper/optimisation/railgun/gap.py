@@ -9,6 +9,49 @@ from __future__ import annotations
 import numpy as np
 
 
+def cylindrical_densities(metadata,u,rho,z):
+    """Per-field Eulerian energy at paired cylindrical points, rho > 0.
+
+    Analytic spectral derivatives retain transverse gradients. No Cartesian
+    core or axis extrapolation is involved; the annular channel excludes both.
+    """
+    from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval,lobatto
+    rho,z=np.broadcast_arrays(np.asarray(rho,float),np.asarray(z,float))
+    if not np.isfinite(rho).all() or not np.isfinite(z).all() or np.any(rho<=0):
+        raise ValueError('finite cylindrical points with rho > 0 required')
+    shape=rho.shape;rho,z=rho.ravel(),z.ravel();r=np.hypot(rho,z)
+    fields=metadata['fields'];nx,ny,L=metadata['nx'],metadata['ny'],metadata['length']
+    n=(nx+1)*(ny+1);value=np.asarray(u,float)
+    if not np.isfinite(value).all() or any(f['parity']!='even' for f in fields):
+        raise ValueError('finite even-parity fields required')
+    a=value[:(4+len(fields))*n].reshape(4+len(fields),nx+1,ny+1)
+    frequency=value[(4+len(fields))*n:(4+len(fields))*n+len(fields)]
+    s,dx=lobatto(nx);y,dy=lobatto(ny)
+    mu=z/r;sn=rho/r
+    bx=cheb_eval(s,np.eye(nx+1),(r-L)/(r+L))
+    by=cheb_eval(y,np.eye(ny+1),2*mu*mu-1)
+    sample=lambda v:np.einsum('pi,ij,pj->p',bx,v,by,optimize=True)
+    f,w,N,b=(sample(a[i]) for i in range(4));B=1+b;nu=N*sn*sn
+    if np.any(B<=0):raise ValueError('positive spatial metric required')
+    densities=[]
+    for i,field in enumerate(fields):
+        k=field['winding'];ka=abs(k);q=sample(a[4+i])
+        qr=sample(dx@a[4+i])*2*L/(r+L)**2
+        qy=sample(a[4+i]@dy.T)
+        amplitude=sn**ka*q
+        radial=sn**ka*qr
+        angular=-4*sn**(ka+1)*mu*qy
+        if ka:angular+=ka*sn**(ka-1)*mu*q
+        potential=(field['mass']**2*amplitude**2+field['quartic']*amplitude**4
+                   +field['sextic']*amplitude**6)
+        density=((frequency[i]+k*w)**2*np.exp(-f)*amplitude**2
+            +np.exp(f-nu)/B**2*(radial**2+angular**2/r**2)
+            +k*k*np.exp(f)*amplitude**2/(B*B*rho*rho)+potential)/(8*np.pi)
+        if not np.isfinite(density).all():raise ValueError('nonfinite cylindrical energy density')
+        densities.append(density.reshape(shape))
+    return np.array(densities)
+
+
 def equatorial_densities(metadata,u,radius):
     """Eulerian energy on the even-parity equator, without starting JAX."""
     from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval,lobatto

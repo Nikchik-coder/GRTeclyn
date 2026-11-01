@@ -121,3 +121,29 @@ a regular Cartesian core. The core must pass independent equations, curvature
 matching and polynomial-order checks; otherwise no trajectory starts. Its
 certificate is saved as `corridor.json`. Merely removing the inner stop on the
 original spherical-coordinate interpolant is refused.
+
+The separated-ring screen has a dedicated nonlinear recovery, with its own go:
+
+```bash
+$PY -m grteclyn_wrapper.optimisation.railgun.annular_recovery \
+  research/railgun/studies/annular_recovery_k12.json \
+  --source results/railgun/annular-gap-screen/k12_128x16.npz \
+  --out runs/railgun/annular-recovery-k12 --gpu 0 --dry-run
+```
+
+The dry run imports no JAX and checks the seed checksum, passing two-grid
+screen provenance, three-solve budget and dense storage estimate. Removing
+`--dry-run` starts GPU work: use the capped launcher above after its specific
+go, with the platform allocator, four threads, 160 GiB, 1800 seconds and chunks
+of 128. The configured grids are 192x16, 224x18 and 256x20 at L=50. Promotion
+adds the total-J border explicitly; the last unbordered frequency must never
+be mistaken for the new logarithmic amplitude unknown.
+
+Each grid requires two fresh corrections, all independent field-equation
+checks, total J=0 and the 1e-6 component-wise annular gap. The middle half of
+the gap is also sampled on a 21x81 cylindrical mesh over z=-10..10, normalised
+to each component's own equatorial peak. Acceptance additionally requires
+1e-6 convergence of the separately measured charges and both gap edges on
+the last two grids. Failed states and diagnostics remain saved; no overlap,
+changed potential or weaker tolerance is an automatic fallback. A certified
+sampled channel is still separate from an actual confined particle trajectory.

@@ -25,10 +25,26 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-annular-gap-screen-20261101`, second node/card 0,
+**Live:** none while the approved nonlinear recovery is synced and checked.
+**Approved next:** GPU regression checks, then `railgun-annular-recovery-k12-20261101`
+on the second node/card 0, from `k12_128x16.npz`. Three fresh coupled
+solves at **192x16 / 224x18 / 256x20**, L=50, total J=0, at most 30 Newton
+iterations per solve and at least two corrections on each grid. Same
+1e-8 equations and 1e-6 matter cutoff; require separate charge/edge convergence
+and a sampled finite-height channel z=-10..10 inside the middle half of the gap.
+Four threads, 160 GiB host cap, 0.5 h per job, chunks 128; no AMR checkpoints.
+Dry run: 19,689 / 25,653 / 32,385 unknowns; eight dense buffers estimated
+23.11 / 39.22 / 62.51 GiB. This estimates storage, not measured allocation.
+Thirteen CPU-only budget/provenance/acceptance checks passed; three GPU
+promotion/Cartesian-density checks remain before launch. No automatic
+fallback to a different grid, winding, potential or tolerance.
+Scratch clean at **16:08 MSK**: 47 MB in `_cache/` only, 539 GB free;
+first node not listed. Both cards idle; no running-job ETA.
+
+Completed `railgun-annular-gap-screen-20261101`, second node/card 0,
 code `928bde26`, finished **13:22:52 MSK**, exit 0. Eight GPU eigenproblems
-completed in 10.28 s (13 s including startup). Both cards are idle; no
-completion ETA or automatically queued nonlinear solve.
+completed in 10.28 s (13 s including startup). Its nonlinear follow-on is
+the separately approved k2=-12 recovery above.
 At the agreed 1e-6 matter cutoff, k2=-4/-8 fail the gap screen; **k2=-12
 and k2=-16 pass on 96x12 and 128x16**. Fixed-background candidate intervals:
 **33.3107 < rho < 41.1737** (width **7.8630**) and
@@ -99,7 +115,7 @@ k2=-12 or -16 seed, enforce total J=0 after backreaction, and require three
 fresh grid solves plus the unchanged independent equations and 1e-6
 matter-gap test. Then verify the finite-height annular channel and particle
 trajectories inside it. The k2=-12 seed is the smaller-separation candidate;
-no nonlinear follow-on has been authorised or launched. The completed
+the k2=-12 recovery above is now authorised and awaiting its regression checks. The completed
 screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
@@ -140,10 +156,10 @@ Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
 
-The authorised regression tests and spherical pilots have completed. The
-spherical-to-ring homotopy completed successfully in the refined pilot. No
-counter-rotation, stacked-ring or physical transport job is queued for
-automatic dispatch. Regression work on the
+The earlier regression tests and spherical pilots have completed. The
+spherical-to-ring homotopy completed successfully in the refined pilot.
+Stacked-ring and physical between-ring transport jobs are not queued.
+Regression work on the
 three newly identified safeguards completed under the same four-thread,
 160 GiB, 0.5 h job cap, GPU 0 and Jacobian chunks of 128. No AMR checkpoints.
 
