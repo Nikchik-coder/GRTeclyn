@@ -1,0 +1,25 @@
+{
+  "columns": [
+    "z",
+    "proper_distance_from_z_min",
+    "lapse",
+    "g_tt",
+    "coordinate_dragging_omega",
+    "electric_tidal_zz",
+    "magnetic_tidal_zz",
+    "linear_spin_force_z_per_spin",
+    "independent_einstein_max",
+    "independent_kg_max",
+    "scalar_amplitude_squared",
+    "Eulerian_matter_energy_density",
+    "shift_norm_over_lapse"
+  ],
+  "observer": "Eulerian orthonormal frame; right-handed Cartesian spatial triad",
+  "spin_force": "Pole-dipole, linear spin, instantaneously comoving, unit test mass",
+  "range": [
+    -15.0,
+    15.0
+  ],
+  "samples": 301,
+  "scope": "Signed axis; the origin requires a certified regular core; no vacuum assumption"
+}

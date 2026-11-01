@@ -40,7 +40,8 @@ hard deadline around **18:58 MSK**. Card 1 idle.
 The core/profile passed at radius 0.4, degrees 6/8: code `078ee51f`,
 **18:19:33–18:26:09 MSK**, 390 s numerical work. Core order-curvature
 difference 2.65e-10, independent Einstein/KG maxima 1.70e-11 / 2.90e-12.
-The preceding 21 targeted GPU checks passed in 76.48 s.
+The preceding 21 targeted GPU checks passed in 76.48 s. The completed
+profile is packed under `results/railgun/studies/strong-profile-073/`.
 Scratch clean: 47 MB in `_cache/` only, 536 GB free at **18:28 MSK**;
 first node not listed. No AMR checkpoints or plotfiles created.
 
@@ -598,10 +599,10 @@ grids passed, as recorded above.
 **Next:** plot the validated counter-rotating fields. Between-ring
 particle trajectories, asymptotic ejection and dynamical stability remain untested.
 
-**Prepared flux representation experiment:** `studies/annular_falloff_k12.json`,
+**Approved queue after strong-ring particles — flux representation experiment:** `studies/annular_falloff_k12.json`,
 three fresh solves 192x16 / 224x18 / 256x20 from the saved finest correction,
 max 30 iterations each, minimum two updates. Cubic Frobenius w falloff,
 explicit factored model/loader, all original gates plus omitted outer PDEs,
 Cartesian metric-ratio flux and infinity-mode crosschecks. Prototype and
-pure-data checks only; GPU manufactured checks and nonlinear recovery need
-a run-specific go. No off-axis particles are included in this proposal.
+pure-data checks passed. Separate go received for GPU manufactured checks,
+then at most three fresh solves. No off-axis particles are included.

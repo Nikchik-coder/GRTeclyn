@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "c25b4c8e523808f5792686243b7d9803e36eb0feeff7633b594152c9cc673d13",
-      "bytes": 12197
+      "sha256": "71e3eef3a753cedf3194b90d9f3e8354a2db88b0f6776fecb071f8f5866ced7f",
+      "bytes": 12421
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -1684,6 +1684,42 @@
     "studies/spherical-validated/sha256.json": {
       "sha256": "6cc847938b846062aa433f50aa8c2ec35cca322d8e095eb6a8d8f6da063d7885",
       "bytes": 1055
+    },
+    "studies/strong-profile-073/README.md": {
+      "sha256": "ba0a8ee68841d896bb213abf99be713e355e263b657f850ca5d28e9d7ac30a42",
+      "bytes": 584
+    },
+    "studies/strong-profile-073/axis.tsv": {
+      "sha256": "c7e0b42f12e6a650b84cd85f6b79c2573497979a18b86db54ffd27f3e1d0f645",
+      "bytes": 99397
+    },
+    "studies/strong-profile-073/corridor.json": {
+      "sha256": "fd54248c38a3d68dbc03092d8457e63cd87615cc6cc76e951d401d78a15f5b57",
+      "bytes": 24757
+    },
+    "studies/strong-profile-073/equator.tsv": {
+      "sha256": "09bb36d74c3240de07e104165f52317b30d724c82562cb1ff4bd952fe88e9794",
+      "bytes": 45137
+    },
+    "studies/strong-profile-073/execution.log": {
+      "sha256": "28b58db253bed0a1bcb99e4ee672e117f3aee695f0d42cc81e0f06d3110adaf9",
+      "bytes": 720
+    },
+    "studies/strong-profile-073/manifest.json": {
+      "sha256": "04467c1f3b3b5712d9ff1e4a60b55834fcacc6bd74ab0dd4dd216a993f9e8958",
+      "bytes": 344
+    },
+    "studies/strong-profile-073/outcome.json": {
+      "sha256": "1dd127c9e94df10350e08b3dcd8376e4cfcbff80ab7c4fcaa470490ef2d064d1",
+      "bytes": 2382
+    },
+    "studies/strong-profile-073/profile.json": {
+      "sha256": "76fb24af936a586c59a6b439c3e3427233028cdc1bde218edbb26dae077f286f",
+      "bytes": 684
+    },
+    "studies/strong-profile-073/sha256sums.txt": {
+      "sha256": "9849dfdb0e83125a954d785945e6b365864c40cb3f62432b72bbe95e77a11136",
+      "bytes": 627
     },
     "studies/uphill-transit/above_all_rk0_negative.json": {
       "sha256": "f494ba6527c204ab571816f0bb4d13c8dadc9bbdb22234fe62393196340cd73a",

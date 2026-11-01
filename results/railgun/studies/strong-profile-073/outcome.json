@@ -1,0 +1,83 @@
+{
+  "accepted": true,
+  "observables": {
+    "charges": [
+      1.3571709385611497
+    ],
+    "matter_J": [
+      -1.3571709385611497
+    ],
+    "J_volume": -1.3571709385611497,
+    "M_Komar_volume": 1.2973467762413458,
+    "M_ADM_estimate": 1.2973467762442072,
+    "M_lapse_estimate": 1.2973467762442403,
+    "mass_extraction": "compactified_endpoint_first_derivatives",
+    "M_ADM_fit_estimate": 1.2973466624680616,
+    "M_lapse_fit_estimate": 1.2973465973029603,
+    "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+    "M_fit_drift": 3.353123847471551e-07,
+    "J_asymptotic_estimate": -1.3571689106397036,
+    "J_fit_drift": 1.0344624771896349e-05,
+    "density_peaks": [
+      {
+        "radius": 1.4486132575369088,
+        "mu": 0.0008811451447204299,
+        "cylindrical_radius": 1.4486126951729894,
+        "axial_position": 0.001276438538456293,
+        "density": 0.007842700420283087
+      }
+    ],
+    "J_surface_radii": [
+      110.0,
+      150.0,
+      210.0,
+      300.0
+    ],
+    "J_surfaces": [
+      -1.3571709379871113,
+      -1.3571709377976402,
+      -1.3571709375367687,
+      -1.357170937289581
+    ],
+    "J_surface_estimate": -1.357170937289581,
+    "J_surface_quadrature_drift": 2.4424906541753444e-15,
+    "lapse_min": 0.49280423128552964,
+    "B_min": 0.8819444014678424,
+    "dragging_max": 0.09649098069727476,
+    "gtt_max": -0.2171948085947071,
+    "gtt_min": -0.999992695856387,
+    "shift_norm_over_lapse_max": 0.35420574542928956,
+    "ergoregion_sampled": false,
+    "low_density_threshold_relative": 1e-06,
+    "low_density_ergoregion_sampled": false,
+    "tail_shells": [
+      60.0,
+      80.0,
+      110.0,
+      150.0,
+      210.0,
+      300.0
+    ],
+    "scalar_tail_ratios": [
+      [
+        8.282222327921279e-18,
+        5.081085546047342e-20,
+        2.3591024101548384e-18,
+        2.73055758347244e-18,
+        6.9220715594718e-19,
+        2.5922959936120376e-19
+      ]
+    ]
+  },
+  "equatorial_density_peak": {
+    "radius": 1.4500000000000002,
+    "density": 0.007842794254876313,
+    "radial_sampling": 0.05
+  },
+  "axis_equation_max": 1.099412597879618e-11,
+  "axis_lapse_min": 0.5043517260219206,
+  "axis_lapse_at_zero": 0.5043517260219206,
+  "ergoregion_sampled": false,
+  "interpretation": "A spin-selective valve is an untested hypothesis; matched-energy asymptotic speeds agree.",
+  "seconds": 390.0215070201084
+}
