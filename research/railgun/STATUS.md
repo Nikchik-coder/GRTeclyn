@@ -4,19 +4,18 @@ Updated **2026-11-01 (MSK)**. Branch: `feature/optimisation`.
 
 **Decision:** the minimal-exotic-matter optimisation campaign is paused. This
 separate study reuses its JAX/Newton infrastructure for regular-centre scalar
-rings. The spherical baseline is validated; ring, counter-rotation, stacked
-states and axial spin effects remain hypotheses to test.
+rings. The spherical baseline and one pure k=1 rotating ring are validated.
+Counter-rotation, stacked states, stability and axial spin effects remain to test.
 
 ## Live and queue
 
-**Live:** `railgun-ring-refined-20261101`, second node/card 0, code
-`58116d7a`, started **12:03:19 MSK**, approved November 1. Refine/recover the
-saved midpoint on 72x10, then continue toward a pure ring and require
-72x10 / 96x12 / 128x16 recovery. At most seven remaining coupled solves
-(17 already spent), three pure-ring solves, 30 Newton steps each; all six
-bisections remain spent. Four threads, 160 GiB, chunks of 128, hard timeout
-**0.5 h (12:33:19 MSK)**; no AMR checkpoints. First recovery is compiling;
-speed and completion ETA are unmeasured. No particle trajectories are running.
+**Live:** none. `railgun-ring-refined-20261101`, second node/card 0, code
+`58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
+**Pure k=1 ring accepted on 72x10 / 96x12 / 128x16**, with two fresh Newton
+updates on each pure-ring grid. Final observable drift **3.52e-10**.
+Cumulative work: 22 coupled solves (five in this leg), six bisections and
+three pure-ring solves. Four threads, 160 GiB, chunks of 128; no AMR checkpoints.
+Both cards are idle; no completion ETA or queued particle trajectory.
 
 `railgun-refinement-regression-20261101`, second node/card 0,
 code `91786ff2`, ran **11:55:53–11:59:39 MSK**: **63 GPU tests passed in
@@ -40,19 +39,27 @@ with `homotopy_unresolved` after 15 solves and six bisections; last passing
 progress 0.40625. The angular-momentum balance gate blocked continuation.
 No pure ring or trajectories were produced by that first leg.
 Scratch is clean: **47 MB**, only `_cache/`,
-**544 GB free** at the 12:03 MSK check. No plotfiles or AMR checkpoints. The first node was not listed.
+**544 GB free** at the 12:07 MSK check. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
 
 The authorised regression tests and spherical pilots have completed. The
-spherical-to-ring homotopy now continues in the approved refined pilot. No
+spherical-to-ring homotopy completed successfully in the refined pilot. No
 counter-rotation, stacked-ring or physical transport job is queued for
 automatic dispatch. Regression work on the
 three newly identified safeguards completed under the same four-thread,
 160 GiB, 0.5 h job cap, GPU 0 and Jacobian chunks of 128. No AMR checkpoints.
 
 ## Completed baseline — November 1
+
+- **Pure rotating k=1 ring accepted**, ending **12:06 MSK**, code `58116d7a`.
+  The old k=0 component and its frequency were removed before three-grid
+  recovery. On 128x16: M_ADM=0.971450813143, J=-0.992014330336;
+  independent Einstein/KG defects **1.58e-11 / 3.92e-12**, final observable
+  drift **3.52e-10**. Pure-grid solve/check times **18.86 / 21.50 / 32.53 s**.
+  This validates a stationary solution, not dynamical stability or ejection.
+  Archive: `results/railgun/ring-validated/`.
 
 - **45 GPU regression tests passed**, 22.34 s, ending 10:21 MSK, code
   `732ed60e`. CUDA placement and float64 are asserted. The tests include
@@ -302,14 +309,13 @@ grid-only refined resume are implemented; all **63 GPU regressions passed**.
 Report: `results/railgun/gpu_refinement_regression.json`. The
 mass coefficient fit has drift 1.02e-6 at progress 0.625; the endpoint estimate
 agrees with the volume mass within 1.73e-8. Original records stay unchanged.
-The KG and exact surface-J failures remain unresolved. The prepared config
-is `studies/spherical_to_ring_refined.json`, with grids
-72x10 / 96x12 / 128x16; its go was received November 1 and it is live above.
-Carry the 17 spent coupled solves and six bisections forward, keep the same
-physical amplitudes and 1e-8 equation/charge gates, then require fresh pure-ring
-recovery on all three grids. The refined seed recovery consumes one of the
-seven remaining coupled solves; four scheduled continuation points follow.
-At most three pure-ring solves follow successful continuation. Proposed cap:
-GPU 0, four threads, 160 GiB, chunks of 128, 0.5 h; no AMR checkpoints.
-Preserve logs and all solved fields. No additional run or automatic rerun is queued.
-No rotating-ring or axial-ejection result has yet been established.
+The old KG and exact surface-J failures shrank under the approved refinement;
+the original failed records stay rejected. The refined config completed with
+unchanged physical amplitudes and 1e-8 equation/charge gates. All three pure-ring
+grids passed, as recorded above.
+
+**Next:** certify the accepted ring's Cartesian core, measure its axial force
+profile, then compare matched inward positive/negative/zero-spin trajectories
+through the centre with step/tolerance refinement. This needs its own bounded
+run-specific go. No particle transport or automatic follow-on job is queued.
+No axial-ejection or stability result has yet been established.
