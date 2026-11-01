@@ -17,7 +17,7 @@ def test_thin_concentric_rings_have_a_resolved_annular_gap():
 
 def test_distinct_peaks_with_overlapping_tails_fail():
     r=np.linspace(0.,40.,4001)
-    density=np.array([np.exp(-((r-6.)/3.)**2),.1*np.exp(-((r-8.)/3.)**2)])
+    density=np.array([np.exp(-((r-12.)/3.)**2),.1*np.exp(-((r-14.)/3.)**2)])
     result=annular_gap(r,density)
     assert not result['accepted']
     assert result['gap_width']<0.

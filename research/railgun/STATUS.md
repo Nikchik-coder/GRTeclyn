@@ -25,11 +25,15 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-gap-regression-20261101`, second node/card 0, code
-`1d3f5a02`. Annular-edge rejection/acceptance, saved Cartesian density
-comparison, rotating KG and explicit GPU cuSOLVER checks. Four threads,
-160 GiB, 0.5 h cap, no AMR checkpoints. Initial tests, ETA unmeasured.
-Scratch clean: 47 MB in `_cache/` only, 543 GB free; first node not listed.
+**Live:** none. `railgun-gap-regression-20261101`, second node/card 0, code
+`1d3f5a02`, ended **13:18:48 MSK**: eight passed, one fixture failed in
+2.67 s. Explicit GPU cuSOLVER agrees with the host bound-mode reference;
+saved Cartesian/spectral density comparison passed. The overlap fixture
+expected a resolved inner edge even though its domain boundary exceeded
+the cutoff; the checker correctly returned an unresolved edge. Move both
+synthetic peaks inward from the domain boundaries and rerun that same suite.
+Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
+Scratch clean: 47 MB in `_cache/` only, 542 GB free; first node not listed.
 The higher-winding physical seed screen remains unlaunched, awaiting go.
 
 Run C `railgun-counter-rotation-20261101`, second node/card 0,
