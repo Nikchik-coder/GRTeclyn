@@ -25,16 +25,19 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-gap-regression-20261101`, second node/card 0, code
-`1d3f5a02`, ended **13:18:48 MSK**: eight passed, one fixture failed in
-2.67 s. Explicit GPU cuSOLVER agrees with the host bound-mode reference;
-saved Cartesian/spectral density comparison passed. The overlap fixture
-expected a resolved inner edge even though its domain boundary exceeded
-the cutoff; the checker correctly returned an unresolved edge. Move both
-synthetic peaks inward from the domain boundaries and rerun that same suite.
-Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
+**Live:** `railgun-annular-gap-screen-20261101`, second node/card 0,
+code `928bde26`, after the explicit go for k2=-4/-8/-12/-16,
+96x12 / 128x16, radial scale 50, at most eight GPU eigenproblems.
+Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints; retain logs/seeds.
+Initial compilation/eigensolve; speed and ETA unmeasured.
 Scratch clean: 47 MB in `_cache/` only, 542 GB free; first node not listed.
-The higher-winding physical seed screen remains unlaunched, awaiting go.
+
+All **nine gap/GPU eigenmode regression checks passed in 2.58 s**, ending
+**13:21:02 MSK**, code `928bde26`. The first run had eight passes and one
+incorrect fixture expectation about an unresolved boundary crossing; the
+fixture was corrected, and the gap criterion stayed unchanged. Both logs
+are retained. GPU cuSOLVER agrees with the host reference; spectral matter
+density agrees with the independent archived Cartesian-derivative profile.
 
 Run C `railgun-counter-rotation-20261101`, second node/card 0,
 implementation `73b2aa30`, ran **12:55:48–13:00:33 MSK (0.079 h)**, exit 0.
@@ -81,15 +84,15 @@ the first node was not listed.
 
 **Next:** search for a separated annular channel before running particles
 between rings. Increasing |k2| is a candidate way to move the outer bound
-mode away from the inner ring; success is not assumed. Prepared, **not launched**:
+mode away from the inner ring; success is not assumed. **Authorised and live**:
 `studies/annular_gap_screen.json` tests k2=-4/-8/-12/-16, masses unchanged,
 96x12 / 128x16, radial compactification scale 50, at most eight quadratic
 eigenproblems. The eigensolver explicitly uses GPU cuSOLVER. Four threads,
 160 GiB, 0.5 h, second-node card 0, no AMR checkpoints; retain seeds/logs.
 This fixed-background linear screen cannot accept a self-consistent spacetime;
 any promising seed still needs nonlinear backreaction, zero-J enforcement,
-three-grid validation and finite-height channel checks. Regression tests are
-pending; a fresh go is required for the changed windings/grids before startup.
+three-grid validation and finite-height channel checks. The nine regression
+checks passed before launch; the changed windings/grids received a fresh go.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
 No physical between-ring trajectory is authorised or running.
