@@ -222,7 +222,7 @@ converged but rejected 72x10 field; its use as an initial guess does not accept
 its constraint error. Every new grid must make at least two real corrections
 and pass independently; the three-grid observable test remains mandatory.
 
-Prepared command, **not authorised or launched** (fresh run-specific go required):
+Command approved and launched November 1 (three solves only):
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refined-20261101 \

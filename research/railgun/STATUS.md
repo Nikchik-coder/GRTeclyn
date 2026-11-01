@@ -31,7 +31,15 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. `railgun-frequency-scan-20261101`, second node/card 0,
+**Live:** `railgun-frequency-073-refined-20261101`, second node/card 0,
+code `e7fed22c`, started **17:45 MSK**. Approved omega=0.73 recovery on
+96x12 / 128x16 / 160x20, at most three solves, 30 iterations each, two
+fresh corrections per grid. Only grids differ from the rejected coarse
+study. Seed SHA256: `7772f35fbd72b9ab9bd4753d5eff329b287572a7804a6e452e4f69a461607123`.
+Four threads, 160 GiB, chunks 128, no AMR checkpoints. Estimated completion
+0.04 h, around **17:48 MSK**; 0.5 h hard cap around **18:15 MSK**.
+
+**Previous frequency scan:** `railgun-frequency-scan-20261101`, second node/card 0,
 code `023f4384`, ran **17:35:17–17:40:03 MSK (0.0794 h)**, exit 2.
 **Four frequencies 0.85 / 0.82 / 0.79 / 0.76 passed all three grids.**
 At 0.73, Newton converged but the unimposed constraint_c was **3.25009e-8
@@ -46,17 +54,17 @@ The preceding **31 GPU regressions passed in 24.87 s**
 (**17:34:17–17:34:43 MSK**, code `1f4054a0`); portable report:
 `results/railgun/reports/gpu_frequency_regression.json`.
 
-**Next, prepared but not launched:** `studies/frequency_073_refined.json`,
+**Approved recovery, now live:** `studies/frequency_073_refined.json`,
 a three-grid recovery of omega=0.73 on 96x12 / 128x16 / 160x20, seeded
 from the retained converged 72x10 candidate. At most three solves, 30
 iterations each, at least two fresh corrections per grid; same branch,
 1e-8 equation and 1e-6 tail/observable gates. Keep four threads, 160 GiB,
 0.5 h, chunks 128 and no AMR checkpoints. Test resolution before further
 frequency continuation. The dry run performed no numerical execution.
-The current go was to stop on failed validation, so no recovery or new
-strong-ring profile/particle experiment is authorised yet. The earlier
-annular k2=-12 flux failure also remains unresolved. Both cards idle,
-no completion ETA. Scratch clean at **17:41 MSK**: 47 MB in `_cache/` only,
+The recovery has a separate run-specific go; lower frequencies and new
+strong-ring profile/particle experiments remain unapproved. The earlier
+annular k2=-12 flux failure remains unresolved. Card 1 idle.
+Scratch clean at **17:45 MSK**: 47 MB in `_cache/` only,
 537 GB free; first node not listed. No AMR checkpoints or plotfiles created.
 
 **Previous scan:** `railgun-compactness-scan-20261101`, second node/card 0,
