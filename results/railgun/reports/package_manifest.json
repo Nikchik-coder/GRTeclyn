@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "3ba9659b092c7551ea46dadd41b5a4febb7e2b13b7ff4241f34645b735a0a2e7",
-      "bytes": 13479
+      "sha256": "82b450f78853e1a27d4ccb635d6385d97b2a66873cb401b06a31916d8dd8714d",
+      "bytes": 13755
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -356,6 +356,78 @@
     "studies/annular-recovery-k12/sha256sums.txt": {
       "sha256": "046a2854c94233f55493eac2b8c1eb9da17448adc4cc5d51584f1a60822afb20",
       "bytes": 1349
+    },
+    "studies/branch-seeds/README.md": {
+      "sha256": "a9197b50766abc298b660b0ad7b4fbfa45f838491f59a1fb30cd45d23ea36a9c",
+      "bytes": 1127
+    },
+    "studies/branch-seeds/execution.log": {
+      "sha256": "dba1755bd8f79326186fa9ea69e5c0dc9df9d6b08deb86f84783ed83a518502c",
+      "bytes": 401
+    },
+    "studies/branch-seeds/manifest.json": {
+      "sha256": "719fcfbb55d8e5a04dbaec79959d5c6a7a15736a8fea9742e511b733d65345ce",
+      "bytes": 1408
+    },
+    "studies/branch-seeds/mixed_inner_m2p5_128x16.json": {
+      "sha256": "1de4c2bd7bb994e79c9a2f580f0345184b9b7f86d15aa87f2e0e27d1b14ac2e3",
+      "bytes": 534
+    },
+    "studies/branch-seeds/mixed_inner_m2p5_128x16.npz": {
+      "sha256": "c74a2787665eac3b645f478074ee00e1cc87ba2127dbb0578c5781d84f7e2538",
+      "bytes": 94904
+    },
+    "studies/branch-seeds/mixed_inner_m2p5_96x12.json": {
+      "sha256": "c1c92f94dcceafed80d36f3cfe86fd3f16256742621b39175f1ba049816d077f",
+      "bytes": 531
+    },
+    "studies/branch-seeds/mixed_inner_m2p5_96x12.npz": {
+      "sha256": "14ddff8bc62c2869830d8d8b98e0fca0228a525e44db32ee4ec1f604f30e13c4",
+      "bytes": 55185
+    },
+    "studies/branch-seeds/mixed_inner_m3_128x16.json": {
+      "sha256": "ebf47df866ed4cf5b9efbd80b946ec36f45f66d424220cf04b546ed1cf8b726a",
+      "bytes": 527
+    },
+    "studies/branch-seeds/mixed_inner_m3_128x16.npz": {
+      "sha256": "8497b78da5b686b5be88e5262da47759f4bcd85c77bd69066be0ab3b4ceb62dc",
+      "bytes": 94948
+    },
+    "studies/branch-seeds/mixed_inner_m3_96x12.json": {
+      "sha256": "4fc63106dfb5b4129a0ad2e8fcb682b4496a4a257b589605ceed02f4014c40d4",
+      "bytes": 524
+    },
+    "studies/branch-seeds/mixed_inner_m3_96x12.npz": {
+      "sha256": "cb8c7f843696c11adc1719e221925d441932e552dd89c919da767014276dd6ad",
+      "bytes": 55204
+    },
+    "studies/branch-seeds/outcome.json": {
+      "sha256": "5e5d8b9ae77517938f8cca573ff08aa9a25aea1d2177ec4c9d805d32a41dcd43",
+      "bytes": 4438
+    },
+    "studies/branch-seeds/progress.json": {
+      "sha256": "cbc99b25ac54f2481689ece5f384c466e79f507350173782e19df2b2cd776a3e",
+      "bytes": 3405
+    },
+    "studies/branch-seeds/sha256sums.txt": {
+      "sha256": "ff204fabe1733d40c50da03d0ac8bcfb041791bc1ad03066c301cb2d76d7d983",
+      "bytes": 1495
+    },
+    "studies/branch-seeds/stacked_odd_128x16.json": {
+      "sha256": "81a9ece5eec99e360a467f1154937d95151569236653b08888b4c8fe8ad4de51",
+      "bytes": 522
+    },
+    "studies/branch-seeds/stacked_odd_128x16.npz": {
+      "sha256": "2b733c77e04d017714f8ac4b3387c8eb24d9c617a4172ceec0f2bc79ac7a4524",
+      "bytes": 94715
+    },
+    "studies/branch-seeds/stacked_odd_96x12.json": {
+      "sha256": "9f835f78c5232f7ac51e0dfbf4e81693e9c56bb7d2667ca8ad49e6adcc77e37a",
+      "bytes": 518
+    },
+    "studies/branch-seeds/stacked_odd_96x12.npz": {
+      "sha256": "dd7e117fc797549827d6ab13d90a48d4ff2dc31b8867d85087f4ff44cce3cced",
+      "bytes": 55073
     },
     "studies/compactness-scan/amplitude_01/accepted.npz": {
       "sha256": "a652c7d6b245a7f8ef98d1affdbcacf56105ca27fcb5053852dd83d88f078eae",

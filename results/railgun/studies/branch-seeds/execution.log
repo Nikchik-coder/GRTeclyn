@@ -1,0 +1,8 @@
+[capped_job] start 2026-11-01T15:39:30Z threads=4 mem=160G timeout=1800s
+[branch-seed] mixed_inner_m2p5_96x12: found=True
+[branch-seed] mixed_inner_m2p5_128x16: found=True
+[branch-seed] mixed_inner_m3_96x12: found=True
+[branch-seed] mixed_inner_m3_128x16: found=True
+[branch-seed] stacked_odd_96x12: found=True
+[branch-seed] stacked_odd_128x16: found=True
+[capped_job] end 2026-11-01T15:39:42Z exit=0

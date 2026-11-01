@@ -38,15 +38,20 @@ two RK tolerances, z=+1 toward -10. Four threads, 160 GiB, 0.5 h,
 chunks 128, no AMR checkpoints. Estimated 0.35 h, around **18:50 MSK**;
 hard deadline **18:58:40 MSK**.
 
-**Also live:** `railgun-branch-seeds-20261101`, second node/card 1, code
-`dc576c85`, started **18:39 MSK**. Six approved full 2D GPU eigenproblems
-on 96x12 / 128x16 for k=2 even masses 2.5/3 and k=1 odd mass 1.
-Original k=1 field remains a separate species. Fixed-metric homotopy
-seeds only, never accepted final backgrounds. Four threads, 160 GiB,
-0.5 h, chunks 128, no AMR checkpoints. Estimated 0.03 h, around
-**18:41 MSK**; hard deadline around **19:09 MSK**.
-The combined two-job caps are eight threads and 320 GiB, below the
-24-CPU / 488 GiB container quota. Card 1 is explicitly authorised.
+**Also live:** `railgun-falloff-regression-20261101`, second node/card 1,
+started **18:41 MSK**, code `dc576c85`. Approved manufactured-field,
+tau-row, state-format and existing annular checks. If they pass, the
+approved three-grid falloff recovery follows on card 1 while particles
+continue on card 0. Same four threads, 160 GiB, 0.5 h per job, chunks 128,
+no AMR checkpoints. Combined caps eight threads / 320 GiB remain below
+24 CPUs / 488 GiB. Card 1 use is explicitly authorised.
+
+**Seed screen completed:** `railgun-branch-seeds-20261101`, second node/card 1,
+code `dc576c85`, **18:39:30–18:39:42 MSK**, exit 0. All six mode problems
+and all three two-grid frequency checks passed (max relative drift 2.62e-14).
+Archive: `results/railgun/studies/branch-seeds/`. These are fixed-metric
+unaccepted homotopy starts, not final mixed-mass or stacked geometries.
+
 The core/profile passed at radius 0.4, degrees 6/8: code `078ee51f`,
 **18:19:33–18:26:09 MSK**, 390 s numerical work. Core order-curvature
 difference 2.65e-10, independent Einstein/KG maxima 1.70e-11 / 2.90e-12.
@@ -608,7 +613,7 @@ under `results/railgun/figures/two-rings*.png`, with exterior dragging in
 `counter-dragging.png`. Between-ring particle trajectories, asymptotic
 ejection and dynamical stability remain untested.
 
-**Approved queue after strong-ring particles — flux representation experiment:** `studies/annular_falloff_k12.json`,
+**Approved falloff recovery, following its GPU checks on card 1:** `studies/annular_falloff_k12.json`,
 three fresh solves 192x16 / 224x18 / 256x20 from the saved finest correction,
 max 30 iterations each, minimum two updates. Cubic Frobenius w falloff,
 explicit factored model/loader, all original gates plus omitted outer PDEs,
@@ -616,7 +621,7 @@ Cartesian metric-ratio flux and infinity-mode crosschecks. Prototype and
 pure-data checks passed. Separate go received for GPU manufactured checks,
 then at most three fresh solves. No off-axis particles are included.
 
-**Approved seed screen, now on card 1:** `studies/branch_seeds.json`,
+**Seed screen completed and archived:** `studies/branch_seeds.json`,
 six full 2D GPU bound-mode pencils on the accepted weak k=1 metric: new
 k=2 even fields at masses 2.5 and 3, and a new k=1 odd field, two grids
 96x12 / 128x16. Keep the original field as a separate species. These start

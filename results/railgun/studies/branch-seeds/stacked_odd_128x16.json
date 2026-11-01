@@ -1,0 +1,20 @@
+{
+  "branch": "stacked_odd",
+  "grid": [
+    128,
+    16
+  ],
+  "linear_mode_found": true,
+  "self_consistent": false,
+  "mode": {
+    "frequency": 0.9545174069403907,
+    "relative_linear_residual": 9.287363170656848e-11,
+    "printed_pde_relative_residual": 9.236632800535659e-11,
+    "winding": 1,
+    "angular_dimensions": 17,
+    "radial_dimensions": 127,
+    "eigensolver": "cusolver",
+    "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+  },
+  "seed": "stacked_odd_128x16.npz"
+}
