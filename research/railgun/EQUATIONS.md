@@ -243,3 +243,32 @@ independent equations, curvature matching, polynomial-order comparison and
 metric signature are checked on the centre, axis and joining region. A failed
 certificate retains the inner stopping sphere. This is more information than
 a one-dimensional signed-z metric curve, which cannot determine all MPD forces.
+
+### Rotating two-field seed and zero-J border
+
+The second field on a rotating background does not separate into a radial
+spherical eigenproblem. With its metric held fixed and its amplitude
+linearised at zero, the parity-factored KG equation has the discrete form
+
+```text
+[A0 + diag(2 k w) omega + I omega^2] q = 0.
+```
+
+Here A0 contains the full radial/angular differentiation, metric gradients,
+mass and k²w² terms; every row is divided by its positive omega² coefficient
+`B² r² exp(nu-2f)`. Radial endpoint values vanish for nonzero regular degree.
+The companion matrix `[0,I; -A0,-diag(2kw)]` supplies real, positive,
+sub-mass-frequency candidates. Reject sign-changing resolved modes and
+require both a relative eigen-residual below 1e-8 and agreement with the
+printed two-dimensional KG equation. A constant-w manufactured metric tests
+the exact frequency shift `delta omega=-k delta w`; an angular perturbation
+tests coupling that a radial-only seed would miss.
+
+Nonlinear continuation holds the k1=1 amplitude fixed while increasing the
+k2=-2 pin. Both individual charges change with the metric. Near zero total
+J, promote the second pin to an unknown log amplitude and impose
+`-k1 Q1-k2 Q2=0`. Three fresh perturbed Newton recoveries then recheck all
+independent equations and both individual charges. Exterior projection onto
+`1` and `5 mu²-1`, with weight `(1-mu²) dmu`, measures coordinate dipole and
+octupole angular coefficients. Their radial decay is reported rather than
+assumed; these coefficients are not labelled invariant multipole moments.

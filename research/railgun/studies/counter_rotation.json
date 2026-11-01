@@ -1,0 +1,11 @@
+{
+  "second_field": {"winding": -2, "mass": 1.0, "amplitude": 0.001, "anchor_radius": 5.0},
+  "continuation_grid": [96, 12],
+  "grids": [[72, 10], [96, 12], [128, 16]],
+  "amplitude_growth": 1.6,
+  "amplitude_cap": 0.08,
+  "max_solves": 24,
+  "max_splits": 6,
+  "max_iter": 30,
+  "newton_tol": 1e-12
+}
