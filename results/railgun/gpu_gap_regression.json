@@ -1,0 +1,75 @@
+{
+  "commit": "928bde26",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "9",
+      "time": "2.576",
+      "timestamp": "2026-11-01T10:20:59.545022+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_gap",
+      "name": "test_thin_concentric_rings_have_a_resolved_annular_gap",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_gap",
+      "name": "test_distinct_peaks_with_overlapping_tails_fail",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_gap",
+      "name": "test_a_radial_node_between_inner_peaks_is_not_an_outer_edge",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_gap",
+      "name": "test_tail_domain_and_nonfinite_data_fail_closed",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_gap",
+      "name": "test_spectral_energy_density_matches_archived_cartesian_derivatives",
+      "time": "0.006",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_counter_rotation",
+      "name": "test_constant_dragging_shifts_the_full_two_dimensional_bound_frequency",
+      "time": "1.040",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_counter_rotation",
+      "name": "test_quadratic_seed_refuses_an_unbound_flat_background",
+      "time": "0.072",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_counter_rotation",
+      "name": "test_cusolver_bound_mode_agrees_with_the_host_reference",
+      "time": "0.722",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.020",
+      "failed": false
+    }
+  ]
+}

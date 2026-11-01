@@ -25,12 +25,24 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-annular-gap-screen-20261101`, second node/card 0,
-code `928bde26`, after the explicit go for k2=-4/-8/-12/-16,
-96x12 / 128x16, radial scale 50, at most eight GPU eigenproblems.
-Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints; retain logs/seeds.
-Initial compilation/eigensolve; speed and ETA unmeasured.
-Scratch clean: 47 MB in `_cache/` only, 542 GB free; first node not listed.
+**Live:** none. `railgun-annular-gap-screen-20261101`, second node/card 0,
+code `928bde26`, finished **13:22:52 MSK**, exit 0. Eight GPU eigenproblems
+completed in 10.28 s (13 s including startup). Both cards are idle; no
+completion ETA or automatically queued nonlinear solve.
+At the agreed 1e-6 matter cutoff, k2=-4/-8 fail the gap screen; **k2=-12
+and k2=-16 pass on 96x12 and 128x16**. Fixed-background candidate intervals:
+**33.3107 < rho < 41.1737** (width **7.8630**) and
+**33.3107 < rho < 90.9212** (width **57.6105**), respectively.
+Frequency relative grid differences are 1.46e-14 / 2.69e-14; edge relative
+changes 6.23e-11 / 6.08e-8. These are linear modes on the accepted inner
+metric, with charge scaled to cancel the fixed inner spin. **They are not
+accepted coupled two-field backgrounds.** Backreaction, three-grid nonlinear
+validation and through-annulus particle passage remain uncomputed.
+Archive: `results/railgun/annular-gap-screen/`; all eight seeds, density
+profiles, manifests, logs and checksums retained. Four threads, 160 GiB,
+0.5 h cap; no AMR checkpoints. No scratch plotfiles were created.
+Scratch clean at **15:56 MSK**: 47 MB in `_cache/` only, 539 GB free;
+first node not listed.
 
 All **nine gap/GPU eigenmode regression checks passed in 2.58 s**, ending
 **13:21:02 MSK**, code `928bde26`. The first run had eight passes and one
@@ -82,17 +94,13 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Next:** search for a separated annular channel before running particles
-between rings. Increasing |k2| is a candidate way to move the outer bound
-mode away from the inner ring; success is not assumed. **Authorised and live**:
-`studies/annular_gap_screen.json` tests k2=-4/-8/-12/-16, masses unchanged,
-96x12 / 128x16, radial compactification scale 50, at most eight quadratic
-eigenproblems. The eigensolver explicitly uses GPU cuSOLVER. Four threads,
-160 GiB, 0.5 h, second-node card 0, no AMR checkpoints; retain seeds/logs.
-This fixed-background linear screen cannot accept a self-consistent spacetime;
-any promising seed still needs nonlinear backreaction, zero-J enforcement,
-three-grid validation and finite-height channel checks. The nine regression
-checks passed before launch; the changed windings/grids received a fresh go.
+**Next:** recover a self-consistent gapped two-field solution from the
+k2=-12 or -16 seed, enforce total J=0 after backreaction, and require three
+fresh grid solves plus the unchanged independent equations and 1e-6
+matter-gap test. Then verify the finite-height annular channel and particle
+trajectories inside it. The k2=-12 seed is the smaller-separation candidate;
+no nonlinear follow-on has been authorised or launched. The completed
+screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
 No physical between-ring trajectory is authorised or running.

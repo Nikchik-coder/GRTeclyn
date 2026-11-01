@@ -8,6 +8,7 @@ The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 
 - `spherical-to-ring-first/`: unresolved first homotopy, 15 solves and six bisections; preserves all attempted fields and the original coefficient-fit rejection. The separate surface-flux diagnosis is included.
 - `spherical-to-ring-resumed/`: corrected-flux continuation; midpoint passes, 62.5% fails independent KG and surface-J checks on 56x8. Cumulative 17 solves/six bisections; no accepted pure ring.
 - `ring-validated/`: accepted pure k=1 fields on three grids, full diagnostics/manifests, and the successful refined continuation. M_ADM=0.971450813143, J=-0.992014330336, scalar frequency 0.932692332164 in m=1 units. Density peaks near cylindrical radius 6.16 in the equatorial plane.
+- `annular-gap-screen/`: eight GPU linear bound-mode tests on the fixed accepted inner ring. k2=-12 and -16 pass the 1e-6 matter-gap screen on both grids, with widths 7.8630 and 57.6105. These seeds are **not self-consistent two-field spacetimes**; nonlinear backreaction and particle passage remain to validate.
 - `counter-rotation/`: accepted k1=+1/k2=-2, zero-total-J state on 72x10 / 96x12 / 128x16. M_ADM=1.132946199392, J1=-0.773443320071468, J2=+0.773443320071473. Nonzero interior dragging max |w|=0.00225517; coordinate octupole tail approaches r^-5. Twelve Newton solves, no splits; all independent gates unchanged. **The fields overlap and fail the separate annular-gap objective.**
 - `two-rings.png` and `two-rings-density.*`: actual overlapping baseline surfaces and equatorial energy densities. The 1e-6 edge criterion fails: inner-component outer radius about 29.88 exceeds outer-component inner radius about 0.010. Peak separation alone is insufficient.
 - `counter-dragging.png`: nonzero interior dragging and the measured exterior coordinate octupole tail.
@@ -53,3 +54,5 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 
 The concentric **target** schematic `research/railgun/annular-gap-target.png`
 has a positive annular channel. It is a design diagram, not a solved field.
+
+`gpu_gap_regression.json`: nine passing gap/density/GPU-eigensolver checks. The initial fixture failure is preserved in `gpu_gap_regression_initial.json`; no physical threshold changed.

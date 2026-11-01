@@ -1,0 +1,62 @@
+{
+  "name": "k16_128x16",
+  "winding": -16,
+  "grid": [
+    128,
+    16
+  ],
+  "mode": {
+    "frequency": 0.9983522343816793,
+    "relative_linear_residual": 3.845193683202838e-13,
+    "printed_pde_relative_residual": 3.8456249172741234e-13,
+    "winding": -16,
+    "angular_dimensions": 17,
+    "radial_dimensions": 127,
+    "eigensolver": "cusolver",
+    "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+  },
+  "gap": {
+    "accepted": true,
+    "reasons": [],
+    "relative_density_cutoff": 1e-06,
+    "edges": [
+      {
+        "inner_radius": null,
+        "outer_radius": 33.31073472520195,
+        "peak_radius": 6.2408752000000005,
+        "peak_density": 0.00023256410668406885,
+        "inner_edge_resolved": false,
+        "outer_edge_resolved": true
+      },
+      {
+        "inner_radius": 90.92123598558975,
+        "outer_radius": 618.8097942090877,
+        "peak_radius": 275.46030602493283,
+        "peak_density": 2.2052909534539723e-09,
+        "inner_edge_resolved": true,
+        "outer_edge_resolved": true
+      }
+    ],
+    "inner_ring_outer_radius": 33.31073472520195,
+    "outer_ring_inner_radius": 90.92123598558975,
+    "gap_width": 57.6105012603878,
+    "minimum_width": 0.0,
+    "corridor": {
+      "midpoint_radius": 62.11598535539585,
+      "sampled_relative_density_max": [
+        9.937656589953182e-07,
+        9.980863967054323e-07
+      ],
+      "interior_samples": 1797
+    },
+    "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+    "exact_vacuum_claim": false
+  },
+  "charge_scaled_to_cancel_fixed_inner_J": true,
+  "self_consistent": false,
+  "second_pin": 0.00016582404623807388,
+  "target_inner_charge": 0.9920143303362918,
+  "quadratic_eigensolver": "cusolver_gpu",
+  "stage": "fixed_background_linear_screen",
+  "seconds": 1.652547961100936
+}
