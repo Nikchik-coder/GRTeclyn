@@ -157,3 +157,38 @@ all gates. The earlier two passing grids remain evidence. This raises the
 cumulative budget from three to four solves; a corrected study cannot reset
 that extra budget. No acceptance tolerance changes, and the original rejected
 study remains untouched.
+
+The asymmetric uphill experiment uses the already accepted pure ring and
+its exact core certificate. The dry run starts no JAX:
+
+```bash
+$PY -m grteclyn_wrapper.optimisation.railgun.uphill \
+  research/railgun/studies/uphill_transit.json \
+  --source results/railgun/studies/ring-validated/accepted.npz \
+  --profile results/railgun/studies/ring-profile \
+  --out runs/railgun/uphill --gpu 0 --dry-run
+```
+
+After a run-specific go, use the capped GPU launcher with four threads,
+160 GiB, 1800 s, chunks 128 and the platform allocator. The 32-track cap
+includes four shared energies, three spin controls plus full background/spin
+reversal, and two RK tolerances. Full conserved energy includes the spin
+coupling. A turnaround is an event in the actual coordinate velocity, rather
+than an inference from not reaching a destination before a timeout. Only
+finite endpoint selection can be claimed; no asymptotic escape follows.
+
+The independently gated compactness scan has its own dry run and go:
+
+```bash
+$PY -m grteclyn_wrapper.optimisation.railgun.compactness \
+  research/railgun/studies/compactness_scan.json \
+  --source results/railgun/studies/ring-validated/accepted.npz \
+  --out runs/railgun/compactness --gpu 0 --dry-run
+```
+
+Seven amplitude pins are attempted in order, at most 21 solves. Every point
+needs three fresh grids and two corrections per grid before becoming the
+next seed. A failed point stops the scan; an accepted sampled ergoregion
+also ends it. Each accepted point saves its own fields and diagnostics.
+No frequency, maximum spin, stability or particle-selection outcome is
+presupposed. Mixed-mass and odd-parity seed work stays separately queued.

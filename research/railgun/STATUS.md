@@ -31,6 +31,39 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
+**Requested follow-on experiments (November 1):**
+
+- **Uphill finite-endpoint selection:** implementation and bounded config
+  `studies/uphill_transit.json` are ready for GPU regression checks, then a
+  separate go. Launch z=+1 toward z=-10 on the accepted pure ring; spin 0,
+  +/-0.001, equal full spin-corrected Killing energy. Four energies include
+  alpha(-10)+1e-7 and brackets derived from measured spin-dependent resting
+  endpoint energies; two RK tolerances and background/spin reversal, 32
+  tracks maximum. Stop at destination or the first true dz/dtau turnaround.
+  Reaching -10 is a finite transit, not escape or long-term trapping. No
+  selection effect is assumed in advance.
+- **Compactness continuation:** implementation and
+  `studies/compactness_scan.json` are ready; not launched. Seven increasing
+  pins 0.06..0.23, each freshly solved on 72x10 / 96x12 / 128x16, at most
+  21 solves and 30 iterations each. Keep the existing equation/convergence
+  gates, measure frequency, lapse, dragging and sampled g_tt, stop on failure
+  or a validated sampled ergoregion. Neither omega=0.7 nor a particular
+  dragging speed or timing enhancement is guaranteed. Stability stays open.
+- **Mixed-mass concentric branch:** requested k1=+2, m1=2.5 or 3, outer
+  k2=-6 or -8, m2=1, total J=0. Requires a new regular integer-winding
+  seed/homotopy and three-grid validation before particles. The proposed
+  radii are hypotheses; higher mass does not create compact support.
+  Retain the agreed 1e-6 effective matter-gap criterion. Not launchable yet.
+- **Stacked odd-parity branch:** existing `studies/stacked_odd.json` specifies
+  the model, but needs a bound-mode continuation seed and fresh recovery.
+  Odd scalar amplitude vanishes on the equator; its transverse gradient
+  generally gives nonzero energy there and on parts of the axis. The new
+  cylindrical density checker retains those derivatives. A matter-free
+  equatorial slot or axial barrel cannot be inferred from parity alone.
+
+These are separate experiments. Their GPU launches need their own concrete
+go; the completed annular correction authorises none of them.
+
 **Live:** none. `railgun-annular-correction-k12-20261101`, second node/card 0,
 code `8946f146`, ran **16:27:12–16:28:22 MSK (0.0194 h)**, exit 2.
 Two additional Newton updates reduced the scaled residual to 9.95e-17;

@@ -111,7 +111,7 @@ class MPDSystem:
 
     def integrate(self, state, *, duration=20., rtol=1e-9, atol=1e-11,
                   max_step=.2, outer_radius=100., inner_radius=1e-4,
-                  target_z=None, samples=None):
+                  target_z=None, samples=None,stop_at_turnaround=False):
         if not (duration > 0 and 0 <= inner_radius < outer_radius and max_step > 0
                 and rtol > 0 and atol > 0):
             raise ValueError('positive time/tolerances/step and ordered radii required')
@@ -143,6 +143,12 @@ class MPDSystem:
             def destination(t,y):return y[3]-target_z
             destination.terminal,destination.direction=True,-1
             events=(*events,destination);labels=(*labels,'target_z')
+        if stop_at_turnaround:
+            if rhs(0.,state)[3]>=0:
+                raise ValueError('turnaround detection requires an initially decreasing z')
+            def turnaround(t,y):return rhs(t,y)[3]
+            turnaround.terminal,turnaround.direction=True,1
+            events=(*events,turnaround);labels=(*labels,'turnaround')
         result = solve_ivp(rhs, (0., duration), state, method='DOP853', rtol=rtol,
                            atol=atol, max_step=max_step, events=events,
                            dense_output=samples is not None)

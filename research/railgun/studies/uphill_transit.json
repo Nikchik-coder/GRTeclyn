@@ -1,0 +1,10 @@
+{
+  "launch_z": 1.0,
+  "target_z": -10.0,
+  "spin": 0.001,
+  "energy_margin": 1e-7,
+  "rtols": [2e-11, 2e-12],
+  "max_step": 0.4,
+  "duration": 250.0,
+  "max_tracks": 32
+}

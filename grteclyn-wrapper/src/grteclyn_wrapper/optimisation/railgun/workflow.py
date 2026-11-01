@@ -93,7 +93,7 @@ def run_study(config, directory, *, reference=None, seed_path=None):
         # Two real corrections are required on finer grids, not acceptance of
         # an interpolant whose equilibrated residual is already small.
         u, info = newton(p.residual, p.jacobian, u0, tol=config.get('newton_tol', 1e-12),
-                         max_iter=config.get('max_iter', 30), min_updates=2 if index else 0,
+                         max_iter=config.get('max_iter', 30), min_updates=config.get('min_updates',2 if index else 0),
                          verbose=True)
         solve_elapsed = time.monotonic()-started
         save_state(directory/f'grid_{nx}x{ny}.npz', p, u)

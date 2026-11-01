@@ -22,8 +22,8 @@ def cylindrical_densities(metadata,u,rho,z):
     shape=rho.shape;rho,z=rho.ravel(),z.ravel();r=np.hypot(rho,z)
     fields=metadata['fields'];nx,ny,L=metadata['nx'],metadata['ny'],metadata['length']
     n=(nx+1)*(ny+1);value=np.asarray(u,float)
-    if not np.isfinite(value).all() or any(f['parity']!='even' for f in fields):
-        raise ValueError('finite even-parity fields required')
+    if not np.isfinite(value).all() or any(f['parity'] not in ('even','odd') for f in fields):
+        raise ValueError('finite fields with declared even/odd parity required')
     a=value[:(4+len(fields))*n].reshape(4+len(fields),nx+1,ny+1)
     frequency=value[(4+len(fields))*n:(4+len(fields))*n+len(fields)]
     s,dx=lobatto(nx);y,dy=lobatto(ny)
@@ -42,6 +42,9 @@ def cylindrical_densities(metadata,u,rho,z):
         radial=sn**ka*qr
         angular=-4*sn**(ka+1)*mu*qy
         if ka:angular+=ka*sn**(ka-1)*mu*q
+        if field['parity']=='odd':
+            amplitude*=mu;radial*=mu
+            angular=angular*mu-sn**(ka+1)*q
         potential=(field['mass']**2*amplitude**2+field['quartic']*amplitude**4
                    +field['sextic']*amplitude**6)
         density=((frequency[i]+k*w)**2*np.exp(-f)*amplitude**2

@@ -141,11 +141,12 @@ def test_unbordered_promotion_preserves_both_frequencies_and_adds_log_pin():
 
 
 @pytest.mark.parametrize('winding',[-2,-12])
-def test_cylindrical_energy_per_component_matches_cartesian_ad(winding):
+@pytest.mark.parametrize('parity',['even','odd'])
+def test_cylindrical_energy_per_component_matches_cartesian_ad(winding,parity):
     from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
     from grteclyn_wrapper.optimisation.railgun.geometry import RingGeometry
     from grteclyn_wrapper.optimisation.railgun.gap import cylindrical_densities,equatorial_densities
-    fields=[ScalarField(winding=1,quartic=.2),ScalarField(winding=winding,sextic=.1)]
+    fields=[ScalarField(winding=1,quartic=.2,parity=parity),ScalarField(winding=winding,sextic=.1,parity=parity)]
     p=RingProblem(fields,nx=12,ny=4,length=5.)
     a,f=p.unpack(p.seed())
     shape=(1-p.s[:,None]**2)*(1+.1*p.y[None,:])
@@ -169,5 +170,9 @@ def test_cylindrical_energy_per_component_matches_cartesian_ad(winding):
     meta=dict(nx=p.nx,ny=p.ny,length=p.length,fields=[field.to_dict() for field in fields])
     actual=cylindrical_densities(meta,u,rho,z)
     np.testing.assert_allclose(actual,reference,rtol=2e-11,atol=1e-17)
-    np.testing.assert_allclose(cylindrical_densities(meta,u,rho,0.),equatorial_densities(meta,u,rho),rtol=1e-12)
+    if parity=='even':
+        np.testing.assert_allclose(cylindrical_densities(meta,u,rho,0.),equatorial_densities(meta,u,rho),rtol=1e-12)
+    else:
+        # The odd scalar vanishes on z=0; its transverse gradient still carries energy.
+        assert np.all(cylindrical_densities(meta,u,rho,0.)>0.)
     np.testing.assert_allclose(actual,cylindrical_densities(meta,u,rho,-z),rtol=1e-13)
