@@ -12,6 +12,14 @@ Check the complete inventory and original study checksums:
 grteclyn-wrapper/.venv/bin/python research/railgun/verify_pack.py
 ```
 
+`figures/uphill-transit.png` shows the verified finite uphill selection and
+its small stopping-height difference. Rebuild it with:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
+  results/railgun/studies/uphill-transit --out results/railgun/figures/uphill-transit.png
+```
+
 The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 96x12. A pure k=1 rotating ring also passes on 72x10, 96x12 and 128x16, with observable drift 3.52e-10. The latest full suite passed 63 GPU tests. These are stationary numerical solutions; 32 finite-radius through-ring particle tracks pass conservation and tolerance checks; dynamical stability remains untested.
 
 - `studies/uphill-transit/`: accepted 32-track finite uphill experiment, z=+1 to z=-10. At equal E=0.9255355443835863, +z spin reaches the target and -z spin turns at z=-9.999772414807428; zero spin reaches the target. Two RK tolerances and background/spin reversal pass; worst normalised conservation drift 1.08e-14, nonmarginal RK timing change 6.68e-10. Four missed raw destination events were corrected with independent first-crossing interpolation and terminal invariants. `original/` retains all raw data; zero extra ring tracks were integrated. This is finite endpoint selection, not escape or long-term trapping.

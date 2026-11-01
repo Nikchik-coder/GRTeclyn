@@ -21,7 +21,8 @@ def plot(directory,out):
     for label,colour,style in [('zero','.3','--'),('positive','#d56d35','-'),('negative','#337ab3','-')]:
         with np.load(directory/f'{regime}_rk1_{label}.npz') as data:state=data['state']
         t,z=state[:,0],state[:,3];curves.append((t,z))
-        description=f'{label.capitalize()} z spin: {controls[label]["classification"]}'
+        description={'zero':'No spin','positive':'+z spin (against ring)',
+                     'negative':'−z spin (with ring)'}[label]+': '+controls[label]['classification']
         overview.plot(t,z,color=colour,ls=style,label=description)
         zoom.plot(t,z-target,color=colour,ls=style)
         marker='s' if controls[label]['classification']=='reflected' else 'o'
@@ -29,9 +30,11 @@ def plot(directory,out):
     overview.axhline(target,color='.6',lw=.8);zoom.axhline(0.,color='.6',lw=.8)
     overview.set(xlabel='Coordinate time t',ylabel='Signed height z',title='Launch z=+1 toward z=−10')
     end=max(t[-1] for t,z in curves)
-    zoom.set(xlabel='Coordinate time t',ylabel='Height above target: z+10',xlim=(.75*end,1.01*end),
+    zoom.set(xlabel='Coordinate time t',ylabel='Height above target: z+10',xlim=(.95*end,1.01*end),
              yscale='symlog',title='Endpoint and first turnaround')
     zoom.set_yscale('symlog',linthresh=1e-8)
+    zoom.set_ylim(-1e-9,2.)
+    zoom.set_yticks([0.,1e-6,1e-4,1e-2,1.])
     for ax in (overview,zoom):ax.grid(alpha=.2)
     handles,labels=overview.get_legend_handles_labels()
     fig.legend(handles,labels,loc='upper center',bbox_to_anchor=(.5,.9),ncol=3,frameon=False)
