@@ -549,6 +549,90 @@
       "sha256": "563cb13b5a7b96098a2975039f31c6a2750b79070c89f77f693489024d9739cf",
       "bytes": 750
     },
+    "studies/annular-validated-k12/README.md": {
+      "sha256": "2f58f50aa408a262aeed77dd43c0865e98f7a8b67c716fa2b16158118ee8ba10",
+      "bytes": 783
+    },
+    "studies/annular-validated-k12/accepted.npz": {
+      "sha256": "3952db5925d4903217f75156e14ff3ba57c05379ae2b01b6bcfba01f97a3c1ee",
+      "bytes": 483339
+    },
+    "studies/annular-validated-k12/execution.log": {
+      "sha256": "72d195eeec8dde3075398eca5b88d9f38bf41b1535622a59915cd1abb30e3d88",
+      "bytes": 875
+    },
+    "studies/annular-validated-k12/grid_192x16.json": {
+      "sha256": "6ac796d4162d5a3aa44a77991112da3626a45b6d160b0beda2dd93a8fd73720d",
+      "bytes": 7035
+    },
+    "studies/annular-validated-k12/grid_192x16.npz": {
+      "sha256": "7495befb05370dd11a94bf62f2abdc7df9f57d770b73294748fe5b91114f827b",
+      "bytes": 296309
+    },
+    "studies/annular-validated-k12/grid_192x16_channel.tsv": {
+      "sha256": "d8f03ee12dc836b21838c6b6f7fe4f4c9ef35da13fc80b43939f34d8d1532a0a",
+      "bytes": 170976
+    },
+    "studies/annular-validated-k12/grid_192x16_density.tsv": {
+      "sha256": "c95487e2905d6ef3820d8bf1c755c333ab6d047ed2766810198fa3cb3ff345a6",
+      "bytes": 562684
+    },
+    "studies/annular-validated-k12/grid_192x16_initial.npz": {
+      "sha256": "624eafa5782ad819d357adecd8b37d9b317373d8dae0e805240a210ec10c5085",
+      "bytes": 295526
+    },
+    "studies/annular-validated-k12/grid_224x18.json": {
+      "sha256": "bd0e220c5060dd9b835e0c886554135fb7cd2b600b4b790a1e951b83e42e4b3f",
+      "bytes": 6939
+    },
+    "studies/annular-validated-k12/grid_224x18.npz": {
+      "sha256": "c36334180b69c1325045075d69093e34f7591a4421be15e0c733f7fc56e3bdbb",
+      "bytes": 383819
+    },
+    "studies/annular-validated-k12/grid_224x18_channel.tsv": {
+      "sha256": "f5425f7e362424978fc5e893c109f6bb7eb83fc8fce93cd551ecc0d7323a9565",
+      "bytes": 170976
+    },
+    "studies/annular-validated-k12/grid_224x18_density.tsv": {
+      "sha256": "ad46a8d89ba35200815c60d3b5702d2accb3dc3f070f7e0cc2c45a97571ad99c",
+      "bytes": 562684
+    },
+    "studies/annular-validated-k12/grid_224x18_initial.npz": {
+      "sha256": "196acb03cc77863e8a165e57dfbff839def2a417991b9613470baf9a119d92d9",
+      "bytes": 378104
+    },
+    "studies/annular-validated-k12/grid_256x20.json": {
+      "sha256": "645bbf0c11426609e3ae05ec976231fb03741cb8c47220a801df7e98fa4134f6",
+      "bytes": 6943
+    },
+    "studies/annular-validated-k12/grid_256x20.npz": {
+      "sha256": "d64005b644af742c3a4fd76437ba8a24ea37ccfa60196e62ea658543243c00e8",
+      "bytes": 483341
+    },
+    "studies/annular-validated-k12/grid_256x20_channel.tsv": {
+      "sha256": "0473e5ce1b0255fe1a9db11072d647c00f9dc1b213e94278d68fddbe0049ee96",
+      "bytes": 170976
+    },
+    "studies/annular-validated-k12/grid_256x20_density.tsv": {
+      "sha256": "ceb213acb1445bc7dfd4a21be8bce18bc910f2b1e2ed870ce7e565c4841b3b4e",
+      "bytes": 562684
+    },
+    "studies/annular-validated-k12/grid_256x20_initial.npz": {
+      "sha256": "b126cc5a8ed2ee2d3418ee85fa7dcdef4f4e07ddedc48c273c888a16e7fd21a1",
+      "bytes": 477803
+    },
+    "studies/annular-validated-k12/manifest.json": {
+      "sha256": "09b1e7a8720e2c37611b2e817fc61e77fdccb2bfee373b96b8fed2552e595a06",
+      "bytes": 1097
+    },
+    "studies/annular-validated-k12/outcome.json": {
+      "sha256": "13a6340b918d979e942f6e447c9984274a08ea0d9e2eca9e6c13311f109ec990",
+      "bytes": 24215
+    },
+    "studies/annular-validated-k12/sha256sums.txt": {
+      "sha256": "23f705a530a3d56ac22c93676e088a6c623620ef2e661e8b4b9a61cad10576b9",
+      "bytes": 1699
+    },
     "studies/branch-seeds/README.md": {
       "sha256": "a9197b50766abc298b660b0ad7b4fbfa45f838491f59a1fb30cd45d23ea36a9c",
       "bytes": 1127
