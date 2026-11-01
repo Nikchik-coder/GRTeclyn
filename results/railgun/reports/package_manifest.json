@@ -54,20 +54,20 @@
       "bytes": 902
     },
     "reports/gpu_annular_correction_regression.json": {
-      "sha256": "b3f4419fce04d7d27bf58b461d275cbed77aaac5fbb6f0bcfe202a378e882419",
-      "bytes": 5590
+      "sha256": "95d487753a38667a7a2e1d6744de9f5a0a965a03ea1b4c48a672c6da90a4cdbf",
+      "bytes": 5549
     },
     "reports/gpu_annular_regression.json": {
-      "sha256": "ecb46548b6f938e426c5d78d059ba631f76f1e5e13aae41ed018e626fcfd3fab",
-      "bytes": 5161
+      "sha256": "cfe3c8f6ca3afdaa65bd75c74dab361e9b8e990dbb9942d4762a2525814a514e",
+      "bytes": 5120
     },
     "reports/gpu_baseline_regression.json": {
       "sha256": "d83685b3a8d0baf8d251f75230e9f872508dc668592e183cfc6d379c6be3edc0",
       "bytes": 688
     },
     "reports/gpu_event_regression.json": {
-      "sha256": "830a9a68c69a55f9f2207e187ec6a8f49e1718ad6e924e8f7c46fdfea88010fd",
-      "bytes": 1656
+      "sha256": "c61ca27bd23f65f3556279de277efcf5022edcdff2440594fe6d036c6e66bdbf",
+      "bytes": 1615
     },
     "reports/gpu_flux_regression.json": {
       "sha256": "8cd9826700c237116afd7b4b0ce364b58899df8cffec18161e07d9c90369f290",
@@ -102,8 +102,8 @@
       "bytes": 7465
     },
     "reports/gpu_uphill_regression.json": {
-      "sha256": "bed033aaf8fb3a8753b4fc4629bfc3f64a1b076d84b5b21669462ae7390ddb65",
-      "bytes": 8139
+      "sha256": "423e24f858881c19e6b795c162823ed346ac291412a60d94b286d7d4a33e6abd",
+      "bytes": 8098
     },
     "reports/two-rings-density.json": {
       "sha256": "2c01732a765450e91b7f23dd0521338a17a4cbd19b29f1e257947b923f5004fc",

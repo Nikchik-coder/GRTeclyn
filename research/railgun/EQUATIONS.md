@@ -51,6 +51,13 @@ Its regular centre behaviour is `q=O(r^(a+p))`. The scalar amplitude is pinned
 at a stated finite radius in q, including for odd parity. Each pin adds one
 unknown frequency. The equations do not fix the position of a density maximum.
 
+For single-field frequency continuation, replace the amplitude border by
+`omega - omega_target = 0`, keeping the same unknowns and differential
+equations. The amplitude at the anchor is then measured. Require positive
+component charge above the declared branch floor and no resolved scalar
+nodes, in addition to every independent equation and three-grid gate;
+otherwise the trivial vacuum could pass at any imposed frequency.
+
 For even parity the angular KG operator, without the B-gradient terms, is
 
 ```text
