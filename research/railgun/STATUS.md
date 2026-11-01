@@ -31,23 +31,36 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** both approved numerical jobs started **19:58:10 MSK**, code
-`4e0af89a`, second GPU node. Card 0: `railgun-strong-phase-polish-20261101` finished **19:58:22 MSK**,
-exit 0: **stronger-ring finite uphill selection accepted**. Both final
-phase comparisons are 4.512e-12; all nonmarginal saved-track errors <=
-5.283e-8 and all 656 full MPD substitution checks <=1.316e-14. No new
-MPD tracks or points. Archive: `studies/strong-uphill-073-validated/`.
-Card 0 now idle. Card 1:
-`railgun-annular-regular-cubic-k12-20261101`, at most three fresh solves
-on 192x16/224x18/256x20. First 192x16 **PASS**; 224x18 converged and
-under independent validation. Full regular cubic momentum equations,
-independently measured infinity J, fresh Jacobians/Newton 1e-14.
-The preceding GPU suites passed **6 + 39 = 45 tests** (3.74 / 10.61 s),
-code `f898960d`. All acceptance gates unchanged. Four threads/160 GiB/
-0.5 h/chunks 128/no AMR checkpoints per job; deadline **20:28 MSK**.
-Only complete field acceptance unlocks the approved eight annular tracks.
-Scratch clean at **19:58 MSK**: 47 MB `_cache/`, 534 GB free; first node
-not listed. Production rate/ETA pending compilation.
+**Live:** `railgun-annular-transit-k12-20261101`, second node/card 1,
+started **20:05:01 MSK**, code `7b00be94`. Approved eight matched-energy
+tracks through the accepted annular gap: spin 0/+0.001/-0.001 and reversal,
+two RK tolerances, launch rho=37.102682914, z=+10 toward -10, axial
+speed -0.5. Every sample must stay inside rho 35.200012026–39.005353801
+and below both 1e-6 matter thresholds. Conservation 1e-9, timing/position/
+reversal 1e-7. Four threads/160 GiB/0.5 h/chunks 128/no AMR checkpoints;
+hard deadline **20:35 MSK**. Compiling Cartesian MPD system; measured ETA
+pending first track. Card 0 idle. Scratch clean at **20:05 MSK**:
+47 MB `_cache/`, 534 GB free; first node not listed.
+
+**Concentric gapped field accepted:** regular-cubic recovery, code
+`4e0af89a`, **19:58:10–20:02:35 MSK (0.0736 h)**, exit 0. Three fresh
+grids 192x16/224x18/256x20 pass all original 1e-8 equation/flux/infinity
+and 1e-6 tail/gap/convergence gates. Maximum finite-sphere J error 7.19e-14;
+finest J volume=-4.44e-16, J infinity=-1.09e-14. M=1.053808111,
+component spins -0.99196098548/+0.99196098548, interior max |w|=0.00435161.
+Gap **33.297341139 < rho < 40.908024688**, width 7.610683549, with a
+clear z=-10..10 annular tube. Last-grid Einstein/KG maxima
+5.08e-13 / 2.83e-14. Observable drift 7.26e-10; charge/edge drift
+1.16e-13 / 1.04e-12. Archive: `studies/annular-validated-k12/`.
+
+**Stronger-ring finite uphill selection accepted:** final two phase
+integrals, code `4e0af89a`, **19:58:10–19:58:22 MSK**, exit 0. Final
+phase comparisons 4.512e-12, all nonmarginal saved-track errors <=5.283e-8,
+all 656 full MPD equation checks <=1.316e-14. Spin +z reaches the target;
+spin -z first turns back at equal energy. No new MPD tracks/points.
+Archive: `studies/strong-uphill-073-validated/`; figure
+`figures/strong-uphill-073.png`. Finite selection, not escape or trapping.
+The preceding phase/field CUDA suites passed **45 tests** (6+39).
 
 **Latest failed field correction:** fresh-Jacobian quintic recovery ran
 **19:44:04–19:45:20 MSK**, code `8b592e9f`, exit 2. Three updates/four
