@@ -292,7 +292,7 @@ every original equation/flux/gap/channel/convergence limit. All four
 omitted outer PDE rows are checked independently. Three solves maximum,
 30 iterations each, minimum two updates per grid; no off-axis tracks.
 
-Both are prepared only and require new run-specific goes. Proposed
+Both have explicit run-specific approval. Selected
 card 0 for the two-track audit, card 1 for the quintic recovery; four
 threads, 160 GiB, 1800 s per job, chunks 128, no AMR checkpoints.
 

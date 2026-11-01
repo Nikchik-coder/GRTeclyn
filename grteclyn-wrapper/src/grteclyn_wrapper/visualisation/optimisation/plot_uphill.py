@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 
-def plot(directory,out):
+def plot(directory,out,*,title=None):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -15,7 +15,11 @@ def plot(directory,out):
     regime='requested_offset'
     if result['selection_regimes'] and regime not in result['selection_regimes']:regime=result['selection_regimes'][0]
     controls=result['records'][regime+'_rk1']['controls']
-    target=json.loads((directory/'manifest.json').read_text())['config']['target_z']
+    manifest=json.loads((directory/'manifest.json').read_text())
+    config=manifest['config']
+    if 'target_z' not in config:
+        config=json.loads((directory/'original/manifest.json').read_text())['config']
+    target=config['target_z']
     fig,(overview,zoom)=plt.subplots(1,2,figsize=(11,4.8));fig.subplots_adjust(left=.09,right=.98,bottom=.22,top=.74,wspace=.3)
     curves=[]
     for label,colour,style in [('zero','.3','--'),('positive','#d56d35','-'),('negative','#337ab3','-')]:
@@ -38,7 +42,7 @@ def plot(directory,out):
     for ax in (overview,zoom):ax.grid(alpha=.2)
     handles,labels=overview.get_legend_handles_labels()
     fig.legend(handles,labels,loc='upper center',bbox_to_anchor=(.5,.9),ncol=3,frameon=False)
-    title='Spin-selective finite uphill transit' if result['spin_selective_finite_transit'] else 'Matched-energy uphill transit'
+    title=title or ('Spin-selective finite uphill transit' if result['spin_selective_finite_transit'] else 'Matched-energy uphill transit')
     fig.suptitle(title,y=.99,fontsize=15)
     energy=result['energies'][regime]
     fig.text(.5,.065,f'Same conserved energy E={energy:.12f}; spin magnitude 0.001. '
@@ -50,7 +54,8 @@ def plot(directory,out):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('directory',type=Path)
-    parser.add_argument('--out',type=Path,required=True);args=parser.parse_args();plot(args.directory,args.out)
+    parser.add_argument('--out',type=Path,required=True);parser.add_argument('--title')
+    args=parser.parse_args();plot(args.directory,args.out,title=args.title)
 
 
 if __name__=='__main__':main()

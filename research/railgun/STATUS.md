@@ -36,8 +36,12 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 - Card 0: `railgun-strong-uphill-073-precision-20261101`, two tighter tracks
   only (34 cumulative), compiling the certified Cartesian particle system.
-- Card 1: `railgun-annular-quintic-k12-20261101`, first 192x16 Newton solve
-  of at most three grids; zero-J quintic dragging representation.
+- Card 1: `railgun-annular-quintic-k12-20261101` stopped **19:07:39 MSK**,
+  exit 2, after its first 192x16 solve (two updates). Original field, flux,
+  gap and finite-height channel checks pass, but the leading infinity angular
+  mode fails: relative residual 80.57967 against 1e-6. Later grids unattempted;
+  no accepted export or off-axis particles. Card 1 now idle. Archive:
+  `results/railgun/studies/annular-quintic-k12/`.
 
 The preceding targeted CUDA suites passed **18 + 34 = 52 tests** (18.02 /
 16.63 s), code `153c53c6`. Each numerical job: four CPU threads, 160 GiB,
