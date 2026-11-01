@@ -1,0 +1,7 @@
+{
+  "fields": [{"winding": 0, "mass": 1.0, "amplitude": 0.1, "anchor_radius": 2.0}],
+  "length": 5.0,
+  "grids": [[56, 8], [72, 10], [96, 12]],
+  "max_iter": 30,
+  "spherical_reference": {"central_amplitude": 0.1, "extent": 100.0, "tol": 1e-9}
+}

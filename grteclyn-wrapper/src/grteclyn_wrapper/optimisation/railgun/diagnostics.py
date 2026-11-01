@@ -4,24 +4,27 @@ from __future__ import annotations
 import numpy as np
 
 from .geometry import RingGeometry
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, tail_ratio
+from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, cheb_coeffs, tail_ratio
 
 
 def spectral_diagnostics(arrays):
-    """Relative tails for resolved fields; analytically zero fields have no scale.
+    """Mixed absolute/relative tails; analytically zero fields have no scale.
 
     Dividing two numbers at roundoff reports O(1) noise for N=0 in a spherical
-    spacetime. Only fields below 64 eps in their natural dimensionless units
-    use the absolute roundoff floor; the physical tail tolerance is unchanged.
+    spacetime. Subtract a 64 eps absolute coefficient floor before dividing;
+    the physical relative tail tolerance and all equation gates are unchanged.
     """
     records = {}
     for tag, a in arrays.items():
         peak = float(np.max(np.abs(a)))
         ratio = max(tail_ratio(a, axis=ax) for ax in (0,1))
+        absolute = max(float(np.max(np.abs(np.moveaxis(cheb_coeffs(a,axis=ax),ax,0)[-3:])))
+                       for ax in (0,1))
         at_roundoff = peak <= 64*np.finfo(float).eps
-        records[tag] = dict(peak=peak, relative_tail=ratio,
+        tested = max(0.,absolute-64*np.finfo(float).eps)/max(peak,1e-300)
+        records[tag] = dict(peak=peak, relative_tail=ratio, absolute_tail=absolute,
                             roundoff_field=bool(at_roundoff),
-                            tested_tail=0. if at_roundoff else ratio)
+                            tested_tail=tested)
     return records
 
 
@@ -110,7 +113,8 @@ def observables(problem, u):
 def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=True):
     u = np.asarray(u)
     reasons = []
-    out = dict(grid=[problem.nx, problem.ny], newton=info, stability='not_assessed')
+    out = dict(grid=[problem.nx, problem.ny], newton=info, length_scale=problem.length,
+               stability='not_assessed')
     if not np.isfinite(u).all():
         return dict(out, verdict='REJECT', reasons=['nonfinite_fields'])
     if not info.get('converged'):
@@ -186,9 +190,12 @@ def converged_records(records, *, tolerance=1e-6):
         return False, None
     a, b = records[-2:]
     keys = ('M_ADM_estimate', 'J_volume', 'dragging_max')
-    drift = max(abs(b[k]-a[k])/max(abs(b[k]), abs(a[k]), 1e-12) for k in keys)
-    # Zero-spin cancellation is judged absolutely, never as a relative 0/0.
-    if abs(a['J_volume']) < 1e-8 and abs(b['J_volume']) < 1e-8:
-        drift = max(abs(b[k]-a[k])/max(abs(b[k]), abs(a[k]), 1e-12)
-                    for k in keys if k != 'J_volume')
+    length = max(a.get('length_scale',1.),b.get('length_scale',1.))
+    scales = dict(M_ADM_estimate=length,J_volume=length**2,dragging_max=1/length)
+    if not all(np.isfinite(r[k]) for r in (a,b) for k in keys):
+        return False,None
+    # Mixed absolute/relative convergence: a roundoff-sized zero has no useful
+    # relative scale. Dimensional floors are 64 eps in the problem's L units.
+    drift = max(max(0.,abs(b[k]-a[k])-64*np.finfo(float).eps*scales[k])
+                /max(abs(b[k]),abs(a[k]),1e-300) for k in keys)
     return bool(np.isfinite(drift) and drift <= tolerance), float(drift)

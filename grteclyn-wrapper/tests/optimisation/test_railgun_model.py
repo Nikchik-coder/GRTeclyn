@@ -135,3 +135,18 @@ def test_tail_noise_is_only_ignored_below_the_physical_tail_gate():
     assert not localized_tail([1e-3,1e-5,2e-5,1e-9],1e-6)
     assert not localized_tail([1e-4,2e-5],1e-6)
     assert not localized_tail([1e-4,float('nan')],1e-6)
+
+
+def test_tails_use_an_absolute_roundoff_floor_even_after_newton_recovery():
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import spectral_diagnostics, converged_records
+    rng=np.random.default_rng(92)
+    # A small smooth remainder can exceed eps in amplitude while its unresolved
+    # coefficients remain below eps. This is a mixed absolute/relative check.
+    smooth=5e-14*np.ones((9,5))+rng.normal(size=(9,5))*1e-16
+    row=spectral_diagnostics({'N':smooth})['N']
+    assert row['peak'] > 64*np.finfo(float).eps
+    assert row['tested_tail']==0.
+    a=dict(verdict='PASS',M_ADM_estimate=1.,J_volume=0.,dragging_max=3e-14,length_scale=5.)
+    b=dict(a,dragging_max=3.001e-14)
+    assert converged_records([a,a,b])[0]
+    assert not converged_records([a,a,dict(a,M_ADM_estimate=1.001)])[0]

@@ -14,10 +14,19 @@ measurements or evidence of a jet, a hidden vortex or a finite Tipler tube.
 reference pilot on 40x6, 56x8 and 72x10, at most 30 Newton iterations per grid.
 Each job has four CPU threads, 160 GiB host address space and a 0.5 h timeout;
 Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained.
-**Live:** `railgun-spherical-pilot-r2-20261101`, second node/card 0, commit
-`c6b4bc67`, started **10:16 MSK**, timeout **0.5 h (10:46 MSK)**. It diagnoses
-the approved 40x6/56x8/72x10 grids with the same equation tolerances. Completion
-ETA and speed are unmeasured. No AMR checkpoints; scratch 47 MB / 546 GB free.
+**Live: none.** `railgun-spherical-pilot-r2-20261101` finished **10:17 MSK**,
+second node/card 0, commit `c6b4bc67`. It recovered the 40x6/56x8/72x10 grids
+in 9.40/10.63/13.99 s, with 1/2/2 actual Newton updates. Off-grid KG residuals
+are **5.23e-8 / 1.14e-10 / 1.29e-12**; the first grid fails the unchanged
+1e-8 gate. The finest mass estimates differ by 1.78e-12. Near-zero w and N
+(3e-14/7e-14) still triggered relative-tail checks despite absolute tails
+below 1e-15; a mixed absolute/relative coefficient test is being installed,
+with a 64 eps absolute floor. The rejected coarse grid is not accepted.
+Scratch clean: 47 MB / 546 GB free. No AMR checkpoints; ETA none.
+
+**Fresh go received:** `studies/spherical_refined.json`, 56x8/72x10/96x12,
+GPU 0, 30 Newton iterations per grid, four threads, 160 GiB and 0.5 h,
+Jacobian chunks 128, no AMR checkpoints. It follows the updated regressions.
 
 `railgun-regression-r3-20261101` passed **all 44 tests** in **22.87 s** on
 GPU 0, ending **10:15 MSK**, commit `c6b4bc67`. The two added checks cover
