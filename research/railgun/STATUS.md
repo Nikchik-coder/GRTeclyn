@@ -31,16 +31,18 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** targeted GPU regressions started **19:30:01 MSK**, code `e5096e78`:
-`railgun-axis-audit-gpu-tests-20261101` on second node/card 0 and
-`railgun-regular-gpu-tests-20261101` on card 1. Each 0.5 h cap, hard
-deadline **20:00 MSK**. Both corrected numerical jobs have explicit go
-and follow only passing tests: at most 32 phase quadratures/656 MPD
-substitution points on card 0; at most three 192x16/224x18/256x20 regular
-operator recovery solves on card 1. All existing gates unchanged, four
-threads/160 GiB/chunks 128/no AMR checkpoints. CPU development suite:
-36 passed in 9.15 s. Scratch clean at **19:30 MSK**: 47 MB in `_cache/`,
-535 GB free; first node not listed. No measured numerical-job ETA yet.
+**Live:** both corrected numerical jobs started **19:31:31 MSK**, code
+`e33bd0c8`, on the second GPU node. Card 0:
+`railgun-strong-axis-audit-20261101`, 32 phase quadratures/656 full-MPD
+substitution points, no new MPD tracks. Card 1:
+`railgun-annular-regular-k12-20261101`, first 192x16 solve of at most
+three grids; two updates converge at scaled residual 5.05e-13, independent
+validation running. All gates unchanged. Preceding CUDA suites passed
+**15 + 33 = 48 tests** (12.45 / 10.63 s), code `e5096e78`.
+Each job: four threads, 160 GiB, 0.5 h, chunks 128, no AMR checkpoints.
+Hard deadline **20:01 MSK**; no steady-state ETA during compilation.
+Scratch clean at **19:31 MSK**: 47 MB in `_cache/`, 535 GB free;
+first node not listed. No off-axis particle job approved or queued.
 
 **Prior correction jobs completed:**
 
