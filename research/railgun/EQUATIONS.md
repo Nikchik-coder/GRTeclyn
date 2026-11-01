@@ -1,0 +1,152 @@
+# Regular-centre scalar rings: equations and numerical contract
+
+## Matter and metric
+
+Use G=c=1, signature (-+++), and independent complex fields
+`chi_a = A_a(r,theta) exp(i omega_a t + i k_a phi)`. Their action is
+
+```text
+S = (16 pi)^-1 integral sqrt(-g) [R - 2 sum_a (|d chi_a|^2 + U_a)] d^4x
+U_a = m_a^2 |chi_a|^2 + lambda4_a |chi_a|^4 + lambda6_a |chi_a|^6.
+```
+
+The implemented self-interactions have nonnegative coefficients. Variation gives
+
+```text
+R_mn = 2 sum_a Re(d_m chi_a d_n chi_a*) + sum_a U_a g_mn
+box chi_a = (m_a^2 + 2 lambda4_a A_a^2 + 3 lambda6_a A_a^4) chi_a.
+```
+
+There is no phantom scalar. The domain has one regular centre and one flat end.
+The metric is
+
+```text
+ds^2 = -exp(f) dt^2 + B^2 exp(-f) [exp(nu) (dr^2+r^2 dtheta^2)
+                                  + r^2 sin^2(theta) (dphi-w dt)^2]
+nu = N sin^2(theta), B=1+b.
+```
+
+Its elementary-flatness condition is automatic on the axis. This is the
+regular-centre counterpart of the existing general quasi-isotropic ansatz;
+the interior vacuum equations are `matter_residual_forms` at `eta0=0`. Its
+canonical sources are independently transcribed for each field, and checked
+against the existing equations before coupling them. The chosen imposed rows
+are `E_f, E_w, E_B, E_Nr` and one KG row per field. `E_c` and `E19` are left
+unimposed everywhere. A separate Cartesian reconstruction checks **all**
+Ricci components and each covariant KG equation, independent of these rows.
+
+This coordinate ansatz is also used for regular rotating boson stars in
+[Kleihaus, Kunz and List (2005)](https://arxiv.org/abs/gr-qc/0505143).
+Its metric-function names differ; the implementation uses the definitions above.
+
+## Regular scalar amplitudes and parity
+
+Let `s=(r-L)/(r+L)` and `y=cos(2 theta)`. The unknown field is
+
+```text
+A = sin^a(theta) cos^p(theta) q(s,y), a=|k|, p=0 (even) or 1 (odd).
+```
+
+Its regular centre behaviour is `q=O(r^(a+p))`. The scalar amplitude is pinned
+at a stated finite radius in q, including for odd parity. Each pin adds one
+unknown frequency. The equations do not fix the position of a density maximum.
+
+For even parity the angular KG operator, without the B-gradient terms, is
+
+```text
+4(1-y^2) q_yy - [(4a+6)y+4a+2] q_y - a(a+1) q.
+```
+
+For odd parity, analytically factoring `cos(theta)` gives
+
+```text
+4(1-y^2) q_yy - [(4a+10)y+4a-2] q_y - (a+1)(a+2) q.
+```
+
+The odd row also gains `2(1-y)(B_y/B)q`. Sources use polynomial combinations
+of `cos(theta)q`, so neither the axis nor equator requires division by a
+vanishing parity factor. For example, with z=cos(theta)q,
+
+```text
+z^2 = (1+y) q^2/2
+z z_y = (1+y) q q_y/2 + q^2/4
+(1-y^2) z_y^2 = (1+y)(1-y^2) q_y^2/2
+                + (1-y^2) q q_y/2 + (1-y) q^2/8.
+```
+
+The implementation includes mass-only and positive quartic/sextic interactions;
+it makes no assertion that a stacked equilibrium exists.
+
+## Grid, boundaries and equation count
+
+Tensor Chebyshev–Lobatto grids cover `s,y in [-1,1]`. At infinity,
+`f=w=N=b=q_a=0`. At the centre, `f_s=w_s=b_s=0`, `N=0`; a nonzero-degree
+scalar has `q=0`, and an even k=0 scalar has `q_s=0`. Angular smoothness and
+parity are encoded in y and the factors above; regular PDE limits are imposed
+at both angular endpoints. Centre isotropy and higher-order smoothness are
+checked through near-centre off-grid Einstein residuals, not inferred merely
+from the boundary rows.
+
+With F scalar fields and P=(nx+1)(ny+1) nodes, there are `(4+F)P+F` unknowns
+and equations. The F borders determine frequencies. An optional total-J
+condition adds one unknown, the final field's log amplitude, and one J row.
+This requires at least two fields; J=0 requires opposite winding signs.
+
+## Charges and validation
+
+Define `Omega_a=omega_a+k_a w`. In this normalisation the positive-frequency
+Noether charge and angular momentum are
+
+```text
+Q_a = (4 pi)^-1 integral Omega_a A_a^2 / alpha dV
+J_a = -k_a Q_a.
+```
+
+For a regular centre there is no throat contribution. The independent exterior
+check is `w=2J/r^3+O(r^-4)`. The spatial ADM fit uses
+`B-1-f/2=M/r+O(r^-2)`; the lapse fit is reported separately. The Komar volume
+integrand, after full-sphere angular integration, is
+
+```text
+B^3 exp(nu-f) r^2 [sum_a (2 omega_a Omega_a exp(-f) A_a^2 - U_a)] dr dmu.
+```
+
+The workflow compares volume/asymptotic J, volume/spatial mass and doubled
+quadrature. It checks bound frequencies, tails, spectral coefficients,
+boundary rows, unused constraints and off-grid Einstein/KG equations. Finer
+grids require two actual Newton corrections from perturbed metric data.
+Only three passing grids and converged observables produce `accepted.npz`.
+The word accepted denotes these finite numerical tests, not a stability proof.
+
+The independent spherical reference solves the areal-radius mass, lapse and
+KG ODEs as a boundary-value problem and converts its seed to isotropic radius.
+It is a k=0 numerical cross-check, not a rotating solution. Its finite exterior
+error still needs an extent comparison; no published rotating branch has yet
+been reproduced by this implementation.
+
+## Curvature, axial profiles and spin transport
+
+Off-grid fields use differentiable Chebyshev interpolation. The metric is
+reconstructed in Cartesian coordinates. The combination
+`(1-exp(N rho^2/r^2))/rho^2` is evaluated using its analytic axis limit.
+Scalar components use `[(x+i sign(k)y)/r]^abs(k)` rather than an azimuthal
+angle, preserving their Cartesian derivatives on the axis. The exact origin
+is excluded from this interpolant: profiles start at positive radius and
+trajectories have an explicit inner stopping sphere. No track through that
+unvalidated point is exported.
+
+The Riemann convention is
+`R^a_bcd=partial_c Gamma^a_bd-partial_d Gamma^a_bc+Gamma^a_ec Gamma^e_bd-Gamma^a_ed Gamma^e_bc`.
+Flat, Schwarzschild and rotating Kerr curvature provide analytic benchmarks.
+Axial profiles report the Eulerian electric and magnetic tidal components;
+`H_zz=R_(z)(0)(x)(y)` gives `F_z/S_z=-H_zz` at linear spin for unit test mass.
+This definition avoids treating a coordinate dragging gradient as an exact force.
+
+The MPD integrator evolves x, p and the antisymmetric spin tensor with the
+Tulczyjew–Dixon condition `p_m S^mn=0` and its full momentum–velocity relation.
+Its Killing integral is `p_m xi^m + S^mn partial_m xi_n/2`.
+See the [MPD formulation](https://link.springer.com/article/10.1140/epjc/s10052-023-11970-5).
+It monitors mass, spin, supplementary condition, Killing energy/angular momentum
+and timelike velocity. A spin/curvature bound and an inner/outer radius stop
+the integration. Controls have equal spin-corrected launch energy. Reaching a
+finite outer radius is labelled as such, not as escape to infinity.

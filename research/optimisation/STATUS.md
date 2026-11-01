@@ -1,5 +1,12 @@
 # Campaign M — status
 
+**Paused — 2026-11-01 (MSK).** Further minimal-exotic-matter searches,
+stability-screen repairs and evolution proposals are on hold. The next research
+direction is the separate [ring-spacetime study](../railgun/STATUS.md), reusing
+the JAX/Newton infrastructure. Earlier run authorisations and pending tables
+below do not dispatch new work while this pause is in force. Existing results
+and the withdrawn-stability-screen warning remain the record of this campaign.
+
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).
 Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/`
