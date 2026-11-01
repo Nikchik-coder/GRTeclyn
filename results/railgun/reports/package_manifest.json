@@ -501,6 +501,46 @@
       "sha256": "910139446bc1720f78b3b89a062a0f209e222e131ac6127d46b99840f836f8d1",
       "bytes": 750
     },
+    "studies/annular-regular-polish-k12/README.md": {
+      "sha256": "8fddc341dbee6b27a584c745309a7a3a1f6d752ea9927c78fe7f27ec9fc355be",
+      "bytes": 392
+    },
+    "studies/annular-regular-polish-k12/execution.log": {
+      "sha256": "579e0c432c791eedd24afdd3b950e21e0fdb9ca1e03ece0777d2219047b0580a",
+      "bytes": 433
+    },
+    "studies/annular-regular-polish-k12/grid_192x16.json": {
+      "sha256": "6c5ad58aac80b6b77b92fb90eb5bd664d2208be35b8842dab7f0bbee58f5e5f2",
+      "bytes": 7005
+    },
+    "studies/annular-regular-polish-k12/grid_192x16.npz": {
+      "sha256": "e0e54247ed494f244f6a5da4d5bd721c440cbd440e8878d7d508c68ce7ce7edc",
+      "bytes": 292205
+    },
+    "studies/annular-regular-polish-k12/grid_192x16_channel.tsv": {
+      "sha256": "d444eff4e8bea80971d03a87a0710c870244f4681367e8ceaf2dde815e8efc6a",
+      "bytes": 170976
+    },
+    "studies/annular-regular-polish-k12/grid_192x16_density.tsv": {
+      "sha256": "e0fbef746e935ca6d36491ed253bf4c178665c8d23c13765d0e7d51ebc80a609",
+      "bytes": 562684
+    },
+    "studies/annular-regular-polish-k12/grid_192x16_initial.npz": {
+      "sha256": "c4a7408c6e3249ea0f269e21681721224c59ed425262f0db0e22388a73eb5523",
+      "bytes": 295718
+    },
+    "studies/annular-regular-polish-k12/manifest.json": {
+      "sha256": "b55583bb52f048840ee065a11815c1386e92cb7cc089fb37f1f9f44f70abdb43",
+      "bytes": 1097
+    },
+    "studies/annular-regular-polish-k12/outcome.json": {
+      "sha256": "3a3aa8d93508d4c3d7ceee78f6502926e68d141f441e9f436f2a5b141417cd3a",
+      "bytes": 8310
+    },
+    "studies/annular-regular-polish-k12/sha256sums.txt": {
+      "sha256": "563cb13b5a7b96098a2975039f31c6a2750b79070c89f77f693489024d9739cf",
+      "bytes": 750
+    },
     "studies/branch-seeds/README.md": {
       "sha256": "a9197b50766abc298b660b0ad7b4fbfa45f838491f59a1fb30cd45d23ea36a9c",
       "bytes": 1127

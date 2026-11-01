@@ -1,0 +1,43 @@
+{
+  "config": {
+    "source_sha256": "b796d38418b37e2ec5ccc116cbf02280cfc4d0b01e9da7b3a358d8ca2ecc4d6a",
+    "outer_winding": -12,
+    "target_j": 0.0,
+    "length": 50.0,
+    "grids": [
+      [
+        192,
+        16
+      ],
+      [
+        224,
+        18
+      ],
+      [
+        256,
+        20
+      ]
+    ],
+    "max_solves": 3,
+    "max_iter": 30,
+    "newton_tol": 1e-14,
+    "perturbation": 0.0,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "edge_tol": 1e-06,
+    "relative_density_cutoff": 1e-06,
+    "channel_half_height": 10.0,
+    "falloff_power": 5,
+    "regular_operator": true,
+    "fresh_jacobian": true
+  },
+  "source_sha256": "b796d38418b37e2ec5ccc116cbf02280cfc4d0b01e9da7b3a358d8ca2ecc4d6a",
+  "source_model": "canonical_regular_centre",
+  "output_model": "canonical_regular_centre_factored_dragging_v1",
+  "commit": "8b592e9f137576852df6ebb088298398c19b5fcc",
+  "platform": "gpu",
+  "float64": true,
+  "stability": "not_assessed",
+  "tau": "Regular H operator; all interior PDEs retained; angular and null-mode infinity conditions."
+}
