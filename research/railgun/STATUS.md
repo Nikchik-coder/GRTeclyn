@@ -31,32 +31,48 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** two approved numerical jobs started **19:06:19 MSK**, code
-`568eaac8`, on the second GPU node:
+**Live:** none; both cards idle. The approved correction jobs finished:
 
-- Card 0: `railgun-strong-uphill-073-precision-20261101`, two tighter tracks
-  only (34 cumulative), compiling the certified Cartesian particle system.
-- Card 1: `railgun-annular-quintic-k12-20261101` stopped **19:07:39 MSK**,
-  exit 2, after its first 192x16 solve (two updates). Original field, flux,
-  gap and finite-height channel checks pass, but the leading infinity angular
-  mode fails: relative residual 80.57967 against 1e-6. Later grids unattempted;
-  no accepted export or off-axis particles. Card 1 now idle. Archive:
-  `results/railgun/studies/annular-quintic-k12/`.
+- Card 0: `railgun-strong-uphill-073-precision-20261101`, code `568eaac8`,
+  **19:06:19–19:10:14 MSK (0.0653 h)**, exit 2. Exactly two new tracks
+  (34 cumulative), rtol=2e-13. Both pass 1e-9 conservation and retain the
+  same transmitted classifications, but timing differences from saved 2e-12
+  controls are **1.88654e-7 / 2.03222e-7**, above unchanged 1e-7. Study
+  **rejected**; no accepted stronger-ring selection or timing claim.
+  Archive: `results/railgun/studies/strong-uphill-073-precision/`, including
+  all 32 immutable originals under `original/`.
+- Card 1: `railgun-annular-quintic-k12-20261101`, code `568eaac8`,
+  **19:06:19–19:07:39 MSK (0.0222 h)**, exit 2. First 192x16 solve makes
+  two updates. Original field, flux, gap and finite-height channel checks
+  pass; finite-sphere J error 4.85538e-9, Cartesian crosscheck 5.86e-15,
+  off-grid Einstein/KG maxima 4.57e-13 / 9.10e-14. Added leading infinity
+  angular-mode residual **80.57967** exceeds 1e-6. Study **rejected**;
+  later grids unattempted, no accepted export or off-axis particles.
+  Archive: `results/railgun/studies/annular-quintic-k12/`.
 
 The preceding targeted CUDA suites passed **18 + 34 = 52 tests** (18.02 /
-16.63 s), code `153c53c6`. Each numerical job: four CPU threads, 160 GiB,
-0.5 h maximum, chunks 128, no AMR checkpoints. Hard deadline **19:36 MSK**;
-no measured steady-state ETA during compilation. Scratch clean at
-**19:06 MSK**: 47 MB in `_cache/` only, 535 GB free; first node not listed.
+16.63 s), code `153c53c6`; portable reports under `results/railgun/reports/`.
+Each job used four CPU threads, 160 GiB, 0.5 h maximum, chunks 128,
+no AMR checkpoints. All current approved correction work is finished;
+no new GPU run is queued. No ETA. Scratch clean at **19:10 MSK**:
+47 MB in `_cache/` only, 535 GB free; first node not listed.
+
+**Next:** diagnose strong-ring timing sensitivity independently before another
+track budget, and impose/test the regular infinity angular structure in the
+annular solver before proposing another bounded recovery. The Newton residual
+alone does not certify the tail: the independently measured leading angular
+equation fails despite the tiny collocation residual. Original failed fields
+remain rejected; all equation, timing and geometry gates remain
+unchanged. No between-ring particle launch until a full background passes.
 
 **Previous:** Strong-ring particles completed all 32
 tracks, but the study is **rejected**: two nonmarginal timing comparisons
 are 2.70803e-7 / 2.68702e-7 against 1e-7. All track conservation, reversal
 and classification checks pass; worst normalised invariant drift 1.55e-10.
 Code `0fd3b1e4`, **18:28:40–18:45:49 MSK (0.286 h)**, exit 2.
-Archive: `results/railgun/studies/strong-uphill-073-initial/`. Prepare an
-accuracy audit of only the two failed controls at tighter RK tolerance;
-the original failed study stays rejected, and no timing limit is relaxed.
+Archive: `results/railgun/studies/strong-uphill-073-initial/`. The separate
+two-control audit is completed above; this original study stays rejected,
+and no timing limit is relaxed.
 
 The cubic annular falloff study is also **rejected** at its first 192x16
 solve, despite finite-sphere J error 7.01e-10, Cartesian crosscheck 2.55e-14
@@ -653,14 +669,7 @@ geometry. The outer -6/-8 species can be seeded only after a pure mixed-mass
 inner branch is independently recovered. Six-problem go received; no
 nonlinear mixed-mass or odd branch recovery is authorised yet.
 
-**Approved, following GPU regressions:** (1) `studies/uphill_precision_073.json`,
-only requested_offset/zero and above_all/negative at rtol=2e-13, compared
-with their saved 2e-12 tracks. Reuse the exact accepted source/core profile,
-retain all 32 originals; at most two new tracks, cumulative 34. Unchanged
-1e-7 timing, 1e-8 height and 1e-9 conservation gates. (2)
-`studies/annular_quintic_k12.json`, at most three fresh solves on
-192x16 / 224x18 / 256x20 with zero-J r^-5 Frobenius falloff, max 30
-iterations/minimum two updates, all old gates plus omitted PDEs and the
-leading angular-mode check. Approved GPU 0 precision audit and GPU 1
-quintic recovery, following targeted GPU regressions; each four threads,
-160 GiB, 0.5 h, chunks 128, no AMR checkpoints. All 52 GPU checks passed; both numerical jobs launched at 19:06:19 MSK.
+**Latest approved correction sequences completed:** the two-track precision
+audit and first-grid quintic recovery both stopped rejected, as detailed in
+Live and queue. Their original budgets are closed. Further numerical runs need
+a separately bounded proposal and go; no off-axis trajectory is queued.

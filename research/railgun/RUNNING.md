@@ -298,3 +298,9 @@ threads, 160 GiB, 1800 s per job, chunks 128, no AMR checkpoints.
 
 Both correction jobs launched on November 1 at 19:06:19 MSK after 52
 passing targeted GPU tests; code `568eaac8`. See STATUS for outcomes.
+
+Both jobs have finished rejected: the precision audit retains timing changes
+1.88654e-7 and 2.03222e-7 above 1e-7; the quintic study fails its first-grid
+leading infinity angular equation (80.57967 above 1e-6). No later grids or
+off-axis tracks. Completed archives are under studies/strong-uphill-073-precision
+and studies/annular-quintic-k12. No new numerical run is authorised.
