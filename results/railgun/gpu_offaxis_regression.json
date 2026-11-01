@@ -1,0 +1,42 @@
+{
+  "commit": "46004c40f8a5162230297520bff5477ca6d8a311",
+  "platform": "cuda",
+  "start_msk": "2026-11-01 13:02:34",
+  "end_msk": "2026-11-01 13:02:40",
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "4",
+      "time": "4.081",
+      "timestamp": "2026-11-01T10:02:35.667713+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_transit",
+      "name": "test_exact_flat_transit_event_and_dense_samples",
+      "time": "2.372"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transit",
+      "name": "test_strict_transport_gate_rejects_small_relative_spin_drift",
+      "time": "0.004"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transit",
+      "name": "test_off_axis_flat_transit_retains_its_launch_radius",
+      "time": "1.031"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.028"
+    }
+  ]
+}
