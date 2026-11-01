@@ -1,0 +1,57 @@
+{
+  "source_sha256": "fca80f859eee840bbbbaa625fa347e178c38d45538fc6f40d6543058e515fa87",
+  "grids": [
+    [
+      96,
+      12
+    ],
+    [
+      128,
+      16
+    ]
+  ],
+  "max_eigenproblems": 6,
+  "frequency_grid_tol": 1e-06,
+  "outer_candidates": [
+    -6,
+    -8
+  ],
+  "branches": [
+    {
+      "name": "mixed_inner_m2p5",
+      "field": {
+        "winding": 2,
+        "mass": 2.5,
+        "parity": "even",
+        "anchor_radius": 1.5,
+        "amplitude": 0.001,
+        "quartic": 0.0,
+        "sextic": 0.0
+      }
+    },
+    {
+      "name": "mixed_inner_m3",
+      "field": {
+        "winding": 2,
+        "mass": 3.0,
+        "parity": "even",
+        "anchor_radius": 1.5,
+        "amplitude": 0.001,
+        "quartic": 0.0,
+        "sextic": 0.0
+      }
+    },
+    {
+      "name": "stacked_odd",
+      "field": {
+        "winding": 1,
+        "mass": 1.0,
+        "parity": "odd",
+        "anchor_radius": 6.0,
+        "amplitude": 0.001,
+        "quartic": 0.0,
+        "sextic": 0.0
+      }
+    }
+  ]
+}

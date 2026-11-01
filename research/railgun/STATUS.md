@@ -75,12 +75,8 @@ The original coarse rejection remains immutable in `studies/frequency-scan/`.
 Figure: `results/railgun/figures/frequency-073-recovery.png`; every original
 and refined constraint value is shown, including small nonmonotonic changes.
 
-**Next:** lower frequencies 0.70 / 0.67 would need fresh bounded continuation
-on the refined grids; stronger-ring profile/core certification and particle
-tracks also need their own go. None are launched or queued. The annular
-k2=-12 far-field flux failure remains unresolved. Both cards idle, no ETA.
-Scratch clean at **17:47 MSK**: 47 MB in `_cache/` only, 537 GB free;
-first node not listed. No AMR checkpoints or plotfiles created.
+The separately approved deeper continuation and stronger-ring follow-ons
+are recorded in the current live/queue block above.
 
 **Previous frequency scan:** `railgun-frequency-scan-20261101`, second node/card 0,
 code `023f4384`, ran **17:35:17–17:40:03 MSK (0.0794 h)**, exit 2.
@@ -280,12 +276,13 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Next:** diagnose and repair the distant-exterior angular-momentum accuracy
+**Annular work:** diagnose and repair the distant-exterior angular-momentum accuracy
 before another coupled recovery. Keep the independent 1e-8 balance gate.
 The k2=-12 geometry already has a converged low-density annulus; changing
 masses or adding repulsion is not the immediate response to this flux failure.
 Then validate the gapped background and run matched off-axis particles within
-its finite-height channel. No further physical run is authorised or queued.
+its finite-height channel. The separately approved falloff recovery is
+queued above; off-axis particles still need an accepted gapped field.
 The completed screen configuration is `studies/annular_gap_screen.json`.
 Off-axis launch/destination support passed four GPU checks in 4.09 s at
 13:02:40 MSK: `results/railgun/reports/gpu_offaxis_regression.json`.
@@ -596,8 +593,10 @@ the original failed records stay rejected. The refined config completed with
 unchanged physical amplitudes and 1e-8 equation/charge gates. All three pure-ring
 grids passed, as recorded above.
 
-**Next:** plot the validated counter-rotating fields. Between-ring
-particle trajectories, asymptotic ejection and dynamical stability remain untested.
+**Figures complete:** overlapping counter-rotating fields and densities are
+under `results/railgun/figures/two-rings*.png`, with exterior dragging in
+`counter-dragging.png`. Between-ring particle trajectories, asymptotic
+ejection and dynamical stability remain untested.
 
 **Approved queue after strong-ring particles — flux representation experiment:** `studies/annular_falloff_k12.json`,
 three fresh solves 192x16 / 224x18 / 256x20 from the saved finest correction,
@@ -606,3 +605,11 @@ explicit factored model/loader, all original gates plus omitted outer PDEs,
 Cartesian metric-ratio flux and infinity-mode crosschecks. Prototype and
 pure-data checks passed. Separate go received for GPU manufactured checks,
 then at most three fresh solves. No off-axis particles are included.
+
+**Prepared longer-term seed screen, not launched:** `studies/branch_seeds.json`,
+six full 2D GPU bound-mode pencils on the accepted weak k=1 metric: new
+k=2 even fields at masses 2.5 and 3, and a new k=1 odd field, two grids
+96x12 / 128x16. Keep the original field as a separate species. These start
+a future amplitude homotopy, not a relabelled winding or accepted final
+geometry. The outer -6/-8 species can be seeded only after a pure mixed-mass
+inner branch is independently recovered. Separate GPU go still required.

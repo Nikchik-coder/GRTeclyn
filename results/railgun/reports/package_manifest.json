@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "71e3eef3a753cedf3194b90d9f3e8354a2db88b0f6776fecb071f8f5866ced7f",
-      "bytes": 12421
+      "sha256": "3ba9659b092c7551ea46dadd41b5a4febb7e2b13b7ff4241f34645b735a0a2e7",
+      "bytes": 13479
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -40,6 +40,14 @@
     "figures/ring-validated.png": {
       "sha256": "e53bdc6cb044f32f4b93093a7dc8f4db0aae1cba9ae59086c4a578d02060adf0",
       "bytes": 147280
+    },
+    "figures/single-ring-frequency-sequence.png": {
+      "sha256": "c4b63c9ec71b639988429d4b419ba6a1326b5b0a2d170809420ba7b372181f47",
+      "bytes": 167791
+    },
+    "figures/strong-profile-073.png": {
+      "sha256": "f5dfe066eff2d35ff4217f8b8a8bf73a8797ce1825d7a36519dc9ca9f1af3ab9",
+      "bytes": 215144
     },
     "figures/two-rings-density.png": {
       "sha256": "ca8106a6adceaa1143b1446bf22231f9817acd00e67b7245a9f85fe3b0e3687f",
@@ -116,6 +124,10 @@
     "reports/gpu_uphill_regression.json": {
       "sha256": "423e24f858881c19e6b795c162823ed346ac291412a60d94b286d7d4a33e6abd",
       "bytes": 8098
+    },
+    "reports/strong-profile-comparison.json": {
+      "sha256": "068a8b046369e4f7ed7a890f8a589effad179aed0c65097e1e24aed22457d68c",
+      "bytes": 967
     },
     "reports/two-rings-density.json": {
       "sha256": "2c01732a765450e91b7f23dd0521338a17a4cbd19b29f1e257947b923f5004fc",

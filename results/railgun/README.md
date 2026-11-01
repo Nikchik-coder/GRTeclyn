@@ -25,6 +25,8 @@ The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 
 - `figures/compactness-scan.png`: three independently accepted amplitude points; rejected points are excluded. Rebuild with `python -m grteclyn_wrapper.visualisation.optimisation.plot_compactness results/railgun/studies/compactness-scan --out results/railgun/figures/compactness-scan.png` using the wrapper environment.
 - `figures/frequency-scan.png`: accepted fixed-frequency points; the measured amplitude at radius 5 falls as lapse decreases and dragging strengthens. Rebuild with the same `plot_compactness` command, using `studies/frequency-scan` and `figures/frequency-scan.png`.
 - `figures/frequency-073-recovery.png`: independent constraints and off-grid Einstein/Klein–Gordon residuals across the original and three refined grids, with the unchanged acceptance limit.
+- `figures/strong-profile-073.png`: matter wall, lapse, dragging and signed magnetic tidal curvature on the certified omega=0.73 ring. `reports/strong-profile-comparison.json` compares the saved weak and strong profiles: peak instantaneous Eulerian linear force per unit spin rises by 78.30, which is not a moving-particle timing ratio.
+- `figures/single-ring-frequency-sequence.png`: six accepted frequencies through 0.70; |J| turns over while local shift/lapse grows. Rejected 0.67 is excluded; no sampled ergoregion.
 - `studies/strong-profile-073/`: accepted Cartesian core and full signed-axis/equatorial profile for omega=0.73, radius 0.4, degrees 6/8; exact source SHA and all diagnostics retained. Particle results are a separate study.
 - `studies/frequency-deep/`: omega=0.70 passes all three refined grids; omega=0.67 fails Newton and independent equations on the first grid. Four solves, unchanged gates; no physical maximum established.
 - `studies/frequency-073-refined/`: omega=0.73 passes 96x12 / 128x16 / 160x20. The old coarse constraint failure clears under refinement; all gates unchanged. Final sampled lapse minimum 0.49280, maximum shift/lapse 0.35421, J=-1.35717; no sampled ergoregion. Three solves, observable drift 1.16e-9. Original rejection retained separately.
@@ -103,4 +105,14 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
   results/railgun/studies/frequency-scan/frequency_05/grid_72x10.json \
   results/railgun/studies/frequency-073-refined \
   --out results/railgun/figures/frequency-073-recovery.png
+```
+
+Rebuild the strong profile and accepted frequency sequence:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_profile \
+  results/railgun/studies/strong-profile-073 --out results/railgun/figures/strong-profile-073.png \
+  --title 'ω=0.73 single ring: matter wall and certified axial profile'
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_frequency_sequence \
+  results/railgun --out results/railgun/figures/single-ring-frequency-sequence.png
 ```

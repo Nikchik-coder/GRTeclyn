@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 
-def plot_profile(source,out):
+def plot_profile(source,out,*,title='Validated k=1 ring: matter wall and signed axial bore'):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ def plot_profile(source,out):
     for ax in axs.flat:
         ax.legend(loc='lower center',bbox_to_anchor=(.5,1.01),frameon=False,fontsize=9)
         ax.grid(alpha=.2)
-    fig.suptitle('Validated k=1 ring: matter wall and signed axial bore',fontsize=14)
+    fig.suptitle(title,fontsize=14)
     out=Path(out);out.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(out,dpi=180);plt.close(fig)
 
@@ -37,7 +37,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path)
     parser.add_argument('--out',type=Path,required=True)
-    args=parser.parse_args();plot_profile(args.source,args.out)
+    parser.add_argument('--title',default='Validated k=1 ring: matter wall and signed axial bore')
+    args=parser.parse_args();plot_profile(args.source,args.out,title=args.title)
 
 
 if __name__=='__main__':main()
