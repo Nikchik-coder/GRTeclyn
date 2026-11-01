@@ -549,6 +549,94 @@
       "sha256": "563cb13b5a7b96098a2975039f31c6a2750b79070c89f77f693489024d9739cf",
       "bytes": 750
     },
+    "studies/annular-transit-k12/README.md": {
+      "sha256": "afafa9b786d2f10bca7ca4ccce7212c00e920c2374c5102ee4f10b0a65577ad6",
+      "bytes": 812
+    },
+    "studies/annular-transit-k12/execution.log": {
+      "sha256": "d6c2643bd3fca48d2a28f87a5441120eb6ef9ea2ac978beae23ef4f27f190327",
+      "bytes": 742
+    },
+    "studies/annular-transit-k12/manifest.json": {
+      "sha256": "ed0c4b6864783de20cff78649c257a15109302a27a42fc23f45b79709e65dced",
+      "bytes": 924
+    },
+    "studies/annular-transit-k12/outcome.json": {
+      "sha256": "b27c1036fed6bd4e22a53f99940afc275163aaf53e19131acdb2bfb948888cad",
+      "bytes": 17978
+    },
+    "studies/annular-transit-k12/progress.json": {
+      "sha256": "4958aa20e6b26683ccef7723013ece1499613b33a33a2be6a834bdee22bc4a6f",
+      "bytes": 16250
+    },
+    "studies/annular-transit-k12/rk0_negative.json": {
+      "sha256": "1171b60156e0f44c12a0031739365ba6c36649d24a886f1fef53861b4b51e318",
+      "bytes": 1675
+    },
+    "studies/annular-transit-k12/rk0_negative.npz": {
+      "sha256": "0f1d02d984a3daf749fcd5d8dc06e61c304dc35676a22622eb058fca934f0811",
+      "bytes": 143117
+    },
+    "studies/annular-transit-k12/rk0_positive.json": {
+      "sha256": "839b7432d1acaf1fe08fc1e16e3e0c6aa3c3e5d329e43bbc38843abd3bfd9fe3",
+      "bytes": 1672
+    },
+    "studies/annular-transit-k12/rk0_positive.npz": {
+      "sha256": "c7bccd0b12650f54c0ceec6a9477c93f02f878acae672fbfdbb1082df1770923",
+      "bytes": 143581
+    },
+    "studies/annular-transit-k12/rk0_reversed.json": {
+      "sha256": "1250fa9717154d766340a1188a47415b187e71f5fcee3da62f0f7ec3ba24fbb7",
+      "bytes": 1696
+    },
+    "studies/annular-transit-k12/rk0_reversed.npz": {
+      "sha256": "701d7ae92de53ec3c844a8eaef9c53d064ad5cff60ba1354958d2f2d0fa002ff",
+      "bytes": 143798
+    },
+    "studies/annular-transit-k12/rk0_zero.json": {
+      "sha256": "a6e9cb44c17e03f6b6f2d59a457b724379a37028641c47f8325a8f215c60293f",
+      "bytes": 1564
+    },
+    "studies/annular-transit-k12/rk0_zero.npz": {
+      "sha256": "634a79caf9eed2a8e70e61191b275d10a47d81f9c5b7bf1229c4e532bfb0d165",
+      "bytes": 162801
+    },
+    "studies/annular-transit-k12/rk1_negative.json": {
+      "sha256": "738876f799b0c4064623454f78c01c08b42bb6c589b0f3c1aa924754c01a07b7",
+      "bytes": 1676
+    },
+    "studies/annular-transit-k12/rk1_negative.npz": {
+      "sha256": "62071f8f8bb7409587549f35db13b2bca27df14f535b7cb0a5d41392cb6f8f79",
+      "bytes": 143167
+    },
+    "studies/annular-transit-k12/rk1_positive.json": {
+      "sha256": "5454a0d41254ae31dd549701fd4df08c38b57d630913ba5015fc5ec7453d781a",
+      "bytes": 1689
+    },
+    "studies/annular-transit-k12/rk1_positive.npz": {
+      "sha256": "e63a6acc012d89da5851ca98f2e8bd430109b383f4ae08051942e798016645e0",
+      "bytes": 143323
+    },
+    "studies/annular-transit-k12/rk1_reversed.json": {
+      "sha256": "271b93f865de0d96d4e4e28606aad65a399da58b11d21f0d63e963a2d168299d",
+      "bytes": 1688
+    },
+    "studies/annular-transit-k12/rk1_reversed.npz": {
+      "sha256": "5f903b83e7bc796c103a63fe6e7505b7db7a764057ac15ef8932e5e238012e94",
+      "bytes": 143869
+    },
+    "studies/annular-transit-k12/rk1_zero.json": {
+      "sha256": "bb1e00e893d24048cefdcba98537f3d55dd2231e3da6f374a09a2af8a82e35c5",
+      "bytes": 1635
+    },
+    "studies/annular-transit-k12/rk1_zero.npz": {
+      "sha256": "d14d81131b64388cf5fb49f7fa31266af5a0824a8b8c005d3a8a3a75da5feb4e",
+      "bytes": 174737
+    },
+    "studies/annular-transit-k12/sha256sums.txt": {
+      "sha256": "8596063f68f53d159d5a698ce511d2ad847af33dbc6954caf5304362a86f2e34",
+      "bytes": 1715
+    },
     "studies/annular-validated-k12/README.md": {
       "sha256": "2f58f50aa408a262aeed77dd43c0865e98f7a8b67c716fa2b16158118ee8ba10",
       "bytes": 783
