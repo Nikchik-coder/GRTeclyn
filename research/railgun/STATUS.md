@@ -25,7 +25,14 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none. Run C `railgun-counter-rotation-20261101`, second node/card 0,
+**Live:** `railgun-gap-regression-20261101`, second node/card 0, code
+`1d3f5a02`. Annular-edge rejection/acceptance, saved Cartesian density
+comparison, rotating KG and explicit GPU cuSOLVER checks. Four threads,
+160 GiB, 0.5 h cap, no AMR checkpoints. Initial tests, ETA unmeasured.
+Scratch clean: 47 MB in `_cache/` only, 543 GB free; first node not listed.
+The higher-winding physical seed screen remains unlaunched, awaiting go.
+
+Run C `railgun-counter-rotation-20261101`, second node/card 0,
 implementation `73b2aa30`, ran **12:55:48–13:00:33 MSK (0.079 h)**, exit 0.
 **k1=+1, k2=-2, total-J=0 accepted on 72x10 / 96x12 / 128x16.**
 Twelve Newton solves total, no amplitude splits; two fresh corrections on
