@@ -14,7 +14,13 @@ measurements or evidence of a jet, a hidden vortex or a finite Tipler tube.
 reference pilot on 40x6, 56x8 and 72x10, at most 30 Newton iterations per grid.
 Each job has four CPU threads, 160 GiB host address space and a 0.5 h timeout;
 Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained.
-Dispatch is being prepared. No single-ring, counter-rotation, stacked-ring or
+`railgun-regression-20261101` launched **10:05 MSK**, second node/card 0,
+commit `fad3d846`. It aborted at **10:05 MSK**, exit 134, during CUDA backend
+initialisation after 16 algebra tests; no GPU numerical result was produced.
+The host address-space cap/allocator combination is under diagnosis. Both
+cards are idle; scratch remains 47 MB cache / 546 GB free. Persistent log:
+`runs/capped_jobs/railgun-regression-20261101/log`. No job is live; ETA none.
+The spherical pilot waits for passing regressions. No single-ring, counter-rotation, stacked-ring or
 transport experiment is authorised by this go. Speed is unmeasured; the
 timeout is a budget, not an ETA. Numerical experiments belong on cluster GPUs.
 
