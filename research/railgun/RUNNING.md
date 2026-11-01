@@ -213,7 +213,7 @@ charge and a nodeless-field check prevent accepting the trivial vacuum or
 switching to an excited branch. At most 21 solves; stop on rejection or a
 validated sampled ergoregion. Use the same capped GPU execution limits.
 
-### Prepared resolution recovery at omega=0.73
+### Completed resolution recovery at omega=0.73
 
 The frequency scan stopped on the 72x10 unimposed constraint at omega=0.73.
 `studies/frequency_073_refined.json` changes only the grids to 96x12 / 128x16 /
@@ -222,7 +222,9 @@ converged but rejected 72x10 field; its use as an initial guess does not accept
 its constraint error. Every new grid must make at least two real corrections
 and pass independently; the three-grid observable test remains mandatory.
 
-Command approved and launched November 1 (three solves only):
+Command approved and completed November 1: three passing solves.
+Archive: `results/railgun/studies/frequency-073-refined/`. This output directory
+already exists; a rerun needs a new run-specific go:
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refined-20261101 \

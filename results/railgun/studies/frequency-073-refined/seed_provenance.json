@@ -1,0 +1,10 @@
+{
+  "source_archive": "studies/frequency-scan/frequency_05/grid_72x10.npz",
+  "source_sha256": "7772f35fbd72b9ab9bd4753d5eff329b287572a7804a6e452e4f69a461607123",
+  "source_validated": false,
+  "source_rejection": "constraint_c on 72x10",
+  "changed_configuration_keys": [
+    "grids"
+  ],
+  "scope": "The rejected coarse field is an initial guess only; each new grid must pass independent checks."
+}

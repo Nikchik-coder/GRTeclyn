@@ -1,0 +1,154 @@
+{
+  "grid": [
+    96,
+    12
+  ],
+  "newton": {
+    "converged": true,
+    "iters": 2,
+    "res_scaled_inf": 7.38377820671286e-15,
+    "res_history": [
+      8.705518051523076e-07,
+      1.8064459492957762e-10,
+      7.38377820671286e-15
+    ],
+    "jacobian_evals": 1,
+    "newton_steps": [
+      1.0,
+      1.0
+    ]
+  },
+  "length_scale": 5.0,
+  "stability": "not_assessed",
+  "raw_residual_max": 5.772687883265348e-12,
+  "constraint_c": 7.775884186544955e-10,
+  "constraint_19": 5.5814721960579833e-11,
+  "equation_max": 1.965819197958068e-12,
+  "boundary_max": 8.134950669101224e-13,
+  "border_max": 0.0,
+  "field_spectra": {
+    "f": {
+      "peak": 1.4152846543787256,
+      "relative_tail": 1.0488914254432978e-09,
+      "absolute_tail": 1.4358933116594603e-09,
+      "roundoff_field": false,
+      "tested_tail": 1.0145514517961477e-09
+    },
+    "w": {
+      "peak": 0.09649098077512208,
+      "relative_tail": 2.6753794064268984e-12,
+      "absolute_tail": 2.581499828716952e-13,
+      "roundoff_field": false,
+      "tested_tail": 2.5281028982906468e-12
+    },
+    "N": {
+      "peak": 0.011075759532780841,
+      "relative_tail": 1.1273337826094076e-09,
+      "absolute_tail": 1.1499925144098366e-11,
+      "roundoff_field": false,
+      "tested_tail": 1.0370136924144104e-09
+    },
+    "b": {
+      "peak": 0.11806118652396035,
+      "relative_tail": 3.5287772525979405e-09,
+      "absolute_tail": 3.4594103970331247e-10,
+      "roundoff_field": false,
+      "tested_tail": 2.9300639696551916e-09
+    },
+    "q0": {
+      "peak": 0.26165993000038085,
+      "relative_tail": 1.2931967081661173e-09,
+      "absolute_tail": 2.8607695610564454e-10,
+      "roundoff_field": false,
+      "tested_tail": 1.0932615676023187e-09
+    }
+  },
+  "spectral_tail": 2.9300639696551916e-09,
+  "charges": [
+    1.3571709385607236
+  ],
+  "matter_J": [
+    -1.3571709385607236
+  ],
+  "J_volume": -1.3571709385607236,
+  "M_Komar_volume": 1.2973467762409476,
+  "M_ADM_estimate": 1.2973467762434223,
+  "M_lapse_estimate": 1.2973467762434108,
+  "mass_extraction": "compactified_endpoint_first_derivatives",
+  "M_ADM_fit_estimate": 1.2973466624675365,
+  "M_lapse_fit_estimate": 1.2973465973024305,
+  "M_endpoint_quadrature_drift": 0.0,
+  "M_fit_drift": 3.3531239318485007e-07,
+  "J_asymptotic_estimate": -1.357168910461052,
+  "J_fit_drift": 1.0344509415061154e-05,
+  "density_peaks": [
+    {
+      "radius": 1.462096057218434,
+      "mu": 0.0024063900014893447,
+      "cylindrical_radius": 1.4620918239231002,
+      "axial_position": 0.0035183733333074324,
+      "density": 0.007842174402417357
+    }
+  ],
+  "J_surface_radii": [
+    110.0,
+    150.0,
+    210.0,
+    300.0
+  ],
+  "J_surfaces": [
+    -1.3571709379593568,
+    -1.3571709377724173,
+    -1.3571709375263137,
+    -1.3571709372117546
+  ],
+  "J_surface_estimate": -1.3571709372117546,
+  "J_surface_quadrature_drift": 2.4424906541753444e-15,
+  "lapse_min": 0.49280915765120775,
+  "B_min": 0.8819499064485835,
+  "dragging_max": 0.09649098017680015,
+  "gtt_max": -0.21719049914232239,
+  "gtt_min": -0.9999797526733232,
+  "shift_norm_over_lapse_max": 0.3540935704538137,
+  "ergoregion_sampled": false,
+  "low_density_threshold_relative": 1e-06,
+  "low_density_ergoregion_sampled": false,
+  "tail_shells": [
+    60.0,
+    80.0,
+    110.0,
+    150.0,
+    210.0,
+    300.0
+  ],
+  "scalar_tail_ratios": [
+    [
+      4.60803628969896e-18,
+      5.328722120341804e-19,
+      2.2219508021352568e-18,
+      4.581302426795494e-19,
+      3.072411343337171e-18,
+      1.2211517828515552e-18
+    ]
+  ],
+  "quadrature_drift": 2.3723222181778407e-14,
+  "angular_momentum_surface_error": 1.348968936554229e-09,
+  "offgrid_einstein_max": 1.7932723150979743e-11,
+  "offgrid_kg_max": 4.0124431555099704e-12,
+  "worst_kg_point": {
+    "radius": 2.5,
+    "theta": 0.8,
+    "kg_max": 4.0124431555099704e-12
+  },
+  "worst_einstein_point": {
+    "radius": 2.5,
+    "theta": 0.8,
+    "einstein_max": 1.7932723150979743e-11
+  },
+  "offgrid_intrinsic_kg_max": 4.0124414207864945e-12,
+  "kg_coordinate_difference": 1.1900203045200897e-15,
+  "verdict": "PASS",
+  "reasons": [],
+  "solve_seconds": 4.5281245918013155,
+  "total_seconds": 20.70460768090561
+}
