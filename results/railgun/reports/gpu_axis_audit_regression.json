@@ -1,0 +1,112 @@
+{
+  "commit": "e5096e78",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "15",
+      "time": "12.443",
+      "timestamp": "2026-11-01T16:30:02.780113+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_flat_phase_and_spin_corrected_energy_match_exact_transit",
+      "time": "0.041",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_first_turning_height_and_regular_phase_have_independent_precision",
+      "time": "0.022",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_substitution_into_full_cartesian_mpd_in_a_smooth_dragging_metric",
+      "time": "2.734",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_threshold_scan_brackets_all_three_rest_energies",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_dry_plan_refuses_an_unbudgeted_track_count",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_compactness_budget_preserves_three_grid_acceptance",
+      "time": "0.005",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_turnaround_agrees_with_exact_rindler_geodesic",
+      "time": "2.186",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_flat_transmission_does_not_trigger_a_turnaround",
+      "time": "1.179",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_exact_threshold_contacts_cannot_supply_a_timing_claim",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill_precision",
+      "name": "test_two_failed_controls_are_the_only_eligible_tighter_integrations",
+      "time": "0.215",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_precedes_a_nearby_turn_within_the_same_sample_interval",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_a_turn_before_the_destination_does_not_become_a_crossing",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_rejects_nonfinite_saved_states",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_recovered_crossing_matches_exact_rindler_time_and_killing_energy",
+      "time": "5.222",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.031",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T16:30:01Z threads=4 mem=160G timeout=1800s\n...............                                                          [100%]\n15 passed in 12.45s\n[capped_job] end 2026-11-01T16:30:15Z exit=0\n"
+}

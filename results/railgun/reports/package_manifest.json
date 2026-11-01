@@ -77,6 +77,10 @@
       "sha256": "cfe3c8f6ca3afdaa65bd75c74dab361e9b8e990dbb9942d4762a2525814a514e",
       "bytes": 5120
     },
+    "reports/gpu_axis_audit_regression.json": {
+      "sha256": "6bf95b369714d4acb079adcb99a3b6f49d437bd39461cf9d4322849115d59146",
+      "bytes": 3621
+    },
     "reports/gpu_baseline_regression.json": {
       "sha256": "d83685b3a8d0baf8d251f75230e9f872508dc668592e183cfc6d379c6be3edc0",
       "bytes": 688
@@ -128,6 +132,10 @@
     "reports/gpu_regression.json": {
       "sha256": "124426b20333f1ed9889e37ca55d8afe5086f2bac9ed63d1878a0fc771a0d27a",
       "bytes": 7465
+    },
+    "reports/gpu_regular_regression.json": {
+      "sha256": "e0a3a71fdfec9d09708f6c39581fa7e404778d7d88679fdb809e17c422d4aacd",
+      "bytes": 7572
     },
     "reports/gpu_strong_regression.json": {
       "sha256": "9e76e20bc4f4286e12423127dcc6baf7d5e887940af5cdb566ea938989201d74",
@@ -448,6 +456,46 @@
     "studies/annular-recovery-k12/sha256sums.txt": {
       "sha256": "046a2854c94233f55493eac2b8c1eb9da17448adc4cc5d51584f1a60822afb20",
       "bytes": 1349
+    },
+    "studies/annular-regular-k12-initial/README.md": {
+      "sha256": "08d9fe52b39a16dce288b462b47af3fcad77885f2ec11b020262e721316c6c6b",
+      "bytes": 427
+    },
+    "studies/annular-regular-k12-initial/execution.log": {
+      "sha256": "c9af36eb49dca6b9ea85d7d82349ac7d4ec57bc0e1d0d33909b744bd554d413a",
+      "bytes": 381
+    },
+    "studies/annular-regular-k12-initial/grid_192x16.json": {
+      "sha256": "df9d40cf6c1b0a41da7aa1e2027baf69ed80164de7f1ae8a9a91776269b21b8c",
+      "bytes": 6967
+    },
+    "studies/annular-regular-k12-initial/grid_192x16.npz": {
+      "sha256": "afbbc383af7fbee9bfe5c014ca442424b84d5eda52a754f7f0b1a4c1521d7360",
+      "bytes": 293222
+    },
+    "studies/annular-regular-k12-initial/grid_192x16_channel.tsv": {
+      "sha256": "c41079689352a154c8303bce50761bbcbfcc641bc0a4a371e372f3a1339a5a18",
+      "bytes": 170976
+    },
+    "studies/annular-regular-k12-initial/grid_192x16_density.tsv": {
+      "sha256": "14707d003edc187ef71743bd90e567736e3b928c9b2eb5c6e89508a103e57ed1",
+      "bytes": 562684
+    },
+    "studies/annular-regular-k12-initial/grid_192x16_initial.npz": {
+      "sha256": "c4a7408c6e3249ea0f269e21681721224c59ed425262f0db0e22388a73eb5523",
+      "bytes": 295718
+    },
+    "studies/annular-regular-k12-initial/manifest.json": {
+      "sha256": "36ffe3935fb416c8045d1622289426468dd42c12cb95a037fc2a52cb2d077bda",
+      "bytes": 1069
+    },
+    "studies/annular-regular-k12-initial/outcome.json": {
+      "sha256": "54323bd22541a12b66a11d2b036dc11c2da0d398b38095f1c6189b9c4edf48f7",
+      "bytes": 8264
+    },
+    "studies/annular-regular-k12-initial/sha256sums.txt": {
+      "sha256": "910139446bc1720f78b3b89a062a0f209e222e131ac6127d46b99840f836f8d1",
+      "bytes": 750
     },
     "studies/branch-seeds/README.md": {
       "sha256": "a9197b50766abc298b660b0ad7b4fbfa45f838491f59a1fb30cd45d23ea36a9c",

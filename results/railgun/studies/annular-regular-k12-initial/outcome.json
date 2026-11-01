@@ -1,0 +1,256 @@
+{
+  "accepted": false,
+  "observable_relative_drift": null,
+  "component_charge_relative_drift": null,
+  "edge_relative_drift": null,
+  "records": [
+    {
+      "grid": [
+        192,
+        16
+      ],
+      "newton": {
+        "converged": true,
+        "iters": 2,
+        "res_scaled_inf": 5.052394815363535e-13,
+        "res_history": [
+          1.6316979565941684e-06,
+          9.169385825337381e-11,
+          5.052394815363535e-13
+        ],
+        "jacobian_evals": 1,
+        "newton_steps": [
+          1.0,
+          1.0
+        ]
+      },
+      "length_scale": 50.0,
+      "stability": "not_assessed",
+      "raw_residual_max": 9.64370803699377e-10,
+      "constraint_c": 7.613882004978317e-13,
+      "constraint_19": 1.0992625376189661e-12,
+      "equation_max": 3.711459906217607e-11,
+      "boundary_max": 9.64370803699377e-10,
+      "border_max": 8.566036768797858e-11,
+      "field_spectra": {
+        "f": {
+          "peak": 0.24541801385308032,
+          "relative_tail": 5.3646262844252384e-11,
+          "absolute_tail": 1.2850751062234989e-11,
+          "roundoff_field": false,
+          "tested_tail": 5.23048003118646e-11
+        },
+        "w": {
+          "peak": 0.004351610964617221,
+          "relative_tail": 2.3205579195584346e-11,
+          "absolute_tail": 4.221678164747592e-14,
+          "roundoff_field": false,
+          "tested_tail": 6.435760724014398e-12
+        },
+        "N": {
+          "peak": 0.0006133315131765256,
+          "relative_tail": 1.092606431946058e-10,
+          "absolute_tail": 5.86604976032409e-14,
+          "roundoff_field": false,
+          "tested_tail": 7.247245891186689e-11
+        },
+        "b": {
+          "peak": 0.0053012440938708565,
+          "relative_tail": 2.6092275446666227e-11,
+          "absolute_tail": 1.1625541240636373e-13,
+          "roundoff_field": false,
+          "tested_tail": 1.9249171682010012e-11
+        },
+        "q0": {
+          "peak": 0.052512224493024895,
+          "relative_tail": 3.384392316655496e-15,
+          "absolute_tail": 4.7149241975963374e-17,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "q1": {
+          "peak": 0.00042593963240215334,
+          "relative_tail": 1.3165158853279435e-09,
+          "absolute_tail": 4.704842032187805e-13,
+          "roundoff_field": false,
+          "tested_tail": 1.0712159982163516e-09
+        }
+      },
+      "spectral_tail": 1.0712159982163516e-09,
+      "charges": [
+        0.9919609854787065,
+        0.08266341544942049
+      ],
+      "matter_J": [
+        -0.9919609854787065,
+        0.9919609853930459
+      ],
+      "J_volume": -8.56605897325835e-11,
+      "M_Komar_volume": 1.053808110824768,
+      "M_ADM_estimate": 1.0538081108554118,
+      "M_lapse_estimate": 1.053808110864947,
+      "mass_extraction": "compactified_endpoint_first_derivatives",
+      "M_ADM_fit_estimate": 1.0538086148683699,
+      "M_lapse_fit_estimate": 1.0538085997857087,
+      "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+      "M_fit_drift": 2.996429466550765e-06,
+      "J_asymptotic_estimate": 9.417189154472504e-05,
+      "J_fit_drift": 0.0009313295415888882,
+      "density_peaks": [
+        {
+          "radius": 6.179519290151313,
+          "mu": 0.001368069075259215,
+          "cylindrical_radius": 6.179513507314305,
+          "axial_position": 0.008454009240823788,
+          "density": 0.0002324560188746582
+        },
+        {
+          "radius": 151.1849714416494,
+          "mu": 0.001368069075259215,
+          "cylindrical_radius": 151.18482996170462,
+          "axial_position": 0.20683148407326812,
+          "density": 1.4541547073326221e-08
+        }
+      ],
+      "J_surface_radii": [
+        1100.0,
+        1500.0,
+        2100.0,
+        3000.0
+      ],
+      "J_surfaces": [
+        1.90718662882965e-08,
+        1.8807512980597793e-08,
+        -7.0674154793654624e-09,
+        3.4081821996950086e-09
+      ],
+      "J_surface_estimate": 3.4081821996950086e-09,
+      "J_surface_quadrature_drift": 7.00934487667837e-17,
+      "lapse_min": 0.8845225666619473,
+      "B_min": 0.9946979981703205,
+      "dragging_max": 0.004351610950448514,
+      "gtt_max": -0.7821222396522194,
+      "gtt_min": -0.9999995877710356,
+      "shift_norm_over_lapse_max": 0.02047217370648556,
+      "ergoregion_sampled": false,
+      "low_density_threshold_relative": 1e-06,
+      "low_density_ergoregion_sampled": false,
+      "tail_shells": [
+        600.0,
+        800.0,
+        1100.0,
+        1500.0,
+        2100.0,
+        3000.0
+      ],
+      "scalar_tail_ratios": [
+        [
+          7.11155921270005e-17,
+          1.2200365921149339e-17,
+          4.967870077220571e-17,
+          1.1413156850746802e-17,
+          3.3320551767560396e-17,
+          2.935498857586331e-17
+        ],
+        [
+          1.22420215834399e-09,
+          2.042956979052045e-15,
+          2.4635410774914424e-15,
+          5.461982153348335e-16,
+          1.5287257279754724e-15,
+          1.3098787210046646e-15
+        ]
+      ],
+      "quadrature_drift": 6.321205995024434e-15,
+      "angular_momentum_surface_error": 1.9157526878029082e-08,
+      "verdict": "REJECT",
+      "reasons": [
+        "angular_momentum_balance"
+      ],
+      "physical_nodal_interpolation_J_surfaces": [
+        2.346824400260585e-05,
+        8.407759624034718e-05,
+        -0.0001032330462363695,
+        0.00019331661295797216
+      ],
+      "Cartesian_J_surfaces": [
+        1.9071866417638618e-08,
+        1.880751304190738e-08,
+        -7.0674154494870676e-09,
+        3.4081822210588872e-09
+      ],
+      "Cartesian_J_surface_crosscheck": 1.2934211964291132e-16,
+      "representation": "dragging_quintic_regular_operator_v2",
+      "omitted_outer_w_equation_count": 0,
+      "omitted_outer_w_equation_max": 0.0,
+      "factored_tau_residual_max": 8.566036768797858e-11,
+      "leading_angular_relative_error": 0.0,
+      "J_infinity_factored": 0.0,
+      "J_infinity_anisotropy": 0.0,
+      "falloff_power": 5,
+      "offgrid_einstein_max": 1.3860009046757615e-10,
+      "offgrid_kg_max": 6.913913885853162e-14,
+      "offgrid_intrinsic_kg_max": 6.913913885853162e-14,
+      "kg_coordinate_difference": 1.1275702593849246e-17,
+      "annular_gap": {
+        "accepted": true,
+        "reasons": [],
+        "relative_density_cutoff": 1e-06,
+        "edges": [
+          {
+            "inner_radius": null,
+            "outer_radius": 33.29734113890109,
+            "peak_radius": 6.2208756,
+            "peak_density": 0.00023248738936337756,
+            "inner_edge_resolved": false,
+            "outer_edge_resolved": true
+          },
+          {
+            "inner_radius": 40.90802468379345,
+            "outer_radius": 362.738613362816,
+            "peak_radius": 150.8380858911014,
+            "peak_density": 1.4542840681281368e-08,
+            "inner_edge_resolved": true,
+            "outer_edge_resolved": true
+          }
+        ],
+        "inner_ring_outer_radius": 33.29734113890109,
+        "outer_ring_inner_radius": 40.90802468379345,
+        "gap_width": 7.61068354489236,
+        "minimum_width": 0.0,
+        "corridor": {
+          "midpoint_radius": 37.10268291134727,
+          "sampled_relative_density_max": [
+            9.980470959984067e-07,
+            9.967333885269433e-07
+          ],
+          "interior_samples": 381
+        },
+        "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+        "exact_vacuum_claim": false
+      },
+      "finite_height_channel": {
+        "accepted": true,
+        "rho_min": 35.20001202512418,
+        "rho_max": 39.00535379757036,
+        "z_min": -10.0,
+        "z_max": 10.0,
+        "relative_density_max": [
+          2.8924423929017494e-07,
+          4.416704690339568e-07
+        ],
+        "samples": [
+          21,
+          81
+        ],
+        "normalisation": "Each component own equatorial peak; threshold 1e-6.",
+        "scope": "Sampled finite-height matter channel; no particle trajectory certified."
+      },
+      "seconds": 71.24459857400507
+    }
+  ],
+  "solves": 1,
+  "seconds": 71.24908413388766,
+  "stability": "not_assessed",
+  "scope": "Coupled stationary annular field; no particle passage or stability claim."
+}
