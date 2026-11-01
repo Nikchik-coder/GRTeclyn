@@ -1,0 +1,208 @@
+{
+  "commit": "1f4054a0",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "31",
+      "time": "24.862",
+      "timestamp": "2026-11-01T14:34:18.534768+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_vacuum_and_nodal_branch_guards_fail_closed",
+      "time": "0.008",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_frequency_dry_plan_is_bounded_and_uses_an_accepted_source",
+      "time": "0.010",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_frequency_border_and_portable_state_preserve_measured_pin",
+      "time": "1.503",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_frequency",
+      "name": "test_fixed_frequency_recovers_the_same_saved_rotating_star",
+      "time": "19.496",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs0]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs1]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs2]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs3]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs4]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_invalid_field[kwargs5]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[even-0]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[even-1]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[even--2]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[even-3]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[odd-0]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[odd-1]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[odd--2]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_sources_reduce_to_independently_transcribed_single_field[odd-3]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_odd_parity_rows_have_finite_axis_and_equator_limits",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_independent_fields_add_stress_without_interference",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_flat_solution_and_correct_centre_rows",
+      "time": "2.118",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_charge_normalisation_and_winding_sign",
+      "time": "0.073",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_three_grid_policy_fails_closed",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_surface_angular_momentum_matches_an_analytic_rotational_flux[-0.3]",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_surface_angular_momentum_matches_an_analytic_rotational_flux[0.3]",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_roundoff_fields_do_not_define_a_relative_spectral_scale",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_tail_noise_is_only_ignored_below_the_physical_tail_gate",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_model",
+      "name": "test_tails_use_an_absolute_roundoff_floor_even_after_newton_recovery",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_diagnostics",
+      "name": "test_endpoint_mass_agrees_with_the_cartesian_ADM_surface_integral",
+      "time": "0.944",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_diagnostics",
+      "name": "test_flat_endpoint_mass_is_zero",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.025",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T14:34:17Z threads=4 mem=160G timeout=1800s\n...............................                                          [100%]\n31 passed in 24.87s\n[capped_job] end 2026-11-01T14:34:43Z exit=0\n"
+}

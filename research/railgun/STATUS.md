@@ -31,9 +31,13 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-frequency-regression-20261101`, second node/card 0,
-code `1f4054a0`, started **17:35 MSK**. GPU checks precede the approved
-frequency scan; 0.5 h hard cap, completion ETA not measured yet.
+**Live:** `railgun-frequency-scan-20261101`, second node/card 0,
+code `023f4384`, started **17:35:17 MSK**. First 72x10 Newton solve at
+omega=0.85 converged in eight corrections; independent validation follows.
+At most 21 solves; 0.5 h hard deadline **18:05:17 MSK**. Completion ETA
+is not measured yet. The preceding 31 GPU regressions passed in 24.87 s
+(**17:34:17–17:34:43 MSK**, code `1f4054a0`); portable report:
+`results/railgun/reports/gpu_frequency_regression.json`.
 
 **Previous scan:** `railgun-compactness-scan-20261101`, second node/card 0,
 code `4445ce44`, ran **17:15:58–17:19:40 MSK (0.0617 h)**, exit 2.
@@ -54,9 +58,9 @@ from `studies/compactness-scan/amplitude_03/accepted.npz` at omega=0.85,
 chunks 128, no AMR checkpoints. Require two corrections on every grid,
 nonvacuum component charge and a nodeless scalar; measure the amplitude
 instead of imposing its fixed-radius pin. Stop on rejection or an accepted
-sampled ergoregion. Regression checks launched; scan waits for a passing report.
+sampled ergoregion. Regression checks passed; the scan is running.
 Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
-Card 0 reserved for regression checks; card 1 idle. Scratch clean at **17:35 MSK**: 47 MB in `_cache/` only,
+Card 0 running the scan; card 1 idle. Scratch clean at **17:35 MSK**: 47 MB in `_cache/` only,
 537 GB free; first node not listed. No completion ETA.
 
 **Uphill experiment accepted after first-crossing audit:** 32 tracks,
