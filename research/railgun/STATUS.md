@@ -31,6 +31,18 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
+**Live:** `railgun-uphill-regression-20261101`, second node/card 0,
+code `4d40acbc`, started **16:51 MSK**. Testing turnaround events, even/odd
+component energy, existing transport/gap checks and CUDA float64 placement.
+Stationary tests: t not applicable; speed/ETA not yet measured; hard cap
+0.5 h, **17:21 MSK**. Four threads, 160 GiB; no AMR checkpoints.
+**Approved queue:** uphill 32-track experiment, then the seven-point,
+21-solve compactness scan, sequentially on card 0 after successful tests.
+Each has a separate 0.5 h cap, four threads, 160 GiB and chunks 128;
+no AMR checkpoints, retain fields and logs. Mixed-mass/stacked seeds remain
+unapproved for GPU launch. Scratch clean at **16:51 MSK**: 47 MB in
+`_cache/` only, 538 GB free; first node not listed. Card 1 idle.
+
 **Requested follow-on experiments (November 1):**
 
 - **Uphill finite-endpoint selection:** implementation and bounded config
@@ -61,10 +73,10 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
   cylindrical density checker retains those derivatives. A matter-free
   equatorial slot or axial barrel cannot be inferred from parity alone.
 
-These are separate experiments. Their GPU launches need their own concrete
-go; the completed annular correction authorises none of them.
+These are separate experiments. The uphill and compactness launches above
+now have their own concrete go; the mixed-mass and stacked branches do not.
 
-**Live:** none. `railgun-annular-correction-k12-20261101`, second node/card 0,
+**Completed:** `railgun-annular-correction-k12-20261101`, second node/card 0,
 code `8946f146`, ran **16:27:12–16:28:22 MSK (0.0194 h)**, exit 2.
 Two additional Newton updates reduced the scaled residual to 9.95e-17;
 **the finest-grid angular-momentum surface check still failed**, 1.36332e-8
