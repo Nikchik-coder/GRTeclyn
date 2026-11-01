@@ -14,6 +14,11 @@ measurements or evidence of a jet, a hidden vortex or a finite Tipler tube.
 reference pilot on 40x6, 56x8 and 72x10, at most 30 Newton iterations per grid.
 Each job has four CPU threads, 160 GiB host address space and a 0.5 h timeout;
 Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained.
+**Live:** `railgun-regression-r2-20261101`, second node/card 0, commit
+`5a27e82f`, started **10:09 MSK**. Timeout **0.5 h (10:39 MSK)**; speed and
+completion ETA are unmeasured. It repeats the suite with a 96-point charge
+fixture, explicit CUDA/float64 assertions and a JUnit record under `runs/railgun/`.
+
 `railgun-regression-20261101` launched **10:05 MSK**, second node/card 0,
 commit `fad3d846`. It aborted at **10:05 MSK**, exit 134, during CUDA backend
 initialisation after 16 algebra tests; no GPU numerical result was produced.
@@ -24,7 +29,7 @@ solver/winding tests passed. The Gaussian analytic-charge fixture missed its
 2e-8 tolerance by a 2.60e-8 interpolation error on 64 radial points; its grid
 is being refined to 96 without relaxing the tolerance. Both
 cards are idle; scratch remains 47 MB cache / 546 GB free. Persistent log:
-`runs/capped_jobs/railgun-regression-20261101/log`. No job is live; ETA none.
+`runs/capped_jobs/railgun-regression-20261101/log`. These two earlier jobs are finished.
 The spherical pilot waits for passing regressions. No single-ring, counter-rotation, stacked-ring or
 transport experiment is authorised by this go. Speed is unmeasured; the
 timeout is a budget, not an ETA. Numerical experiments belong on cluster GPUs.
