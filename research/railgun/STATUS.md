@@ -31,23 +31,24 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none; both cards idle. Fresh-Jacobian quintic recovery finished
+**Live:** targeted GPU checks started **19:56:40 MSK**, code `f898960d`,
+second node/card 0 (`railgun-phase-polish-gpu-tests-20261101`) and card 1
+(`railgun-regular-cubic-gpu-tests-20261101`). Each 0.5 h cap, deadline
+**20:26 MSK**. Explicit go covers the two order-32 phase integrals and
+three-grid regular-cubic recovery after passing tests. Conditional eight-track
+annular particles are already approved and require full field acceptance.
+All gates unchanged; four threads/160 GiB/chunks 128/no AMR checkpoints.
+Scratch clean at **19:56 MSK**: 47 MB `_cache/`, 534 GB free; first node
+not listed. No production ETA during test/compilation.
+
+**Latest failed field correction:** fresh-Jacobian quintic recovery ran
 **19:44:04–19:45:20 MSK**, code `8b592e9f`, exit 2. Three updates/four
 Jacobians give scaled residual 6.65e-17 on 192x16, but finite-sphere J error
 4.97200e-8 fails 1e-8. All other gates, including infinity modes, pass.
 Later grids unattempted; no off-axis particle launch. Archive:
 `results/railgun/studies/annular-regular-polish-k12/`.
-Preceding 37 GPU tests pass. Scratch clean at **19:45 MSK**:
-47 MB `_cache/`, 534 GB free; first node not listed. No ETA.
-
-**Approved, syncing before GPU regressions:** two order-32 scalar phase integrals only
-(`studies/axial_phase_polish_073.json`, card 0), and regular-cubic recovery
-(`studies/annular_regular_cubic_k12.json`, card 1), at most three solves on
-192x16/224x18/256x20, fresh Jacobians/1e-14/minimum two updates/max 30.
-All physical acceptance gates unchanged. Four threads/160 GiB/0.5 h/chunks
-128/no AMR checkpoints per job, targeted GPU tests first. The conditional
-eight-track annular pilot is already approved but stays blocked until the
-entire field study passes. No new MPD track in the two-integral phase audit.
+Preceding 37 GPU tests pass. No physical tolerance is relaxed by the next
+regular-cubic profile; it measures the leading infinity J independently.
 
 **Independent particle phase audit completed:** code `e33bd0c8`,
 **19:31:31–19:38:26 MSK (0.1153 h)**, exit 2. All 656 full Cartesian MPD
