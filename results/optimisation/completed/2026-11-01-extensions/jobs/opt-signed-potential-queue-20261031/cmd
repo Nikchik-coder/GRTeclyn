@@ -1,0 +1,1 @@
+env QUEUE_GPU_MEM_MAX_MB=100 QUEUE_IDLE_EXIT=1 QUEUE_POLL_SEC=30 bash grteclyn-wrapper/scripts/campaigns/lib/gpu_queue.sh runs/optimisation/signchanging_20261031/queue 0 1

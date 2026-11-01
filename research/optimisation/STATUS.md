@@ -22,7 +22,7 @@ before instability screening can be enabled again.
 The October 30 stationary extension trials are archived as exploratory work;
 their small validated gain does not warrant inclusion in the paper. The
 October 31 instruction reopens exploration: fixed true area, bounded tides
-and canonical bosons are now being tested (Live below). D30 evolution authorization was withdrawn
+and canonical bosons were tested (completed results below). D30 evolution authorization was withdrawn
 on 2026-10-30 at about 22:26 MSK: stopped at t = 0.54. A fresh D30 CMA-ES
 search is authorized: cheap finer-grid screening of each new best, then a
 full independent re-solve of the finalist (choice confirmed at 22:34 MSK). D0 ended with a NaN at t = 88.4175. Evolution of the validated D30 e0316 winner is authorized on 2026-10-31, N128 on card 1, checkpoints off. The 2026-10-30
@@ -60,188 +60,112 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 | D21 potential-only dynamical comparison | Evolve the saved V=0 reference at J=1.0138 with drive 0, same R_e, binary, grid and perturbation | One N128 evolution, roughly 6--9 GPU h to t100--150 at 18 units/h; deferred, no new launch authorized here; checkpoint choice needed |
 | Continuum growth rate and onset model | Fit each saved D21 resolution over matched linear intervals, test fit-window sensitivity and a common-tau logarithmic onset law | CPU post-processing of existing streams; no new evolution needed for the first check |
 
-## Signed-interior potential experiment — queued (22:13 MSK)
+## Live — none (2026-11-01, 08:23 MSK)
 
-The October 31 request allows negative Q inside the kink while keeping both
-asymptotic vacua locally massive. `--potential-domain endpoint-positive`
-requires m_min>0 and Q(1)>0; the default positive family remains available.
-For V=m² psi²(psi-psi_minus)² Q/psi_minus², both endpoints retain V=V'=0,
-with V''(0)=2m² and V''(psi_minus)=2m²Q(1). These local conditions do not
-establish a connecting solution or stability. The rotation equation contains
-no explicit V term: enhanced frame dragging is a hypothesis to measure.
+**All three GPUs are free.** The two D90 extensions, positive-family geometry
+pilot and both signed-domain searches are finished; their automatic queue is
+empty and its dispatcher exited normally. No stationary or evolution job from
+this campaign is live, and no new job was launched during closeout. ETA: none.
+Scratch is clean: first node **46 MB cache / 598 GB free**, second node
+**47 MB cache / 549 GB free**. No plotfiles or AMR checkpoints to prune.
 
-**Queue launched 2026-10-31 at 22:13:16 MSK**, second node, slots 0/1:
-`opt-signed-potential-queue-20261031`, detached session 103341. Both nodes
-see code `485f8d44` after the shared checkout pull. Verified at 22:13:
-runner/workers alive, both jobs pending, running directory empty; all three
-GPUs remain occupied by their existing searches. No signed search has started.
-The next free slot takes D90, then the other slot takes geometry. The queue
-checks every 30 s and each job independently refuses missing telemetry or an
-occupied GPU. Four threads and 200 GiB virtual cap per process; queue timeout
-**8 h, November 1 at 06:13 MSK**, individual search caps **4 h after dispatch**.
-Start/finish ETA is pending dispatch and measured progress. Queue state and
-UTC event times: `runs/optimisation/signchanging_20261031/queue/queue.log`;
-commands, commit and hashes: the parent `dispatch_manifest.txt` and job files.
-No queued run needs a checkpoint. Existing searches continue unchanged.
+## Completed high-spin and geometry searches — packed November 1
 
-Two stationary tests are queued; neither displaces an active job:
+Archive: [`completed/2026-11-01-extensions`](../../results/optimisation/completed/2026-11-01-extensions/README.md).
+All evaluation traces and acceptance decisions, original commands/logs, final
+recovery fields, references and selected rejected fields are retained with
+source and archive hashes. Selected fields are finite; all three accepted
+backgrounds have fresh Newton corrections on all three grids. No new evolution
+or dynamical stability claim. Paper figures and tables remain unchanged.
 
-| Test | Search and control | Budget / dispatch |
+| Search | Completion MSK | Evaluations | Outcome |
+|---|---|---|---|
+| D90 warm, second/card 1 | Oct 31 22:48:54 | 744/800, CMA tolerance stop | Refined X=0.623381857, 3.98% above matched V=0; exit 0 |
+| D90 weak, second/card 0 | Oct 31 22:48:20 | 768/800, CMA tolerance stop | No screened or validated finalist; exit 2 |
+| Positive geometry, first/card 0 | Nov 1 00:52:54 | 200/200 | Refined X_full=0.785362378 at J=6.441851; exit 0; matched V=0 unresolved |
+| Signed D90, second/card 0 | Oct 31 23:34:40 | 400/400 | No screened or validated finalist; queue marked failed |
+| Relaxed geometry, second/card 1 | Oct 31 23:52:00 | 200/200 | Refined X_full=0.767319886 at J=6.483804; exit 0; winner still has positive Q |
+
+The dispatcher `opt-signed-potential-queue-20261031` started Oct 31 at
+22:13:16, dispatched D90 at 22:48:50 and geometry at 22:49:20, and exited
+23:52:12, all MSK. Its exit 0 records a drained queue, not success of every
+child. No search hit a timeout. Queue log and original job records are packed.
+No further signed-domain search is queued.
+
+### What the results establish
+
+**D90 still has no validated improvement over V=0 (X=0.599549030).** Both
+positive-family extensions reach provisional X=0.56494496 but fail the
+acceptance gates there. Warm has only one screened candidate, which refines
+to X=0.623381857 with 4/2/3 Newton updates; weak has none. The previously
+validated low-mass X=0.611923754 remains better and is still 2.06% above V=0.
+
+The signed search reaches **provisional X=0.203862059 (66.00% below V=0)**,
+with min Q=-0.885797 and Q(1)=3.719669. This is a rejected candidate:
+**all 42 search-grid PASS candidates fail finer-grid screening**. No
+`best_clean` exists. The frontier fields and all failures are packed for
+resolution diagnosis; they must not become article points or evolution seeds.
+A failed screen does not establish whether a separately refined branch exists.
+
+**Geometry:** both winners pass 150x30/180x36/210x42 perturbed recovery,
+two Newton corrections per grid, X_full drift about 2.1e-12. Independent
+equations, minimal-surface and tidal checks pass. At fixed true area
+A=204.026798 and gamma=-pi, spin rose from J=1.013800 to 6.441851/6.483804.
+The initial-reference X_full=4.684238263 falls by 83.23%/83.62%, but those
+are joint spin-and-potential changes. Both massless continuations to the
+winning J failed Newton convergence (residual about 2e-4), so
+`validated_fractional_improvement` remains null. A matched-spin benefit from
+the potential has not been established. X_full uses R_A normalization and
+includes angular gradients; it is not interchangeable with the D90 X above.
+
+The relaxed-domain winner's **min Q=0.821613 remains positive**. It gives no
+evidence that a negative interior helped. Four negative-interior proposals
+passed the coarse geometry gates; their best X_full=2.557900 was not a
+finalist and has no independent recovery. Its fields are archived.
+
+### Search definitions and remaining checks
+
+D90 extensions hold the exact member 0031 R_e/J/gamma, use m=[0,0.20],
+q_i=[-2,8], seeds 223/227, and 150x30 search with cheap per-best finer-grid
+screens and perturbed finalist recovery. Warm x0=(0.05850821,-1.593098,
+0.333527,3.429064), weak x0=(0.01,0,0,0); mass steps 0.01/0.005.
+The positive geometry search uses the true minimal surface, not the legacy
+constant-eta area pin: J=[0,7.7], m=[0.005,1.2], q_i=[-2,8], seed 211,
+and an unchanged tidal ceiling four times the initial massless reference.
+
+The opt-in `--potential-domain endpoint-positive` keeps m_min>0 and Q(1)>0
+while allowing Q<0 in the interior. The double zeros retain V=V'=0 at the
+vacua, with V''(0)=2m² and V''(psi_minus)=2m²Q(1). These are local vacuum
+conditions, not global existence or stability guarantees. There is no explicit
+V source in the rotation equation; stronger frame dragging is a hypothesis,
+not a deduction from the sign of V. Default full-interval positivity remains.
+Signed D90 uses m=[0.001,0.20], q_i=[-8,8], x0=(0.05,-4.2,4.2,0), seed 239;
+relaxed geometry uses m=[0.005,1.2], the same q box, x0=(0.5,-4.2,4.2,0),
+seed 241, and the same J range/area/tidal constraint as the positive pilot.
+Commands: `studies/run_signed_potential.sh`; signed code 485f8d44.
+The implementation passed 189 tests before dispatch.
+
+Outstanding diagnostics, **not launched or queued by this closeout**:
+
+| Question | Required work | Planning cost |
 |---|---|---|
-| Signed D90 | Exact member 0031 R_e/J/gamma; m=[0.001,0.20], q_i=[-8,8], x0=(0.05,-4.2,4.2,0), seed 239; explicit V=0 control | 400 CMA proposals, 4 h cap; next free second-node GPU |
-| Signed geometry | D21 true minimal area/gamma fixed, J=[0,7.7], initial-reference tidal ceiling ×4; m=[0.005,1.2], q_i=[-8,8], x0=(0.5,-4.2,4.2,0), seed 241; V=0 control at winning J required | 200 CMA proposals, 4 h cap; other free second-node GPU |
+| Is signed D90's low X a resolved branch? | Actual perturbed re-solves of selected rejected fields on finer grids; inspect scalar residual and tails without weakening acceptance | Roughly 0.25–1 GPU h, resolution-dependent |
+| Does geometry beat V=0 at its winning spin? | Repair/continue massless controls at the same true area, gamma and J, then independent three-grid recovery | Roughly 0.25–1 GPU h, continuation-dependent |
 
-The starting shape has Q(0)=Q(1)=1 and Q(1/2)=-0.05. Allowing signed
-interiors does not force the winner to have one: saved extrema and endpoint
-values distinguish signed candidates from ordinary positive-family results.
-Both searches use 150x30 and actual perturbed final refinement on
-150x30/180x36/210x42. D90 keeps cheap finer-grid screens on each new best;
-the geometry study retains independent off-grid equations, the true minimal
-surface, angular-gradient exoticity and the tidal ceiling. No radial stability
-screen, evolution, AMR checkpoints or plotfiles. Negative V itself contributes
-no direct null-contracted term; reduced X still requires changed scalar gradients.
+The proposed local curvature/rotation balance remains unverified. No
+coordinate-dependent potential has been introduced; shape redistribution does
+not remove the Gauss–Bonnet constraint for spherical throat topology. A small
+X alone does not demonstrate a regular traversable zero-exoticity limit.
 
-Validation: **189 optimisation tests pass**, including signed-vacuum derivatives,
-opt-in proposal acceptance, final-refinement metadata, free-J matched controls
-and rejection before GPU selection. Dispatch guards reject missing telemetry
-and busy cards; shell syntax and whitespace checks pass.
+### Earlier low-mass closeout
 
-Reproducible commands: `research/optimisation/studies/run_signed_potential.sh`.
-Output root: `runs/optimisation/signchanging_20261031/` (D90 `d90.tsv`,
-geometry `geometry/potential-t4/`). Dispatch must fail closed if GPU telemetry
-fails or a compute job is present. At **22:13 MSK** all three GPUs remain
-occupied: first node geometry, second node the two D90 extensions. Scratch is
-clean: first **46 MB cache / 614 GB free**, second **47 MB / 559 GB free**.
-
-## Live
-
-Checked **2026-10-31 at 21:52 MSK**. Both initial 400-proposal
-low-mass searches finished, exit 0: D80 at **21:44:01**, D90 at **21:51:50**.
-D80: X=1.069974516102 versus V=0 X=1.419239991186 (24.61% lower),
-m=0.1998769, q=(-1.998487,0.022093,7.996882). D90: screened finalist
-X=0.611923753514 versus V=0 X=0.599549029786 (**2.06% higher**),
-m=0.05850821, q=(-1.593098,0.333527,3.429064). It did not beat V=0;
-the unqualified coarse minimum X=0.60859386 also remains above V=0.
-
-**Perturbed recovery:** original final-grid checks took zero Newton updates.
-Their `best_clean` labels alone are insufficient independent validation.
-D80's recheck `opt-d80-lowmass-recheck-20261031` ran on second/card 0
-from 21:51 MSK to **21:51:49**, exit 0: all three grids PASS with actual
-Newton corrections, finest X=1.069974516105, E19=1.13e-10, E_c=4.11e-10.
-D90's corresponding recheck ran **21:52:36–21:53:15**, second/card 0,
-job `opt-d90-lowmass-recheck-20261031`, coarse e0397, exit 0. All three
-grids PASS with 2/2/2 Newton corrections: finest X=0.611923753610,
-E19=1.08e-10, E_c=3.30e-10. It remains 2.06% above V=0. Outputs are `d80_recheck/` and `d90_recheck/`
-under `runs/optimisation/low_mass_20261031/`; originals stay unchanged.
-
-**D90 extension authorized and started.** Warm restart launched
-**21:52:36 MSK**, second/card 1, job `opt-d90-extend-warm-20261031`,
-code `87d52379` (checkout `acdbade8`). 800 CMA proposals, seed 223,
-x0=(0.0585082124,-1.5930976620,0.3335265754,3.4290638686), mass step 0.01.
-Bounds m in [0,0.20], q_i in [-2,8]; allowing m=0 includes the classical
-limit, although a finite random search need not propose that exact endpoint.
-Reference R_e/J/gamma unchanged. Search 150x30, cheap per-best finer-grid
-screens, actual perturbed 150x30/180x36/210x42 finalist recovery.
-Four threads, 200 GiB virtual cap, **4 h timeout, November 1 at 01:52 MSK**;
-measured search speed/ETA pending walk-in. Output
-`runs/optimisation/d90_extension_20261031/warm.tsv`.
-A separate weak-kink restart launched **21:53:50 MSK**, second/card 0:
-`opt-d90-extend-weak-20261031`, x0=(0.01,0,0,0), mass step 0.005,
-seed 227, 800 proposals, same bounds and gates. Four threads, 200 GiB
-virtual cap, **4 h timeout, November 1 at 01:53 MSK**; output
-`runs/optimisation/d90_extension_20261031/weak.tsv`. At 21:55 both restarts have entered CMA and are advancing; GPU memory
-is about 61.7 GiB each. A warm proposal reaches X=0.59693 but fails the
-finer scalar residual gate (~7.4e-8). Weak-kink proposals around X=0.586
-also fail independent constraints. These are not validated reductions.
-Measured completion ETA pending a longer search sample; both are detached.
-First-node card 0 continues the geometry pilot below. No evolution,
-plotfiles or AMR checkpoints; no consumer is needed. At 21:55 storage
-is clean: first **46 MB cache / 614 GB free**, second **47 MB / 558 GB free**.
-
-The legacy search and standalone resolution command now request a
-perturbed seed, at least one Newton correction and a 1e-14 solve target
-for final refinement, as the true-area study already does. Cheap screens
-remain unchanged. The focused search/resolution/study suites pass **84 tests**.
-Old zero-update labels must not substitute for this recovery test; the
-original files and logs are retained alongside the recheck in
-[`completed/2026-10-31-low-mass`](../../results/optimisation/completed/2026-10-31-low-mass/README.md).
-The compact pack retains all acceptance records and selected numerical fields,
-with source/archive hashes. Both old searches and both rechecks are closed out;
-there are no stationary scratch plotfiles or checkpoints to prune.
-
-Requested experiment: m in [0.001, 0.20], x0=(0.10,0,0,0), mass step 0.03,
-q_i in [-2,8], seeds 205 (D80) and 207 (D90). Hold each classical reference's
-R_e, J and gamma fixed: members 0023 and 0031, respectively. Search grid
-150x30; screen each new best on 180x36 and 210x42, then independently
-re-solve the finalist. Existing positivity, Newton and independent-constraint
-gates are unchanged. Massless references are explicitly recomputed and
-remain the controls. A candidate above the massless bill is not an improvement;
-radial stability remains not assessed. Long tails at very small mass may fail
-resolution checks and require a separate resolution diagnosis.
-
-D90's old m=0.150309 result sits near the old bound and motivates this test;
-it does not establish that lowering the bound must beat V=0. D80 already
-beat its massless reference on the old search grid, with its minimum at
-m=0.234 outside the new narrow box. No quantitative decomposition assigning
-88% of throat support to frame dragging has been verified here. The proposed
-pressure/frame-dragging mechanism remains a hypothesis, not an article result.
-The old free-J D21 scan changed spin, so it is not a fixed-spin comparison.
-
-Launch-time storage: first node **46 MB cache, 609 GB free**; second node
-**47 MB cache, 529 GB free**. No scratch plotfiles or checkpoints.
-
-### Geometry/free-spin pilot — launched (21:21 MSK)
-
-**Launched 2026-10-31 at 21:21:32 MSK**, first node / GPU 0, after pulling
-`69e9590a` and checking the card idle. Job `opt-d21-geometry-freej-20261031`;
-output `runs/optimisation/geometry_20261031/potential-t4/`, allocation and
-commit in its parent's `launch.json`, exact command/log in `runs/capped_jobs/`.
-Four threads, 220 GiB virtual-address cap (CUDA reservations included),
-Jacobian chunks 512, **4 h hard timeout, November 1 at 01:21 MSK**.
-At **21:55 MSK**, 41/200 CMA proposals have completed; the job is alive.
-Best provisional full X=1.685086 at J=3.02362, within the initial tidal cap;
-it is not yet a finer-grid winner or a matched-spin potential improvement.
-Recent speed ~88 evaluations/h gives **1.81 h, 23:43 MSK** for the search,
-followed by finalist and matched-reference validation.
-Stationary-only: no plotfiles, AMR checkpoints, frames or consumer.
-Launch storage: first node **46 MB cache, 608 GB free**; second node's
-21:19 check **47 MB cache, 539 GB free**. No scratch leftovers.
-
-Authorized: fixed **true minimal throat area** and asymptotic redshift, free J,
-with m >= 0.005. The legacy `--pin area` fixes a constant-eta surface; this pilot
-instead extends the coupled minimal-surface study. Config:
-[`studies/d21_geometry_free_spin.toml`](studies/d21_geometry_free_spin.toml).
-Initial reference: D21 member 0000, J=1.013799991684, A=204.0268;
-warm seed: the validated factored t4 finalist, X_full=2.188430376060.
-
-Search box: J in [0,7.7], m in [0.005,1.2], q_i in [-2,8]; seed 211,
-200 CMA evaluations at 150x30, mass step 0.1 and J step 0.5. The upper spin
-bound is a finite pilot choice, not a proven wormhole limit. Tides stay below
-four times the **initial** massless reference; changing spin cannot loosen
-that cap. Full X includes radial and angular gradients, with the existing
-independent Einstein/scalar, surface and quadrature gates. The finalist and
-a separately continued massless control at its own J are re-solved on
-150x30, 180x36, 210x42. Joint gain and matched-spin gain are separate outputs;
-a failed control yields no claimed potential-induced gain. Stability remains
-not assessed. Saved shape, lapse and tidal diagnostics must be examined
-before interpreting a small X as a traversable, near-zero-exoticity limit.
-
-The proposed local curvature/rotation balance and polar-support mechanism
-are hypotheses, not verified identities or findings. A scalar-only V(psi)
-already permits angular field variation and does not enforce equal proper
-wall thickness at all latitudes. Multiplying it by a prescribed angular
-weight would require a consistent covariant matter extension. No such
-coordinate-dependent potential is added. For spherical throat topology,
-Gauss--Bonnet fixes integrated Gaussian curvature at 4 pi; shape can
-redistribute it, not erase it. The rotating massless family's Kerr limit
-([Kleihaus and Kunz](https://arxiv.org/abs/1409.1503)) does not establish a
-regular traversable X=0 solution. This pilot tests the covariant existing
-model before any further winding-matter extension.
-
-Validation before launch: full optimisation suite **177 passed**, then **39 focused tests passed**
-including the final matched-control failure case; added coverage checks J continuation, fifth-parameter propagation, fixed-area
-control matching and rejection of spin-only gains. The existing D80/D90
-jobs use the legacy driver and are unaffected by this study extension.
+The original D80/D90 400-proposal runs and independent rechecks are archived
+in [`completed/2026-10-31-low-mass`](../../results/optimisation/completed/2026-10-31-low-mass/README.md).
+D80: X=1.069974516105 versus V=0 1.419239991186 (24.61% lower),
+2/3/2 Newton updates. D90: X=0.611923753610 versus V=0 0.599549029786
+(2.06% higher), 2/2/2 updates. Original zero-update `best_clean` labels are
+superseded by these perturbed rechecks. The mass floor motivated the search;
+lowering it did not guarantee a gain. Stability screening remains disabled.
 
 ### Completed evolution and boson closeout (20:35 MSK)
 

@@ -71,6 +71,14 @@ include the finished nonrotating boson CMA and strict rotating continuation.
 Neither produced a validated D21 boson winner; rejected proposals are not
 added as physical points to the article figures.
 
+The completed high-spin and geometry experiments are archived in
+[`completed/2026-11-01-extensions`](completed/2026-11-01-extensions/README.md).
+The D90 extensions establish no validated gain over V=0; the signed-interior
+minimum is rejected. Two geometry finalists pass independent refinement, but
+matching massless controls at their increased spin remain unresolved. The
+relaxed-domain winner still has a positive potential throughout the field
+interval. These exploratory outputs are excluded from article figures.
+
 ## Stationary mechanism and trade-offs
 
 `physics/` compares saved D0/D21/D30 fields with their exact fixed-R_e,

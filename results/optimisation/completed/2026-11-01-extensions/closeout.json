@@ -1,0 +1,29 @@
+{
+  "checked_utc": "2026-11-01T05:23:19Z",
+  "finished_searches": 5,
+  "active_gpus": 0,
+  "queued_searches": 0,
+  "archive_source_files": 285,
+  "finite_npz_files": 34,
+  "checks": [
+    "source and packed SHA256 verification",
+    "lossless numerical array preservation",
+    "finite selected numerical fields",
+    "positive Newton correction counts on every accepted final grid",
+    "outcome and saved finalist agreement"
+  ],
+  "storage": {
+    "first_node": {
+      "scratch_cache_MiB": 46,
+      "free_GiB": 598
+    },
+    "second_node": {
+      "scratch_cache_MiB": 47,
+      "free_GiB": 549
+    }
+  },
+  "scratch_plotfiles": 0,
+  "scratch_checkpoints": 0,
+  "pruned_files": 0,
+  "stability": "not_assessed"
+}
