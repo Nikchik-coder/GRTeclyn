@@ -25,9 +25,10 @@ def preflight(source,config):
                equation_tol=1e-8,tail_tol=1e-6,observable_tol=1e-6,edge_tol=1e-6,
                relative_density_cutoff=1e-6,channel_half_height=10.,perturbation=0.)
     if any(config.get(k)!=v for k,v in fixed.items()):raise ValueError('fixed three-solve falloff recovery budget and unchanged gates required')
+    if config.get('falloff_power',3) not in (3,5):raise ValueError('cubic or zero-J quintic profile required')
     return dict(metadata=meta,source_sha256=digest,max_solves=3,
                 grids=config['grids'],numerical_execution=False,
-                representation='w=(1-s)^3 H; two omitted outer PDE rows checked independently')
+                representation=f'w=(1-s)^{config.get("falloff_power",3)} H; omitted outer PDE rows checked independently')
 
 
 def run_recovery(source,config,directory):
@@ -44,12 +45,12 @@ def run_recovery(source,config,directory):
         source_model='canonical_regular_centre',output_model=MODEL,
         commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         platform='gpu',float64=bool(old.jax.config.jax_enable_x64),stability='not_assessed',
-        tau='Infinity and two outermost w-PDE rows replaced by three zero auxiliary rows; omitted PDEs tested.'))
+        tau=f'Power {config.get("falloff_power",3)} falloff; every omitted outer PDE row is tested.'))
     previous=old,old_u;records=[];started=time.monotonic()
     radius=np.loadtxt(Path('results/railgun/studies/annular-recovery-k12/grid_192x16_density.tsv'),usecols=0)
     for nx,ny in config['grids']:
         tick=time.monotonic();name=f'grid_{nx}x{ny}'
-        p=FactoredDraggingProblem(old.fields,nx=nx,ny=ny,length=50.,target_j=0.)
+        p=FactoredDraggingProblem(old.fields,nx=nx,ny=ny,length=50.,target_j=0.,power=config.get('falloff_power',3))
         guess=p.transfer(*previous,perturb=0.)
         save_state(directory/f'{name}_initial.npz',p,guess)
         print(f'[falloff] solve {nx}x{ny}, unknowns={p.n_unknowns}',flush=True)

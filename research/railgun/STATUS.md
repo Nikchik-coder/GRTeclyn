@@ -621,13 +621,10 @@ under `results/railgun/figures/two-rings*.png`, with exterior dragging in
 `counter-dragging.png`. Between-ring particle trajectories, asymptotic
 ejection and dynamical stability remain untested.
 
-**Approved falloff recovery, following its GPU checks on card 1:** `studies/annular_falloff_k12.json`,
-three fresh solves 192x16 / 224x18 / 256x20 from the saved finest correction,
-max 30 iterations each, minimum two updates. Cubic Frobenius w falloff,
-explicit factored model/loader, all original gates plus omitted outer PDEs,
-Cartesian metric-ratio flux and infinity-mode crosschecks. Prototype and
-pure-data checks passed. Separate go received for GPU manufactured checks,
-then at most three fresh solves. No off-axis particles are included.
+**Cubic falloff experiment completed, rejected:** the separately approved
+run stopped after its first grid on the added literal-infinity gate.
+The original source and every failed field are retained, as reported above.
+No off-axis particle launch follows from this rejected study.
 
 **Seed screen completed and archived:** `studies/branch_seeds.json`,
 six full 2D GPU bound-mode pencils on the accepted weak k=1 metric: new
@@ -637,3 +634,15 @@ a future amplitude homotopy, not a relabelled winding or accepted final
 geometry. The outer -6/-8 species can be seeded only after a pure mixed-mass
 inner branch is independently recovered. Six-problem go received; no
 nonlinear mixed-mass or odd branch recovery is authorised yet.
+
+**Prepared, fresh go required:** (1) `studies/uphill_precision_073.json`,
+only requested_offset/zero and above_all/negative at rtol=2e-13, compared
+with their saved 2e-12 tracks. Reuse the exact accepted source/core profile,
+retain all 32 originals; at most two new tracks, cumulative 34. Unchanged
+1e-7 timing, 1e-8 height and 1e-9 conservation gates. (2)
+`studies/annular_quintic_k12.json`, at most three fresh solves on
+192x16 / 224x18 / 256x20 with zero-J r^-5 Frobenius falloff, max 30
+iterations/minimum two updates, all old gates plus omitted PDEs and the
+leading angular-mode check. Proposed GPU 0 precision audit and GPU 1
+quintic recovery, following targeted GPU regressions; each four threads,
+160 GiB, 0.5 h, chunks 128, no AMR checkpoints. Neither has launched.

@@ -332,3 +332,19 @@ the standard loader refuses it. It retains both the factored coordinates
 and physical nodal vector. No prior rejected archive is changed. The
 planned recovery retains the original three grids, density gap and finite
 height channel, and all earlier acceptance limits.
+
+The first cubic solve passed finite-sphere flux checks but its literal
+infinity coefficient was wrong. For a zero-J, equatorially symmetric
+source, use the separate experimental p=5 profile. The leading flat
+asymptotic equation is w_rr+4w_r/r+L_mu(w)/r^2=0, with
+L_mu=(1-mu^2)d_mu^2-4mu d_mu. A power r^-n has angular equation
+[L_mu+n(n-3)]W=0. The n=3 constant is fixed by J; its mass correction
+at n=4 also vanishes when J=0. The next even angular mode is n=5,
+W proportional to 5mu^2-1. Check that leading angular equation in addition
+to every original finite-sphere, full PDE and volume gate.
+
+For quintic initialization, avoid unstable fivefold polynomial deflation.
+Fit physical nodal w in the constrained basis with relative SVD cutoff
+1e-12; this is only a starting guess and is retained explicitly. Fresh
+Newton updates and all independent acceptance tests still follow. No
+quintic GPU result exists at this implementation stage.

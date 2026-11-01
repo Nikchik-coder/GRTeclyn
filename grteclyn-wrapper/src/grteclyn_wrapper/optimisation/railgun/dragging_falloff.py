@@ -1,7 +1,7 @@
 """Experimental Frobenius boundary representation for asymptotic dragging.
 
-w=(1-s)^3 H(s,y), deg_s H=nx-3. Three auxiliary coordinates preserve the
-standard vector size and are set to zero by tau rows. The two outermost
+w=(1-s)^p H(s,y), deg_s H=nx-p. For p=3 or zero-J p=5, p auxiliary coordinates preserve the
+standard vector size and are set to zero by tau rows. The p-1 outermost
 interior w equations are not imposed; every printed PDE, including those
 rows, remains an independent acceptance check. No physical tolerance changes.
 """
@@ -17,9 +17,19 @@ MODEL='canonical_regular_centre_factored_dragging_v1'
 CUBIC=np.array([2.5,-3.75,1.5,-.25])
 
 
-def project_coefficients(values):
+def project_coefficients(values,*,power=3):
     """Polynomial division removes only the degree-two remainder at infinity."""
-    coeff=cheb_coeffs(np.asarray(values),0)
+    values=np.asarray(values)
+    if power==5:
+        # Repeated endpoint deflation amplifies roundoff as nx^10. Fit the
+        # physical values in the constrained basis, truncating only singular
+        # directions below 1e-12 of the largest singular value. Every physical
+        # equation and asymptotic diagnostic remains an acceptance gate.
+        nx=values.shape[0]-1;s=np.cos(np.pi*np.arange(nx+1)/nx)
+        basis=(1-s[:,None])**5*np.polynomial.chebyshev.chebvander(s,nx-5)
+        return np.linalg.lstsq(basis,values,rcond=1e-12)[0]
+    if power!=3:raise ValueError('only cubic or zero-J quintic falloff is supported')
+    coeff=cheb_coeffs(values,0)
     result=np.zeros((coeff.shape[0]-3,coeff.shape[1]))
     for i in range(coeff.shape[1]):
         q=np.polynomial.chebyshev.chebdiv(coeff[:,i],CUBIC)[0]
@@ -30,11 +40,15 @@ def project_coefficients(values):
 class FactoredDraggingProblem(RingProblem):
     representation=REPRESENTATION
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self,*args,power=3,**kwargs):
+        if power not in (3,5) or (power==5 and kwargs.get('target_j')!=0.):
+            raise ValueError('quintic dragging requires a zero-total-J border')
+        self.power=power
+        self.representation=REPRESENTATION if power==3 else 'dragging_quintic_zeroJ_tau_v1'
         super().__init__(*args,**kwargs)
-        self.h_count=self.nx-2
+        self.h_count=self.nx+1-power
         eye=np.eye(self.h_count)
-        self.h_basis=np.polynomial.chebyshev.chebvander(self.s,self.nx-3)
+        self.h_basis=np.polynomial.chebyshev.chebvander(self.s,self.nx-self.power)
         self.h_first=np.column_stack([np.polynomial.chebyshev.chebval(self.s,
             np.polynomial.chebyshev.chebder(c)) for c in eye])
         self.h_second=np.column_stack([np.polynomial.chebyshev.chebval(self.s,
@@ -47,12 +61,12 @@ class FactoredDraggingProblem(RingProblem):
         arrays,freq=super().unpack(u)
         xp=np if isinstance(u,np.ndarray) else self.xp
         h=xp.asarray(self.h_basis)@self.raw_dragging(u)[:self.h_count]
-        arrays['w']=(1-xp.asarray(self.s[:,None]))**3*h
+        arrays['w']=(1-xp.asarray(self.s[:,None]))**self.power*h
         return arrays,freq
 
     def pack(self,arrays,frequencies):
         value=super().pack(arrays,frequencies)
-        raw=np.zeros(self.shape);raw[:self.h_count]=project_coefficients(arrays['w'])
+        raw=np.zeros(self.shape);raw[:self.h_count]=project_coefficients(arrays['w'],power=self.power)
         value[self.n:2*self.n]=raw.ravel()
         return value
 
@@ -68,9 +82,10 @@ class FactoredDraggingProblem(RingProblem):
         h=xp.asarray(self.h_basis)@coeff
         hx=xp.asarray(self.h_first)@coeff;hxx=xp.asarray(self.h_second)@coeff
         t=1-xp.asarray(self.s[:,None]);dy=xp.asarray(self.dy)
-        return dict(w=t**3*h,w_x=t**3*hx-3*t*t*h,
-                    w_xx=t**3*hxx-6*t*t*hx+6*t*h,
-                    w_y=t**3*(h@dy.T),w_yy=t**3*(h@xp.asarray(self.dyy).T))
+        k=self.power
+        return dict(w=t**k*h,w_x=t**k*hx-k*t**(k-1)*h,
+                    w_xx=t**k*hxx-2*k*t**(k-1)*hx+k*(k-1)*t**(k-2)*h,
+                    w_y=t**k*(h@dy.T),w_yy=t**k*(h@xp.asarray(self.dyy).T))
 
     def rows(self,u,xp=np):
         arrays,frequencies=self.unpack(u)
@@ -83,9 +98,9 @@ class FactoredDraggingProblem(RingProblem):
         xp=self.xp
         value=super()._residual(u)
         raw=self.raw_dragging(u)
-        # Three algebraic zero rows replace infinity and the two outermost
+        # p algebraic zero rows replace infinity and the p-1 outermost
         # w-PDE rows. Their omitted PDE values remain in rows(u) for validation.
-        block=xp.concatenate((raw[-3:],self.rows(u,xp)['E_w'][2:],
+        block=xp.concatenate((raw[-self.power:],self.rows(u,xp)['E_w'][self.power-1:],
                               self.dragging_jets(u,xp)['w_x'][-1:])).ravel()
         return value.at[self.n:2*self.n].set(block)
 
@@ -94,23 +109,24 @@ class FactoredDraggingProblem(RingProblem):
         c=np.asarray(self.raw_dragging(np.asarray(u))[:self.h_count])
         from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval
         by=cheb_eval(self.y,np.eye(self.ny+1),y)
-        h=np.polynomial.chebyshev.chebvander(s,self.nx-3)@c@by.T
+        h=np.polynomial.chebyshev.chebvander(s,self.nx-self.power)@c@by.T
         t=(1-s if one_minus_s is None else np.atleast_1d(one_minus_s))[:,None]
-        if not derivative:return t**3*h
+        if not derivative:return t**self.power*h
         dc=np.polynomial.chebyshev.chebder(c,axis=0)
-        hx=np.polynomial.chebyshev.chebvander(s,self.nx-4)@dc@by.T
-        return t**3*hx-3*t*t*h
+        hx=np.polynomial.chebyshev.chebvander(s,self.nx-self.power-1)@dc@by.T
+        return t**self.power*hx-self.power*t**(self.power-1)*h
 
 
 class FactoredDraggingGeometry(RingGeometry):
     def __init__(self,problem,u):
+        self.power=problem.power
         super().__init__(problem,u)
         self.h_coefficients=self.xp.asarray(cheb_coeffs(
             np.asarray(problem.raw_dragging(np.asarray(u))[:problem.h_count]),1))
 
     def sample(self,name,s,y):
         if name!='w':return super().sample(name,s,y)
-        return (1-s)**3*self.xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-3,self.xp),
+        return (1-s)**self.power*self.xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-self.power,self.xp),
             self.h_coefficients,chebyshev_basis(y,self.ny,self.xp))
 
 
@@ -120,7 +136,7 @@ class FactoredDraggingGeometry(RingGeometry):
         xp=self.xp;r2=xp.sum(x[1:]**2);r=xp.sqrt(r2)
         t=2*self.length/(r+self.length);s=1-t;y=2*x[3]**2/r2-1
         f,n,b=(self.sample(k,s,y) for k in ('f','N','b'))
-        w=t**3*xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-3,xp),
+        w=t**self.power*xp.einsum('i,ij,j->',chebyshev_basis(s,self.nx-self.power,xp),
                           self.h_coefficients,chebyshev_basis(y,self.ny,xp))
         rho2=x[1]**2+x[2]**2;nu=n*rho2/r2
         c=(1+b)**2*xp.exp(-f);a=c*xp.exp(nu);v=xp.array([-x[2],x[1],0.])
@@ -167,7 +183,7 @@ def cartesian_surface_flux(problem,u,radii,*,order=48):
 def save_state(path,problem,u,*,validated=False):
     import json
     base,physical=problem.physical_vector(u)
-    metadata=dict(schema=1,model=MODEL,representation=REPRESENTATION,nx=problem.nx,ny=problem.ny,
+    metadata=dict(schema=1,model=MODEL,representation=problem.representation,falloff_power=problem.power,nx=problem.nx,ny=problem.ny,
                   length=problem.length,target_j=problem.target_j,fields=[f.to_dict() for f in problem.fields],
                   validated=bool(validated),stability='not_assessed')
     np.savez_compressed(path,metadata=json.dumps(metadata),u=np.asarray(u),physical_u=physical)
@@ -179,10 +195,11 @@ def load_state(path):
     with np.load(path,allow_pickle=False) as data:
         metadata=json.loads(str(data['metadata']));value=np.array(data['u'])
         physical=np.array(data['physical_u'])
-    if metadata.get('model')!=MODEL or metadata.get('representation')!=REPRESENTATION:
+    if metadata.get('model')!=MODEL or metadata.get('representation') not in (REPRESENTATION,'dragging_quintic_zeroJ_tau_v1'):
         raise ValueError('explicit factored-dragging format required')
     problem=FactoredDraggingProblem([ScalarField(**f) for f in metadata['fields']],
-        nx=metadata['nx'],ny=metadata['ny'],length=metadata['length'],target_j=metadata['target_j'])
+        nx=metadata['nx'],ny=metadata['ny'],length=metadata['length'],target_j=metadata['target_j'],power=metadata.get('falloff_power',3))
+    if problem.representation!=metadata['representation']:raise ValueError('falloff representation mismatch')
     if value.shape!=(problem.n_unknowns,) or not np.isfinite(value).all():raise ValueError('invalid factored state')
     _,reconstructed=problem.physical_vector(value)
     if physical.shape!=reconstructed.shape or not np.allclose(physical,reconstructed,rtol=0.,atol=64*np.finfo(float).eps*max(1.,float(np.max(abs(physical))))):
@@ -209,9 +226,9 @@ def validate(problem,u,info,*,equation_tol=1e-8,tail_tol=1e-6):
     row.update(J_surfaces=flux.tolist(),J_surface_estimate=float(flux[-1]),
         J_surface_quadrature_drift=quadrature,angular_momentum_surface_error=error,
         Cartesian_J_surfaces=independent.tolist(),Cartesian_J_surface_crosscheck=cross,
-        representation=REPRESENTATION)
+        representation=problem.representation)
     residual=np.asarray(problem.residual(u));rows=problem.rows(u)
-    omitted=float(np.max(abs(rows['E_w'][:2])/(1+problem.ri[:2]**2)))
+    omitted=float(np.max(abs(rows['E_w'][:problem.power-1])/(1+problem.ri[:problem.power-1]**2)))
     row['omitted_outer_w_equation_max']=omitted
     row['factored_tau_residual_max']=float(np.max(abs(residual)))
     if not np.isfinite(omitted) or omitted>equation_tol:reasons.append('omitted_outer_w_equations')
@@ -222,9 +239,19 @@ def validate(problem,u,info,*,equation_tol=1e-8,tail_tol=1e-6):
     mu,weights=np.polynomial.legendre.leggauss(96);mu=(mu+1)/2;weights=weights/2
     from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval
     by=cheb_eval(problem.y,np.eye(problem.ny+1),2*mu*mu-1);h=by@h_inf
-    j_inf=float(6*problem.length**3*np.sum(weights*(1-mu*mu)*h))
-    anisotropy=float(4*problem.length**3*np.max(abs(h-j_inf/(4*problem.length**3))))
-    row.update(J_infinity_factored=j_inf,J_infinity_anisotropy=anisotropy)
+    if problem.power==3:
+        j_inf=float(6*problem.length**3*np.sum(weights*(1-mu*mu)*h))
+        anisotropy=float(4*problem.length**3*np.max(abs(h-j_inf/(4*problem.length**3))))
+    else:
+        j_inf,anisotropy=0.,0.
+        # With J=0 and equatorial reflection the leading permitted mode is
+        # r^-5 P'_3(mu). Check its flat asymptotic angular equation separately.
+        angular=4*(1-problem.y**2)*(problem.dyy@h_inf)-(10*problem.y+6)*(problem.dy@h_inf)+10*h_inf
+        peak=float(np.max(abs(h_inf)))
+        angular_error=max(0.,float(np.max(abs(angular)))-64*np.finfo(float).eps)/max(peak,1e-300)
+        row['leading_angular_relative_error']=angular_error
+        if not np.isfinite(angular_error) or angular_error>1e-6:reasons.append('leading_asymptotic_angular_mode')
+    row.update(J_infinity_factored=j_inf,J_infinity_anisotropy=anisotropy,falloff_power=problem.power)
     if max(abs(j_inf-row['J_volume']),anisotropy)>equation_tol*scale:reasons.append('asymptotic_dragging_modes')
     geometry=FactoredDraggingGeometry(problem,u);checks=[]
     for radius in problem.length*np.array([.02,.05,.15,.5,1.,2.,4.]):
