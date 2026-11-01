@@ -5,18 +5,23 @@ Updated **2026-11-01 (MSK)**. Branch: `feature/optimisation`.
 **Decision:** the minimal-exotic-matter optimisation campaign is paused. This
 separate study reuses its JAX/Newton infrastructure for regular-centre scalar
 rings. The spherical baseline and one pure k=1 rotating ring are validated.
-Counter-rotation, stacked states, stability and axial spin effects remain to test.
+Axial spin-dependent transit is validated; counter-rotation, stacked states and stability remain to test.
 
 ## Live and queue
 
-**Live:** `railgun-ring-transit-20261101`, second node/card 0,
-code `96c81edc`, following **16 passing GPU tests in 48.29 s**
-(12:39:55–12:40:46 MSK). Four controls at z=10, spin magnitude 0.001;
-fast v=-0.5 plus E=1-2e-5 / 1 / 1+2e-5; signed destination z=-10.
-RK tolerances 2e-11 / 2e-12, max step 0.4, proper duration <=120.
-Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
-Core reconstruction/compilation; speed and completion ETA not measured.
-Scratch clean: 47 MB, 543 GB free; first node not listed.
+**Live:** none. Run B `railgun-ring-transit-20261101`, second node/card 0,
+code `96c81edc`, ran **12:41:00–12:53:33 MSK (0.209 h)**, exit 0.
+All **32 tracks reached z=-10 from z=+10**, crossing the certified centre.
+Four controls, two RK tolerances, high-speed plus three E~1 cases;
+maximum normalised conservation drift 1.90e-13, RK time difference 3.56e-13.
+Reversing ring and spin gave zero measured axial/time difference.
+At spin magnitude 0.001, fast transit t(+z spin)-t(-z spin)=-0.000581712663.
+All sampled near-threshold controls transmitted: no spin valve demonstrated.
+These are finite-radius transits, not numerical demonstrations of escape.
+Archive: `results/railgun/ring-transit/`; 16 GPU regression checks passed.
+Four threads, 160 GiB, 0.5 h cap, no AMR checkpoints.
+Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:54 MSK;
+first node not listed.
 
 Run A `railgun-ring-profile-20261101`, second node/card 0,
 code `4c1e2085`, passed at **12:37:19 MSK**, after 0.072 h including compilation.
@@ -32,13 +37,14 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Authorised next:** Run B tests finite axial transits with zero/positive/
-negative spin and the reversed-background control, at two RK tolerances.
-High-speed plus three energies around E=1; conservation gate 1e-9.
-Spin parallel to this negative-J ring is the negative-z spin control.
-Equal energy and mass imply equal speeds at infinity; finite transit times
-can differ. Neither spin-selective escape nor radial ordering of future
-counter-rotating fields is guaranteed. Archive B before starting Run C.
+**Authorised next:** test the full 2D rotating KG initializer, then Run C:
+k1=+1, k2=-2, second-node card 0, continuation 96x12, recovery
+72x10 / 96x12 / 128x16. At most 24 Newton solves total, 30 iterations
+per solve, six amplitude splits, second pin <=0.08, unchanged 1e-8
+independent-equation gates. Four threads, 160 GiB, chunks 128, 0.5 h cap,
+no AMR checkpoints. A and B are archived before this stage.
+Make the two-ring surface/cross-section figure from solved fields, retaining
+any overlap. An off-axis between-ring particle path remains untested.
 
 **Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
@@ -46,7 +52,7 @@ counter-rotating fields is guaranteed. Archive B before starting Run C.
 updates on each pure-ring grid. Final observable drift **3.52e-10**.
 Cumulative work: 22 coupled solves (five in this leg), six bisections and
 three pure-ring solves. Four threads, 160 GiB, chunks of 128; no AMR checkpoints.
-No physical trajectory has run yet.
+Single-ring physical trajectories are archived above.
 
 `railgun-refinement-regression-20261101`, second node/card 0,
 code `91786ff2`, ran **11:55:53–11:59:39 MSK**: **63 GPU tests passed in
@@ -345,7 +351,5 @@ the original failed records stay rejected. The refined config completed with
 unchanged physical amplitudes and 1e-8 equation/charge gates. All three pure-ring
 grids passed, as recorded above.
 
-**Next:** execute the authorised profile/core check, then compare matched
-inward positive/negative/zero-spin trajectories through the centre with
-step/tolerance refinement. Archive each stage before starting the next.
-No axial-ejection or stability result has yet been established.
+**Next:** validate the counter-rotating branch and plot both fields. Between-ring
+particle trajectories, asymptotic ejection and dynamical stability remain untested.

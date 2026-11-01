@@ -1,0 +1,19 @@
+{
+  "gates": {
+    "accepted": true,
+    "normalised_drift": {
+      "mass2": 1.3877787807814457e-14,
+      "spin2": 2.1811098391798234e-14,
+      "energy": 8.548888267379056e-15,
+      "angular_momentum": 1.0842021724855044e-14
+    },
+    "tolerance": 1e-09,
+    "zero_invariant_scale": "unit rest mass units",
+    "ssc_max": 2.2949215438831914e-15,
+    "norm_error": 4.440892098500626e-16
+  },
+  "stop": "target_z",
+  "axial_symmetry_error": 0.0,
+  "proper_time_symmetry_error": 0.0,
+  "symmetry_accepted": true
+}
