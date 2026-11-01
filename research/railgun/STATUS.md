@@ -9,11 +9,16 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** none. `railgun-spherical-to-ring-20261101`, second node/card 0,
+**Live:** `railgun-flux-regression-20261101`, second node/card 0, code
+`da1280f5`, started **10:56:21 MSK**. Six targeted surface-flux/resume/device
+checks, four threads, 160 GiB, timeout **0.05 h (10:59:21 MSK)**. Completion
+ETA unmeasured. No nonlinear solve is running during these checks.
+
+`railgun-spherical-to-ring-20261101`, second node/card 0,
 code `389c8762`, ran **10:46:17–10:49:52 MSK (0.060 h)**. It stopped normally
 with `homotopy_unresolved` after 15 solves and six bisections; last passing
 progress 0.40625. The angular-momentum balance gate blocked continuation.
-No pure ring or trajectories were produced. GPUs are idle; no completion ETA.
+No pure ring or trajectories were produced by that first leg.
 Scratch is clean: **47 MB**, only `_cache/`,
 **545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
