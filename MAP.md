@@ -15,7 +15,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
 | optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | `runs/optimisation/` (`evolution/` for GRTeclyn runs) | paused: [`STATUS.md`](research/optimisation/STATUS.md) |
-| ring spacetimes and spin transport | [`research/railgun/`](research/railgun/) | [`results/railgun/`](results/railgun/README.md) | `runs/railgun/` | spherical baseline validated: [`STATUS.md`](research/railgun/STATUS.md) |
+| ring spacetimes and spin transport | [`research/railgun/`](research/railgun/) | [`results/railgun/`](results/railgun/README.md) | `runs/railgun/` | spherical star and rotating ring validated: [`STATUS.md`](research/railgun/STATUS.md) |
 
 Optimisation's Python code and command entry points live together in
 [`grteclyn_wrapper.optimisation`](grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md).
