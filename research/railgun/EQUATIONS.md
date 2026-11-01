@@ -103,8 +103,9 @@ J_a = -k_a Q_a.
 ```
 
 For a regular centre there is no throat contribution. The independent exterior
-check is `w=2J/r^3+O(r^-4)`. The spatial ADM fit uses
-`B-1-f/2=M/r+O(r^-2)`; the lapse fit is reported separately. The Komar volume
+check is `w=2J/r^3+O(r^-4)`. Finite-radius spatial and lapse coefficient fits
+are reported as diagnostics. Acceptance uses the endpoint ADM/lapse masses
+and exact angular-momentum surface integrals derived below. The Komar volume
 integrand, after full-sphere angular integration, is
 
 ```text
@@ -173,6 +174,34 @@ The three-term fit to `w=sum_(n=3)^5 c_n/r^n` is retained as a diagnostic,
 but is no longer used as the angular-momentum balance gate. Its truncation
 error rejected the first ring continuation even though the exact surface
 flux and matter charge agreed. The original rejected records are preserved.
+
+### Mass at compactified infinity
+
+Write the spatial metric as `gamma_ij=C delta_ij+D(delta_ij-e_phi_i e_phi_j)`,
+where `C=B^2 exp(-f)` and `D=C(exp(nu)-1)`. The Cartesian ADM surface integral
+on a coordinate sphere reduces to
+
+```text
+M_ADM(R) = R^2/4 integral_0^1 [-2 partial_R C - partial_R D + D/R] dmu.
+```
+
+If f,b,N vanish at s=1, their leading 1/r coefficients are -2L times
+their first s derivatives. Taking the limit gives
+
+```text
+M_ADM = L integral_0^1 [f_s - 2 b_s - (1-mu^2) N_s]_(s=1) dmu,
+M_lapse = L integral_0^1 [f_s]_(s=1) dmu.
+```
+
+The N term is retained rather than assuming it has no 1/r contribution.
+Endpoint ADM mass must agree with the independently integrated Komar mass,
+and with the lapse mass, at the existing 1e-6 tolerance. Doubled angular
+quadrature is checked too. The old finite-radius fits and their drift stay
+in the reports, but fit truncation error is no longer an acceptance gate.
+An independent regression evaluates the literal Cartesian ADM integrand
+from differentiated metric components and extrapolates its finite-radius
+values to compare with the endpoint formula. Saved ring states that fail
+KG or surface-J checks remain rejected after this measurement correction.
 
 ### KG, winding and the regular core
 

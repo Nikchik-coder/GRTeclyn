@@ -63,6 +63,7 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
   XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
   "$PY" -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_model.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
+  grteclyn-wrapper/tests/optimisation/test_railgun_diagnostics.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_continuation.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_baseline.py \
@@ -92,6 +93,28 @@ accepted pure rings.
 configuration and spherical source, rechecks the last passing point, and
 carries forward all spent solves and bisections. It neither resets the work
 budget nor promotes a previously rejected point. Use a new output directory.
+
+An explicitly approved grid refinement uses `--resume ... --refine-resume`.
+Only the three grids may change, and each radial and angular order must
+increase. Physical settings, tolerances, solve and bisection budgets must
+match. The last passing state is perturbed and freshly solved on the new
+first grid with at least two Newton corrections. That recovery consumes a
+solve from the existing budget; its independent checks must pass before
+continuation proceeds. The proposed refined configuration changes only
+the grids to 72x10 / 96x12 / 128x16:
+
+```bash
+# Lists the proposal; initialises no GPU. The actual pilot needs its own go.
+$PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring_refined.json \
+  --source results/railgun/spherical-validated/accepted.npz \
+  --resume results/railgun/spherical-to-ring-resumed --refine-resume \
+  --gpu 0 --jac-chunk 128 --out runs/railgun/spherical-to-ring-refined --dry-run
+```
+
+The saved run has spent 17 of 24 coupled solves and all six bisections.
+Expected remaining work is one recovery solve plus four continuation points;
+up to seven coupled solves remain, followed by at most three pure-ring solves.
+Proposed caps are four threads, 160 GiB, 0.5 h and no AMR checkpoints.
 
 `transport --through-centre --speed -.2` selects an inward launch and requests
 a regular Cartesian core. The core must pass independent equations, curvature

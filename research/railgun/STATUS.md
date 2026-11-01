@@ -281,13 +281,13 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable:** finish checking the mass extraction and prepare a
-finer-grid continuation proposal. The mass coefficient fit has drift 1.02e-6
-at progress 0.625; an offline compactified-endpoint estimate agrees with the
-volume mass within 1.73e-8, so its extraction also needs review before using
-fit drift to diagnose the fields. This endpoint method is not yet implemented
-or regression-tested. The KG and exact surface-J failures remain unresolved.
-Proposed grids are 72x10 / 96x12 / 128x16; adding 128x16 requires a fresh go.
+**Current implementation:** endpoint ADM/lapse mass extraction and an explicit
+grid-only refined resume are implemented; GPU regressions are pending. The
+mass coefficient fit has drift 1.02e-6 at progress 0.625; the endpoint estimate
+agrees with the volume mass within 1.73e-8. Original records stay unchanged.
+The KG and exact surface-J failures remain unresolved. The prepared config
+is `studies/spherical_to_ring_refined.json`, with grids
+72x10 / 96x12 / 128x16; adding 128x16 requires a fresh go.
 Carry the 17 spent coupled solves and six bisections forward, keep the same
 physical amplitudes and 1e-8 equation/charge gates, then require fresh pure-ring
 recovery on all three grids. GPU 0, four threads, 160 GiB and chunks of 128;

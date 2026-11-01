@@ -25,6 +25,7 @@ def main(argv=None):
     homotopy.add_argument('config',type=Path)
     homotopy.add_argument('--source',type=Path,required=True)
     homotopy.add_argument('--resume',type=Path,help='prior unresolved homotopy; carries spent solve/split budgets')
+    homotopy.add_argument('--refine-resume',action='store_true',help='explicit grid-only refinement; requires fresh Newton recovery')
     homotopy.add_argument('--out',type=Path,required=True)
     homotopy.add_argument('--gpu',type=int,required=True)
     homotopy.add_argument('--jac-chunk',type=int,default=128)
@@ -62,12 +63,15 @@ def main(argv=None):
         ScalarField(**config['ring_field'])
         if args.gpu < 0 or args.jac_chunk <= 0:
             parser.error('gpu must be nonnegative and jac-chunk positive')
+        if args.refine_resume and args.resume is None:
+            parser.error('--refine-resume requires --resume')
         if args.dry_run:
-            print(json.dumps(dict(config=config,numerical_execution=False),indent=2));return 0
+            print(json.dumps(dict(config=config,resume=str(args.resume) if args.resume else None,
+                                  refine_resume=args.refine_resume,numerical_execution=False),indent=2));return 0
         from ..solver.device import select_device
         select_device(args.gpu,args.jac_chunk)
         from ..railgun.continuation import run_homotopy
-        result=run_homotopy(args.source,config,args.out,resume=args.resume)
+        result=run_homotopy(args.source,config,args.out,resume=args.resume,refine_resume=args.refine_resume)
         return 0 if result['accepted'] else 2
     if args.verb == 'profile':
         if args.gpu < 0:

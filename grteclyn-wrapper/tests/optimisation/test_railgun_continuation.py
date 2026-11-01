@@ -66,3 +66,35 @@ def test_resume_preserves_spent_budgets_and_refuses_changed_experiments(tmp_path
     (tmp_path/'outcome.json').write_text(json.dumps(dict(accepted=False,solves=24,splits=6)))
     with pytest.raises(ValueError,match='remaining solve budget'):
         resume_record(tmp_path,config,'abc')
+
+
+def test_refined_resume_changes_only_grids_and_preserves_budgets(tmp_path):
+    import json
+    from grteclyn_wrapper.optimisation.railgun.continuation import resume_record
+    config=dict(max_solves=24,max_splits=6,grids=[[56,8],[72,10],[96,12]],initial_amplitude=.001)
+    refined=dict(config,grids=[[72,10],[96,12],[128,16]])
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(config=config,source_sha256='abc')))
+    (tmp_path/'outcome.json').write_text(json.dumps(dict(accepted=False,solves=17,splits=6)))
+    (tmp_path/'attempt_016.json').write_text(json.dumps(dict(attempt=16,progress=.5,verdict='PASS')))
+    with pytest.raises(ValueError,match='must match'):
+        resume_record(tmp_path,refined,'abc')
+    path,progress,solves,splits=resume_record(tmp_path,refined,'abc',refine=True)
+    assert (path.name,progress,solves,splits)==('attempt_016.npz',.5,17,6)
+    for changed in (dict(refined,max_solves=25),dict(refined,initial_amplitude=.002),
+                    dict(refined,grids=[[56,8],[96,12],[128,16]])):
+        with pytest.raises(ValueError,match='larger grids and identical'):
+            resume_record(tmp_path,changed,'abc',refine=True)
+    (tmp_path/'outcome.json').write_text(json.dumps(dict(accepted=True)))
+    with pytest.raises(ValueError,match='unresolved'):
+        resume_record(tmp_path,refined,'abc',refine=True)
+
+
+def test_resolution_recovery_performs_fresh_Newton_updates():
+    from grteclyn_wrapper.optimisation.railgun.continuation import recover_resolution
+    old=RingProblem(nx=8,ny=4)
+    p,u,info=recover_resolution(old,np.zeros(old.n_unknowns),(12,6),verbose=False)
+    assert info['converged'],info
+    assert len(info['newton_steps'])>=2
+    assert np.max(abs(p.residual(u)))<1e-8
+    with pytest.raises(ValueError,match='both grid dimensions'):
+        recover_resolution(old,np.zeros(old.n_unknowns),(12,4),verbose=False)

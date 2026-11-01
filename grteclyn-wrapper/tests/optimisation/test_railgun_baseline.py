@@ -60,3 +60,22 @@ def test_saved_spherical_flux_preserves_the_accepted_baseline():
     old=json.loads((ARCHIVE.parent/'grid_96x12.json').read_text())
     row=validate(p,u,old['newton'],independent=False)
     assert row['verdict']=='PASS',row['reasons']
+
+
+def test_mass_correction_keeps_the_unresolved_ring_rejected():
+    import json
+    from grteclyn_wrapper.optimisation.railgun.workflow import load_state
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import validate
+    directory=ARCHIVE.parent.parent/'spherical-to-ring-resumed'
+    if not directory.exists():pytest.skip('resumed ring archive not present')
+    old=json.loads((directory/'attempt_017.json').read_text())
+    assert old['M_fit_drift']>1e-6
+    p,u,_=load_state(directory/'attempt_017.npz')
+    row=validate(p,u,old['newton'])
+    assert abs(row['M_ADM_estimate']-row['M_Komar_volume'])<1e-6
+    assert 'mass_balance' not in row['reasons']
+    assert 'mass_lapse_balance' not in row['reasons']
+    assert row['verdict']=='REJECT'
+    assert 'independent_equations' in row['reasons']
+    assert 'intrinsic_kg_crosscheck' in row['reasons']
+    assert 'angular_momentum_balance' in row['reasons']

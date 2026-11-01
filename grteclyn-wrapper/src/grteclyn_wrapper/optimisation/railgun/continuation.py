@@ -88,15 +88,27 @@ def linear_bound_seed(problem,u,*,index=1):
                 initialization='bound KG eigenmode on the spherical background')
 
 
-def resume_record(directory,config,source_hash):
+def resume_record(directory,config,source_hash,*,refine=False):
     """Resume a previously passing point without resetting either work budget."""
     directory=Path(directory)
     manifest=json.loads((directory/'manifest.json').read_text())
     outcome=json.loads((directory/'outcome.json').read_text())
-    if manifest['config']!=config or manifest['source_sha256']!=source_hash:
+    previous_config=manifest['config']
+    if refine:
+        unchanged=lambda c:{k:v for k,v in c.items() if k!='grids'}
+        a,b=previous_config.get('grids',[]),config.get('grids',[])
+        larger=(len(a)==len(b)==3 and all(len(x)==len(y)==2
+                and y[0]>x[0] and y[1]>x[1] for x,y in zip(a,b)))
+        if not larger or unchanged(previous_config)!=unchanged(config):
+            raise ValueError('refined resume requires larger grids and identical physical settings and budgets')
+    elif previous_config!=config:
         raise ValueError('resume configuration and spherical source must match')
+    if manifest['source_sha256']!=source_hash:
+        raise ValueError('resume configuration and spherical source must match')
+    if outcome.get('accepted'):
+        raise ValueError('resume requires an unresolved study with remaining solve budget')
     solves,splits=int(outcome['solves']),int(outcome['splits'])
-    if (outcome['accepted'] or not 0<=solves<int(config.get('max_solves',24))
+    if (not 0<=solves<int(config.get('max_solves',24))
             or not 0<=splits<=int(config.get('max_splits',6))):
         raise ValueError('resume requires an unresolved study with remaining solve budget')
     records=[json.loads(p.read_text()) for p in directory.glob('attempt_*.json')]
@@ -106,11 +118,26 @@ def resume_record(directory,config,source_hash):
     return directory/f'attempt_{best["attempt"]:03d}.npz',float(best['progress']),solves,splits
 
 
-def run_homotopy(source,config,directory,*,resume=None):
+def recover_resolution(old,u,grid,*,max_iter=30,tolerance=1e-12,verbose=True):
+    """Transfer and perturb a state, then require two real Newton corrections."""
+    from .problem import RingProblem
+    from ..solver.newton import newton
+    nx,ny=grid
+    if nx<=old.nx or ny<=old.ny:
+        raise ValueError('resolution recovery requires both grid dimensions to increase')
+    problem=RingProblem(old.fields,nx=nx,ny=ny,length=old.length,target_j=old.target_j)
+    seed=problem.transfer(old,u,perturb=1e-5)
+    recovered,info=newton(problem.residual,problem.jacobian,seed,tol=tolerance,
+                          max_iter=max_iter,min_updates=2,verbose=verbose)
+    return problem,recovered,info
+
+
+def run_homotopy(source,config,directory,*,resume=None,refine_resume=False):
     from .problem import RingProblem
     from .workflow import load_state,save_state,write_json,run_study
     from .diagnostics import validate
     from ..solver.newton import newton
+    if refine_resume and resume is None:raise ValueError('refined resume requires a prior study')
     old,old_u,metadata=load_state(source)
     if not metadata.get('validated') or len(old.fields)!=1 or old.fields[0].degree!=0:
         raise ValueError('homotopy requires an accepted one-field even k=0 background')
@@ -135,16 +162,35 @@ def run_homotopy(source,config,directory,*,resume=None):
     print(json.dumps(dict(event='device',platform=manifest['platform'],float64=manifest['float64'])),flush=True)
     current=None;splits=0;solves=0
     if resume is not None:
-        path,current,solves,splits=resume_record(resume,config,source_hash)
+        path,current,solves,splits=resume_record(resume,config,source_hash,refine=refine_resume)
         first,seed,_=load_state(path)
-        record=validate(first,seed,dict(converged=True,resumed=True))
+        expected=(replace(start,amplitude=start.amplitude*max(1-current,floor)),
+                  replace(target,amplitude=epsilon*(target.amplitude/epsilon)**current))
+        if first.fields!=expected or first.length!=old.length or first.target_j is not None:
+            raise ValueError('resume state must match its declared continuation point')
+        manifest.update(resume_state_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                        previous_solves=solves,previous_splits=splits,resumed_progress=current,
+                        refined_resume=bool(refine_resume))
+        write_json(directory/'manifest.json',manifest)
+        info=dict(converged=True,resumed=True)
+        if refine_resume:
+            started=time.monotonic()
+            first,seed,info=recover_resolution(first,seed,grids[0],
+                            max_iter=config.get('max_iter',30),tolerance=config.get('newton_tol',1e-12))
+            solves+=1
+            solve_seconds=time.monotonic()-started
+            save_state(directory/f'attempt_{solves:03d}.npz',first,seed)
+        record=validate(first,seed,info)
+        if refine_resume:
+            record.update(progress=current,attempt=solves,kind='resolution_recovery',
+                          solve_seconds=solve_seconds,total_seconds=time.monotonic()-started)
+            write_json(directory/f'attempt_{solves:03d}.json',record)
+            print(f'[homotopy] refinement attempt={solves} t={current:g} verdict={record["verdict"]}',flush=True)
         write_json(directory/'resume_check.json',record)
         if record['verdict']!='PASS':
-            write_json(directory/'manifest.json',manifest)
-            outcome=dict(accepted=False,reason='resume_revalidation',solves=solves,splits=splits,last_progress=current)
+            outcome=dict(accepted=False,reason='resume_revalidation',solves=solves,splits=splits,
+                         last_progress=current,stability='not_assessed')
             write_json(directory/'outcome.json',outcome);return outcome
-        manifest.update(resume_state_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
-                        previous_solves=solves,previous_splits=splits,resumed_progress=current)
     else:
         seed=transfer_fields(first,old,old_u)
         try:
@@ -190,6 +236,7 @@ def run_homotopy(source,config,directory,*,resume=None):
     final_config={k:v for k,v in config.items() if k in ('newton_tol','max_iter','equation_tol','tail_tol','observable_tol')}
     final_config.update(fields=[target.to_dict()],grids=grids,length=old.length)
     outcome=run_study(final_config,directory/'pure_ring',seed_path=seed_path)
-    outcome.update(homotopy_solves=solves,old_component_removed=True,stability='not_assessed')
+    outcome.update(homotopy_solves=solves,solves=solves,splits=splits,last_progress=current,
+                   pure_ring_solves=outcome['grids_attempted'],old_component_removed=True,stability='not_assessed')
     write_json(directory/'outcome.json',outcome)
     return outcome

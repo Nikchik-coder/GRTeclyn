@@ -55,6 +55,24 @@ def angular_momentum_surfaces(problem, u, radii, *, order=48):
     return -radii**4/4*np.sum(weights[None,:]*(1-mu[None,:]**2)*b**3*np.exp(-2*f)*wr,axis=1)
 
 
+def asymptotic_masses(problem, u, *, order=48):
+    """ADM and lapse masses from first derivatives at compactified infinity.
+
+    With nu=N(1-mu^2), the Cartesian ADM integral gives
+    M=L integral_0^1 [f_s-2 b_s-(1-mu^2) N_s]_(s=1) dmu.
+    Keep the N contribution rather than assuming its 1/r coefficient vanishes.
+    The asymptotic lapse/Komar mass is L integral f_s dmu.
+    """
+    arrays,_=problem.unpack(np.asarray(u))
+    mu,weights=np.polynomial.legendre.leggauss(order)
+    mu,weights=(mu+1)/2,weights/2
+    by=cheb_eval(problem.y,np.eye(problem.ny+1),2*mu*mu-1)
+    fs,bs,ns=((problem.dx[0]@arrays[tag])@by.T for tag in ('f','b','N'))
+    adm=problem.length*np.sum(weights*(fs-2*bs-(1-mu*mu)*ns))
+    lapse=problem.length*np.sum(weights*fs)
+    return float(adm),float(lapse)
+
+
 def observables(problem, u):
     arrays, frequencies = problem.unpack(np.asarray(u))
     sample = lambda a: problem.qx@a@problem.qy.T
@@ -95,7 +113,8 @@ def observables(problem, u):
         peaks.append(dict(radius=float(r[ix, 0]), mu=float(mu[0, iy]),
                           cylindrical_radius=float(r[ix, 0]*np.sqrt(sk[0, iy])),
                           axial_position=float(r[ix, 0]*mu[0, iy]), density=float(density[ix, iy])))
-    # Spatial ADM coefficient: B-1-f/2=M/r+O(r^-2).
+    # Finite-order coefficient fits remain diagnostic estimates. Endpoint
+    # derivatives below measure the actual leading terms at infinity.
     shells = problem.length*np.array([12., 16., 22., 30., 42., 60.])
     s = (shells-problem.length)/(shells+problem.length)
     bx = cheb_eval(problem.s, np.eye(problem.nx+1), s)
@@ -113,6 +132,8 @@ def observables(problem, u):
     surface_radii=shells[2:]
     surface_j=angular_momentum_surfaces(problem,u,surface_radii)
     surface_fine=angular_momentum_surfaces(problem,u,surface_radii,order=96)
+    adm_mass,lapse_mass=asymptotic_masses(problem,u)
+    endpoint_fine=asymptotic_masses(problem,u,order=96)
     density = sum(densities) if densities else np.zeros_like(gtt)
     maxdensity = float(np.max(density))
     lowdensity = density <= 1e-6*max(maxdensity, 1e-300)
@@ -123,7 +144,10 @@ def observables(problem, u):
         tails.append((np.max(np.abs(vals), axis=1)/peak).tolist())
     return dict(charges=charges.tolist(), matter_J=[float(-f.winding*q) for f, q in zip(problem.fields, charges)],
                 J_volume=float(sum(-f.winding*q for f, q in zip(problem.fields, charges))),
-                M_Komar_volume=komar, M_ADM_estimate=masses[-1], M_lapse_estimate=lapse_masses[-1],
+                M_Komar_volume=komar, M_ADM_estimate=adm_mass, M_lapse_estimate=lapse_mass,
+                mass_extraction='compactified_endpoint_first_derivatives',
+                M_ADM_fit_estimate=masses[-1],M_lapse_fit_estimate=lapse_masses[-1],
+                M_endpoint_quadrature_drift=float(max(abs(adm_mass-endpoint_fine[0]),abs(lapse_mass-endpoint_fine[1]))),
                 M_fit_drift=max(masses)-min(masses), J_asymptotic_estimate=spins[-1],
                 J_fit_drift=max(spins)-min(spins), density_peaks=peaks,
                 J_surface_radii=surface_radii.tolist(),J_surfaces=surface_j.tolist(),
@@ -196,8 +220,12 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
         reasons.append('angular_momentum_balance')
     if abs(summary['M_ADM_estimate']-summary['M_Komar_volume']) > 1e-6*max(1., abs(summary['M_ADM_estimate'])):
         reasons.append('mass_balance')
-    if summary['M_fit_drift'] > 1e-6:
-        reasons.append('asymptotic_fit')
+    # The finite-radius fit has truncation error even for a resolved metric.
+    # Compare independent endpoint, lapse and volume masses at the same gate.
+    if abs(summary['M_ADM_estimate']-summary['M_lapse_estimate']) > 1e-6*max(1.,abs(summary['M_ADM_estimate'])):
+        reasons.append('mass_lapse_balance')
+    if not np.isfinite(summary['M_endpoint_quadrature_drift']) or summary['M_endpoint_quadrature_drift'] > 1e-6:
+        reasons.append('mass_endpoint_quadrature')
     for ratios in summary['scalar_tail_ratios']:
         if not localized_tail(ratios,tail_tol):
             reasons.append('scalar_localization')
@@ -221,7 +249,7 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
             reasons.append('independent_equations')
         if max(out['offgrid_intrinsic_kg_max'],out['kg_coordinate_difference']) > equation_tol:
             reasons.append('intrinsic_kg_crosscheck')
-    if not all(np.isfinite(out[k]) for k in ('M_ADM_estimate', 'M_Komar_volume', 'J_volume', 'J_asymptotic_estimate', 'gtt_max')):
+    if not all(np.isfinite(out[k]) for k in ('M_ADM_estimate', 'M_lapse_estimate', 'M_Komar_volume', 'J_volume', 'J_asymptotic_estimate', 'gtt_max')):
         reasons.append('nonfinite_observables')
     out.update(verdict='PASS' if not reasons else 'REJECT', reasons=reasons)
     return out
