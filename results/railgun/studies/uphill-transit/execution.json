@@ -1,0 +1,17 @@
+{
+  "node": "second GPU node",
+  "card": 0,
+  "raw_code": "4d40acbc",
+  "audit_code": "786cf041",
+  "raw_start_utc": "2026-11-01T13:52:24Z",
+  "raw_end_utc": "2026-11-01T14:07:01Z",
+  "audit_start_utc": "2026-11-01T14:11:52Z",
+  "audit_end_utc": "2026-11-01T14:12:10Z",
+  "exit_code": 0,
+  "integrated_tracks": 32,
+  "additional_audit_tracks": 0,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "amr_checkpoints": false
+}

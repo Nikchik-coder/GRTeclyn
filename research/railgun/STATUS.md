@@ -31,32 +31,31 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-uphill-event-audit-20261101`, second node/card 0,
-code `786cf041`, started **17:11 MSK**. Reconstruct first crossings from the
-saved dense samples with degree 5/7 comparison and independently check terminal
-TD-MPD invariants; **zero additional integrated ring tracks**. No evolution t;
-speed/ETA not yet measured; hard cap 0.5 h, **17:41 MSK**. Four threads,
-160 GiB, no AMR checkpoints. Five event/CUDA regression checks passed in
-7.11 s, **17:10:35–17:10:44 MSK**. Exact Rindler crossing time and Killing
-energy agree, and the direct integrator now resolves the earlier target.
+**Live:** `railgun-compactness-scan-20261101`, second node/card 0,
+code `4445ce44`, started **17:15 MSK**. Seven pins 0.06..0.23, at most
+21 fresh Newton solves on 72x10 / 96x12 / 128x16, max 30 iterations each.
+Stop at the first rejected point or an independently validated sampled
+ergoregion. Stationary solve: t not applicable; per-point speed/ETA not yet
+measured; hard cap **0.5 h, 17:45 MSK**. Four threads, 160 GiB, chunks 128;
+no AMR checkpoints. Scratch clean: 47 MB `_cache/` only, 538 GB free;
+first node not listed. Card 1 idle. No other physical run is queued.
 
-Completed raw integration:
-`railgun-uphill-transit-20261101`, second node/card 0, code `4d40acbc`, ran
-**16:52:24–17:07:01 MSK (0.244 h)**, exit 0, 32 tracks. Conservation passed,
-but raw event labels are not sufficient: a shallow destination crossing and
-turnaround can occur within one step, making a transmitted control appear
-reflected just beyond z=-10. Preserve the original data; independently audit
-first crossings before acceptance or a selection claim. No new physical
-tracks are added. The live integration code was left untouched until it ended.
-**37 GPU regression checks passed in 42.32 s**, **16:51:24–16:52:08 MSK**,
-exit 0, code `4d40acbc`; portable report
-`results/railgun/reports/gpu_uphill_regression.json`.
-**Approved next:** first-crossing verification as part of the uphill study,
-then the seven-point compactness scan, at most 21 solves, card 0.
-Each job: four threads, 160 GiB, chunks 128, 0.5 h cap;
-no AMR checkpoints, retain fields/logs. Mixed-mass/stacked seeds are not
-approved for GPU launch. Scratch clean at **17:11 MSK**: 47 MB in `_cache/`
-only, 538 GB free; first node not listed. Card 1 idle.
+**Uphill experiment accepted after first-crossing audit:** 32 tracks,
+raw code `4d40acbc`, **16:52:24–17:07:01 MSK**, followed by the event audit
+code `786cf041`, **17:11:52–17:12:10 MSK**. At common energy
+E=0.9255355443835863, +z spin reaches z=-10 at t=81.4993862174;
+-z spin turns at z=-9.999772414807428, while the no-spin control reaches -10
+at t=81.7834142908. The ring's J is negative, so -z is the aligned spin.
+This is **finite endpoint selection, not escape or long-term trapping**.
+All invariants and reversal/tolerance checks passed: worst normalised drift
+1.08e-14; nonmarginal RK timing change 6.68e-10. Four raw destination events
+were corrected using degree 5/7 interpolation, verified terminal invariants
+and no added ring integrations; all originals remain under `original/`.
+Exact-threshold marginal contacts cannot supply a transit-time or selection
+claim. Archive: `results/railgun/studies/uphill-transit/`.
+37 initial GPU regressions passed in 42.32 s, then five event/CUDA checks in
+7.11 s; reports under `results/railgun/reports/`. The direct integrator now
+resolves an earlier shallow crossing before its terminal turnaround.
 
 **Requested follow-on experiments (November 1):**
 

@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "d2bd2861dc022847a1a9b4e9dbde9fc1426cc6583ed26afe89e89a5bc61ed8a7",
-      "bytes": 8179
+      "sha256": "0e44375f2eb86c27aa23d281435443c950e235a4c045bfa8ed92b33103aa6d3d",
+      "bytes": 8984
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -56,6 +56,10 @@
     "reports/gpu_baseline_regression.json": {
       "sha256": "d83685b3a8d0baf8d251f75230e9f872508dc668592e183cfc6d379c6be3edc0",
       "bytes": 688
+    },
+    "reports/gpu_event_regression.json": {
+      "sha256": "830a9a68c69a55f9f2207e187ec6a8f49e1718ad6e924e8f7c46fdfea88010fd",
+      "bytes": 1656
     },
     "reports/gpu_flux_regression.json": {
       "sha256": "8cd9826700c237116afd7b4b0ce364b58899df8cffec18161e07d9c90369f290",
@@ -1196,6 +1200,566 @@
     "studies/spherical-validated/sha256.json": {
       "sha256": "6cc847938b846062aa433f50aa8c2ec35cca322d8e095eb6a8d8f6da063d7885",
       "bytes": 1055
+    },
+    "studies/uphill-transit/above_all_rk0_negative.json": {
+      "sha256": "f494ba6527c204ab571816f0bb4d13c8dadc9bbdb22234fe62393196340cd73a",
+      "bytes": 1585
+    },
+    "studies/uphill-transit/above_all_rk0_negative.npz": {
+      "sha256": "e63486ac5067fe7e639ac48ca6cefc95d6d0130f06c0d8fedd60e8bc71127a42",
+      "bytes": 75385
+    },
+    "studies/uphill-transit/above_all_rk0_positive.json": {
+      "sha256": "a9c8d88ed93e901ee8ea1ecf81a1ac05533b2970498400c5ead801d8325af901",
+      "bytes": 1408
+    },
+    "studies/uphill-transit/above_all_rk0_positive.npz": {
+      "sha256": "0923745123c19a13462014a4fd0f58fa1af069352a2bd227a78c4552a146b6d4",
+      "bytes": 71164
+    },
+    "studies/uphill-transit/above_all_rk0_reversed.json": {
+      "sha256": "102711b4d1c02a286e1b6b8b0d0c9a588f8d6cbb93e26218e89efdad5238fee8",
+      "bytes": 1410
+    },
+    "studies/uphill-transit/above_all_rk0_reversed.npz": {
+      "sha256": "8b4773988851733595992261b74684a98419e6818079b44ef0d1fac8d110d17b",
+      "bytes": 71512
+    },
+    "studies/uphill-transit/above_all_rk0_zero.json": {
+      "sha256": "e748e4b155b00523310bad630145051864527da6603d760fc86fcd83322bc2c1",
+      "bytes": 1271
+    },
+    "studies/uphill-transit/above_all_rk0_zero.npz": {
+      "sha256": "72bf4d877a98e8ecc7027b12ddd40fa0b06bb21d4555c61400056b13289a62be",
+      "bytes": 53641
+    },
+    "studies/uphill-transit/above_all_rk1_negative.json": {
+      "sha256": "9e6da7b7018e743cc806d2fb17798e41f041cc186164250adfdf5dc359301ba5",
+      "bytes": 1600
+    },
+    "studies/uphill-transit/above_all_rk1_negative.npz": {
+      "sha256": "f4b30f1da75ab8ada4daa61e45e814c3c59abb9397bc9d23573dc71470521b4a",
+      "bytes": 73616
+    },
+    "studies/uphill-transit/above_all_rk1_positive.json": {
+      "sha256": "6003e2a266b19b142f2858dd49f27079633682f4ee5eeb357c215979e1abdc5c",
+      "bytes": 1419
+    },
+    "studies/uphill-transit/above_all_rk1_positive.npz": {
+      "sha256": "b2ec1080d30624c8b6169e6594cd4e848ca5448f6fddc5a198eb45df19b11ee8",
+      "bytes": 75918
+    },
+    "studies/uphill-transit/above_all_rk1_reversed.json": {
+      "sha256": "73f13c1b57394738ab12f5a644cf9f24e5c09aa7fb98e18ed80e236267df0303",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/above_all_rk1_reversed.npz": {
+      "sha256": "e7c44260025c049e7592c4adda582a37f452a9b26c0d35100f0af79710ab8200",
+      "bytes": 76182
+    },
+    "studies/uphill-transit/above_all_rk1_zero.json": {
+      "sha256": "52fa7629b0708c56ab8c87433de904d0742c7ac0bf3123887007a5afdbafe8b4",
+      "bytes": 1273
+    },
+    "studies/uphill-transit/above_all_rk1_zero.npz": {
+      "sha256": "f57df7a4c479c5fe8c9a12865ebe779a45c3846644b3b01e89445e9032de2a83",
+      "bytes": 62640
+    },
+    "studies/uphill-transit/below_all_rk0_negative.json": {
+      "sha256": "344b1797b90286c2fdf5776816d23b245023788f07e322e50ec9b5a0ca82f09f",
+      "bytes": 1435
+    },
+    "studies/uphill-transit/below_all_rk0_negative.npz": {
+      "sha256": "e58a3316ca64d5e6b4ace1090a9e330ea9b176333b92450c6eec77271c348113",
+      "bytes": 74367
+    },
+    "studies/uphill-transit/below_all_rk0_positive.json": {
+      "sha256": "2b5728865b59dbb3b7f9c2db5c46b03bab455f8ed82dcd5d055d2b8880418442",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/below_all_rk0_positive.npz": {
+      "sha256": "d6d95fdd5f7095d5220725e71e5bebaca2e4d7fa5141ca82d55bba95f653d28b",
+      "bytes": 71808
+    },
+    "studies/uphill-transit/below_all_rk0_reversed.json": {
+      "sha256": "0fadf4700dc61cfb24bba68c19548d9905926349f309ba3f11b9a61eec25cd17",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/below_all_rk0_reversed.npz": {
+      "sha256": "b2e8a9df2be0158866d7a8cdcfa87faed2e57bf844d4c045b77e31927bbaee29",
+      "bytes": 72129
+    },
+    "studies/uphill-transit/below_all_rk0_zero.json": {
+      "sha256": "6c071fd89ba2a470096e57827e93dc13301d602ab3eb3c3bf2f29e157d1798f0",
+      "bytes": 1330
+    },
+    "studies/uphill-transit/below_all_rk0_zero.npz": {
+      "sha256": "e59ad15838d18c92ed9f60faf7a206b365550a87b0a2c49218e685769bf4f857",
+      "bytes": 65644
+    },
+    "studies/uphill-transit/below_all_rk1_negative.json": {
+      "sha256": "54fd7796c35b3f00c3866f78387e9f5aeb46a53c351a821d8ba8416d574bb06d",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/below_all_rk1_negative.npz": {
+      "sha256": "ac2c725f7070d4f4cb47566526a405382bb4ac5fff25ec3afb439eea1ced9403",
+      "bytes": 76080
+    },
+    "studies/uphill-transit/below_all_rk1_positive.json": {
+      "sha256": "10400294009ba71928ad60b0e94c6961558744f48f4f88895553ad0968e3b141",
+      "bytes": 1419
+    },
+    "studies/uphill-transit/below_all_rk1_positive.npz": {
+      "sha256": "b7c153c360c03546db8b1ed384260b0da7118cfd0e37ff0185da6ab6a9f3974a",
+      "bytes": 75854
+    },
+    "studies/uphill-transit/below_all_rk1_reversed.json": {
+      "sha256": "f6442ac1167b4fed654217ab94d81ee4078317bec5f1fb8d8035a59e277b3cc2",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/below_all_rk1_reversed.npz": {
+      "sha256": "9783890c9b6a3f7a9ccce227a6bedc43c33b087cd261f219ee68b37fef4695f7",
+      "bytes": 76122
+    },
+    "studies/uphill-transit/below_all_rk1_zero.json": {
+      "sha256": "674848a2323b0513f73073d5ddc75fa02ec54bf61fdf0d4b81ff168c0b0a122a",
+      "bytes": 1346
+    },
+    "studies/uphill-transit/below_all_rk1_zero.npz": {
+      "sha256": "90e671eddca27b4c2da1acebc5e68e8c35f8b4f7741f27e4cd94eebeea4cad3a",
+      "bytes": 60605
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_negative.json": {
+      "sha256": "ba7416938e37939a2e2ce8072ed81f5ddda0dcd9d6d0f2bb1972ccbeda2b1a02",
+      "bytes": 1388
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_negative.npz": {
+      "sha256": "784e45267d6a2182bd3cafe44fca1d1e00a9f23a13abc4b437a7c6532be9ceef",
+      "bytes": 75276
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_positive.json": {
+      "sha256": "3df5ee4cbf756060e31f0bc9a87a77cdc4302820814719381fc84ea383003fff",
+      "bytes": 1405
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_positive.npz": {
+      "sha256": "0dbb5c8dcd37310046073de77b9c63b0634dc505347eca7a50415233d94cd918",
+      "bytes": 73632
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_reversed.json": {
+      "sha256": "4c1950875e5176d7cbb1106e5e557942e686885c5964f631db5c48ca5ccb3d16",
+      "bytes": 1407
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_reversed.npz": {
+      "sha256": "66acb3af44ff6ff38414c42b97240b0ac6d1ccf2498c4a9c7c624c750a613127",
+      "bytes": 73947
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_zero.json": {
+      "sha256": "218c7c8e308e318ba4438e75ec6e665cf3ebfaaf9f27043c68dc799d6a9fc981",
+      "bytes": 1266
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk0_zero.npz": {
+      "sha256": "fecbcfaf5864846a36b1ec41a514f30d0c28afbd585ec81be1a77c5fafd34657",
+      "bytes": 65004
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_negative.json": {
+      "sha256": "b2e7d95504995ee11f993e6a709d45b71a4ea12fa66ae549ee21e824ad19151c",
+      "bytes": 1392
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_negative.npz": {
+      "sha256": "f504ecebbaaf6acfc89907d45a2d3ca96a46d479400ecfae95a6ba9b15e55520",
+      "bytes": 74926
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_positive.json": {
+      "sha256": "d88a990f694c6647990bf121573611bf84710c4d8a59e4863a8e67c9d2734f97",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_positive.npz": {
+      "sha256": "2c86bf73c40e8e4e006bf30afa455a263c2c1308057e23affd8b3b9eb80f2e6e",
+      "bytes": 75829
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_reversed.json": {
+      "sha256": "4e90d63a0838bd36e9b073cd1f36840c8f4258d5c36ffb36302164a9689f5f96",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_reversed.npz": {
+      "sha256": "0ffe59e541f5091e4bebf7371c7170ee0a3bf4d981641cb0290f72c4e9819fbc",
+      "bytes": 76116
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_zero.json": {
+      "sha256": "aab0c6120490190cb18bde5ce98c3d9d901c0b1e84218ec88d23564c550eb4d8",
+      "bytes": 1261
+    },
+    "studies/uphill-transit/between_spin_thresholds_rk1_zero.npz": {
+      "sha256": "a4e3d271e65c377f39fbde144e5563e4e2049cd6c32be8101c76f98bcaf7b627",
+      "bytes": 63120
+    },
+    "studies/uphill-transit/event_audit.log": {
+      "sha256": "0bfa8cc4d4401a58ecfd18504e3b3c099e2f9621f8e6e4a06bc0be5c91acf2cb",
+      "bytes": 374
+    },
+    "studies/uphill-transit/execution.json": {
+      "sha256": "f97fb98e30f1d8d91d6c878179a7572f6ea5a367461de15e0615dc6e997e28f9",
+      "bytes": 447
+    },
+    "studies/uphill-transit/manifest.json": {
+      "sha256": "b3e655d6d468e7df9f1a6c1ed418ccaca04c6fb85318f9ae0e3b730426bd9419",
+      "bytes": 867
+    },
+    "studies/uphill-transit/original/README.md": {
+      "sha256": "19ffd1255a467c4343b24761b3db2955452e05321ae6074f16eb744803f7a422",
+      "bytes": 326
+    },
+    "studies/uphill-transit/original/above_all_rk0_negative.json": {
+      "sha256": "5e8fecbe79220f750f022d0ccff9416c424052df0e5c77f0f56d2d0101116af7",
+      "bytes": 1391
+    },
+    "studies/uphill-transit/original/above_all_rk0_negative.npz": {
+      "sha256": "624a82f01c4bcbd2bc89777db6a22b9fee61839eeff44c3c9431891550d559fb",
+      "bytes": 75455
+    },
+    "studies/uphill-transit/original/above_all_rk0_positive.json": {
+      "sha256": "a9c8d88ed93e901ee8ea1ecf81a1ac05533b2970498400c5ead801d8325af901",
+      "bytes": 1408
+    },
+    "studies/uphill-transit/original/above_all_rk0_positive.npz": {
+      "sha256": "0923745123c19a13462014a4fd0f58fa1af069352a2bd227a78c4552a146b6d4",
+      "bytes": 71164
+    },
+    "studies/uphill-transit/original/above_all_rk0_reversed.json": {
+      "sha256": "102711b4d1c02a286e1b6b8b0d0c9a588f8d6cbb93e26218e89efdad5238fee8",
+      "bytes": 1410
+    },
+    "studies/uphill-transit/original/above_all_rk0_reversed.npz": {
+      "sha256": "8b4773988851733595992261b74684a98419e6818079b44ef0d1fac8d110d17b",
+      "bytes": 71512
+    },
+    "studies/uphill-transit/original/above_all_rk0_zero.json": {
+      "sha256": "e748e4b155b00523310bad630145051864527da6603d760fc86fcd83322bc2c1",
+      "bytes": 1271
+    },
+    "studies/uphill-transit/original/above_all_rk0_zero.npz": {
+      "sha256": "72bf4d877a98e8ecc7027b12ddd40fa0b06bb21d4555c61400056b13289a62be",
+      "bytes": 53641
+    },
+    "studies/uphill-transit/original/above_all_rk1_negative.json": {
+      "sha256": "0070ec7fdf9e90351da64c7e68fbb0b4060763513b863c806cf53c044e837a5d",
+      "bytes": 1387
+    },
+    "studies/uphill-transit/original/above_all_rk1_negative.npz": {
+      "sha256": "bbf6fc8edf613e11a685b63ae787df236a40ffb6e5587085166ba3a82cf18ee4",
+      "bytes": 73688
+    },
+    "studies/uphill-transit/original/above_all_rk1_positive.json": {
+      "sha256": "6003e2a266b19b142f2858dd49f27079633682f4ee5eeb357c215979e1abdc5c",
+      "bytes": 1419
+    },
+    "studies/uphill-transit/original/above_all_rk1_positive.npz": {
+      "sha256": "b2ec1080d30624c8b6169e6594cd4e848ca5448f6fddc5a198eb45df19b11ee8",
+      "bytes": 75918
+    },
+    "studies/uphill-transit/original/above_all_rk1_reversed.json": {
+      "sha256": "73f13c1b57394738ab12f5a644cf9f24e5c09aa7fb98e18ed80e236267df0303",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/original/above_all_rk1_reversed.npz": {
+      "sha256": "e7c44260025c049e7592c4adda582a37f452a9b26c0d35100f0af79710ab8200",
+      "bytes": 76182
+    },
+    "studies/uphill-transit/original/above_all_rk1_zero.json": {
+      "sha256": "52fa7629b0708c56ab8c87433de904d0742c7ac0bf3123887007a5afdbafe8b4",
+      "bytes": 1273
+    },
+    "studies/uphill-transit/original/above_all_rk1_zero.npz": {
+      "sha256": "f57df7a4c479c5fe8c9a12865ebe779a45c3846644b3b01e89445e9032de2a83",
+      "bytes": 62640
+    },
+    "studies/uphill-transit/original/below_all_rk0_negative.json": {
+      "sha256": "344b1797b90286c2fdf5776816d23b245023788f07e322e50ec9b5a0ca82f09f",
+      "bytes": 1435
+    },
+    "studies/uphill-transit/original/below_all_rk0_negative.npz": {
+      "sha256": "e58a3316ca64d5e6b4ace1090a9e330ea9b176333b92450c6eec77271c348113",
+      "bytes": 74367
+    },
+    "studies/uphill-transit/original/below_all_rk0_positive.json": {
+      "sha256": "2b5728865b59dbb3b7f9c2db5c46b03bab455f8ed82dcd5d055d2b8880418442",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/original/below_all_rk0_positive.npz": {
+      "sha256": "d6d95fdd5f7095d5220725e71e5bebaca2e4d7fa5141ca82d55bba95f653d28b",
+      "bytes": 71808
+    },
+    "studies/uphill-transit/original/below_all_rk0_reversed.json": {
+      "sha256": "0fadf4700dc61cfb24bba68c19548d9905926349f309ba3f11b9a61eec25cd17",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/original/below_all_rk0_reversed.npz": {
+      "sha256": "b2e8a9df2be0158866d7a8cdcfa87faed2e57bf844d4c045b77e31927bbaee29",
+      "bytes": 72129
+    },
+    "studies/uphill-transit/original/below_all_rk0_zero.json": {
+      "sha256": "6c071fd89ba2a470096e57827e93dc13301d602ab3eb3c3bf2f29e157d1798f0",
+      "bytes": 1330
+    },
+    "studies/uphill-transit/original/below_all_rk0_zero.npz": {
+      "sha256": "e59ad15838d18c92ed9f60faf7a206b365550a87b0a2c49218e685769bf4f857",
+      "bytes": 65644
+    },
+    "studies/uphill-transit/original/below_all_rk1_negative.json": {
+      "sha256": "54fd7796c35b3f00c3866f78387e9f5aeb46a53c351a821d8ba8416d574bb06d",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/original/below_all_rk1_negative.npz": {
+      "sha256": "ac2c725f7070d4f4cb47566526a405382bb4ac5fff25ec3afb439eea1ced9403",
+      "bytes": 76080
+    },
+    "studies/uphill-transit/original/below_all_rk1_positive.json": {
+      "sha256": "10400294009ba71928ad60b0e94c6961558744f48f4f88895553ad0968e3b141",
+      "bytes": 1419
+    },
+    "studies/uphill-transit/original/below_all_rk1_positive.npz": {
+      "sha256": "b7c153c360c03546db8b1ed384260b0da7118cfd0e37ff0185da6ab6a9f3974a",
+      "bytes": 75854
+    },
+    "studies/uphill-transit/original/below_all_rk1_reversed.json": {
+      "sha256": "f6442ac1167b4fed654217ab94d81ee4078317bec5f1fb8d8035a59e277b3cc2",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/original/below_all_rk1_reversed.npz": {
+      "sha256": "9783890c9b6a3f7a9ccce227a6bedc43c33b087cd261f219ee68b37fef4695f7",
+      "bytes": 76122
+    },
+    "studies/uphill-transit/original/below_all_rk1_zero.json": {
+      "sha256": "674848a2323b0513f73073d5ddc75fa02ec54bf61fdf0d4b81ff168c0b0a122a",
+      "bytes": 1346
+    },
+    "studies/uphill-transit/original/below_all_rk1_zero.npz": {
+      "sha256": "90e671eddca27b4c2da1acebc5e68e8c35f8b4f7741f27e4cd94eebeea4cad3a",
+      "bytes": 60605
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_negative.json": {
+      "sha256": "ba7416938e37939a2e2ce8072ed81f5ddda0dcd9d6d0f2bb1972ccbeda2b1a02",
+      "bytes": 1388
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_negative.npz": {
+      "sha256": "784e45267d6a2182bd3cafe44fca1d1e00a9f23a13abc4b437a7c6532be9ceef",
+      "bytes": 75276
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_positive.json": {
+      "sha256": "3df5ee4cbf756060e31f0bc9a87a77cdc4302820814719381fc84ea383003fff",
+      "bytes": 1405
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_positive.npz": {
+      "sha256": "0dbb5c8dcd37310046073de77b9c63b0634dc505347eca7a50415233d94cd918",
+      "bytes": 73632
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_reversed.json": {
+      "sha256": "4c1950875e5176d7cbb1106e5e557942e686885c5964f631db5c48ca5ccb3d16",
+      "bytes": 1407
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_reversed.npz": {
+      "sha256": "66acb3af44ff6ff38414c42b97240b0ac6d1ccf2498c4a9c7c624c750a613127",
+      "bytes": 73947
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_zero.json": {
+      "sha256": "218c7c8e308e318ba4438e75ec6e665cf3ebfaaf9f27043c68dc799d6a9fc981",
+      "bytes": 1266
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk0_zero.npz": {
+      "sha256": "fecbcfaf5864846a36b1ec41a514f30d0c28afbd585ec81be1a77c5fafd34657",
+      "bytes": 65004
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_negative.json": {
+      "sha256": "b2e7d95504995ee11f993e6a709d45b71a4ea12fa66ae549ee21e824ad19151c",
+      "bytes": 1392
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_negative.npz": {
+      "sha256": "f504ecebbaaf6acfc89907d45a2d3ca96a46d479400ecfae95a6ba9b15e55520",
+      "bytes": 74926
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_positive.json": {
+      "sha256": "d88a990f694c6647990bf121573611bf84710c4d8a59e4863a8e67c9d2734f97",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_positive.npz": {
+      "sha256": "2c86bf73c40e8e4e006bf30afa455a263c2c1308057e23affd8b3b9eb80f2e6e",
+      "bytes": 75829
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_reversed.json": {
+      "sha256": "4e90d63a0838bd36e9b073cd1f36840c8f4258d5c36ffb36302164a9689f5f96",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_reversed.npz": {
+      "sha256": "0ffe59e541f5091e4bebf7371c7170ee0a3bf4d981641cb0290f72c4e9819fbc",
+      "bytes": 76116
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_zero.json": {
+      "sha256": "aab0c6120490190cb18bde5ce98c3d9d901c0b1e84218ec88d23564c550eb4d8",
+      "bytes": 1261
+    },
+    "studies/uphill-transit/original/between_spin_thresholds_rk1_zero.npz": {
+      "sha256": "a4e3d271e65c377f39fbde144e5563e4e2049cd6c32be8101c76f98bcaf7b627",
+      "bytes": 63120
+    },
+    "studies/uphill-transit/original/corridor.json": {
+      "sha256": "e6ba8ec3746141ec88351efff7d94d2f759ccea2de5407517202138a79614d44",
+      "bytes": 24623
+    },
+    "studies/uphill-transit/original/manifest.json": {
+      "sha256": "f4dc760b8b475f1cbef026c82619fcb91dd6402de70a5151c5d9efc54bb3762c",
+      "bytes": 799
+    },
+    "studies/uphill-transit/original/outcome.json": {
+      "sha256": "24adee09623dc327158caf278ecad8d8a43a12e7da2abdaeb4d3bab488ecb536",
+      "bytes": 59571
+    },
+    "studies/uphill-transit/original/progress.json": {
+      "sha256": "1c05f047241891d6be22a1a1eee852346314e04c802b5f28e87901ca1f781a07",
+      "bytes": 54074
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_negative.json": {
+      "sha256": "a7be7cea4f87e1b62a5e57c61eea0bb9f941f17d2da05fc5dfe259255da5a71b",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_negative.npz": {
+      "sha256": "1db7c0834a8303eaa7553dafddd852df4120ab16fb07289d9cf6bcd1a57776cc",
+      "bytes": 75860
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_positive.json": {
+      "sha256": "af0a197895fc5c18e93e344dd03d20e8c7dfb2ee5dabf82caa37490435f0e5ce",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_positive.npz": {
+      "sha256": "6115babaf5a9243631ea7f9f466d27df8beb30b6010893b1723952ed18c25ce7",
+      "bytes": 75727
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_reversed.json": {
+      "sha256": "394393d81880e6fda933d4da968fd5e4df6e39637716fdd862861d2ecfe8e73e",
+      "bytes": 1423
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_reversed.npz": {
+      "sha256": "c1d63f6eb827a18c1571027d47154d458b9d4327a85276dcfa754a84cf186596",
+      "bytes": 76006
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_zero.json": {
+      "sha256": "99aab2f381c9c2632d58f2eb45f88fe99f7707eb68d3890149174c1c766a3040",
+      "bytes": 1343
+    },
+    "studies/uphill-transit/original/requested_offset_rk0_zero.npz": {
+      "sha256": "7ba683102cd8a36489b79d675310a6fa7ef15e23e4ddc14c36b56621d363da73",
+      "bytes": 62901
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_negative.json": {
+      "sha256": "f8ab9f4746057a2d5e7147e8c570376ddcf9ab3c2753bef3bd2b61f6b06bde90",
+      "bytes": 1433
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_negative.npz": {
+      "sha256": "e3a0bc5c05e20d003d606a7e7c59c6fe7f7d440ac34c96bf84c7344c19708be2",
+      "bytes": 75867
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_positive.json": {
+      "sha256": "2b7b0559592c77c2ed6e269cd1e7776a88de5c730ed806d44961e0a3cf736e27",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_positive.npz": {
+      "sha256": "d2a8ede70e201bea537b403295530ef2b8bd3b746f8eb8967585528ea98b6fca",
+      "bytes": 76078
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_reversed.json": {
+      "sha256": "4f9682ba294f14895e90c93def8638b445d431506f5e92f4b9d0b28f2491c7f2",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_reversed.npz": {
+      "sha256": "3099c9cd8df48d3c91ff4e9ea8ef9cdf4354dd0a646fe1542072f7425b9430af",
+      "bytes": 76348
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_zero.json": {
+      "sha256": "089e1617daf6fc19799f694372b2abded07565b6104b2fb8010054f95b34fb89",
+      "bytes": 1344
+    },
+    "studies/uphill-transit/original/requested_offset_rk1_zero.npz": {
+      "sha256": "cc137b48952ea178b48dbfb25a2d73a8f92316841ecfa46841bddd456a4d2ec4",
+      "bytes": 65808
+    },
+    "studies/uphill-transit/original/run.log": {
+      "sha256": "989566ba7cdf908128672888aa8babb702e9187310c869995d0e05a9d59e4665",
+      "bytes": 2636
+    },
+    "studies/uphill-transit/original/thresholds.json": {
+      "sha256": "161247dec9f975659ea33700878498e21dcc226241f18cc5032c9c3a8b47f248",
+      "bytes": 456
+    },
+    "studies/uphill-transit/outcome.json": {
+      "sha256": "398c177df1eb186f08fff6395ed997f37a219ae15cd19e54c11144671d5343f2",
+      "bytes": 61534
+    },
+    "studies/uphill-transit/requested_offset_rk0_negative.json": {
+      "sha256": "a7be7cea4f87e1b62a5e57c61eea0bb9f941f17d2da05fc5dfe259255da5a71b",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/requested_offset_rk0_negative.npz": {
+      "sha256": "1db7c0834a8303eaa7553dafddd852df4120ab16fb07289d9cf6bcd1a57776cc",
+      "bytes": 75860
+    },
+    "studies/uphill-transit/requested_offset_rk0_positive.json": {
+      "sha256": "af0a197895fc5c18e93e344dd03d20e8c7dfb2ee5dabf82caa37490435f0e5ce",
+      "bytes": 1421
+    },
+    "studies/uphill-transit/requested_offset_rk0_positive.npz": {
+      "sha256": "6115babaf5a9243631ea7f9f466d27df8beb30b6010893b1723952ed18c25ce7",
+      "bytes": 75727
+    },
+    "studies/uphill-transit/requested_offset_rk0_reversed.json": {
+      "sha256": "394393d81880e6fda933d4da968fd5e4df6e39637716fdd862861d2ecfe8e73e",
+      "bytes": 1423
+    },
+    "studies/uphill-transit/requested_offset_rk0_reversed.npz": {
+      "sha256": "c1d63f6eb827a18c1571027d47154d458b9d4327a85276dcfa754a84cf186596",
+      "bytes": 76006
+    },
+    "studies/uphill-transit/requested_offset_rk0_zero.json": {
+      "sha256": "0d2d5e0bd2f408a32264346983b1053186e69dce83dced22361108004bcf2ca7",
+      "bytes": 1552
+    },
+    "studies/uphill-transit/requested_offset_rk0_zero.npz": {
+      "sha256": "acebc62d016e8df42e6dbaa2f7ea26b2dca8b2fa6acabb04213b93c54e2a4cf0",
+      "bytes": 62841
+    },
+    "studies/uphill-transit/requested_offset_rk1_negative.json": {
+      "sha256": "f8ab9f4746057a2d5e7147e8c570376ddcf9ab3c2753bef3bd2b61f6b06bde90",
+      "bytes": 1433
+    },
+    "studies/uphill-transit/requested_offset_rk1_negative.npz": {
+      "sha256": "e3a0bc5c05e20d003d606a7e7c59c6fe7f7d440ac34c96bf84c7344c19708be2",
+      "bytes": 75867
+    },
+    "studies/uphill-transit/requested_offset_rk1_positive.json": {
+      "sha256": "2b7b0559592c77c2ed6e269cd1e7776a88de5c730ed806d44961e0a3cf736e27",
+      "bytes": 1422
+    },
+    "studies/uphill-transit/requested_offset_rk1_positive.npz": {
+      "sha256": "d2a8ede70e201bea537b403295530ef2b8bd3b746f8eb8967585528ea98b6fca",
+      "bytes": 76078
+    },
+    "studies/uphill-transit/requested_offset_rk1_reversed.json": {
+      "sha256": "4f9682ba294f14895e90c93def8638b445d431506f5e92f4b9d0b28f2491c7f2",
+      "bytes": 1424
+    },
+    "studies/uphill-transit/requested_offset_rk1_reversed.npz": {
+      "sha256": "3099c9cd8df48d3c91ff4e9ea8ef9cdf4354dd0a646fe1542072f7425b9430af",
+      "bytes": 76348
+    },
+    "studies/uphill-transit/requested_offset_rk1_zero.json": {
+      "sha256": "107c372b6c6a14d1202e4e90c8e5def0c1fce11b3198d3602bd8fcc56f9cbab8",
+      "bytes": 1554
+    },
+    "studies/uphill-transit/requested_offset_rk1_zero.npz": {
+      "sha256": "c9b5be4b9f8ce82ccaa5a7555175ce3785a233911902f6d71c20bff380dddfe9",
+      "bytes": 65751
+    },
+    "studies/uphill-transit/sha256sums.txt": {
+      "sha256": "3642e4ff7db11fd29d54ebe1bb480ff3e151c9339853c7cec34912240af135f4",
+      "bytes": 14024
     }
   }
 }

@@ -1,0 +1,53 @@
+{
+  "commit": "786cf041",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "5",
+      "time": "7.107",
+      "timestamp": "2026-11-01T14:10:37.073620+00:00",
+      "hostname": "ilya-test-3-gpu-2-0"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_precedes_a_nearby_turn_within_the_same_sample_interval",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_a_turn_before_the_destination_does_not_become_a_crossing",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_rejects_nonfinite_saved_states",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_recovered_crossing_matches_exact_rindler_time_and_killing_energy",
+      "time": "6.376",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.030",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T14:10:35Z threads=4 mem=160G timeout=1800s\n.....                                                                    [100%]\n5 passed in 7.11s\n[capped_job] end 2026-11-01T14:10:44Z exit=0\n"
+}

@@ -1,0 +1,3 @@
+[capped_job] start 2026-11-01T14:11:52Z threads=4 mem=160G timeout=1800s
+{"accepted": true, "corrected_tracks": ["requested_offset_rk0_zero", "requested_offset_rk1_zero", "above_all_rk0_negative", "above_all_rk1_negative"], "selection_regimes": ["requested_offset", "between_spin_thresholds"], "additional_integrated_tracks": 0}
+[capped_job] end 2026-11-01T14:12:10Z exit=0

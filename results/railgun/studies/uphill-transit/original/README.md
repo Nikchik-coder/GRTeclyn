@@ -1,0 +1,1 @@
+Original 32-track integration, retained unchanged. Four destination events were missed when a crossing and turnaround shared one accepted step. Use the audited parent outcome and trajectories for every classification or timing claim. The raw accepted flag checked integration/conservation and does not certify event ordering.

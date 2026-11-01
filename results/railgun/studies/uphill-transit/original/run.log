@@ -1,0 +1,34 @@
+[capped_job] start 2026-11-01T13:52:24Z threads=4 mem=160G timeout=1800s
+[uphill] requested_offset_rk0_zero: reflected, z=-10.0000230456, strict=True
+[uphill] requested_offset_rk0_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] requested_offset_rk0_negative: reflected, z=-9.9997724148, strict=True
+[uphill] requested_offset_rk0_reversed: transmitted, z=-10.0000000000, strict=True
+[uphill] requested_offset_rk1_zero: reflected, z=-10.0000230456, strict=True
+[uphill] requested_offset_rk1_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] requested_offset_rk1_negative: reflected, z=-9.9997724148, strict=True
+[uphill] requested_offset_rk1_reversed: transmitted, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk0_zero: marginal, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk0_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk0_negative: reflected, z=-9.9997493685, strict=True
+[uphill] between_spin_thresholds_rk0_reversed: transmitted, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk1_zero: marginal, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk1_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] between_spin_thresholds_rk1_negative: reflected, z=-9.9997493685, strict=True
+[uphill] between_spin_thresholds_rk1_reversed: transmitted, z=-10.0000000000, strict=True
+[uphill] below_all_rk0_zero: reflected, z=-9.9997263358, strict=True
+[uphill] below_all_rk0_positive: reflected, z=-9.9999769556, strict=True
+[uphill] below_all_rk0_negative: reflected, z=-9.9994756952, strict=True
+[uphill] below_all_rk0_reversed: reflected, z=-9.9999769556, strict=True
+[uphill] below_all_rk1_zero: reflected, z=-9.9997263358, strict=True
+[uphill] below_all_rk1_positive: reflected, z=-9.9999769556, strict=True
+[uphill] below_all_rk1_negative: reflected, z=-9.9994756952, strict=True
+[uphill] below_all_rk1_reversed: reflected, z=-9.9999769556, strict=True
+[uphill] above_all_rk0_zero: transmitted, z=-10.0000000000, strict=True
+[uphill] above_all_rk0_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] above_all_rk0_negative: reflected, z=-10.0000230467, strict=True
+[uphill] above_all_rk0_reversed: transmitted, z=-10.0000000000, strict=True
+[uphill] above_all_rk1_zero: transmitted, z=-10.0000000000, strict=True
+[uphill] above_all_rk1_positive: transmitted, z=-10.0000000000, strict=True
+[uphill] above_all_rk1_negative: reflected, z=-10.0000230467, strict=True
+[uphill] above_all_rk1_reversed: transmitted, z=-10.0000000000, strict=True
+[capped_job] end 2026-11-01T14:07:01Z exit=0
