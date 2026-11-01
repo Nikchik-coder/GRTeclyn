@@ -32,11 +32,15 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 ## Live and queue
 
 **Live:** both approved numerical jobs started **19:58:10 MSK**, code
-`4e0af89a`, second GPU node. Card 0:
-`railgun-strong-phase-polish-20261101`, exactly two order-32 scalar
-phase integrals, no new MPD tracks or substitution points. Card 1:
+`4e0af89a`, second GPU node. Card 0: `railgun-strong-phase-polish-20261101` finished **19:58:22 MSK**,
+exit 0: **stronger-ring finite uphill selection accepted**. Both final
+phase comparisons are 4.512e-12; all nonmarginal saved-track errors <=
+5.283e-8 and all 656 full MPD substitution checks <=1.316e-14. No new
+MPD tracks or points. Archive: `studies/strong-uphill-073-validated/`.
+Card 0 now idle. Card 1:
 `railgun-annular-regular-cubic-k12-20261101`, at most three fresh solves
-on 192x16/224x18/256x20, full regular cubic momentum equations,
+on 192x16/224x18/256x20. First 192x16 **PASS**; 224x18 converged and
+under independent validation. Full regular cubic momentum equations,
 independently measured infinity J, fresh Jacobians/Newton 1e-14.
 The preceding GPU suites passed **6 + 39 = 45 tests** (3.74 / 10.61 s),
 code `f898960d`. All acceptance gates unchanged. Four threads/160 GiB/
