@@ -9,11 +9,12 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-guards-regression-20261101`, second node/card 0, started
-**10:36 MSK**, code `fd15f724`, four threads, 160 GiB, timeout **0.5 h
-(11:06 MSK)**. It is alive, compiling/executing the extended GPU test suite;
-completion ETA is unmeasured. Scratch is clean: **47 MB**, only `_cache/`,
-**546 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
+**Live:** `railgun-baseline-guards-20261101`, second node/card 0, started
+**10:41 MSK**, code `303bdab5`, four threads, 160 GiB, timeout **0.5 h
+(11:11 MSK)**. These are two read-only checks against the saved spherical
+solution: intrinsic KG/core certification and the integer-winding bound mode.
+Completion ETA is unmeasured. Scratch is clean: **47 MB**, only `_cache/`,
+**545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
@@ -51,7 +52,9 @@ three newly identified safeguards continues under the same four-thread,
 
 ## Current implementation checks
 
-The November 1 safeguards are implemented and await GPU regression checks:
+The November 1 safeguards passed **51 GPU regressions in 55.99 s**, code
+`fd15f724`, ending **10:37 MSK**. Checks against the saved nonflat baseline are
+live as recorded above; no nonlinear ring solve has started.
 
 1. Off-grid reports include worst KG/Einstein **radius and theta**, with a
    separate intrinsic divergence-form KG evaluation and Cartesian/intrinsic
