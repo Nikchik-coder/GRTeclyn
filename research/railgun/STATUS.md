@@ -31,7 +31,15 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** none; both cards idle. Strong-ring particles completed all 32
+**Live:** targeted GPU regressions started **19:05:10 MSK**, code `153c53c6`,
+second node/card 0 (`railgun-precision-gpu-tests-20261101`) and card 1
+(`railgun-quintic-gpu-tests-20261101`). Each capped at 0.5 h; hard deadline
+**19:35 MSK**. Numerical correction jobs follow only after passing tests.
+Both correction sequences have explicit go: two new particle tracks on card 0
+and at most three quintic recovery solves on card 1. No AMR checkpoints.
+Scratch clean at **19:05 MSK**: 47 MB in `_cache/`, 535 GB free.
+
+**Previous:** Strong-ring particles completed all 32
 tracks, but the study is **rejected**: two nonmarginal timing comparisons
 are 2.70803e-7 / 2.68702e-7 against 1e-7. All track conservation, reversal
 and classification checks pass; worst normalised invariant drift 1.55e-10.
@@ -635,7 +643,7 @@ geometry. The outer -6/-8 species can be seeded only after a pure mixed-mass
 inner branch is independently recovered. Six-problem go received; no
 nonlinear mixed-mass or odd branch recovery is authorised yet.
 
-**Prepared, fresh go required:** (1) `studies/uphill_precision_073.json`,
+**Approved, following GPU regressions:** (1) `studies/uphill_precision_073.json`,
 only requested_offset/zero and above_all/negative at rtol=2e-13, compared
 with their saved 2e-12 tracks. Reuse the exact accepted source/core profile,
 retain all 32 originals; at most two new tracks, cumulative 34. Unchanged
@@ -643,6 +651,6 @@ retain all 32 originals; at most two new tracks, cumulative 34. Unchanged
 `studies/annular_quintic_k12.json`, at most three fresh solves on
 192x16 / 224x18 / 256x20 with zero-J r^-5 Frobenius falloff, max 30
 iterations/minimum two updates, all old gates plus omitted PDEs and the
-leading angular-mode check. Proposed GPU 0 precision audit and GPU 1
+leading angular-mode check. Approved GPU 0 precision audit and GPU 1
 quintic recovery, following targeted GPU regressions; each four threads,
-160 GiB, 0.5 h, chunks 128, no AMR checkpoints. Neither has launched.
+160 GiB, 0.5 h, chunks 128, no AMR checkpoints. GPU regressions launched at 19:05 MSK; numerical jobs queued on passing tests.
