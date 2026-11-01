@@ -31,17 +31,18 @@ near 5.89 and 7.77 do not create a gap. The target schematic is
 
 ## Live and queue
 
-**Live:** `railgun-uphill-regression-20261101`, second node/card 0,
-code `4d40acbc`, started **16:51 MSK**. Testing turnaround events, even/odd
-component energy, existing transport/gap checks and CUDA float64 placement.
-Stationary tests: t not applicable; speed/ETA not yet measured; hard cap
-0.5 h, **17:21 MSK**. Four threads, 160 GiB; no AMR checkpoints.
-**Approved queue:** uphill 32-track experiment, then the seven-point,
-21-solve compactness scan, sequentially on card 0 after successful tests.
-Each has a separate 0.5 h cap, four threads, 160 GiB and chunks 128;
-no AMR checkpoints, retain fields and logs. Mixed-mass/stacked seeds remain
-unapproved for GPU launch. Scratch clean at **16:51 MSK**: 47 MB in
-`_cache/` only, 538 GB free; first node not listed. Card 1 idle.
+**Live:** `railgun-uphill-transit-20261101`, second node/card 0,
+code `4d40acbc`, started **16:52:24 MSK**. Initial core certification/compilation
+phase; 32 matched-energy tracks maximum. No evolution t; per-track speed and
+completion ETA not measured yet. Hard cap **0.5 h, 17:22 MSK**.
+**37 GPU regression checks passed in 42.32 s**, **16:51:24–16:52:08 MSK**,
+exit 0, code `4d40acbc`; portable report
+`results/railgun/reports/gpu_uphill_regression.json`.
+**Approved next:** seven-point compactness scan, at most 21 solves, card 0
+when uphill finishes. Each job: four threads, 160 GiB, chunks 128, 0.5 h cap;
+no AMR checkpoints, retain fields/logs. Mixed-mass/stacked seeds are not
+approved for GPU launch. Scratch clean at **16:54 MSK**: 47 MB in `_cache/`
+only, 538 GB free; first node not listed. Card 1 idle.
 
 **Requested follow-on experiments (November 1):**
 

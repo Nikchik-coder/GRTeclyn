@@ -14,6 +14,7 @@ grteclyn-wrapper/.venv/bin/python research/railgun/verify_pack.py
 
 The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 96x12. A pure k=1 rotating ring also passes on 72x10, 96x12 and 128x16, with observable drift 3.52e-10. The latest full suite passed 63 GPU tests. These are stationary numerical solutions; 32 finite-radius through-ring particle tracks pass conservation and tolerance checks; dynamical stability remains untested.
 
+- `reports/gpu_uphill_regression.json`: 37 passing GPU checks, including analytic Rindler turnaround, flat transmission, odd-parity gradient energy, existing transport and CUDA float64 placement.
 - `studies/spherical-initial/`: rejected 40x6 pilot.
 - `studies/spherical-diagnostic/`: 40x6/56x8/72x10 diagnostic recovery; study rejected.
 - `studies/spherical-validated/`: accepted three-grid background, independent areal-radius ODE reference, configuration, diagnostics and checksums.
