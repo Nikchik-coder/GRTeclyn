@@ -272,3 +272,32 @@ independent equations and both individual charges. Exterior projection onto
 `1` and `5 mu²-1`, with weight `(1-mu²) dmu`, measures coordinate dipole and
 octupole angular coefficients. Their radial decay is reported rather than
 assumed; these coefficients are not labelled invariant multipole moments.
+
+### Concentric annular channel
+
+The required study geometry has two coplanar rings around the same centre.
+An axial trajectory through the central hole does not test the annulus
+between them. Define each effective matter edge using its own Eulerian
+energy-density peak and the agreed relative cutoff 1e-6. Let R1_out be the
+last outward crossing for field 1, and R2_in the first inward crossing for
+field 2 on the equatorial radial profile. Require R1_out < R2_in and both
+densities below their separate cutoffs throughout the intervening interval.
+Using the first/last crossings also rejects a spurious gap at a radial node.
+Missing tail crossings, boundary peaks, nonfinite data and unresolved gap
+sampling fail the screen. Three-dimensional channel checks and full off-axis
+particle tracks follow only after a suitable self-consistent background.
+
+These are effective edges, not compact support. Ordinary massive boson-star
+fields have exponential tails; see the asymptotic scalar behaviour in
+[the rotating-boson-star study](https://link.springer.com/article/10.1140/epjc/s10052-024-12664-2).
+The accepted 1e-6 tolerance allows these tails. No field clipping, radial
+translation of a solved field or redrawn surface can create a physical gap.
+
+The proposed higher-winding screen solves only linear modes on the fixed
+accepted inner metric. It scales each outer mode's charge to cancel the fixed
+inner J, then measures the density-edge gap on two grids. Those seeds remain
+`validated=False`; their backreaction and two-field field equations are not
+solved. The explicit GPU eigensolver uses
+[`jax.lax.linalg.eig` with cuSOLVER](https://docs.jax.dev/en/latest/_autosummary/jax.lax.linalg.eig.html),
+with right eigenvectors only. CPU-reference agreement is a regression check;
+the screen requires GPU eigendecomposition.

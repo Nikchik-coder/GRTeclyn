@@ -8,15 +8,30 @@ rings. The spherical baseline, pure k=1 ring and a zero-net-spin k1=1/k2=-2
 state are validated. Single-ring axial spin-dependent transit is validated;
 between-ring transport, stacked states and stability remain to test.
 
+**Primary target — clarified November 1:** two coplanar, concentric rings
+with a shared centre and a resolved annular matter gap. The particle channel
+must lie **outside the inner ring's outer edge and inside the outer ring's
+inner edge**, rather than through the central hole. Effective edges use
+Eulerian matter energy density at **1e-6 of each component's own peak**;
+negligible tails are allowed. Require positive gap width and both component
+densities below their separate thresholds across the channel. A finite-height
+channel and an actual off-axis trajectory still need verification.
+The current k1=1/k2=-2 stationary solution is an **overlapping baseline**:
+it passes the field equations but **fails this geometry requirement**.
+Its inner-component outer edge is about 29.88; the outer-component inner
+edge is about 0.010 on the extended radial sample. Separate density peaks
+near 5.89 and 7.77 do not create a gap. The target schematic is
+`annular-gap-target.png`; it is not a solved configuration.
+
 ## Live and queue
 
 **Live:** none. Run C `railgun-counter-rotation-20261101`, second node/card 0,
 implementation `73b2aa30`, ran **12:55:48–13:00:33 MSK (0.079 h)**, exit 0.
 **k1=+1, k2=-2, total-J=0 accepted on 72x10 / 96x12 / 128x16.**
 Twelve Newton solves total, no amplitude splits; two fresh corrections on
-every recovery grid. Final observable drift 7.63e-10; component-charge drift
-2.55e-13. M_ADM=1.132946199392, component J=-0.773443320071468 /
-+0.773443320071473, total J=4.67e-15. Interior max |w|=0.00225517;
+every recovery grid. Final observable drift 7.62e-10; component-charge drift
+2.54e-13. M_ADM=1.132946199392, component J=-0.773443320071468 /
++0.773443320071473, total J=4.66e-15. Interior max |w|=0.00225517;
 no sampled ergoregion. Independent Einstein/KG maxima 1.86e-11 / 3.69e-12.
 The exterior coordinate octupole decay order increases from 4.96 to 4.99;
 this is a coordinate harmonic measurement, not an invariant moment claim.
@@ -53,11 +68,20 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Next:** render both solved scalar fields and their equatorial density
-profiles. Measure overlap before naming an inter-ring gap. Off-axis transport
-launches accept a cylindrical radius and signed exit height; the new flat
-regression is pending, and no physical between-ring trajectory has run.
-A concrete between-ring pilot still needs its run-specific go.
+**Next:** search for a separated annular channel before running particles
+between rings. Increasing |k2| is a candidate way to move the outer bound
+mode away from the inner ring; success is not assumed. Prepared, **not launched**:
+`studies/annular_gap_screen.json` tests k2=-4/-8/-12/-16, masses unchanged,
+96x12 / 128x16, radial compactification scale 50, at most eight quadratic
+eigenproblems. The eigensolver explicitly uses GPU cuSOLVER. Four threads,
+160 GiB, 0.5 h, second-node card 0, no AMR checkpoints; retain seeds/logs.
+This fixed-background linear screen cannot accept a self-consistent spacetime;
+any promising seed still needs nonlinear backreaction, zero-J enforcement,
+three-grid validation and finite-height channel checks. Regression tests are
+pending; a fresh go is required for the changed windings/grids before startup.
+Off-axis launch/destination support passed four GPU checks in 4.09 s at
+13:02:40 MSK: `results/railgun/gpu_offaxis_regression.json`.
+No physical between-ring trajectory is authorised or running.
 
 **Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.

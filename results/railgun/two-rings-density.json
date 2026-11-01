@@ -1,0 +1,46 @@
+{
+  "component_peak_radii": [
+    5.886672999999999,
+    7.767568499999999
+  ],
+  "midpoint_radius": 6.827120749999999,
+  "midpoint_component_density": [
+    0.0002132166606076939,
+    7.662206147173435e-05
+  ],
+  "midpoint_total_fraction_of_peak": 0.9892195913556109,
+  "radial_sample_spacing": 0.008999499999999997,
+  "scope": "Density overlap only; no between-ring particle path has been integrated.",
+  "annular_gap": {
+    "accepted": false,
+    "reasons": [
+      "no_resolved_annular_gap"
+    ],
+    "relative_density_cutoff": 1e-06,
+    "edges": [
+      {
+        "inner_radius": null,
+        "outer_radius": 29.879232038114065,
+        "peak_radius": 5.880951,
+        "peak_density": 0.0002251371886127782,
+        "inner_edge_resolved": false,
+        "outer_edge_resolved": true
+      },
+      {
+        "inner_radius": 0.010263359710764784,
+        "outer_radius": 35.010550324629364,
+        "peak_radius": 7.760935333333333,
+        "peak_density": 8.126208726547015e-05,
+        "inner_edge_resolved": true,
+        "outer_edge_resolved": true
+      }
+    ],
+    "inner_ring_outer_radius": 29.879232038114065,
+    "outer_ring_inner_radius": 0.010263359710764784,
+    "gap_width": -29.8689686784033,
+    "minimum_width": 0.0,
+    "corridor": null,
+    "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+    "exact_vacuum_claim": false
+  }
+}

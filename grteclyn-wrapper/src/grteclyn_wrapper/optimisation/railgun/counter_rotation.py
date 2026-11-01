@@ -18,7 +18,7 @@ from .model import ScalarField,exprel
 from .continuation import transfer_fields
 
 
-def linear_rotating_seed(problem,u,*,index=1):
+def linear_rotating_seed(problem,u,*,index=1,eigensolver='scipy'):
     """Solve the full 2D quadratic eigenproblem on the fixed rotating metric."""
     arrays,frequencies=problem.unpack(np.asarray(u))
     field=problem.fields[index];ka=abs(field.winding);odd=field.parity=='odd'
@@ -48,7 +48,17 @@ def linear_rotating_seed(problem,u,*,index=1):
     operator+=np.diag(expand(potential/weight+field.winding**2*w*w))
     linear=expand(2*field.winding*w)
     companion=np.block([[np.zeros((n,n)),np.eye(n)],[-operator,-np.diag(linear)]])
-    values,vectors=eig(companion,check_finite=True)
+    if eigensolver=='cusolver':
+        if problem.jax.devices()[0].platform!='gpu':raise ValueError('cuSOLVER requires GPU execution')
+        values,vectors=problem.jax.lax.linalg.eig(problem.xp.asarray(companion),
+            compute_left_eigenvectors=False,compute_right_eigenvectors=True,
+            implementation=problem.jax.lax.linalg.EigImplementation.CUSOLVER)
+        if any(d.platform!='gpu' for d in values.devices()):raise RuntimeError('GPU eigenvalue placement required')
+        values,vectors=np.asarray(values),np.asarray(vectors)
+    elif eigensolver=='scipy':
+        values,vectors=eig(companion,check_finite=True)
+    else:raise ValueError('eigensolver must be scipy or cusolver')
+    if not np.isfinite(values).all() or not np.isfinite(vectors).all():raise RuntimeError('nonfinite KG eigendecomposition')
     candidates=[]
     for j,omega in enumerate(values):
         if not np.isfinite(omega) or abs(omega.imag)>1e-8 or not 0<omega.real<field.mass*(1-1e-8):continue
@@ -74,7 +84,7 @@ def linear_rotating_seed(problem,u,*,index=1):
     if pde_error>1e-8:raise RuntimeError('quadratic KG mode disagrees with the field equation')
     return seed,dict(frequency=omega,relative_linear_residual=error,
         printed_pde_relative_residual=pde_error,winding=field.winding,
-        angular_dimensions=nt,radial_dimensions=nr,
+        angular_dimensions=nt,radial_dimensions=nr,eigensolver=eigensolver,
         initialization='nodeless full 2D quadratic KG bound mode on the rotating metric')
 
 
