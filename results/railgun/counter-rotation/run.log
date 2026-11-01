@@ -1,0 +1,70 @@
+[capped_job] start 2026-11-01T09:55:48Z threads=4 mem=160G timeout=1800s
+[counter] solving the full rotating two-dimensional KG mode
+[newton] iter 0: |R| 3.205e-06 -> 1.643e-09 (t = 1)
+[newton] iter 1: |R| 1.643e-09 -> 4.407e-13 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 5.232e-14
+[counter] solve=1 kind=amplitude_continuation verdict=PASS J=-0.9892448458335629
+[newton] iter 0: |R| 4.997e-06 -> 3.990e-09 (t = 1)
+[newton] iter 1: |R| 3.990e-09 -> 1.667e-12 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.980e-13
+[counter] solve=2 kind=amplitude_continuation verdict=PASS J=-0.9849331765970494
+[newton] iter 0: |R| 1.278e-05 -> 2.604e-08 (t = 1)
+[newton] iter 1: |R| 2.604e-08 -> 2.774e-11 (t = 1)
+[newton] iter 2: |R| 2.774e-11 -> 5.794e-14 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.867e-15
+[counter] solve=3 kind=amplitude_continuation verdict=PASS J=-0.9739435034377869
+[newton] iter 0: |R| 3.265e-05 -> 1.688e-07 (t = 1)
+[newton] iter 1: |R| 1.688e-07 -> 4.562e-10 (t = 1)
+[newton] iter 2: |R| 4.562e-10 -> 2.609e-12 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 2.855e-13
+[counter] solve=4 kind=amplitude_continuation verdict=PASS J=-0.9461217119804967
+[newton] iter 0: |R| 8.313e-05 -> 1.075e-06 (t = 1)
+[newton] iter 1: |R| 1.075e-06 -> 7.308e-09 (t = 1)
+[newton] iter 2: |R| 7.308e-09 -> 1.216e-10 (t = 1)
+[newton] iter 3: |R| 1.216e-10 -> 1.465e-12 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 1.556e-13
+[counter] solve=5 kind=amplitude_continuation verdict=PASS J=-0.8768744120550253
+[newton] iter 0: |R| 2.099e-04 -> 6.559e-06 (t = 1)
+[newton] iter 1: |R| 6.559e-06 -> 1.122e-07 (t = 1)
+[newton] iter 2: |R| 1.122e-07 -> 5.637e-09 (t = 1)
+[newton] iter 3: |R| 5.637e-09 -> 1.696e-10 (t = 1)
+[newton] iter 4: |R| 1.696e-10 -> 9.137e-12 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 9.464e-13
+[counter] solve=6 kind=amplitude_continuation verdict=PASS J=-0.711524183294768
+[newton] iter 0: |R| 5.196e-04 -> 3.590e-05 (t = 1)
+[newton] iter 1: |R| 3.590e-05 -> 1.705e-06 (t = 1)
+[newton] iter 2: |R| 1.705e-06 -> 2.222e-07 (t = 1)
+[newton] iter 3: |R| 2.213e-07 -> 1.131e-11 (t = 1)
+[newton] iter 4: |R| 1.131e-11 -> 1.173e-15 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 1.356e-16
+[counter] solve=7 kind=amplitude_continuation verdict=PASS J=-0.35226516610512326
+[newton] iter 0: |R| 1.229e-03 -> 1.553e-04 (t = 1)
+[newton] iter 1: |R| 1.546e-04 -> 3.564e-06 (t = 1)
+[newton] iter 2: |R| 3.564e-06 -> 1.666e-07 (t = 1)
+[newton] iter 3: |R| 1.666e-07 -> 7.951e-09 (t = 1)
+[newton] iter 4: |R| 7.951e-09 -> 3.863e-10 (t = 1)
+[newton] iter 5: |R| 3.863e-10 -> 1.926e-11 (t = 1)
+[newton] iter 6: |R| 1.926e-11 -> 9.884e-13 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 1.144e-13
+[counter] solve=8 kind=amplitude_continuation verdict=PASS J=0.2967150305585512
+[newton] iter 0: |R| 1.486e-01 -> 7.768e-03 (t = 1)
+[newton] iter 1: |R| 7.768e-03 -> 7.398e-04 (t = 1)
+[newton] iter 2: |R| 7.398e-04 -> 8.809e-05 (t = 1)
+[newton] iter 3: |R| 9.698e-05 -> 1.127e-08 (t = 1)
+[newton] iter 4: |R| 1.127e-08 -> 2.632e-12 (t = 1)
+[newton] iter 5: |R| 2.632e-12 -> 1.414e-15 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 1.232e-15
+[counter] solve=9 kind=zero_J_border verdict=PASS J=2.220446049250313e-16
+[newton] iter 0: |R| 1.046e-05 -> 1.531e-09 (t = 1)
+[newton] iter 1: |R| 1.531e-09 -> 3.404e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 6.371e-15
+[counter] solve=10 kind=three_grid_recovery verdict=PASS J=4.551914400963142e-15
+[newton] iter 0: |R| 8.249e-06 -> 1.208e-09 (t = 1)
+[newton] iter 1: |R| 1.208e-09 -> 2.573e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.773e-15
+[counter] solve=11 kind=three_grid_recovery verdict=PASS J=4.773959005888173e-15
+[newton] iter 0: |R| 8.113e-06 -> 9.107e-10 (t = 1)
+[newton] iter 1: |R| 9.107e-10 -> 1.987e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 4.472e-15
+[counter] solve=12 kind=three_grid_recovery verdict=PASS J=4.6629367034256575e-15
+[capped_job] end 2026-11-01T10:00:33Z exit=0

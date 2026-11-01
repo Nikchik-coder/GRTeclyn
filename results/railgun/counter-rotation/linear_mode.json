@@ -1,0 +1,9 @@
+{
+  "frequency": 0.9465981484332868,
+  "relative_linear_residual": 2.6652929423958783e-11,
+  "printed_pde_relative_residual": 2.6587269148411614e-11,
+  "winding": -2,
+  "angular_dimensions": 13,
+  "radial_dimensions": 95,
+  "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+}

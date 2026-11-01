@@ -1,0 +1,40 @@
+{
+  "config": {
+    "second_field": {
+      "winding": -2,
+      "mass": 1.0,
+      "amplitude": 0.001,
+      "anchor_radius": 5.0
+    },
+    "continuation_grid": [
+      96,
+      12
+    ],
+    "grids": [
+      [
+        72,
+        10
+      ],
+      [
+        96,
+        12
+      ],
+      [
+        128,
+        16
+      ]
+    ],
+    "amplitude_growth": 1.6,
+    "amplitude_cap": 0.08,
+    "max_solves": 24,
+    "max_splits": 6,
+    "max_iter": 30,
+    "newton_tol": 1e-12
+  },
+  "source_sha256": "fca80f859eee840bbbbaa625fa347e178c38d45538fc6f40d6543058e515fa87",
+  "transport_commit": "96c81edc7df31503f41630ab6a617026e3867d2c",
+  "commit": "71a1283705639d0df849fcc6edb82f10e2c77a46",
+  "platform": "gpu",
+  "float64": true,
+  "stability": "not_assessed"
+}

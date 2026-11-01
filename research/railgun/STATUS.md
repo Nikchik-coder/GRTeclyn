@@ -4,19 +4,26 @@ Updated **2026-11-01 (MSK)**. Branch: `feature/optimisation`.
 
 **Decision:** the minimal-exotic-matter optimisation campaign is paused. This
 separate study reuses its JAX/Newton infrastructure for regular-centre scalar
-rings. The spherical baseline and one pure k=1 rotating ring are validated.
-Axial spin-dependent transit is validated; counter-rotation, stacked states and stability remain to test.
+rings. The spherical baseline, pure k=1 ring and a zero-net-spin k1=1/k2=-2
+state are validated. Single-ring axial spin-dependent transit is validated;
+between-ring transport, stacked states and stability remain to test.
 
 ## Live and queue
 
-**Live:** `railgun-counter-rotation-20261101`, second node/card 0,
-implementation `73b2aa30` (launch checkout `71a12837`). The three rotating
-bound-mode/CUDA regression checks passed in 1.71 s at **12:55:20 MSK**.
-Full 2D KG mode, then bounded amplitude continuation and zero-J border;
-96x12 continuation, 72x10 / 96x12 / 128x16 final recovery.
-Four threads, 160 GiB, 0.5 h cap, chunks 128; no AMR checkpoints.
-Initial bound-mode calculation; speed and completion ETA not measured.
-Scratch clean: 47 MB, 543 GB free; first node not listed.
+**Live:** none. Run C `railgun-counter-rotation-20261101`, second node/card 0,
+implementation `73b2aa30`, ran **12:55:48–13:00:33 MSK (0.079 h)**, exit 0.
+**k1=+1, k2=-2, total-J=0 accepted on 72x10 / 96x12 / 128x16.**
+Twelve Newton solves total, no amplitude splits; two fresh corrections on
+every recovery grid. Final observable drift 7.63e-10; component-charge drift
+2.55e-13. M_ADM=1.132946199392, component J=-0.773443320071468 /
++0.773443320071473, total J=4.67e-15. Interior max |w|=0.00225517;
+no sampled ergoregion. Independent Einstein/KG maxima 1.86e-11 / 3.69e-12.
+The exterior coordinate octupole decay order increases from 4.96 to 4.99;
+this is a coordinate harmonic measurement, not an invariant moment claim.
+Archive: `results/railgun/counter-rotation/`. Three bound-mode/CUDA tests passed.
+Four threads, 160 GiB, chunks 128, 0.5 h cap; no AMR checkpoints.
+Scratch clean: 47 MB in `_cache/` only, 543 GB free at 13:00 MSK;
+first node not listed. Both cards idle, no ETA or queued physical run.
 
 Run B `railgun-ring-transit-20261101`, second node/card 0,
 code `96c81edc`, ran **12:41:00–12:53:33 MSK (0.209 h)**, exit 0.
@@ -46,14 +53,11 @@ Four threads, 160 GiB, 0.5 h cap; no AMR checkpoints.
 Scratch clean: 47 MB in `_cache/` only, 543 GB free at 12:37 MSK;
 the first node was not listed.
 
-**Authorised next:** test the full 2D rotating KG initializer, then Run C:
-k1=+1, k2=-2, second-node card 0, continuation 96x12, recovery
-72x10 / 96x12 / 128x16. At most 24 Newton solves total, 30 iterations
-per solve, six amplitude splits, second pin <=0.08, unchanged 1e-8
-independent-equation gates. Four threads, 160 GiB, chunks 128, 0.5 h cap,
-no AMR checkpoints. A and B are archived before this stage.
-Make the two-ring surface/cross-section figure from solved fields, retaining
-any overlap. An off-axis between-ring particle path remains untested.
+**Next:** render both solved scalar fields and their equatorial density
+profiles. Measure overlap before naming an inter-ring gap. Off-axis transport
+launches accept a cylindrical radius and signed exit height; the new flat
+regression is pending, and no physical between-ring trajectory has run.
+A concrete between-ring pilot still needs its run-specific go.
 
 **Completed:** `railgun-ring-refined-20261101`, second node/card 0, code
 `58116d7a`, ran **12:03:19–12:06:14 MSK (0.049 h)**, exit 0.
@@ -360,5 +364,5 @@ the original failed records stay rejected. The refined config completed with
 unchanged physical amplitudes and 1e-8 equation/charge gates. All three pure-ring
 grids passed, as recorded above.
 
-**Next:** validate the counter-rotating branch and plot both fields. Between-ring
+**Next:** plot the validated counter-rotating fields. Between-ring
 particle trajectories, asymptotic ejection and dynamical stability remain untested.
