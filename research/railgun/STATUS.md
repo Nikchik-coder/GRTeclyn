@@ -9,19 +9,21 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** none. `railgun-baseline-guards-20261101` finished on the second
-node/card 0 at **10:43:52 MSK**: **two tests passed in 140.43 s**, code
-`303bdab5`. Its checks against the saved spherical star passed intrinsic KG,
-Cartesian core certification and the integer-winding bound mode. Both cards
-are idle; there is no completion ETA. Scratch is clean: **47 MB**, only `_cache/`,
+**Live:** `railgun-spherical-to-ring-20261101`, second node/card 0, started
+**10:46:17 MSK**, code `389c8762`. Approved November 1: at most 24 coupled
+solves, six bisections, 30 Newton iterations per grid, final pure-ring recovery
+on 56x8 / 72x10 / 96x12. Four CPU threads, 160 GiB, chunks of 128, hard timeout
+**0.5 h (11:16:17 MSK)**. First attempt is compiling; speed and completion ETA
+are unmeasured. No particle trajectories are running. Scratch is clean: **47 MB**, only `_cache/`,
 **545 GB free**. No plotfiles or AMR checkpoints. The first node was not listed.
 Host/checkout details stay in the
 untracked `runs/railgun/NODES.local.md`. Synchronisation is **git push/pull only**,
 through `myfork`; code and validation archives were transferred that way.
 
-The authorised regression tests and spherical pilots have completed. No
-single-ring, homotopy, counter-rotation, stacked-ring or physical transport
-job is authorised or queued for automatic dispatch. Regression work on the
+The authorised regression tests and spherical pilots have completed. The
+spherical-to-ring homotopy now has a go and is live as recorded above. No
+counter-rotation, stacked-ring or physical transport job is queued for
+automatic dispatch. Regression work on the
 three newly identified safeguards completed under the same four-thread,
 160 GiB, 0.5 h job cap, GPU 0 and Jacobian chunks of 128. No AMR checkpoints.
 
@@ -257,10 +259,10 @@ Do not relax a failed gate to obtain a result. Stability remains `not_assessed`.
   `results/railgun/`. Record failures without promoting their fields to results.
   No scratch deletion is authorised here; preserve frames and slice caches.
 
-**Next deliverable (requires a separate go):** the single-ring initialization
+**Current deliverable (go received November 1):** the single-ring initialization
 experiment using `studies/spherical_to_ring.json`: at most 24 coupled solves,
 six bisections, 30 Newton iterations per grid; final pure-ring recovery on
 56x8 / 72x10 / 96x12. Proposed limits remain GPU 0, four CPU threads,
 160 GiB, chunks of 128, 0.5 h, no AMR checkpoints; preserve logs and solved
-fields. This is a proposal, not an authorised or automatically queued run.
+fields. No further parameter scan or automatic rerun is queued.
 No rotating-ring or axial-ejection result has yet been established.
