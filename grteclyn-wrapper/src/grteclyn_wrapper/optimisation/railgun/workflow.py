@@ -67,6 +67,11 @@ def run_study(config, directory, *, reference=None, seed_path=None):
             raise ValueError('seed topology, radial scale and J condition must match')
         previous = old, old_u
     write_json(directory/'manifest.json', manifest)
+    if reference is not None:
+        write_json(directory/'reference_ode.json', {key: value for key,value in reference.items()
+                    if not isinstance(value,np.ndarray)})
+        np.savez_compressed(directory/'reference_ode.npz', **{key:value for key,value in reference.items()
+                    if isinstance(value,np.ndarray)})
     for index, (nx, ny) in enumerate(grids):
         started = time.monotonic()
         p = RingProblem(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'))
@@ -102,7 +107,9 @@ def run_study(config, directory, *, reference=None, seed_path=None):
         records.append(record)
         print(json.dumps({'event': 'grid', 'grid': [nx, ny], 'verdict': record['verdict'],
                           'reasons': record['reasons'], 'seconds': record['total_seconds']}), flush=True)
-        if record['verdict'] != 'PASS':
+        diagnostic_recovery = (config.get('diagnostic_refinement',False) and info.get('converged')
+                               and np.isfinite(u).all() and record.get('B_min',0.) > 0)
+        if record['verdict'] != 'PASS' and not diagnostic_recovery:
             break
         previous = p, u
     accepted, drift = converged_records(records, tolerance=config.get('observable_tol', 1e-6))

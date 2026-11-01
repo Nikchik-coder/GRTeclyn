@@ -25,7 +25,11 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-spherical-pilot \
 A new output directory is required. Solved fields on every attempted grid
 remain provisional in `grid_NxM.npz`, with Newton history and diagnostics in
 the matching JSON. `outcome.json` states acceptance and rejection reasons.
-A failed gate stops the study and returns exit code 2. Only a passing
+A failed gate stops a normal study and returns exit code 2. The spherical
+pilot enables `diagnostic_refinement`: a converged, finite rejected coarse
+solution is re-solved on its two already specified finer grids to measure
+the defect. The rejected grid stays rejected, and prevents acceptance.
+Only a passing
 three-grid study writes `accepted.npz`. No AMR checkpoints are written.
 
 The other supplied configurations are single-ring, counter-rotating J=0 and

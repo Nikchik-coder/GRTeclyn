@@ -7,6 +7,30 @@ from .geometry import RingGeometry
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, tail_ratio
 
 
+def spectral_diagnostics(arrays):
+    """Relative tails for resolved fields; analytically zero fields have no scale.
+
+    Dividing two numbers at roundoff reports O(1) noise for N=0 in a spherical
+    spacetime. Only fields below 64 eps in their natural dimensionless units
+    use the absolute roundoff floor; the physical tail tolerance is unchanged.
+    """
+    records = {}
+    for tag, a in arrays.items():
+        peak = float(np.max(np.abs(a)))
+        ratio = max(tail_ratio(a, axis=ax) for ax in (0,1))
+        at_roundoff = peak <= 64*np.finfo(float).eps
+        records[tag] = dict(peak=peak, relative_tail=ratio,
+                            roundoff_field=bool(at_roundoff),
+                            tested_tail=0. if at_roundoff else ratio)
+    return records
+
+
+def localized_tail(ratios, tolerance):
+    """Require a small last tail and decay wherever the field is measurable."""
+    return (np.isfinite(ratios).all() and ratios[-1] <= tolerance
+            and all(b <= max(a,tolerance) for a,b in zip(ratios,ratios[1:])))
+
+
 def observables(problem, u):
     arrays, frequencies = problem.unpack(np.asarray(u))
     sample = lambda a: problem.qx@a@problem.qy.T
@@ -108,7 +132,8 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
     borders = residual[len(problem.tags)*problem.n:]
     out['boundary_max'] = float(np.max(np.abs(boundary)))
     out['border_max'] = float(np.max(np.abs(borders))) if len(borders) else 0.
-    out['spectral_tail'] = max(tail_ratio(a, axis=ax) for a in arrays.values() for ax in (0, 1))
+    out['field_spectra'] = spectral_diagnostics(arrays)
+    out['spectral_tail'] = max(row['tested_tail'] for row in out['field_spectra'].values())
     for name in ('constraint_c', 'constraint_19', 'equation_max', 'boundary_max', 'border_max'):
         if not np.isfinite(out[name]) or out[name] > equation_tol:
             reasons.append(name)
@@ -136,7 +161,7 @@ def validate(problem, u, info, *, equation_tol=1e-8, tail_tol=1e-6, independent=
     if summary['M_fit_drift'] > 1e-6 or summary['J_fit_drift'] > 1e-6:
         reasons.append('asymptotic_fit')
     for ratios in summary['scalar_tail_ratios']:
-        if ratios[-1] > tail_tol or any(b>a+1e-10 for a, b in zip(ratios, ratios[1:])):
+        if not localized_tail(ratios,tail_tol):
             reasons.append('scalar_localization')
             break
     if independent:

@@ -14,10 +14,21 @@ measurements or evidence of a jet, a hidden vortex or a finite Tipler tube.
 reference pilot on 40x6, 56x8 and 72x10, at most 30 Newton iterations per grid.
 Each job has four CPU threads, 160 GiB host address space and a 0.5 h timeout;
 Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained.
-**Live:** `railgun-regression-r2-20261101`, second node/card 0, commit
-`5a27e82f`, started **10:09 MSK**. Timeout **0.5 h (10:39 MSK)**; speed and
-completion ETA are unmeasured. It repeats the suite with a 96-point charge
-fixture, explicit CUDA/float64 assertions and a JUnit record under `runs/railgun/`.
+**Live: none.** `railgun-regression-r2-20261101` passed **all 42 tests** on
+second node/card 0 in **22.40 s**, ending **10:09 MSK**, commit `5a27e82f`.
+CUDA placement and float64 were asserted. JUnit: `runs/railgun/regression-r2.xml`.
+
+`railgun-spherical-pilot-20261101` ran **10:10 MSK**, commit `7991987a`.
+The 40x6 solve took 4.75 s and one Newton update (scaled residual 3.21e-14),
+then failed validation: no accepted background. M_ADM=0.532563289276 and
+the independent Komar integral=0.532563289090. Off-grid Einstein residual
+is 9.96e-10; KG is **5.23e-8**, above the 1e-8 gate. Its N field is only
+1.54e-16: dividing its roundoff tail by that value gave a false 0.116 relative
+tail. All sampled scalar tails are below 4e-9; tiny sub-threshold fluctuations
+also caused a false localization rejection. Roundoff handling is being fixed;
+the KG rejection remains. The approved 56x8/72x10 recovery will diagnose it,
+without changing any acceptance threshold. Output: `runs/railgun/spherical-pilot-20261101/`.
+Both cards idle; ETA none. Scratch clean: 47 MB cache / 546 GB free.
 
 `railgun-regression-20261101` launched **10:05 MSK**, second node/card 0,
 commit `fad3d846`. It aborted at **10:05 MSK**, exit 134, during CUDA backend
@@ -30,7 +41,7 @@ solver/winding tests passed. The Gaussian analytic-charge fixture missed its
 is being refined to 96 without relaxing the tolerance. Both
 cards are idle; scratch remains 47 MB cache / 546 GB free. Persistent log:
 `runs/capped_jobs/railgun-regression-20261101/log`. These two earlier jobs are finished.
-The spherical pilot waits for passing regressions. No single-ring, counter-rotation, stacked-ring or
+The spherical pilot's diagnostic retry waits for the validation fixes. No single-ring, counter-rotation, stacked-ring or
 transport experiment is authorised by this go. Speed is unmeasured; the
 timeout is a budget, not an ETA. Numerical experiments belong on cluster GPUs.
 

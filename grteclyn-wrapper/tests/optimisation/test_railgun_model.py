@@ -116,3 +116,22 @@ def test_three_grid_policy_fails_closed():
     assert not converged_records([row,row])[0]
     assert not converged_records([row,row,dict(row,verdict='REJECT')])[0]
     assert not converged_records([row,row,dict(row,M_ADM_estimate=float('nan'))])[0]
+
+
+def test_roundoff_fields_do_not_define_a_relative_spectral_scale():
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import spectral_diagnostics
+    rng=np.random.default_rng(91)
+    tiny=rng.normal(size=(9,5))*1e-16
+    records=spectral_diagnostics({'N':tiny,'physical':tiny*1e12})
+    assert records['N']['roundoff_field']
+    assert records['N']['tested_tail']==0.
+    assert not records['physical']['roundoff_field']
+    assert records['physical']['tested_tail'] > .01
+
+
+def test_tail_noise_is_only_ignored_below_the_physical_tail_gate():
+    from grteclyn_wrapper.optimisation.railgun.diagnostics import localized_tail
+    assert localized_tail([4e-9,6e-10,2e-10,8e-11,2e-10],1e-6)
+    assert not localized_tail([1e-3,1e-5,2e-5,1e-9],1e-6)
+    assert not localized_tail([1e-4,2e-5],1e-6)
+    assert not localized_tail([1e-4,float('nan')],1e-6)

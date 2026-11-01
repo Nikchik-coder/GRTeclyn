@@ -3,5 +3,6 @@
   "length": 5.0,
   "grids": [[40, 6], [56, 8], [72, 10]],
   "max_iter": 30,
+  "diagnostic_refinement": true,
   "spherical_reference": {"central_amplitude": 0.1, "extent": 100.0, "tol": 1e-9}
 }
