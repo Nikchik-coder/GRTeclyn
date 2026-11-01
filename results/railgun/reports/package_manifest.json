@@ -341,6 +341,46 @@
       "sha256": "46cafc5538669388673c1bce70b92bab185e622652c2b9dd018c231aeecd3767",
       "bytes": 2306
     },
+    "studies/annular-quintic-k12/README.md": {
+      "sha256": "5cd384170e00dc964ac84c8a8dc7c106ccf43b7e32773186c4a9349c0783019d",
+      "bytes": 385
+    },
+    "studies/annular-quintic-k12/execution.log": {
+      "sha256": "236b01e21efde5fe01dc69dbc110d35fce9de650f832d7fa43f4827762ef01b9",
+      "bytes": 388
+    },
+    "studies/annular-quintic-k12/grid_192x16.json": {
+      "sha256": "cb6768e9b67918b4b56ff00f6d4c409f54bb766c1f32cefe60f5e4efd1fdcd5e",
+      "bytes": 6934
+    },
+    "studies/annular-quintic-k12/grid_192x16.npz": {
+      "sha256": "7a9675ab1ae0028d38a971631d9dbff865f69a10fd69a245fb5965fa4c5c97de",
+      "bytes": 295533
+    },
+    "studies/annular-quintic-k12/grid_192x16_channel.tsv": {
+      "sha256": "ee7e4ecf296798f941924f6b7d189be8fd6b359b821ab959755d29ba731b6a98",
+      "bytes": 170976
+    },
+    "studies/annular-quintic-k12/grid_192x16_density.tsv": {
+      "sha256": "fbb44560b24125f6c47c82bcba1a8e94b2419d68dab9e7f8f14066ab14b63435",
+      "bytes": 562684
+    },
+    "studies/annular-quintic-k12/grid_192x16_initial.npz": {
+      "sha256": "cb556b2e2b4a1ebb5b9feab5716911709f2db7688784c862716ce2edddc8ba1f",
+      "bytes": 294907
+    },
+    "studies/annular-quintic-k12/manifest.json": {
+      "sha256": "8982244b69ea73a42234c37bffe968267191a996a4b00fd85e941d5587d0eb7a",
+      "bytes": 1004
+    },
+    "studies/annular-quintic-k12/outcome.json": {
+      "sha256": "5512bd5d364598acc8aadd5a8e2b567ad163a69aadeabfebdc918a529653f146",
+      "bytes": 8227
+    },
+    "studies/annular-quintic-k12/sha256sums.txt": {
+      "sha256": "0bf79aef497b98118c3cf6e049c9fc326dfa517d23be188192aae5aa335d6a84",
+      "bytes": 750
+    },
     "studies/annular-recovery-k12/execution.json": {
       "sha256": "b74a2fb6be36c3937168d4dd8199cebb1a3668bc720d9c2cf2420ef33ca7318d",
       "bytes": 356
