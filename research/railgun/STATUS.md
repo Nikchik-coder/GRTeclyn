@@ -9,10 +9,13 @@ states and axial spin effects remain hypotheses to test.
 
 ## Live and queue
 
-**Live:** `railgun-flux-regression-20261101`, second node/card 0, code
-`da1280f5`, started **10:56:21 MSK**. Six targeted surface-flux/resume/device
-checks, four threads, 160 GiB, timeout **0.05 h (10:59:21 MSK)**. Completion
-ETA unmeasured. No nonlinear solve is running during these checks.
+**Live:** `railgun-ring-resumed-20261101`, second node/card 0, code
+`da1280f5`, started **10:56:58 MSK**. Same configuration and spherical source;
+resume rechecks the last passing state and carries 15 solves/six bisections
+forward. Four threads, 160 GiB, chunks of 128, timeout **0.417 h
+(11:21:58 MSK)**; combined nonlinear-job caps remain below 0.5 h.
+Completion ETA is unmeasured. The six targeted GPU flux/resume/device checks
+passed in 3.87 s at **10:56:26 MSK**, code `da1280f5`.
 
 `railgun-spherical-to-ring-20261101`, second node/card 0,
 code `389c8762`, ran **10:46:17–10:49:52 MSK (0.060 h)**. It stopped normally
