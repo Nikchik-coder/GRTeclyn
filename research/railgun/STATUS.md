@@ -9,7 +9,13 @@ Counter-rotation, stacked states, stability and axial spin effects remain to tes
 
 ## Live and queue
 
-**Live:** none. Run A `railgun-ring-profile-20261101`, second node/card 0,
+**Live:** `railgun-transit-regression-20261101`, second node/card 0,
+code `96c81edc`; exact crossing event, dense trajectory output, 1e-9
+conservation gates and prior transport/curvature regressions. Four threads,
+160 GiB, 0.5 h cap; no AMR checkpoints. Compiling; ETA not measured.
+Scratch clean: 47 MB, 543 GB free; first node not listed.
+
+Run A `railgun-ring-profile-20261101`, second node/card 0,
 code `4c1e2085`, passed at **12:37:19 MSK**, after 0.072 h including compilation.
 The degree 6/8 Cartesian core at radius 0.4 passed: maximum parent curvature
 mismatch 2.88e-10; independent axial Einstein/KG maximum 4.73e-12.
