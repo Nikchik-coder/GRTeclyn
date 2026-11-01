@@ -1,0 +1,14 @@
+{
+  "rest_energy": {
+    "zero": 0.8802936647724655,
+    "positive": 0.8802918560785459,
+    "negative": 0.8802954734663851
+  },
+  "energies": {
+    "requested_offset": 0.8802937647724655,
+    "between_spin_thresholds": 0.8802936647724655,
+    "below_all": 0.8802917560785459,
+    "above_all": 0.8802955734663851
+  },
+  "interpretation": "Measured full spin-corrected Killing energy of a resting body at z=-10; predictions are checked by actual tracks."
+}
