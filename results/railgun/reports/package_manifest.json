@@ -2,12 +2,20 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "b1030e19879325b64356fbc30b3f31fb1a8f0968bd9409ac843610b7effd41d0",
-      "bytes": 15263
+      "sha256": "c0343796e3b243771d47c2109ac451721c35eef0bc56823d18b2bb3f2b510757",
+      "bytes": 17482
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
       "bytes": 390676
+    },
+    "figures/annular-rings-validated.png": {
+      "sha256": "39c2193196d1756e6c7c199e898c222aa522b616ec6d09cb17a7020b012903fa",
+      "bytes": 383320
+    },
+    "figures/annular-transit-k12.png": {
+      "sha256": "56a62416196e438759b4b9861b7458ba969f6cb395893625bfc415799501f350",
+      "bytes": 143523
     },
     "figures/compactness-scan.png": {
       "sha256": "1ef286fd85707c08334a0e98f0c003f948762eea864f2fdf23674948ccca3ad9",
@@ -49,6 +57,10 @@
       "sha256": "f5dfe066eff2d35ff4217f8b8a8bf73a8797ce1825d7a36519dc9ca9f1af3ab9",
       "bytes": 215144
     },
+    "figures/strong-uphill-073.png": {
+      "sha256": "4efb978e303aca2d390291c27a4ea549dd6926466d5055eef95a314853b67f19",
+      "bytes": 156382
+    },
     "figures/two-rings-density.png": {
       "sha256": "ca8106a6adceaa1143b1446bf22231f9817acd00e67b7245a9f85fe3b0e3687f",
       "bytes": 125918
@@ -68,6 +80,10 @@
     "reports/annular-flux-diagnostic.json": {
       "sha256": "bd3b6906f22bcde276ff430433d431673749745ee430bfc3e5539cf992ff4ffc",
       "bytes": 902
+    },
+    "reports/completed-experiments.json": {
+      "sha256": "ff90a42bcd7cfa7049f7f3823ee984728dccc7024dac217bef45964519c4578b",
+      "bytes": 10151
     },
     "reports/gpu_annular_correction_regression.json": {
       "sha256": "95d487753a38667a7a2e1d6744de9f5a0a965a03ea1b4c48a672c6da90a4cdbf",

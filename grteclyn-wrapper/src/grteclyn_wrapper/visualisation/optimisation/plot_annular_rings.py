@@ -70,7 +70,7 @@ def plot(directory,out,*,diagnostic=False):
              'Dashed line: 10⁻⁶ cutoff.\n'
              f'Green tube: ρ={channel["rho_min"]:.2f}–{channel["rho_max"]:.2f}, '
              f'z={channel["z_min"]:.0f}…{channel["z_max"]:.0f}. '
-             'Stationary solution; particle passage and stability remain to test.',ha='center',fontsize=10)
+             'Stationary field; particle results are packaged separately.',ha='center',fontsize=10)
     out=Path(out);out.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(out,dpi=180);plt.close(fig)
 

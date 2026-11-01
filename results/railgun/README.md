@@ -6,6 +6,28 @@ run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
+The latest completed experiments pass every original acceptance gate:
+
+- **Concentric gapped rings:** `studies/annular-validated-k12/`, k1=+1/k2=-12,
+  three grids 192x16/224x18/256x20. Zero volume/infinity J agrees with finite
+  Cartesian surface flux to about 1e-13. Clear component-wise 1e-6 gap
+  33.29734 < rho < 40.90802; finite-height tube validated.
+- **Particles between the rings:** `studies/annular-transit-k12/`, all eight
+  matched-energy spin/reversal/two-tolerance tracks reach z=-10 while staying
+  inside the tube. Worst relative component density 1.75e-7 and invariant drift
+  4.11e-13. The +z minus -z coordinate transit split is 3.58739e-6.
+- **Stronger-ring finite spin selection:** `studies/strong-uphill-073-validated/`,
+  omega=0.73. At equal energy +z spin reaches the target and -z spin first
+  turns back. All 656 full Cartesian MPD substitution checks pass; every
+  nonmarginal saved finest track agrees with independent phase timing within
+  5.29e-8. Two final phase-order checks agree within 4.52e-12. Original failed
+  RK and coarse-quadrature studies remain unchanged and rejected.
+
+Summary: `reports/completed-experiments.json`. Figures:
+`figures/annular-rings-validated.png`, `figures/annular-transit-k12.png`,
+`figures/strong-uphill-073.png`. These demonstrate stationary fields and finite
+passages/first turnarounds; no asymptotic escape, energy gain or stability claim.
+
 Check the complete inventory and original study checksums:
 
 ```bash
@@ -31,7 +53,7 @@ The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 
 - `studies/strong-uphill-073-initial/`: all 32 tracks complete, conservation/classification/reversal checks pass; study rejected by two timing differences above the unchanged 1e-7 gate. Originals retained unchanged; the separate two-track audit also remains rejected.
 - `studies/annular-quintic-k12/`: first 192x16 solve converges and passes all original field/flux/gap/channel checks, but the added infinity angular equation fails (relative residual 80.58). Rejected; no later grids or off-axis particles.
 - `reports/gpu_precision_regression.json` and `reports/gpu_quintic_regression.json`: 18 and 34 passing targeted GPU checks, including float64 placement, exact leading momentum modes and manufactured quintic fields.
-- `studies/annular-falloff-k12-cubic/`: first cubic-falloff solve passes original finite-radius flux/field/gap/channel tests but fails the added literal-infinity coefficient test. No accepted gapped background or particle launch.
+- `studies/annular-falloff-k12-cubic/`: first cubic-falloff solve passes original finite-radius flux/field/gap/channel tests but fails the added literal-infinity coefficient test. This rejected study exports no accepted field; the separate regular-cubic recovery above passes.
 - `studies/branch-seeds/`: all six GPU bound-mode problems passed for new k=2,m=2.5/3 even fields and a k=1,m=1 odd field on two grids. Resolved fixed-background homotopy starts only, all validated=false; nonlinear pure-branch recovery and outer -6/-8 seeding remain pending.
 - `studies/strong-profile-073/`: accepted Cartesian core and full signed-axis/equatorial profile for omega=0.73, radius 0.4, degrees 6/8; exact source SHA and all diagnostics retained. Particle results are a separate study.
 - `studies/frequency-deep/`: omega=0.70 passes all three refined grids; omega=0.67 fails Newton and independent equations on the first grid. Four solves, unchanged gates; no physical maximum established.
@@ -122,4 +144,17 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
   --title 'ω=0.73 single ring: matter wall and certified axial profile'
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_frequency_sequence \
   results/railgun --out results/railgun/figures/single-ring-frequency-sequence.png
+```
+
+
+Rebuild the newly accepted figures with the wrapper environment:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_rings \
+  results/railgun/studies/annular-validated-k12 --out results/railgun/figures/annular-rings-validated.png
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_transit \
+  results/railgun/studies/annular-transit-k12 --out results/railgun/figures/annular-transit-k12.png
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
+  results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/strong-uphill-073.png \
+  --title 'Stronger ring (ω=0.73): validated finite spin selection'
 ```

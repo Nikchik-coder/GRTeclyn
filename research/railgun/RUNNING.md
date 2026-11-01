@@ -1,5 +1,13 @@
 # Running ring studies
 
+**Completed November 1:** both numerical blockers are resolved. Accepted
+archives: `studies/strong-uphill-073-validated/`, `studies/annular-validated-k12/`
+and `studies/annular-transit-k12/` under results/railgun. All eight annular
+tracks pass; no jobs remain live or queued. Earlier commands and proposals
+below are retained for reproduction, not as a current launch queue. See
+[STATUS.md](STATUS.md) for current outcomes and the unchanged acceptance gates.
+
+
 Read [STATUS.md](STATUS.md), [EQUATIONS.md](EQUATIONS.md) and the repository
 [AGENTS.md](../../AGENTS.md) first. Numerical jobs run on the cluster checkout
 identified in the untracked `runs/railgun/NODES.local.md`. No command below

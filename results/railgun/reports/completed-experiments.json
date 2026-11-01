@@ -1,0 +1,297 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "all_accepted": true,
+  "annular_field": {
+    "archive": "studies/annular-validated-k12",
+    "grids": [
+      [
+        192,
+        16
+      ],
+      [
+        224,
+        18
+      ],
+      [
+        256,
+        20
+      ]
+    ],
+    "M_ADM": 1.0538081108367106,
+    "J_volume": -4.440892098500626e-16,
+    "J_infinity": -1.0910433934516649e-14,
+    "component_J": [
+      -0.9919609854800482,
+      0.9919609854800477
+    ],
+    "dragging_max": 0.004351610960146169,
+    "gap": {
+      "accepted": true,
+      "reasons": [],
+      "relative_density_cutoff": 1e-06,
+      "edges": [
+        {
+          "inner_radius": null,
+          "outer_radius": 33.297341138936936,
+          "peak_radius": 6.2208756,
+          "peak_density": 0.0002324873893634992,
+          "inner_edge_resolved": false,
+          "outer_edge_resolved": true
+        },
+        {
+          "inner_radius": 40.90802468805212,
+          "outer_radius": 362.7386133421856,
+          "peak_radius": 150.8380858911014,
+          "peak_density": 1.4542840682178225e-08,
+          "inner_edge_resolved": true,
+          "outer_edge_resolved": true
+        }
+      ],
+      "inner_ring_outer_radius": 33.297341138936936,
+      "outer_ring_inner_radius": 40.90802468805212,
+      "gap_width": 7.610683549115187,
+      "minimum_width": 0.0,
+      "corridor": {
+        "midpoint_radius": 37.10268291349453,
+        "sampled_relative_density_max": [
+          9.98047096021779e-07,
+          9.967333867589626e-07
+        ],
+        "interior_samples": 381
+      },
+      "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+      "exact_vacuum_claim": false
+    },
+    "tube": {
+      "accepted": true,
+      "rho_min": 35.20001202621573,
+      "rho_max": 39.00535380077333,
+      "z_min": -10.0,
+      "z_max": 10.0,
+      "relative_density_max": [
+        2.8924423909050726e-07,
+        4.416704688500519e-07
+      ],
+      "samples": [
+        21,
+        81
+      ],
+      "normalisation": "Each component own equatorial peak; threshold 1e-6.",
+      "scope": "Sampled finite-height matter channel; no particle trajectory certified."
+    },
+    "max_flux_error": 7.187225583954801e-14,
+    "observable_drift": 7.264974040366483e-10
+  },
+  "annular_transport": {
+    "archive": "studies/annular-transit-k12",
+    "tracks": 8,
+    "energy": 1.1251088204467277,
+    "matched_energy_error": 2.220446049250313e-16,
+    "component_relative_density_max": [
+      9.415695592090389e-08,
+      1.7413850530468082e-07
+    ],
+    "rho_min": 36.404424333619296,
+    "rho_max": 37.10268291350083,
+    "normalised_invariant_drift_max": 4.102032631757013e-13,
+    "rk_time_error_max": 5.684341886080802e-14,
+    "rk_position_error_max": 2.842170943040401e-14,
+    "coordinate_time_positive_minus_negative": 3.5873877024528156e-06
+  },
+  "stronger_single_ring": {
+    "archive": "studies/strong-uphill-073-validated",
+    "omega": 0.73,
+    "energy": 0.8802937647724655,
+    "controls": {
+      "zero": {
+        "gates": {
+          "accepted": true,
+          "normalised_drift": {
+            "mass2": 6.176836819804517e-12,
+            "spin2": 4.268814905877934e-30,
+            "energy": 1.966961369597961e-12,
+            "angular_momentum": 0.0
+          },
+          "tolerance": 1e-09,
+          "zero_invariant_scale": "unit rest mass units",
+          "ssc_max": 2.723268192688672e-15,
+          "norm_error": 8.881784197001252e-16
+        },
+        "stop": "target_z",
+        "energy": 0.8802937647724655,
+        "launch": {
+          "mass2": 1.0000000000000007,
+          "spin2": 0.0,
+          "ssc_max": 0.0,
+          "energy": 0.8802937647724656,
+          "angular_momentum": 0.0,
+          "velocity_norm": -1.0,
+          "velocity_normalizer": 1.0000000000000007,
+          "velocity_denominator": 4.000000000000003,
+          "spin_curvature_ratio": 0.0
+        },
+        "final": {
+          "mass2": 0.9999999999995977,
+          "spin2": -7.192546135482883e-31,
+          "ssc_max": 7.490135267947155e-16,
+          "energy": 0.8802937647724334,
+          "angular_momentum": 0.0,
+          "velocity_norm": -1.0,
+          "velocity_normalizer": 0.9999999999995977,
+          "velocity_denominator": 3.9999999999983906,
+          "spin_curvature_ratio": 3.388422826891072e-17
+        },
+        "proper_time": 39.65692175097113,
+        "coordinate_time": 57.9534880168919,
+        "final_z": -10.0,
+        "endpoint_energy_margin": 9.999999994736442e-08,
+        "marginal": false,
+        "classification": "transmitted",
+        "rtol": 2e-13
+      },
+      "positive": {
+        "gates": {
+          "accepted": true,
+          "normalised_drift": {
+            "mass2": 2.9023672354355748e-11,
+            "spin2": 5.42270492832203e-12,
+            "energy": 8.87049634324846e-12,
+            "angular_momentum": 2.7113727929517495e-12
+          },
+          "tolerance": 1e-09,
+          "zero_invariant_scale": "unit rest mass units",
+          "ssc_max": 6.654137116296676e-15,
+          "norm_error": 1.1102230246251565e-15
+        },
+        "stop": "target_z",
+        "energy": 0.8802937647724655,
+        "launch": {
+          "mass2": 1.0000000000000007,
+          "spin2": 1.0000000000000002e-06,
+          "ssc_max": 0.0,
+          "energy": 0.8802937647724657,
+          "angular_momentum": 0.001,
+          "velocity_norm": -0.9999999999999996,
+          "velocity_normalizer": 1.0000000000000007,
+          "velocity_denominator": 3.9999999837710143,
+          "spin_curvature_ratio": 0.00018662141416554327
+        },
+        "final": {
+          "mass2": 0.9999999999975464,
+          "spin2": 9.999999999998157e-07,
+          "ssc_max": 3.329950324736812e-16,
+          "energy": 0.8802937647722953,
+          "angular_momentum": 0.0009999999999999079,
+          "velocity_norm": -0.9999999999999998,
+          "velocity_normalizer": 0.9999999999975464,
+          "velocity_denominator": 4.000000006375356,
+          "spin_curvature_ratio": 3.99536325071359e-05
+        },
+        "proper_time": 39.508477278517866,
+        "coordinate_time": 57.78485758309352,
+        "final_z": -10.0,
+        "endpoint_energy_margin": 1.9086939195833708e-06,
+        "marginal": false,
+        "classification": "transmitted"
+      },
+      "negative": {
+        "gates": {
+          "accepted": true,
+          "normalised_drift": {
+            "mass2": 3.023181704975286e-11,
+            "spin2": 5.86104447852613e-12,
+            "energy": 9.423909172807054e-12,
+            "angular_momentum": 2.9303816317938214e-12
+          },
+          "tolerance": 1e-09,
+          "zero_invariant_scale": "unit rest mass units",
+          "ssc_max": 4.686238658162825e-15,
+          "norm_error": 1.1102230246251565e-15
+        },
+        "stop": "turnaround",
+        "energy": 0.8802937647724655,
+        "launch": {
+          "mass2": 1.0,
+          "spin2": 1.0000000000000002e-06,
+          "ssc_max": 0.0,
+          "energy": 0.8802937647724657,
+          "angular_momentum": -0.001,
+          "velocity_norm": -1.0,
+          "velocity_normalizer": 1.0,
+          "velocity_denominator": 3.9999999837710116,
+          "spin_curvature_ratio": 0.00018662141416554332
+        },
+        "final": {
+          "mass2": 0.9999999999975494,
+          "spin2": 9.999999999998223e-07,
+          "ssc_max": 1.1869079090756542e-15,
+          "energy": 0.8802937647723054,
+          "angular_momentum": -0.0009999999999999111,
+          "velocity_norm": -1.0000000000000002,
+          "velocity_normalizer": 0.9999999999975494,
+          "velocity_denominator": 4.000000006375613,
+          "spin_curvature_ratio": 3.995439632104652e-05
+        },
+        "proper_time": 39.70162160601331,
+        "coordinate_time": 58.004266397170795,
+        "final_z": -9.999842477544606,
+        "endpoint_energy_margin": -1.708693919688642e-06,
+        "marginal": false,
+        "classification": "reflected"
+      },
+      "reversed": {
+        "gates": {
+          "accepted": true,
+          "normalised_drift": {
+            "mass2": 2.9023672354355748e-11,
+            "spin2": 5.42270492832203e-12,
+            "energy": 8.87049634324846e-12,
+            "angular_momentum": 2.7113727929517495e-12
+          },
+          "tolerance": 1e-09,
+          "zero_invariant_scale": "unit rest mass units",
+          "ssc_max": 6.654137116296676e-15,
+          "norm_error": 1.1102230246251565e-15
+        },
+        "stop": "target_z",
+        "energy": 0.8802937647724655,
+        "launch": {
+          "mass2": 1.0000000000000007,
+          "spin2": 1.0000000000000002e-06,
+          "ssc_max": 0.0,
+          "energy": 0.8802937647724657,
+          "angular_momentum": -0.001,
+          "velocity_norm": -0.9999999999999996,
+          "velocity_normalizer": 1.0000000000000007,
+          "velocity_denominator": 3.9999999837710143,
+          "spin_curvature_ratio": 0.00018662141416554327
+        },
+        "final": {
+          "mass2": 0.9999999999975464,
+          "spin2": 9.999999999998157e-07,
+          "ssc_max": 3.329950324736812e-16,
+          "energy": 0.8802937647722953,
+          "angular_momentum": -0.0009999999999999079,
+          "velocity_norm": -0.9999999999999998,
+          "velocity_normalizer": 0.9999999999975464,
+          "velocity_denominator": 4.000000006375356,
+          "spin_curvature_ratio": 3.99536325071359e-05
+        },
+        "proper_time": 39.508477278517866,
+        "coordinate_time": 57.78485758309352,
+        "final_z": -10.0,
+        "endpoint_energy_margin": 1.9086939195833708e-06,
+        "marginal": false,
+        "classification": "transmitted"
+      }
+    },
+    "max_nonmarginal_saved_time_error": 5.2828866614618164e-08,
+    "max_nonmarginal_phase_order_error": 4.511946372076636e-12,
+    "max_full_mpd_defect": 1.3156965295433759e-14,
+    "full_mpd_points": 656,
+    "phase_quadratures": 34,
+    "cumulative_mpd_tracks": 34
+  },
+  "scope": "Validated stationary fields and finite target passages/first turnarounds. No asymptotic escape, long-term trapping, net energy gain or dynamical stability claim."
+}
