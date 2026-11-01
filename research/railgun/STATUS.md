@@ -9,7 +9,13 @@ Axial spin-dependent transit is validated; counter-rotation, stacked states and 
 
 ## Live and queue
 
-**Live:** none. Run B `railgun-ring-transit-20261101`, second node/card 0,
+**Live:** `railgun-counter-regression-20261101`, second node/card 0,
+code `73b2aa30`; rotating KG quadratic eigenproblem, angular coupling,
+flat no-bound-mode refusal and CUDA/float64 placement. Four threads,
+160 GiB, 0.5 h cap, chunks 128; no AMR checkpoints. Initial tests;
+no measured completion ETA. Scratch clean: 47 MB, 543 GB free.
+
+Run B `railgun-ring-transit-20261101`, second node/card 0,
 code `96c81edc`, ran **12:41:00–12:53:33 MSK (0.209 h)**, exit 0.
 All **32 tracks reached z=-10 from z=+10**, crossing the certified centre.
 Four controls, two RK tolerances, high-speed plus three E~1 cases;
