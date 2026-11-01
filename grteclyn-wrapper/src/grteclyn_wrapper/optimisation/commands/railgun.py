@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 
@@ -38,6 +39,11 @@ def main(argv=None):
     profile.add_argument('--z-max', type=float, default=30.)
     profile.add_argument('--samples', type=int, default=101)
     args = parser.parse_args(argv)
+    # The async CUDA pool reserves more virtual address space than the bounded
+    # 160 GiB pilots allow. Platform allocation succeeded under that same cap.
+    if not getattr(args, 'dry_run', False):
+        os.environ.setdefault('XLA_PYTHON_CLIENT_ALLOCATOR', 'platform')
+        os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE', 'false')
     if args.verb == 'profile':
         if args.gpu < 0:
             parser.error('gpu must be nonnegative')

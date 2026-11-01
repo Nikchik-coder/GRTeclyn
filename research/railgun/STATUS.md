@@ -17,7 +17,12 @@ Jacobian chunks are 128. No AMR checkpoints. Logs and solved fields are retained
 `railgun-regression-20261101` launched **10:05 MSK**, second node/card 0,
 commit `fad3d846`. It aborted at **10:05 MSK**, exit 134, during CUDA backend
 initialisation after 16 algebra tests; no GPU numerical result was produced.
-The host address-space cap/allocator combination is under diagnosis. Both
+The platform allocator with preallocation disabled works under the same cap:
+`railgun-regression-platform-20261101` ran **10:06–10:07 MSK**, 22.80 s,
+40 passed / one failed. Flat, Schwarzschild, Kerr, TD-MPD, parity and existing
+solver/winding tests passed. The Gaussian analytic-charge fixture missed its
+2e-8 tolerance by a 2.60e-8 interpolation error on 64 radial points; its grid
+is being refined to 96 without relaxing the tolerance. Both
 cards are idle; scratch remains 47 MB cache / 546 GB free. Persistent log:
 `runs/capped_jobs/railgun-regression-20261101/log`. No job is live; ETA none.
 The spherical pilot waits for passing regressions. No single-ring, counter-rotation, stacked-ring or

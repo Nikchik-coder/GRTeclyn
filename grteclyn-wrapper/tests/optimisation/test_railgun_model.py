@@ -98,7 +98,7 @@ def test_flat_solution_and_correct_centre_rows():
 def test_charge_normalisation_and_winding_sign():
     from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
     field = ScalarField()
-    p = RingProblem([field, dataclasses.replace(field,winding=-1)],nx=64,ny=8,length=1.,target_j=0.)
+    p = RingProblem([field, dataclasses.replace(field,winding=-1)],nx=96,ny=8,length=1.,target_j=0.)
     arrays = {tag:np.zeros(p.shape) for tag in p.tags}
     radial = p.r[1:]*np.exp(-p.r[1:]**2/2)
     arrays['q0'][1:] = radial[:,None]

@@ -1,5 +1,6 @@
 """Independent full curvature: flat, Schwarzschild and rotating Kerr benchmarks."""
 import numpy as np
+import os
 import pytest
 
 from grteclyn_wrapper.optimisation.solver.device import configure_jax
@@ -7,6 +8,12 @@ from grteclyn_wrapper.optimisation.railgun.geometry import curvature, RingGeomet
 
 jax = configure_jax()
 xp = jax.numpy
+
+
+def test_requested_device_and_precision():
+    if os.environ.get('JAX_PLATFORMS') == 'cuda':
+        assert all(d.platform == 'gpu' for d in jax.devices())
+    assert xp.asarray(1.).dtype == xp.float64
 
 
 def minkowski(x):

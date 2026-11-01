@@ -56,7 +56,7 @@ Regression tests on a selected cluster card can run as one capped job:
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
   env JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES=0 WH_JAC_CHUNK=128 \
-  XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async \
+  XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
   "$PY" -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_model.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
   grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
