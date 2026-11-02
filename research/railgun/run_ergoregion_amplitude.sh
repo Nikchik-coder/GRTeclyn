@@ -27,6 +27,10 @@ set -euo pipefail
     export JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES=0 WH_JAC_CHUNK=128
     export XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
     mkdir -p runs/railgun/checks
+    "$py" -m grteclyn_wrapper.optimisation.railgun.ergoregion_scan \
+        research/railgun/studies/ergoregion_amplitude.json \
+        --source results/railgun/studies/frequency-deep/frequency_01/accepted.npz \
+        --out "$out" --gpu 0 --dry-run "${resume_args[@]}" > "${report%.xml}-plan.json"
     "$py" -m pytest -q --junitxml="$report" \
         grteclyn-wrapper/tests/optimisation/test_railgun_ergoregion_scan.py \
         grteclyn-wrapper/tests/optimisation/test_railgun_frequency.py \

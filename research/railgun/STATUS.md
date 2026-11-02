@@ -41,6 +41,11 @@ directory, copies its evidence to a new run, and carries forward three spent
 solves. At most **24 new solves** remain for the eight increases, cumulative
 27. Source reproduction is not solved again. Proposed same card/resources,
 0.5 h cap for tests and continuation, checkpoints OFF; no restart launched.
+CPU-only checks on the actual saved fields now pass: common-point lapse/g_tt/
+shift/frequency differences are at most **7.37e-14**; source-reproduction
+mass/J/frequency drift is **2.88e-12**. Thus the stopped comparison was a
+sampling-position error. Reused-field hashes are recorded in the dry plan;
+no further Newton solve or GPU initialisation was used for this check.
 
 Single-ring ergoregion search,
 [ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
