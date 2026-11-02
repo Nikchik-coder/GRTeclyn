@@ -468,6 +468,7 @@ if [[ "${SWH_CONSUME:-1}" != "0" ]]; then
 # written by run_single.sh: entry point for the plotfile consumer
 import os
 import runpy
+import signal
 if __name__ == "__main__":
     # Spawned workers import this file as __mp_main__; only the parent enters
     # the CLI. Long runs can cap each consumer worker independently of AMReX.
@@ -475,6 +476,11 @@ if __name__ == "__main__":
         for key in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
                     "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
             os.environ[key] = os.environ["SWH_CONSUMER_THREADS"]
+    # Unwind the process-pool context before the supervisor's final drain.
+    # Otherwise orphan workers could still be writing the same frame files.
+    def stop_after_workers(signum, frame):
+        raise SystemExit(0)
+    signal.signal(signal.SIGTERM, stop_after_workers)
     runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
 PY
 fi

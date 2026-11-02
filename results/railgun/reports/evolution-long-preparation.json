@@ -1,7 +1,6 @@
 {
   "stage": "requested_awaiting_checkpoint_choice",
-  "local_tests": 10,
-  "test_seconds": 0.28,
+  "local_tests": 11,
   "checks": [
     "duration-only physical parameter differences",
     "checkpoint off/on and bounded retention",
@@ -9,8 +8,19 @@
     "template overwrite refusal",
     "gauge-change refusal",
     "real multiprocessing spawn through generated post.py",
-    "shared preflight"
+    "shared preflight",
+    "SIGTERM waits for spawned workers before the supervisor final drain"
   ],
   "new_gpu_startups": 0,
-  "plan": "research/railgun/studies/evolution_long_070.json"
+  "plan": "research/railgun/studies/evolution_long_070.json",
+  "cluster_real_input_check": {
+    "job": "railgun-ring070-t50-template-check-20261102",
+    "exit_code": 0,
+    "policies": [
+      "off",
+      "on"
+    ],
+    "platform": "CPU metadata/hash/layout checks only; no GPU startup",
+    "finished_msk": "2026-11-02 10:59:06"
+  }
 }

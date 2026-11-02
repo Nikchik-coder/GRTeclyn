@@ -286,7 +286,7 @@ The generated consumer entry point now has a multiprocessing main guard;
 two spawned workers can process the unchanged 25-step plot cadence. Each
 consumer worker uses one CPU thread, while AMReX retains four. The local
 regression actually starts spawned children through the generated entry
-point. Ten duration/identity/spawn/shared-preflight checks pass. All default
+point. Eleven duration/identity/spawn/shared-preflight checks pass. All default
 frames and caches remain mandatory, keep-last is three, host address-space
 cap is 160 GiB per process, and the complete foreground job has a 3 h cap.
 

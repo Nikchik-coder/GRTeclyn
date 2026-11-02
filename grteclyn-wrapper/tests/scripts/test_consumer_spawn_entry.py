@@ -30,3 +30,31 @@ def main():
         capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "[(0, '1'), (1, '1'), (4, '1'), (9, '1')]"
+
+
+def test_sigterm_waits_for_workers_before_the_final_drain(tmp_path):
+    root = Path(__file__).resolve().parents[2]
+    script = (root/'scripts/campaigns/spinning_wormhole/run_single.sh').read_text()
+    body = re.search(r'cat > "\$\{RUN_DIR\}/post.py" <<PY\n(.*?)\nPY', script, re.S).group(1)
+    (tmp_path/'post.py').write_text(body.replace('${CONSUMER_MOD}', 'spawn_probe')+'\n')
+    package = tmp_path/'spawn_probe'; package.mkdir()
+    (package/'__init__.py').write_text('')
+    (package/'__main__.py').write_text(
+        'from .worker import main\nif __name__ == "__main__":\n    main()\n')
+    (package/'worker.py').write_text('''import os, signal, time
+import multiprocessing as mp
+from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
+def finish(value):
+    time.sleep(.2)
+    Path(f'done_{value}').write_text('complete')
+def main():
+    with ProcessPoolExecutor(max_workers=2, mp_context=mp.get_context('spawn')) as pool:
+        pending = [pool.submit(finish, value) for value in range(2)]
+        os.kill(os.getpid(), signal.SIGTERM)
+''')
+    result = subprocess.run([sys.executable, str(tmp_path/'post.py')],
+        cwd=tmp_path, env={**os.environ, 'PYTHONPATH':str(tmp_path)},
+        capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert all((tmp_path/f'done_{value}').read_text() == 'complete' for value in range(2))
