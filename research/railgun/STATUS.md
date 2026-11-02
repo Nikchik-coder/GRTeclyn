@@ -15,22 +15,29 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-export-n192-20261102`, second GPU node/card 0,
-source `fcb5ce624`, started **10:05:32 MSK**. Cartesian 200^3 padded cube;
-JAX derivative compilation/core certification, no cell rate yet and no
-3+1 time yet. ETA **0.20 h, about 10:18 MSK**; hard cap **0.5 h,
-10:35:32 MSK**. GPU context present, no other occupant.
+**Live:** `railgun-ring070-preflight-n192-20261102`, second GPU node/card 0,
+source `a7e252973`, started **10:14 MSK**. Inspectable t=0 import/read-key/
+full-frame preflight; no evolution time or speed yet. ETA **0.04 h, about
+10:17 MSK**; per-job hard cap **0.5 h, about 10:44 MSK**.
+
+**192^3 export complete:** **10:05:32–10:12:36 MSK**, exit 0, 8,000,000
+padded cells / 1,856,000,388 bytes. Fresh C6 core accepted; Einstein/KG
+1.70e-10 / 1.13e-10, order-curvature difference 8.60e-9. Export det(h)/tr A
+errors 1.12e-15 / 4.67e-17; Q_box=1.306322429183444, J=-Q.
+Grid SHA256 `64a606f3f248ecd939d4088c28116776847c2a6b0831d572b0d8ef67ec61bd58`.
+The actual prepared 192^3 template differs from the archived 128^3 params
+only in resolution, max_steps and run/data paths; frozen binary hash matches.
 
 **Regressions complete:** `railgun-richardson-regression-20261102`,
 **10:03:50–10:04:17 MSK**, exit 0, **31 passed in 24.63 s**.
 
-**Approved queue:** one certified 192^3 export, inspectable t=0 preflight,
-then the full launch preflight and one t<=2 evolution. Stop on failed checks.
+**Approved queue:** after the inspectable preflight passes, the full launch
+preflight and one t<=2 evolution remain. Stop on failed checks.
 The final 192^3 Richardson go was received November 2. Same frozen binary
 and physics, four threads, 160 GiB, 0.5 h per job; checkpoints OFF, full
 frames, keep-last three plotfiles. No other grids or longer runs.
 
-Last scratch check, second GPU node, **2026-11-02 10:06 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 10:13 MSK**: `_cache/`
 **47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
 Exactly three plotfiles per pilot retained as approved. No checkpoints.
 All original frames and slice caches remain on NFS; first node not listed.
