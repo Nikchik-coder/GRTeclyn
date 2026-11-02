@@ -45,7 +45,10 @@ The script verifies every moved file and leaves `evolution/` untouched.
 ## Automatic CMA-ES ergoregion search
 
 Scope: [ergoregion_cma.json](studies/ergoregion_cma.json), approved November 2
-with checkpoints OFF and launched at 18:38:03 MSK on the two-GPU node/card 0. The same `cma.CMAEvolutionStrategy` ask/tell algorithm as
+with checkpoints OFF; ran 18:38:03–18:44:52 MSK on the two-GPU node/card 0.
+It found a three-grid validated ergoregion after five proposals: shift/lapse
+1.080970704, g_tt maximum +0.0150110091, omega=0.655065086594. All 41 GPU
+regressions pass. The discovery budget is closed. Maximisation is a new study. The same `cma.CMAEvolutionStrategy` ask/tell algorithm as
 the wormhole search chooses **central lapse**, the central clock rate relative
 to infinity, between 0.14 and 0.41. For this fixed k=1, m=1 free scalar model
 there is one continuous branch coordinate; map scale is a numerical choice,

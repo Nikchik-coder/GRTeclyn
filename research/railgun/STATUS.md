@@ -15,23 +15,37 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Live CMA-ES search:** `railgun-ergoregion-cma-20261102`, two-GPU node/card 0,
-source `052487e5d`, started **18:38:03 MSK**. GPU regressions run first;
-all **41 GPU tests passed** in 76.53 s. Source reproduction passes
-with mass/J/frequency drift **5.31e-13**. CMA has started: its first target,
-central lapse 0.339785587, independently passes 128x16 with shift/lapse
-**0.847675**, g_tt maximum **-0.0323281**. This is provisional, not a
-three-grid accepted field. A second target at 0.316323561 is being checked.
-One-hour hard cap, ending by **19:38:03 MSK**;
-completion ETA/throughput not yet measured. Checkpoints **OFF**, explicitly
-confirmed November 2. GPU 1 remains free. Scope:
-[ergoregion_cma.json](studies/ergoregion_cma.json). Automate trial selection
-using the same CMA-ES ask/tell algorithm as the exotic-matter search. For the
-unchanged canonical k=1, m=1 single-field model, search the continuous branch
-using **central lapse 0.14–0.41**; frequency and scalar amplitude are solved.
-The new central-lapse border replaces the amplitude border, leaving every
-field equation and the number of unknowns unchanged. Starting state is the
-three-grid accepted omega=0.685955820263 ring, SHA256 `e586e4c1a4048773dcb4e3be87c67ce6cd523f7846b371a716cb4b1981b150ff`.
+**Validated ergoregion found:** `railgun-ergoregion-cma-20261102`, two-GPU
+node/card 0, source `052487e5d`, **18:38:03–18:44:52 MSK**, exit 0,
+**0.1136 h** including all 41 passing GPU regressions. CMA-ES stopped at the
+validated target after **five proposals, 11 search solves and three fresh
+refinement solves**. All original gates pass on **128x16 / 160x20 / 192x24**.
+On the finest grid: frequency **0.655065086594**, central lapse **0.297290525**,
+minimum lapse **0.282624975**, maximum shift/lapse **1.080970704**, maximum
+**g_tt=+0.0150110091**, at the sampled equatorial rho **0.7513443**.
+The positive sign exceeds the three-grid spread **2.88e-13** by many orders.
+Final-pair strong-field observable/frequency differences are below **4.08e-13**.
+M_ADM=1.140069720430, J=-1.126588475994. Worst off-grid Einstein/KG across
+all three: **5.04e-10 / 3.74e-11**, below 1e-8; surface J error <=1.92e-11.
+
+This establishes a stationary ergoregion on the fixed canonical k=1, m=1
+branch. Dynamical stability of this new ring has not been tested. The previous
+3+1 evolutions used the weaker omega=0.70 ring. Accepted field:
+`runs/railgun/single-ring/scans/ergoregion-cma-20261102/accepted_ergoregion.npz`.
+Both GPUs idle. Checkpoints OFF; all fields and logs retained. Scratch:
+14 GB retained, **544 GB free**, three plotfiles per old evolution, zero
+checkpoints. No scratch or frame removal. Evidence packing is in progress.
+
+**Next: maximisation requested.** Prepare bounded CMA searches from this
+accepted ring, continuing after the first positive g_tt. Preserve all original
+physical and resolution gates; rank only fully validated final values. The
+best value found is conditional on the sampled branch/range, not a global
+maximum or a stability result. No maximisation GPU work has started.
+
+Completed discovery scope:
+[ergoregion_cma.json](studies/ergoregion_cma.json). The central-lapse border
+replaces the amplitude border without changing the field equations or the
+number of unknowns. It explores the same canonical free scalar model.
 
 CMA seed 171, population four, at most **32 proposals**. Nearest solved
 fields, bounded secant predictions, automatic log-lapse steps <=0.04 and
@@ -46,7 +60,7 @@ Bridge states have algebraic, unused-equation, flux and branch screens;
 only independently checked final proposals receive feasible CMA scores.
 Every search state remains provisional. A three-grid positive-g_tt sign
 with the existing margin checks is required for `accepted_ergoregion.npz`.
-The process stops on a validated ergoregion or its evaluation/solve/time cap.
+The completed discovery stopped on the validated ergoregion target.
 No new matter potential, winding, 3+1 evolution or physical stability claim.
 
 Twenty-three CPU preparation/engine/acceptance tests pass, including actual
