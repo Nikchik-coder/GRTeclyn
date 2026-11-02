@@ -17,7 +17,12 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 **Live CMA-ES search:** `railgun-ergoregion-cma-20261102`, two-GPU node/card 0,
 source `052487e5d`, started **18:38:03 MSK**. GPU regressions run first;
-search follows only on success. One-hour hard cap, ending by **19:38:03 MSK**;
+all **41 GPU tests passed** in 76.53 s. Source reproduction passes
+with mass/J/frequency drift **5.31e-13**. CMA has started: its first target,
+central lapse 0.339785587, independently passes 128x16 with shift/lapse
+**0.847675**, g_tt maximum **-0.0323281**. This is provisional, not a
+three-grid accepted field. A second target at 0.316323561 is being checked.
+One-hour hard cap, ending by **19:38:03 MSK**;
 completion ETA/throughput not yet measured. Checkpoints **OFF**, explicitly
 confirmed November 2. GPU 1 remains free. Scope:
 [ergoregion_cma.json](studies/ergoregion_cma.json). Automate trial selection
@@ -45,8 +50,8 @@ The process stops on a validated ergoregion or its evaluation/solve/time cap.
 No new matter potential, winding, 3+1 evolution or physical stability claim.
 
 Twenty-three CPU preparation/engine/acceptance tests pass, including actual
-bounded CMA generations, failure ranking and automatic bisection. Two new
-CUDA border/recovery tests are included in the live job. Card 0 on the authorised
+bounded CMA generations, failure ranking and automatic bisection. The new
+CUDA border/recovery tests passed as part of the 41-test suite. Card 0 on the authorised
 two-GPU node only, four CPU threads, 160 GiB, chunks 128, **one-hour** job
 cap including regressions and search. The stationary search writes fields/logs,
 not AMR evolution checkpoints. Both H100s were free before launch. Scratch
