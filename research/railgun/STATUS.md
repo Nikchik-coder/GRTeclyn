@@ -15,7 +15,12 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Prepared, awaiting a run-specific go:** single-ring ergoregion search,
+**Live:** `railgun-ergoregion-amplitude-20261102`, second GPU node/card 0,
+started **17:56:39 MSK** on source `ec764d6cc`. GPU regressions are running;
+the amplitude scan follows only on success. Hard runtime limit **0.5 h**,
+ending by **18:26:39 MSK** (not a measured completion ETA); solve throughput
+is not yet available. Checkpoints **OFF**, explicitly confirmed November 2.
+Single-ring ergoregion search,
 [ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
 hash-checked accepted omega=0.70 state; k=1, m=1 and the matter model stay fixed.
 First reproduce it on radial scale 2.5, with the amplitude pinned at its scalar
@@ -30,20 +35,21 @@ Original 1e-8 equation/flux and 1e-6 tail/observable checks stay unchanged;
 additional lapse/g_tt/shift/frequency convergence checks run before writing
 an accepted state. Positive g_tt must occur on all three grids with a margin
 larger than their spread and 1e-8. No automatic k=2 branch or extra solves.
-Seven CPU-only preparation/remapping/predictor/acceptance regressions pass;
-the new CUDA border test and existing field tests await the same go.
-Proposed second GPU node/card 0, four CPU threads, 160 GiB, 0.5 h per job,
-Jacobian chunks 128; retain logs and all attempted fields. Checkpoint choice
-awaits confirmation; this stationary solve needs no AMR checkpoint. A frequency
+Eleven CPU-only new/existing preparation and guard checks pass;
+the new CUDA border test and existing field tests are part of the live job.
+Four CPU threads, 160 GiB, 0.5 h total, Jacobian chunks 128; retain logs
+and all attempted fields. Scratch at launch: 14 GB retained in four finished
+evolutions plus the 47 MB cache; 531 GB free, three plotfiles per evolution,
+zero checkpoints. No scratch removal. A frequency
 turning point is a hypothesis, not established by the rejected omega=0.67
 Newton solve. A fixed-radius amplitude pin can turn too; no guaranteed
-ergoregion or nonsingular Jacobian is assumed. No new GPU work has started.
+ergoregion or nonsingular Jacobian is assumed.
 
 **GPU evolution complete:** `railgun-ring070-evolve-n192-t50-20261102`,
 second GPU node/card 0, source `b64bf13ff`, ran from **11:13:00 to
 12:56:40 MSK** (1.728 h including final image processing), exit 0,
 exactly **t=50**, 15000 steps. Final evolution speed **29.36 code units/h**.
-Both GPUs are idle; no evolution is queued. Its own log contains no NaN/Inf
+No evolution is queued; the new stationary job is listed above. Its own log contains no NaN/Inf
 or fatal error. **Checkpoints OFF**, explicitly chosen November 2.
 
 Same certified t=0 cube and frozen binary, N=192, box 32. Physics, timestep,

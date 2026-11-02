@@ -2,12 +2,13 @@
 
 **Completed November 2:** N=192 reached t=50 at 12:56:40 MSK, exit 0.
 The 16 movies finished encoding at 14:02:43 MSK; contact sheets await visual
-review. Checkpoints OFF. No ring jobs remain live. See STATUS for storage.
+review. Checkpoints OFF. No evolution remains live; the new stationary study
+is listed below. See STATUS for storage.
 Scope: [studies/evolution_long_070.json](studies/evolution_long_070.json).
 
 **Completed November 2:** the omega=0.70 Cartesian 3+1 import and full
 96^3 / 128^3 / 192^3 Richardson study through t=2 finished. All approved
-budgets are closed; both GPUs idle. The finest pair's Ham/Mom orders at
+pilot budgets are closed. The finest pair's Ham/Mom orders at
 t=2 are 4.01 / 3.83; charge-change Richardson order is 4.677.
 See [EVOLUTION.md](EVOLUTION.md) and [STATUS.md](STATUS.md).
 
@@ -44,7 +45,8 @@ The script verifies every moved file and leaves `evolution/` untouched.
 ## Amplitude continuation toward a single-ring ergoregion
 
 Prepared scope: [ergoregion_amplitude.json](studies/ergoregion_amplitude.json).
-This is a new stationary study; it has not received a run-specific go.
+The stationary study received its go November 2, checkpoints OFF, and started
+at 17:56:39 MSK on the second GPU node/card 0. See STATUS for progress.
 The dry run reads only NumPy data and does not initialise JAX:
 
 ```bash
