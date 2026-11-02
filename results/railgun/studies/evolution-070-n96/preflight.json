@@ -1,0 +1,280 @@
+{
+ "schema": 1,
+ "campaign": "canonical scalar ring evolution",
+ "mode": "full",
+ "restart": false,
+ "exe": "main3d_ring070r2_3e6466ed_2026-11-02.ex",
+ "exe_sha256": "14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc",
+ "params_sha256": "eeb2bd22c631290d6d2ead12b308760e50692a9c8dd39a502a9a8e6cc68bf622",
+ "verdict": "pass",
+ "reasons": [],
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "required": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing": [],
+  "subset": null,
+  "source": "--frames-fields in SWH_CONSUME_ARGS",
+  "axis": "z",
+  "errors": [],
+  "warnings": [],
+  "render": {
+   "plotfile": "plt00000",
+   "frame": 0,
+   "status": "ok",
+   "seconds": 9.0,
+   "frames_out": "preflight_frames",
+   "log": "preflight_frames/render.log",
+   "fields": {
+    "chi": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 0.24907103180885315,
+     "max": 0.800994873046875,
+     "verdict": "ok"
+    },
+    "chi_minus_1": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.7509289979934692,
+     "max": -0.1990051120519638,
+     "verdict": "ok"
+    },
+    "K": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -1.6233799362690452e-16,
+     "max": 1.6875245502245313e-16,
+     "verdict": "ok"
+    },
+    "lapse": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 0.4246019124984741,
+     "max": 0.8918851613998413,
+     "verdict": "ok"
+    },
+    "shift1": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.11820332705974579,
+     "max": 0.11820332705974579,
+     "verdict": "ok"
+    },
+    "shift2": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.11820332705974579,
+     "max": 0.11820332705974579,
+     "verdict": "ok"
+    },
+    "shift3": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "phi": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.08423656970262527,
+     "max": 0.08423656970262527,
+     "verdict": "ok"
+    },
+    "Pi": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.11709674447774887,
+     "max": 0.11709674447774887,
+     "verdict": "ok"
+    },
+    "phi_lump0": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.08423656970262527,
+     "max": 0.08423656970262527,
+     "verdict": "ok"
+    },
+    "Pi_lump0": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -0.11709674447774887,
+     "max": 0.11709674447774887,
+     "verdict": "ok"
+    },
+    "Weyl4_Re": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 1.085532312572468e-05,
+     "max": 0.03459198400378227,
+     "verdict": "ok"
+    },
+    "Weyl4_Im": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": -2.5624147383496165e-05,
+     "max": 0.004900667350739241,
+     "verdict": "ok"
+    },
+    "Weyl4_Mag": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 1.0855449545488227e-05,
+     "max": 0.034852515906095505,
+     "verdict": "ok"
+    },
+    "scalar_activity": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 3.637947884271853e-05,
+     "max": 0.14571234583854675,
+     "verdict": "ok"
+    },
+    "local_speed": {
+     "pixels": 2304,
+     "nan": 0,
+     "min": 0.23875631392002106,
+     "max": 0.808815062046051,
+     "verdict": "ok"
+    }
+   },
+   "log_tail": []
+  }
+ },
+ "intent": {
+  "errors": [],
+  "warnings": [
+   "this run writes no checkpoints: if it dies, it cannot be restarted"
+  ]
+ },
+ "required_files": {
+  "files": {
+   "recipe_initial_data_file": "runs/railgun/evolution/initial-070-n96-20261102/initial.gridinit"
+  },
+  "errors": []
+ },
+ "header_binary_requirements": {
+  "checks": [],
+  "errors": []
+ },
+ "symmetry": {
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "consumer": {
+  "consume": true,
+  "areal_radius": "off",
+  "neck_horizons": false,
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "paths": {
+  "name": "ring070-n96-t2-r2-20261102",
+  "errors": [],
+  "warnings": []
+ },
+ "static": {
+  "keys": 60,
+  "absent_from_binary": [],
+  "allowed_absent": []
+ },
+ "probe": {
+  "status": "ok",
+  "exit_code": 0,
+  "unused": [],
+  "version": "3e6466ed",
+  "seconds": 2.5,
+  "log_tail": [],
+  "allowed_unused": []
+ },
+ "t0": {
+  "collapse_diagnostics.dat": {
+   "time": 0.0,
+   "min_lapse": 0.42460192402,
+   "min_chi": 0.24907102918,
+   "max_abs_K": 1.9009357067e-16,
+   "min_lapse_x": 16.0,
+   "min_lapse_y": 16.0,
+   "min_lapse_z": 16.0,
+   "max_ah_r": 0.0,
+   "min_theta_plus": 0.10601634389,
+   "r_at_min_theta_plus": 16.165807537,
+   "min_phi": -0.084236570798,
+   "max_phi": 0.084236570798,
+   "min_Pi": -0.11709674112,
+   "max_Pi": 0.11709674112,
+   "pump_work": 0.0
+  },
+  "complex_scalar_diagnostics.dat": {
+   "time": 0.0,
+   "Q_box": 1.3063223674,
+   "Jz_matter_box": -1.3053329044,
+   "integral_abs_Phi_sq": 1.0731022275,
+   "m2_re": -2.0206875816e-19,
+   "m2_im": 1.9396462498e-18,
+   "max_abs_Phi_sq": 0.0072406121018
+  },
+  "constraint_norms.dat": {
+   "time": 0.0,
+   "L2_Ham": 0.0082442709706,
+   "L2_Mom": 2.3406381933e-05,
+   "min_rho_req": -0.0011395810554,
+   "max_rho_req": 0.011319498278,
+   "integral_neg_rho": 1.2516393455,
+   "L2_Ham_rel": 0.36271062455,
+   "L2_Mom_rel": 0.0025920558192,
+   "pump_force_L2": 0.0,
+   "governor": 0.99999998208,
+   "pump_fi_L2": 0.0,
+   "L2_Ham_amr": 3.0110989754e-05,
+   "L2_Mom_amr": 2.5673856402e-05,
+   "L2_Ham_amr_rel": 0.0012476127618,
+   "L2_Mom_amr_rel": 0.0024952755304,
+   "Linf_Ham_amr": 0.0021186391773,
+   "L2_Ham_amr_ref": 0.0,
+   "L2_Ham_int": 0.0001033415149,
+   "L2_Mom_int": 8.8113185052e-05
+  }
+ },
+ "grteclyn_version": "3e6466ed",
+ "seed": {
+  "requested": {}
+ }
+}

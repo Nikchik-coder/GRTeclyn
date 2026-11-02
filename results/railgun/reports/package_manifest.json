@@ -49,6 +49,14 @@
       "sha256": "e53bdc6cb044f32f4b93093a7dc8f4db0aae1cba9ae59086c4a578d02060adf0",
       "bytes": 147280
     },
+    "figures/ring070-n128-initial.png": {
+      "sha256": "d12d7e101b9b2893bbc19836f548beb4dd680c5eee4b0d9a0547ab8ec175199f",
+      "bytes": 40318
+    },
+    "figures/ring070-n96-initial.png": {
+      "sha256": "a7f0158f6d82dfea3ac522c30d5302dd5f3b9d4b5036be1ffd0384d541970503",
+      "bytes": 37801
+    },
     "figures/single-ring-frequency-sequence.png": {
       "sha256": "c4b63c9ec71b639988429d4b419ba6a1326b5b0a2d170809420ba7b372181f47",
       "bytes": 167791
@@ -112,6 +120,10 @@
     "reports/gpu_event_regression.json": {
       "sha256": "c61ca27bd23f65f3556279de277efcf5022edcdff2440594fe6d036c6e66bdbf",
       "bytes": 1615
+    },
+    "reports/gpu_evolution_regression.json": {
+      "sha256": "ce7857f3cc8dd5301eed995c653b8f5e9c700e554dd96b8ae161a8fb0dae5fc1",
+      "bytes": 4983
     },
     "reports/gpu_falloff_regression.json": {
       "sha256": "94eb2fd3ea60909a9cde268fa587640e066cb2c6d74dadb3466c2875d62d7c59",
@@ -1096,6 +1108,102 @@
     "studies/counter-rotation/sha256sums.txt": {
       "sha256": "862ea43d9ac9b2e5ed2f95a2363ccd23721882a65aff2ed84e24e5c332e3451c",
       "bytes": 2714
+    },
+    "studies/evolution-070-n96/README.md": {
+      "sha256": "94778a58e42b98ab7917d32022be362e337bbe9730cf09e45c325f9145455251",
+      "bytes": 434
+    },
+    "studies/evolution-070-n96/consumer.log": {
+      "sha256": "81c2680c9fe4797ccdabb180d2fc5659d04a611c55e8bff64c36aa47d40e7455",
+      "bytes": 771
+    },
+    "studies/evolution-070-n96/data/collapse_diagnostics.dat": {
+      "sha256": "c6df6297b6b5afcab4eeb63589fd44dbabb35f2a164cfa5ea5a1bddcc500c581",
+      "bytes": 88779
+    },
+    "studies/evolution-070-n96/data/complex_scalar_diagnostics.dat": {
+      "sha256": "9a752638525e02899522ecfd86d6ccc58b8c1a5095124715d7cf891cca9b07a9",
+      "bytes": 40299
+    },
+    "studies/evolution-070-n96/data/constraint_norms.dat": {
+      "sha256": "ca21111d11cdab5bf5bb56fbc8d0cda0c0b1a3addb0a905ddc64ced07b381895",
+      "bytes": 113019
+    },
+    "studies/evolution-070-n96/execution.log": {
+      "sha256": "93902706ef26655c81017b3bb4d2475e967143a25cf22f776231ba350fb2b05c",
+      "bytes": 127505
+    },
+    "studies/evolution-070-n96/export/corridor.json": {
+      "sha256": "724b113f1544ae3e8dac7dac360da9703d142595f524017659a52cfbf12a013a",
+      "bytes": 24782
+    },
+    "studies/evolution-070-n96/export/manifest.json": {
+      "sha256": "977c957b4f9717e8374b2de900d1455f8f71b1c46786fa6f0bcba7f207514d6a",
+      "bytes": 996
+    },
+    "studies/evolution-070-n96/export/outcome.json": {
+      "sha256": "73628c32dbf0d13ba9eb0d2a0b013d83bed6ed8e995c01916d77ed2c8acdbd96",
+      "bytes": 614
+    },
+    "studies/evolution-070-n96/export/progress.json": {
+      "sha256": "9f89bc5199f5759ba92dd82948b0a229d230129a75214ca37cfffc988be83f60",
+      "bytes": 76
+    },
+    "studies/evolution-070-n96/parameters_and_version.txt": {
+      "sha256": "a6e567cfbc74e40e6138c3608afb12e1be6ca7ba4b436cf422fda24ee3c45899",
+      "bytes": 3144
+    },
+    "studies/evolution-070-n96/params.txt": {
+      "sha256": "8e86502c49f86d0138066bdd7fb6f20ad966c14468c9a87c0656fdf999a1f784",
+      "bytes": 1728
+    },
+    "studies/evolution-070-n96/preflight.json": {
+      "sha256": "1f0c489255d94d4d5bf50da075def931eda744f3d26b7b3c551d5a88f5515ee5",
+      "bytes": 5952
+    },
+    "studies/evolution-070-n96/run.log": {
+      "sha256": "6b93074d48cace7a7de20446ec499d22c98467317d9178175e97414a1697f179",
+      "bytes": 120303
+    },
+    "studies/evolution-070-n96/run_manifest.json": {
+      "sha256": "3caa13c82d3a9e6cd982170059f99cfd791fd4f20ad3b6e817e41f0cb0d977de",
+      "bytes": 12639
+    },
+    "studies/evolution-070-n96/sha256sums.txt": {
+      "sha256": "55d4cb795a7ea5c9373c912c62f3fc850817d3ce438699dc6c3acc78a0841415",
+      "bytes": 1999
+    },
+    "studies/evolution-070-n96/slices/chi_0000.npz": {
+      "sha256": "965ef7ef9602b9fe99ac35a2dd3c3102f82921f95ba915d520729e9597da3174",
+      "bytes": 3118
+    },
+    "studies/evolution-070-n96/slices/chi_0300.npz": {
+      "sha256": "d02dda19368d4712cc3acd46de46242fa1b48d36a4e2e671bae604ad55d2f78e",
+      "bytes": 5220
+    },
+    "studies/evolution-070-n96/slices/lapse_0000.npz": {
+      "sha256": "6bccee11fd709c5e3e850231fee3c2d82403b491f4c2d67f179fbf78144398c5",
+      "bytes": 3099
+    },
+    "studies/evolution-070-n96/slices/lapse_0300.npz": {
+      "sha256": "dde548f4fefe6216a5eba6ca3ea447e97ec66a4742674b12b5505fd65b0c02da",
+      "bytes": 4960
+    },
+    "studies/evolution-070-n96/slices/scalar_activity_0000.npz": {
+      "sha256": "cb7a59960492ef195bd82270f06429dc95727a707040c93f12473cb2e3303d42",
+      "bytes": 3181
+    },
+    "studies/evolution-070-n96/slices/scalar_activity_0300.npz": {
+      "sha256": "2dcf441554efcd70088e427ef6b86e0fa17e446a3514940e1f7fc3acfc4a890a",
+      "bytes": 6125
+    },
+    "studies/evolution-070-n96/small_data/boundary_flux.dat": {
+      "sha256": "91278d0226bcd65daa911ce78875b5c2f92ba1830335e63463932c1f76bdaeec",
+      "bytes": 1036
+    },
+    "studies/evolution-070-n96/summary.json": {
+      "sha256": "c6f888de338e4a888aa19a36faa633ef9c469af01d654f46d9d34d6113fdac27",
+      "bytes": 1895
     },
     "studies/frequency-073-refined/README.md": {
       "sha256": "dff0af46931d6d4448f4e1f36cc89ed768e9a30be32a819123c99b7cf5e697d1",
