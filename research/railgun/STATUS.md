@@ -19,8 +19,11 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 `railgun-ergoregion-max-r2-seed271-20261102`, two-GPU node/card 0, and
 `railgun-ergoregion-max-r2-seed272-20261102`, card 1. Both started
 **19:53:49 MSK**, after the explicit go for both renewed jobs and
-checkpoints **OFF**. GPU regressions first, then accepted-source reproduction
-and CMA proposals. Best accepted value starts at **3.720789536602**.
+checkpoints **OFF**. All **55 GPU regressions pass on each card**, in
+**70.77 / 71.39 s**. Both accepted-source reproductions pass; CMA
+continuation is advancing. At **19:56:27 MSK**, cards 0/1 had started
+**9 / 4 search solves**, zero verification solves; no new accepted result.
+Best accepted value remains **3.720789536602**.
 **Every potential new best immediately passes all three grids before receiving
 a successful score; otherwise it is rejected.** No deferred finalist phase.
 One-hour cap per job including tests; deadline **20:53:49 MSK**,
