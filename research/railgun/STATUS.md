@@ -15,6 +15,40 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**CMA-ES search prepared, awaiting its bounded go:**
+[ergoregion_cma.json](studies/ergoregion_cma.json). Automate trial selection
+using the same CMA-ES ask/tell algorithm as the exotic-matter search. For the
+unchanged canonical k=1, m=1 single-field model, search the continuous branch
+using **central lapse 0.14–0.41**; frequency and scalar amplitude are solved.
+The new central-lapse border replaces the amplitude border, leaving every
+field equation and the number of unknowns unchanged. Starting state is the
+three-grid accepted omega=0.685955820263 ring, SHA256 `e586e4c1a4048773dcb4e3be87c67ce6cd523f7846b371a716cb4b1981b150ff`.
+
+CMA seed 171, population four, at most **32 proposals**. Nearest solved
+fields, bounded secant predictions, automatic log-lapse steps <=0.04 and
+at most four failed-step bisections per proposal replace hand-chosen steps.
+Individual failed trials receive penalties; they do not stop the search.
+Maximum **80 search Newton solves**, including source reproduction, plus
+**nine** reserved for at most three three-grid finalists: **89 total**.
+Search grid 128x16; finalists 128x16 / 160x20 / 192x24; map scale 2.5,
+30 iterations per solve, minimum two corrections, fresh Jacobians, Newton
+1e-14. Original equation/flux 1e-8 and tail/observable 1e-6 gates unchanged.
+Bridge states have algebraic, unused-equation, flux and branch screens;
+only independently checked final proposals receive feasible CMA scores.
+Every search state remains provisional. A three-grid positive-g_tt sign
+with the existing margin checks is required for `accepted_ergoregion.npz`.
+The process stops on a validated ergoregion or its evaluation/solve/time cap.
+No new matter potential, winding, 3+1 evolution or physical stability claim.
+
+Twenty-three CPU preparation/engine/acceptance tests pass, including actual
+bounded CMA generations, failure ranking and automatic bisection. Two new
+CUDA border/recovery tests await the same go. Prepared card 0 on the authorised
+two-GPU node only, four CPU threads, 160 GiB, chunks 128, **one-hour** job
+cap including regressions and search. Checkpoint choice awaits confirmation;
+the stationary search writes fields/logs, not AMR evolution checkpoints.
+No CMA GPU work has started. Both H100s idle at preparation; scratch retains
+14 GB, with 531 GB free; no scratch or frame removal.
+
 **Stopped:** `railgun-ergoregion-amplitude-20261102`, second GPU node/card 0,
 **17:56:39–17:59:36 MSK**, exit 2, 0.0492 h including tests. All **23 GPU
 regressions pass**. All three initial reproduction solves converge in two

@@ -42,6 +42,60 @@ folder reorganisation, run `python3 research/railgun/organize_runs.py`; use
 `--apply` only after checking that no running job uses the folders being moved.
 The script verifies every moved file and leaves `evolution/` untouched.
 
+## Automatic CMA-ES ergoregion search
+
+Prepared scope: [ergoregion_cma.json](studies/ergoregion_cma.json), awaiting
+its run-specific go. The same `cma.CMAEvolutionStrategy` ask/tell algorithm as
+the wormhole search chooses **central lapse**, the central clock rate relative
+to infinity, between 0.14 and 0.41. For this fixed k=1, m=1 free scalar model
+there is one continuous branch coordinate; map scale is a numerical choice,
+not an extra physical parameter. No interaction or winding changes.
+
+The new equation `mean_y f(r=0,y) = 2 log(alpha_c)` replaces the scalar
+amplitude border. Frequency and amplitude are both solved. First reproduce
+the last accepted omega=0.685955820263 ring with this new border. Then CMA
+chooses up to 32 targets (population four, seed 171), beginning near 0.30.
+Each proposal starts from nearby screened fields with a bounded secant guess.
+Automatic log-lapse steps <=0.04 and at most four bisections per proposal
+handle failed jumps; failed fields never enter the initial-guess cache.
+The cache's intermediate states are provisional. All unused-equation, charge,
+flux, tail and branch screens run on them. Independently reconstructed
+Einstein/KG checks must also pass at the final proposal before it receives
+the feasible score `1/(1+max(|shift|/lapse))`; failures score >=2.
+
+Maximum 80 search solves, including the initial reproduction, plus nine
+reserved for at most three finalists. Search grid 128x16; every finalist is
+solved afresh on 128x16 / 160x20 / 192x24. Newton 1e-14, fresh Jacobians,
+two updates minimum, 30 iterations maximum. Original acceptance thresholds
+remain unchanged. Only a three-grid positive-g_tt sign with the common-point
+margin check produces `accepted_ergoregion.npz`. Single-grid samples remain
+provisional; `best_validated.npz` may still be a ring without an ergoregion.
+The process stops on full ergoregion acceptance or its work/time cap.
+
+CPU-only preview on the authorised node:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.ergoregion_cma \
+  research/railgun/studies/ergoregion_cma.json \
+  --source runs/railgun/single-ring/scans/ergoregion-amplitude-20261102-r2/amplitude_01/accepted.npz \
+  --out runs/railgun/single-ring/scans/ergoregion-cma-20261102 --gpu 0 --dry-run
+```
+
+Prepared launch, only after its go: GPU regression tests, then search,
+four CPU threads, 160 GiB, one-hour cap for the whole sequence, chunks 128:
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-cma-20261102 \
+  --threads 4 --mem 160 --timeout 3600 --gpu -- \
+  bash research/railgun/run_ergoregion_cma.sh
+```
+
+Card 0 on the two-GPU node only. The script checks occupancy and source hash
+before GPU tests. Keep every attempt, failed diagnostic, optimiser stop
+criterion, configuration and solved field. No automatic 3+1 evolution or AMR
+checkpoint is part of this search. Unlike the earlier fixed sequence, individual
+rejected proposals do not close the approved search budget.
+
 ## Amplitude continuation toward a single-ring ergoregion
 
 Prepared scope: [ergoregion_amplitude.json](studies/ergoregion_amplitude.json).

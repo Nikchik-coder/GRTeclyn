@@ -24,7 +24,9 @@ def save_state(path, problem, u, *, validated=False):
                     ny=problem.ny, length=problem.length, target_j=problem.target_j,
                     fields=[f.to_dict() for f in problem.fields], validated=bool(validated),
                     stability='not_assessed')
-    if any(t is not None for t in problem.frequency_targets):
+    if getattr(problem, 'central_lapse', None) is not None:
+        metadata['central_lapse'] = problem.central_lapse
+    if any(t is not None for t in problem.frequency_targets) or getattr(problem, 'central_lapse', None) is not None:
         metadata['frequency_targets']=list(problem.frequency_targets)
         arrays,_=problem.unpack(np.asarray(u))
         metadata['measured_amplitude_pins']=[float(problem.anchors[i]@arrays[f'q{i}'][:,-1])
@@ -41,7 +43,7 @@ def load_state(path):
         raise ValueError('unsupported ring solution schema/model')
     p = RingProblem([ScalarField(**f) for f in metadata['fields']], nx=metadata['nx'],
                     ny=metadata['ny'], length=metadata['length'], target_j=metadata['target_j'],
-                    frequency_targets=metadata.get('frequency_targets'))
+                    frequency_targets=metadata.get('frequency_targets'), central_lapse=metadata.get('central_lapse'))
     if u.shape != (p.n_unknowns,) or not np.isfinite(u).all():
         raise ValueError('saved vector is nonfinite or incompatible with its declared model')
     return p, u, metadata
@@ -100,7 +102,7 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
     for index, (nx, ny) in enumerate(grids):
         started = time.monotonic()
         p = RingProblem(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'),
-                        frequency_targets=config.get('frequency_targets'))
+                        frequency_targets=config.get('frequency_targets'), central_lapse=config.get('central_lapse'))
         if index == 0:
             device = p.jax.devices()[0]
             manifest.update(jax=p.jax.__version__, platform=device.platform,

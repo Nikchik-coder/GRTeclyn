@@ -18,9 +18,15 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, loba
 
 class RingProblem:
     def __init__(self, fields=(), *, nx=32, ny=8, length=6., target_j=None, quadrature_order=None,
-                 frequency_targets=None):
+                 frequency_targets=None, central_lapse=None):
         self.fields = tuple(fields)
         self.frequency_targets=tuple(frequency_targets) if frequency_targets is not None else (None,)*len(fields)
+        self.central_lapse = central_lapse
+        if central_lapse is not None:
+            if (len(fields) != 1 or target_j is not None
+                    or any(value is not None for value in self.frequency_targets)
+                    or not np.isfinite(central_lapse) or not 0 < central_lapse < 1):
+                raise ValueError('central lapse control requires one field, no other border, and 0<lapse<1')
         if len(self.frequency_targets)!=len(fields):raise ValueError('one frequency target per field required')
         if any(value is not None for value in self.frequency_targets):
             if len(fields)!=1 or target_j is not None:
@@ -129,6 +135,9 @@ class RingProblem:
             key = {'f': 'E_f', 'w': 'E_w', 'N': 'E_Nr', 'b': 'E_B'}.get(tag, f'E_{tag}')
             blocks.append(xp.concatenate((a[:1], rows[key], origin)).ravel())
         for i, field in enumerate(self.fields):
+            if self.central_lapse is not None:
+                blocks.append(xp.atleast_1d(xp.mean(arrays['f'][-1, :])-2*xp.log(self.central_lapse)))
+                continue
             if self.frequency_targets[i] is not None:
                 blocks.append(xp.atleast_1d(frequencies[i]-self.frequency_targets[i]))
                 continue

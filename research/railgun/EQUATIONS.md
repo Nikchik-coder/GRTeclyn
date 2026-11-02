@@ -58,6 +58,17 @@ component charge above the declared branch floor and no resolved scalar
 nodes, in addition to every independent equation and three-grid gate;
 otherwise the trivial vacuum could pass at any imposed frequency.
 
+For the single-field CMA search, another choice is to replace the amplitude
+border by `mean_y f(r=0,y) - 2 log(alpha_c) = 0`, where `alpha_c` is the
+central lapse. Regularity makes the central value independent of angle. The
+asymptotic condition `f(infinity)=0` fixes the time normalisation, and the
+shift norm vanishes at the centre, so `alpha_c` is also the central clock
+rate relative to infinity. This changes neither the field equations nor the
+number of unknowns. Both frequency and scalar amplitude are solved. It is
+mutually exclusive with frequency control and the total-J border. A nonzero
+charge floor and the nodeless-branch checks still apply. This is a choice of
+branch coordinate, not a proof that the branch has no further folds.
+
 For even parity the angular KG operator, without the B-gradient terms, is
 
 ```text
