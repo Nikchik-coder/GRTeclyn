@@ -38,10 +38,17 @@ checkpoints. No scratch or frame removal. Discovery and both preceding
 amplitude studies are archived in results/railgun/studies/; **1278** package
 files and every per-study checksum pass verification.
 
-**Maximisation campaign LIVE:** two independent CMA searches,
+**Maximisation campaign partly stopped:** two independent CMA searches,
 `railgun-ergoregion-max-seed271-20261102` on card 0 and
 `railgun-ergoregion-max-seed272-20261102` on card 1 of the authorised
 two-GPU node only. Both started **19:09:13 MSK**, source `a3d410421`.
+Seed 271 stopped **19:15:53 MSK**, exit 1, after 27 search solves and
+four completed proposals. The one-dimensional CMA library raised
+`ValueError: not yet initialized (dimension needed)` during its first
+population update. No refinement solve ran. Its strongest independently
+passing 160x20 candidate has shift/lapse **3.72079**, central lapse
+**0.129931**, and g_tt **+0.246798**; it remains provisional. All fields
+and records are retained; no automatic restart. Seed 272 continues on card 1.
 All **45 GPU regressions passed on each card**, in 75.86/74.67 seconds.
 Both source-reproduction solves pass independent equation checks, reproducing
 shift/lapse **1.080970704**; CMA continuation has started.
