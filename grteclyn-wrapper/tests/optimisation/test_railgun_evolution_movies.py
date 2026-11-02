@@ -39,6 +39,15 @@ def test_missing_middle_slice_cannot_make_a_shortened_movie(tmp_path):
         validate_cache(tmp_path, ['phi'], 1., 2, 1)
 
 
+def test_numeric_order_when_step_numbers_exceed_four_digits(tmp_path):
+    folder = cache_fixture(tmp_path)
+    for path in folder.glob('*.npz'):
+        path.unlink()
+    for index in range(0, 10001, 250):
+        np.savez(folder / f'slice_{index:04d}.npz', time=index/10000., arr=np.ones((2, 2)))
+    assert validate_cache(tmp_path, ['phi'], 1., 10000, 250) == 41
+
+
 def test_rejects_wrong_time_or_nonfinite_diagnostics(tmp_path):
     folder = cache_fixture(tmp_path)
     np.savez(folder / 'slice_0001.npz', time=.6, arr=np.ones((2, 2)))

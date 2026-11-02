@@ -1,5 +1,5 @@
 {
-  "stage": "running",
+  "stage": "evolution_complete_movies_pending",
   "request": "November 2: run N=192 to t=50",
   "name": "ring070-n192-t50-20261102",
   "reference": "results/railgun/studies/evolution-070-n192",
@@ -49,15 +49,20 @@
   "go": "Run N=192 through t=50 requested; checkpoints explicitly off November 2.",
   "started_msk": "2026-11-02 11:13:00",
   "job": "railgun-ring070-evolve-n192-t50-20261102",
+  "finished_msk": "2026-11-02 12:56:40",
+  "exit_status": 0,
+  "final_time": 50.0,
   "movies": {
     "request": "November 2: create the ring t=50 evolution movies after completion",
-    "job": "railgun-ring070-t50-movies-20261102",
+    "job": "railgun-ring070-t50-movies-r2-20261102",
+    "previous_job": "railgun-ring070-t50-movies-20261102",
+    "previous_stop": "All 601 slices exist; lexical filename sorting rejected the five-digit step indices before rendering. Fixed to sort numeric step numbers.",
     "completion_gate": "Successful finished manifest, final drain, complete finite diagnostics and all 601 slices in all 16 fields",
     "output": "Run-local movies/; fixed-scale redraws under movie_render/frames; original frames/cache preserved",
     "gpu": false,
     "cpu_cores": 2,
     "host_GiB": 16,
-    "wall_seconds_including_wait": 21600,
+    "wall_seconds_including_wait": 10800,
     "visual_review": "Consecutive decoded MP4 contact sheets in movie_render/qa"
   }
 }

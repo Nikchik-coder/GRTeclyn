@@ -34,7 +34,8 @@ def validate_cache(run: Path, fields: list[str], end: float,
                    steps: int, cadence: int) -> int:
     expected = list(range(0, steps + 1, cadence))
     for field in fields:
-        paths = sorted((run / 'frames/_slice_cache' / f'{field}_z').glob('slice_*.npz'))
+        paths = sorted((run / 'frames/_slice_cache' / f'{field}_z').glob('slice_*.npz'),
+                       key=lambda p: int(p.stem.split('_')[-1]))
         indices = [int(p.stem.split('_')[-1]) for p in paths]
         if indices != expected:
             raise ValueError(f'incomplete slice cache for {field}: {len(paths)} frames')
