@@ -3,8 +3,9 @@
 The first experiment is an **unperturbed import and short-evolution pilot**,
 not a long-time stability test. Its prepared scope is in
 [studies/evolution_pilot_070.json](studies/evolution_pilot_070.json).
-GPU tests, production export/core certification, preflight and evolution
-require the separately bounded go. No previous transport approval covers them.
+The separate go for GPU tests, two production exports/core certificates,
+four zero-step preflights and two t<=2 evolutions was received November 2.
+It does not authorise further grids, perturbations or longer evolutions.
 
 ## Source and physical model
 

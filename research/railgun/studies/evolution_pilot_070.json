@@ -1,5 +1,5 @@
 {
-  "stage": "prepared_not_launched",
+  "stage": "approved_in_progress",
   "source": "results/railgun/studies/frequency-deep/frequency_01/accepted.npz",
   "source_sha256": "bf92fd0c8a9be3bb75481e693f6927ea82757e30f843d06305e053a77280d82e",
   "frequency": 0.70,

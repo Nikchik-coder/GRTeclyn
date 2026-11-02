@@ -13,15 +13,22 @@ in their immutable archives.
 3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
 matter-J/m=2 diagnostics are implemented. Fourteen local analytic/preflight
 tests pass, and the separate CUDA evolution binary compiles successfully.
-GPU export, new-core certification and time evolution have not
-started; their bounded pilot awaits a run-specific go. The export uses a C6
+GPU regressions are live after the run-specific go. Export, new-core
+certification and time evolution are conditional on those checks. The export uses a C6
 centre join with finite inactive branches under JAX batching.
 See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live GPU runs:** none; both GPU cards idle. **Queued GPU runs:** none. No ETA.
-All approved correction and conditional transport budgets are closed.
+**Live:** `railgun-evolution-regression-20261102`, second GPU node/card 0,
+source `a80189919`, started **09:05 MSK**. Targeted exporter/curvature/preflight
+tests; no evolution time yet. ETA not measured; hard cap **0.5 h, 09:35 MSK**.
+**Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
+one inspectable t=0-only check and one launch preflight per grid, then t<=2
+unperturbed evolutions. Maximum two exports, four zero-step preflights and
+two evolutions. Sequential on card 0; stop on failure. Four threads,
+160 GiB and 0.5 h per job, no checkpoints; full frames and keep-last 3.
+All earlier stationary/particle correction budgets are closed.
 
 **CPU compilation complete:** `railgun-evolution-build-r2-20261102`, second
 GPU node, source `3e6466ed`, **08:48:56–08:51:40 MSK (0.0456 h)**, exit 0.
@@ -29,9 +36,9 @@ Frozen binary `runs/railgun/evolution/bin/main3d_ring070r2_3e6466ed_2026-11-02.e
 SHA256 `14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc`.
 Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
-in `studies/evolution_pilot_070.json`; no GPU launch is authorised yet.
+in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
 
-Last scratch check, second GPU node, **2026-11-02 08:53 MSK**: **47 MB** in `_cache/`
+Last scratch check, second GPU node, **2026-11-02 09:05 MSK**: **47 MB** in `_cache/`
 only, **560 GB free**. First node not listed. These stationary and transport
 jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
 
