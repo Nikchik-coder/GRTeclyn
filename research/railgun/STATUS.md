@@ -22,10 +22,17 @@ See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-export-n128-20261102`, second GPU node/card 0,
-source `8f4c7a63b`, started **09:25:16 MSK**. Core certification and 128^3
-export; no finer-grid evolution yet. ETA not measured; hard cap
-**0.5 h, 09:55:16 MSK**.
+**Live:** `railgun-ring070-evolve-n128-20261102`, second GPU node/card 0,
+source `d53f4b659`, started **09:35:54 MSK**. Full launch preflight then t<=2,
+max_steps=400. Initial t=0; speed not yet measured. Estimated completion
+including frames **0.05 h, about 09:39 MSK**; hard cap **0.5 h, 10:05:54 MSK**.
+All GPU work stays on the second GPU node only.
+128^3 inspectable t=0 preflight passed at **09:32:57 MSK**, all 16 fields
+rendered; initial ring/centre-hole image visually checked. Interior initial
+Hamiltonian/momentum L2=3.4831e-5 / 3.0843e-5, 2.97 / 2.86 times below 96^3.
+Charge=1.3063224291 matches its export within 1e-10 relative.
+128^3 export finished **09:31:20 MSK**, exit 0, **0.0998 h**. Core passes;
+det(h)/trace-A defects 8.89e-16 / 3.42e-17; Q_box=1.306322429105, J=-Q.
 **96^3 pilot complete:** `ring070-n96-t2-r2-20261102`, exit 0, all frames
 rendered and exactly three plotfiles retained. It advanced one floating-point
 stop-boundary step to 2.0066667; trust/analysis is limited to saved t<=2.
@@ -44,7 +51,9 @@ including CUDA/float64 assertion, geometry benchmarks and exporter tests.
 **Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
 inspectable t=0 checks and full launch preflights, then t<=2
 unperturbed evolutions. Maximum two exports, four zero-step preflights and
-two evolutions. Two zero-step startups and one evolution are spent;
+two evolutions. Three zero-step startups and one evolution are spent;
+the fourth startup and second evolution are now running. No further GPU
+startup or evolution remains after this pilot.
 the saved 96^3 t=0 rows
 have been inspected. The corrected launch uses a full preflight, followed
 by the 128^3 t=0-only and full-launch preflights: two startups remain.
@@ -60,7 +69,7 @@ Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
 
-Last scratch check, second GPU node, **2026-11-02 09:25 MSK**: `_cache/` **47 MB**,
+Last scratch check, second GPU node, **2026-11-02 09:35 MSK**: `_cache/` **47 MB**,
 96^3 pilot **709 MB** (three retained plotfiles), **559 GB free**. First node
 not listed. No AMR checkpoints; all frames and slice caches retained.
 
