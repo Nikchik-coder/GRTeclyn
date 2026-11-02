@@ -15,7 +15,7 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: saved-candidate three-resolution validation**, source `a9eb87a8a`:
+**Saved-candidate validation: card 0 live, card 1 rejected**, source `a9eb87a8a`:
 `railgun-ergoregion-max-validate271-20261102` on two-GPU node/card 0
 (candidate 3.72), and `railgun-ergoregion-max-validate272-20261102` on
 card 1 (candidate 5.21). Both started **19:40:02 MSK** after the explicit
@@ -28,7 +28,14 @@ all original acceptance limits unchanged. Stop on rejection and retain
 every field/log. Both H100s were free before launch. Scratch: **14 GB
 retained, 544 GB free**, three plotfiles per old evolution, zero checkpoints;
 no scratch/frame removal. Best accepted result remains **1.080970704**
-until a new candidate passes all three grids. If a candidate fails, prepare
+until a new candidate passes all three grids. Card 0 passed 160x20 and
+continues at 192x24. Card 1 stopped **19:42:03 MSK**, exit 2, after its
+first 160x20 solve: fresh Newton stalled at scaled residual **1.865e-14**,
+above the unchanged 1e-14 target. Its equation checks passed, but this is
+not a complete passing resolution study: **5.21 is rejected as a new best**.
+One of its three permitted solves was used; no automatic correction rerun.
+All **53 GPU regressions pass on each card**, in **70.79 / 69.37 s**.
+If a candidate fails, prepare
 a renewed search with immediate three-grid verification of each potential
 new best; do not return to deferred checks.
 
