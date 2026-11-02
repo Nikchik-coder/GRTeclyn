@@ -12,7 +12,8 @@ in their immutable archives.
 **New work:** the omega=0.70 single ring is being prepared for full Cartesian
 3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
 matter-J/m=2 diagnostics are implemented. Twelve local analytic/preflight
-tests pass. GPU export, new-core certification and time evolution have not
+tests pass, and the separate CUDA evolution binary compiles successfully.
+GPU export, new-core certification and time evolution have not
 started; their bounded pilot awaits a run-specific go. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
@@ -20,15 +21,15 @@ started; their bounded pilot awaits a run-specific go. See [EVOLUTION.md](EVOLUT
 **Live GPU runs:** none; both GPU cards idle. **Queued GPU runs:** none. No ETA.
 All approved correction and conditional transport budgets are closed.
 
-**CPU compilation live:** `railgun-evolution-build-r2-20261102`, second GPU
-node, source `3e6466ed`, started **08:48:56 MSK**, four threads, 160 GiB cap.
-It includes the compiler-caught diagnostic vector-type fix; the earlier build
-was stopped. No GPU context has started. Build ETA not yet measured;
-hard wall limit **1 h, 09:48:56 MSK**.
+**CPU compilation complete:** `railgun-evolution-build-r2-20261102`, second
+GPU node, source `3e6466ed`, **08:48:56–08:51:40 MSK (0.0456 h)**, exit 0.
+Frozen binary `runs/railgun/evolution/bin/main3d_ring070r2_3e6466ed_2026-11-02.ex`,
+SHA256 `14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc`.
+Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; no GPU launch is authorised yet.
 
-Last scratch check, second GPU node, **2026-11-02 08:42 MSK**: **47 MB** in `_cache/`
+Last scratch check, second GPU node, **2026-11-02 08:53 MSK**: **47 MB** in `_cache/`
 only, **560 GB free**. First node not listed. These stationary and transport
 jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
 

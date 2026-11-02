@@ -6,6 +6,7 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 DATA="" NAME="" GPU="" BINARY="" CHECKPOINTS=""
+EXTRA=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --data-dir) DATA="$2"; shift 2 ;;
@@ -13,6 +14,7 @@ while [[ $# -gt 0 ]]; do
     --gpu) GPU="$2"; shift 2 ;;
     --binary) BINARY="$2"; shift 2 ;;
     --checkpoints) CHECKPOINTS="$2"; shift 2 ;;
+    --preflight-only) EXTRA+=(--preflight-only); shift ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -34,5 +36,6 @@ FIELDS="$(sed 's/#.*//' "${HERE}/frames_default.txt" | tr '\n' ' ')"
 exec bash "${HERE}/../spinning_wormhole/launch.sh" \
   --template "${TEMPLATE}" --name "${NAME}" --gpu "${GPU}" --binary "${BINARY}" \
   --profile smoke --subdir pilot --keep-last 3 --foreground \
+  "${EXTRA[@]}" \
   --consume-args "--frames-fields ${FIELDS} --frames-axis z --frames-coord 16 --frames-zoom 16 --frames-center 16 16 16 --frames-cache-slices --frames-auto-zlim --frames-blank-edge 2 --no-psi4" \
   --what 'Unperturbed omega=0.70 regular-centre canonical ring, t<=2; no stability claim'

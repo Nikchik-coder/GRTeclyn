@@ -99,8 +99,10 @@ calculate_curvature_invariants = 0
     template = Path(template)
     template.parent.mkdir(parents=True, exist_ok=True)
     if template.exists():
-        raise ValueError('refusing to overwrite an existing run template')
-    template.write_text(text)
+        if template.read_text() != text:
+            raise ValueError('refusing to overwrite an existing run template')
+    else:
+        template.write_text(text)
     return dict(template=str(template), n=n, length=32., stop_time=2.,
                 dx=32/n, checkpoints=False, max_level=0,
                 gridinit_sha256=outcome['gridinit_sha256'],

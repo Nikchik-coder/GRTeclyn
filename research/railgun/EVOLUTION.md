@@ -86,7 +86,10 @@ boundary extent, three-resolution convergence and many dynamical times are
 separate requirements for a physical stability result.
 
 Run sequentially and stop on failed core, import, preflight or nonfinite
-state. Compare the C++ t=0 charge against the export and its finite-difference
+state. First use `--preflight-only` on each grid and inspect its retained
+report and frames before the actual pilot. This allows **four zero-step
+preflight startups and two evolutions** in total; the actual launcher repeats
+the full preflight. Compare the C++ t=0 charge against the export and its finite-difference
 matter J against -k Q; inspect initial constraints at both resolutions,
 their change during t<=2, amplitude, lapse and m=2 evolution. A large initial
 constraint defect or worsening refinement blocks longer evolution.
@@ -114,7 +117,12 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-evolution-build \
 This is CPU compilation, with no CUDA context or GPU test. The frozen binary,
 source stamp and build hash go under `runs/railgun/evolution/bin/` and
 `results/railgun/reports/evolution_binaries.tsv`. It never overwrites the
-wormhole campaign pin. Check GPU occupancy and storage before each actual
+wormhole campaign pin. The first successful binary is
+`main3d_ring070r2_3e6466ed_2026-11-02.ex`, source `3e6466ed`, SHA256
+`14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc`.
+Compilation completed 2026-11-02 at 08:51:40 MSK, exit 0, using four CPU
+threads and a 160 GiB cap in 0.0456 h. No GPU context was started.
+Check GPU occupancy and storage before each actual
 GPU job. After approval, first run the targeted exporter/corridor regression
 tests on the selected card, then for each approved N:
 
@@ -127,8 +135,11 @@ env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
   --source results/railgun/studies/frequency-deep/frequency_01/accepted.npz \
   --out runs/railgun/evolution/initial-070-n${N} --n ${N} --length 32 --gpu 0
 
-# Then use the actual frozen binary from the build manifest. This wrapper
-# stays foreground so capped_job.sh contains both preflight and evolution.
+# Then use the actual frozen binary from the build manifest. First add
+# --preflight-only, inspect its report/frames and t=0 constraints, and only
+# then repeat the same command without that flag to evolve. An identical
+# generated template is reused; changing an existing template is refused.
+# This wrapper stays foreground so capped_job.sh contains all children.
 bash grteclyn-wrapper/scripts/campaigns/railgun/launch.sh \
   --data-dir runs/railgun/evolution/initial-070-n${N} \
   --name ring070-n${N}-t2 --gpu 0 --binary "$RING_BINARY" --checkpoints off
@@ -146,8 +157,9 @@ preflight tests. Analytic cases cover flat harmonic phase/normalization,
 spatially varying rotation and the sign of K_ij, J=-k Q, nonflat conformal
 connections, a time-dependent metric's K sign, exact cell/ghost alignment,
 and rejection of unarchived/uncertified or mismatched inputs. Shell syntax
-checks pass. CUDA compilation and the new GPU numerical tests are still
-required; no ring evolution has been run yet.
+checks pass. The stamped CUDA executable compiles successfully; the new GPU
+numerical tests, actual export and evolution are still required. No ring
+evolution has been run yet.
 
 After the pilot, choose a sufficiently large domain and three resolutions,
 then compare an unperturbed control with explicit small nonaxisymmetric

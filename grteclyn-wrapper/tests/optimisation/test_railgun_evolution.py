@@ -141,6 +141,8 @@ def test_pilot_requires_a_certified_matching_export_and_explicit_checkpoint_choi
     assert 'recipe_scalar_sign = 1' in text and 'calculate_complex_scalar_diagnostics = 1' in text
     assert 'center = 16 16 16' in text and 'lo_boundary = 1 1 1' in text
     assert 'amr.checkpoint_files_output = 0' in text
+    assert prepare(tmp_path, template, checkpoints='off') == plan
+    template.write_text(text+'# changed after review\n')
     with pytest.raises(ValueError, match='overwrite'):
         prepare(tmp_path, template, checkpoints='off')
     manifest['frequency'] = .67
