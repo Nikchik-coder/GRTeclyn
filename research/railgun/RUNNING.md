@@ -44,7 +44,54 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 ## Automatic CMA-ES ergoregion search
 
-### Maximisation campaign, prepared
+### Maximisation campaigns stopped; immediate resolution checks
+
+The initial seed-271/272 jobs stopped on pycma's one-dimensional standard-
+deviation clipping error, before any refinement. Their provisional extremes
+are not accepted maxima. All saved fields remain unchanged. CPU regressions
+reproduce the failures after exactly 4/12 proposals; explicit `maxstd=inf`
+avoids that scalar-library path while the physical boundary transform retains
+the same 0.08--0.32 lapse bounds. Full 32-proposal CPU tests pass for both seeds.
+
+Every improving maximisation proposal now undergoes its three-resolution
+study **inside the objective, before returning a successful CMA score**.
+Only three passing grids, the original equation/flux/tail gates and common-
+point convergence permit promotion. Failed, skipped or nonimproving proposals
+receive rejection penalties. A failed refined field is removed from the
+initial-guess cache; it cannot displace the accepted best. Missing even one
+grid rejects promotion regardless of a study's reported success flag.
+There is no deferred end-of-search finalist phase in maximisation mode.
+Once fewer than three refinement solves remain, search stops before starting
+another provisional proposal. Four promotion attempts remain the per-run cap.
+
+Prepared separate validation jobs reuse the two strongest hash-checked fields
+from the immutable figure-input snapshot. Each permits **only three fresh
+solves** on 160x20 / 192x24 / 224x28, Newton 1e-14, minimum two updates,
+maximum 30 iterations, fresh Jacobians, and unchanged 1e-8/1e-6 gates.
+No new CMA proposal or source-reproduction solve. All new evidence is separate
+from the stopped jobs. These jobs await a fresh run-specific go and checkpoint
+choice; no GPU startup is authorised by preparation alone:
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-validate271-20261102 \
+  --threads 4 --mem 160 --timeout 1800 --gpu -- \
+  bash research/railgun/run_max_candidate_validation.sh 0
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-validate272-20261102 \
+  --threads 4 --mem 160 --timeout 1800 --gpu -- \
+  bash research/railgun/run_max_candidate_validation.sh 1
+```
+
+The runner first checks the card and CPU-only source hashes, then runs GPU
+regressions, then the three-grid study. Four CPU threads, 160 GiB, 0.5 h per
+job including tests, chunks 128; six new solves maximum in total. Proposed
+checkpoints OFF; retain every log and field. Dry plan (no JAX startup):
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.validate_max_candidate \
+  --seed 271 --gpu 0 --out runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102 --dry-run
+```
+
+Original campaign scope (both stopped; do not relaunch over their evidence):
 
 Continue from the accepted ergoregion instead of stopping on the first one.
 Two independent searches use cards 0/1 of the authorised two-GPU node only,
@@ -82,7 +129,7 @@ four CPU threads, 160 GiB, one hour including tests, chunks 128. Combined
 caps are eight threads and 320 GiB, below the node's 24-CPU/488-GiB quota.
 Total proposal ceiling 64, total search/refinement solve ceiling 184. All
 attempts and the strongest accepted fields stay saved. No 3+1 evolution or
-AMR checkpoint is part of the proposal. These launches await their go.
+AMR checkpoint is part of the proposal. These original launches have stopped.
 
 ### Completed discovery
 

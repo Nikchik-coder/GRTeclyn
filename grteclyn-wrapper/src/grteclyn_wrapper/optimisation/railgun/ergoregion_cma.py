@@ -89,7 +89,10 @@ def bounded_cma(config, objective, stop):
     es = cma.CMAEvolutionStrategy([config['x0']], config['sigma0'],
          dict(bounds=[[config['central_lapse_bounds'][0]], [config['central_lapse_bounds'][1]]],
               popsize=config['popsize'], maxfevals=config['max_evaluations'],
-              seed=config['seed'], verbose=-9, verb_log=0))
+              seed=config['seed'], verbose=-9, verb_log=0,
+              # pycma 4.4.4 cannot clip a one-dimensional sigma_vec. Its
+              # boundary transform still enforces the physical lapse bounds.
+              maxstd=float('inf')))
     count, reason = 0, 'cma_stop'
     try:
         while not es.stop() and count < config['max_evaluations'] and not stop():
@@ -105,8 +108,8 @@ def bounded_cma(config, objective, stop):
             reason = 'validated_ergoregion'
         elif count >= config['max_evaluations']:
             reason = 'evaluation_budget'
-    except BudgetExhausted:
-        reason = 'search_solve_budget'
+    except BudgetExhausted as error:
+        reason = 'refinement_solve_budget' if str(error) == 'refinement' else 'search_solve_budget'
     return dict(reason=reason, criteria=dict(es.stop()), evaluations_started=count,
                 cma_version=cma.__version__)
 
@@ -285,7 +288,7 @@ class Search:
                 or self.budget.refinement_limit-self.budget.refinement_used < 3
                 or any(abs(row['log_lapse']-item['log']) < self.config.get('finalist_log_separation',1e-4)
                        for row in self.finalists)):
-            return
+            return dict(accepted=False, reason='refinement_budget_or_duplicate')
         index = len(self.finalists)+1
         config = dict(fields=self.plan['metadata']['fields'], length=2.5, central_lapse=math.exp(item['log']),
                       grids=self.config['grids'], require_gpu=True, max_iter=30, min_updates=2,
@@ -300,14 +303,20 @@ class Search:
             result = run_study(config, path, seed_path=item['path'],
                                acceptance_check=lambda rows: extra_checks(path, rows, self.source, self.config))
         except (ValueError, FloatingPointError, np.linalg.LinAlgError) as error:
-            self.finalists.append(dict(log_lapse=item['log'], accepted=False, directory=str(path), error=str(error)))
+            row = dict(log_lapse=item['log'], accepted=False, directory=str(path), error=str(error))
+            self.finalists.append(row)
             self.progress()
-            return
+            return row
         self.budget.refinement_used -= 3-len(result['records'])
-        row = dict(log_lapse=item['log'], accepted=result['accepted'], directory=str(path),
+        accepted = bool(result['accepted'] and len(result['records']) == 3
+            and [r.get('grid') for r in result['records']] == config['grids']
+            and all(r.get('verdict') == 'PASS' for r in result['records'])
+            and result['additional_acceptance'].get('passed')
+            and len(result['additional_acceptance'].get('common_point_extrema', [])) == 3)
+        row = dict(log_lapse=item['log'], accepted=accepted, directory=str(path),
                    checks=result['additional_acceptance'])
         self.finalists.append(row)
-        if result['accepted']:
+        if accepted:
             ratio = result['additional_acceptance']['common_point_extrema'][-1]['shift_norm_over_lapse_max']
             if ratio > self.best_ratio:
                 self.best_ratio, self.best_path = ratio, str(path/'accepted.npz')
@@ -319,8 +328,13 @@ class Search:
                     self.best_ergo_ratio = ratio
                     shutil.copy2(path/'accepted.npz', self.directory/'accepted_ergoregion.npz')
         self.progress()
+        return row
 
     def objective(self, target):
+        maximising = self.config.get('mode') == 'maximise'
+        if maximising and (self.budget.refinement_limit-self.budget.refinement_used < 3
+                           or len(self.finalists) >= self.config['max_finalists']):
+            raise BudgetExhausted('refinement')
         record = dict(central_lapse=target, stage='evaluating', passed=False, sample=None)
         self.evaluations.append(record)
         self.progress()
@@ -330,6 +344,28 @@ class Search:
             record.update(stage='complete', score=value, path=item['path'],
                           passed=item['row']['verdict']=='PASS' and item['sample'] is not None,
                           sample=item['sample'])
+            if maximising:
+                record['single_grid_passed'] = record['passed']
+                record['single_grid_sample'] = item['sample']
+                # Only three-grid accepted values enter the feasible CMA
+                # ranking. A provisional extremum never leads the search.
+                record.update(passed=False, score=4., sample=None, resolution_status='REJECT')
+                if item['sample'] is not None and record['single_grid_passed']:
+                    if item['sample']['shift_norm_over_lapse_max'] > self.best_ratio:
+                        record['stage'] = 'resolution_study'
+                        self.progress()
+                        refinement = self.refine(item)
+                        record['refinement'] = refinement
+                        if refinement['accepted']:
+                            sample = refinement['checks']['common_point_extrema'][-1]
+                            record.update(passed=True, sample=sample, resolution_status='PASS',
+                                score=score(dict(verdict='PASS', independent=True), sample))
+                        else:
+                            self.pool = [v for v in self.pool if v['path'] != item['path']]
+                    else:
+                        record['rejection_reason'] = 'does_not_improve_validated_best'
+                record['stage'] = 'complete'
+                value = record['score']
             self.progress()
             if (self.config.get('mode') != 'maximise' and item['sample'] is not None
                     and item['sample']['gtt_max'] > 0):
@@ -362,7 +398,7 @@ class Search:
             return False
         cfg = self.config
         stopped = bounded_cma(cfg, self.objective, self.should_stop)
-        if not self.should_stop():
+        if cfg.get('mode') != 'maximise' and not self.should_stop():
             candidates = sorted((v for v in self.evaluations if v['passed']), key=lambda v:v['score'])
             for candidate in candidates:
                 if len(self.finalists) >= cfg['max_finalists'] or self.should_stop():

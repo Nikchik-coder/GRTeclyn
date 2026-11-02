@@ -55,6 +55,30 @@ with refined equatorial peak shift/lapse **5.20846**, central clock about
 **6.0 minutes per distant hour**. It remains provisional. Both cards idle;
 no finalist refinement ran, and the best three-grid validated ring remains
 **1.080970704**. No physical maximum is established by these stopped searches.
+
+**Promotion rule corrected, GPU validation jobs prepared but not launched:**
+every improving proposal now runs 160x20 / 192x24 / 224x28 **before** receiving
+a successful CMA score. Only complete three-grid equation, flux, tail and
+common-point convergence checks permit promotion. Failed or skipped refinement
+means rejection, not a provisional leader; the accepted best stays unchanged.
+If three refinement calls cannot be reserved, search stops before new work.
+The old deferred finalist phase is removed for maximisation. The scalar pycma
+failure is reproduced after 4/12 proposals and avoided with explicit unlimited
+internal standard deviation; the original physical lapse bounds stay enforced.
+Both seeded CPU searches finish their full 32-proposal tests. **35 CPU tests
+pass**, covering rejected leaders, missing finest grids, budget exhaustion,
+hash-checked saved-candidate plans and preservation of the accepted best.
+
+Separate prepared jobs will test only the saved **3.72 / 5.21** candidates,
+one per card, with no new CMA proposal or source-reproduction solve.
+Three fresh solves each, six total maximum; original grids and 1e-8/1e-6
+gates, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14.
+Proposed resources: four threads, 160 GiB, 0.5 h per job including GPU
+regressions, chunks 128, checkpoints OFF, retain fields/logs. Source and
+record hashes are fixed by the figure snapshot. Fresh run-specific go and
+checkpoint confirmation required; no GPU startup has occurred. RUNNING.md
+contains the concrete commands. The stopped raw evidence stays immutable.
+
 All **45 GPU regressions passed on each card**, in 75.86/74.67 seconds.
 Both source-reproduction solves pass independent equation checks, reproducing
 shift/lapse **1.080970704**. No evolution time applies. The one-hour cap
