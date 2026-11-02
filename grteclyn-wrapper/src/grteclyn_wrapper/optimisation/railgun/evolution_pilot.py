@@ -47,7 +47,6 @@ checkpoint_interval = -1
 plot_interval = 25
 amr.plot_vars = {' '.join(COMPONENTS)}
 amr.derive_plot_vars = Weyl4 constraints
-hdf5_subpath = hdf5
 pout_subpath = pout
 data_subpath = data
 print_progress_only_to_rank_0 = 1

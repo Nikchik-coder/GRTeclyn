@@ -13,23 +13,32 @@ in their immutable archives.
 3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
 matter-J/m=2 diagnostics are implemented. Fourteen local analytic/preflight
 tests pass, and the separate CUDA evolution binary compiles successfully.
-All **22 GPU regressions pass**. The first Cartesian export/core certificate
-is live; time evolution remains conditional on its checks. The export uses a C6
+All **22 GPU regressions pass**. The 96^3 export and new-core certificate
+pass. Its first GRTeclyn zero-step load completed, but full preflight refused
+the obsolete, unread `hdf5_subpath` output key; it is removed before evolution.
+The refused report remains refused. The export uses a C6
 centre join with finite inactive branches under JAX batching.
 See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-export-n96-20261102`, second GPU node/card 0,
-source `3d2a88742`, started **09:06:28 MSK**. New-core certification then
-96^3 Cartesian export; no evolution time yet. ETA not measured;
-hard cap **0.5 h, 09:36:28 MSK**.
+**Live:** none while the output-key correction is synced. No evolution yet.
+96^3 export finished **09:12:07 MSK**, exit 0, **0.0942 h**; det(h) and trace-A
+defects 8.89e-16 / 4.05e-17, Q_box=1.306322367390 and J=-Q.
+New-core maximum Einstein/KG 1.70e-10 / 1.13e-10; degree-comparison
+curvature 8.60e-9, all below 1e-8. Source/core acceptance limits unchanged.
+GRTeclyn t=0 charge 1.3063223674 matches the export within 1e-10 relative;
+interior Hamiltonian/momentum L2 are 1.0334e-4 / 8.8114e-5. Its finite-
+difference matter J=-1.3053329044 awaits refinement comparison.
 Regressions finished **09:05:26 MSK**, exit 0: **22 passed in 23.81 s**,
 including CUDA/float64 assertion, geometry benchmarks and exporter tests.
 **Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
-one inspectable t=0-only check and one launch preflight per grid, then t<=2
+inspectable t=0 checks and full launch preflights, then t<=2
 unperturbed evolutions. Maximum two exports, four zero-step preflights and
-two evolutions. Sequential on card 0; stop on failure. Four threads,
+two evolutions. One zero-step startup is spent; the saved 96^3 t=0 rows
+have been inspected. The corrected launch uses a full preflight, followed
+by the 128^3 t=0-only and full-launch preflights: three startups remain.
+No check is skipped or relaxed. Sequential on card 0; stop on failure. Four threads,
 160 GiB and 0.5 h per job, no checkpoints; full frames and keep-last 3.
 All earlier stationary/particle correction budgets are closed.
 
@@ -41,7 +50,7 @@ Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
 
-Last scratch check, second GPU node, **2026-11-02 09:06 MSK**: **47 MB** in `_cache/`
+Last scratch check, second GPU node, **2026-11-02 09:14 MSK**: **47 MB** in `_cache/`
 only, **560 GB free**. First node not listed. These stationary and transport
 jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
 
