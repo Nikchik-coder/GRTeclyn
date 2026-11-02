@@ -15,10 +15,14 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-richardson-regression-20261102`, second GPU node/card 0,
-source `fcb5ce624`, started **10:03:50 MSK**. Targeted 31-test suite alive;
-no evolution time yet. ETA **0.02 h, about 10:05 MSK**; per-job hard cap
-**0.5 h, 10:33:50 MSK**.
+**Live:** `railgun-ring070-export-n192-20261102`, second GPU node/card 0,
+source `fcb5ce624`, started **10:05:32 MSK**. Cartesian 200^3 padded cube;
+JAX derivative compilation/core certification, no cell rate yet and no
+3+1 time yet. ETA **0.20 h, about 10:18 MSK**; hard cap **0.5 h,
+10:35:32 MSK**. GPU context present, no other occupant.
+
+**Regressions complete:** `railgun-richardson-regression-20261102`,
+**10:03:50–10:04:17 MSK**, exit 0, **31 passed in 24.63 s**.
 
 **Approved queue:** one certified 192^3 export, inspectable t=0 preflight,
 then the full launch preflight and one t<=2 evolution. Stop on failed checks.
@@ -26,7 +30,7 @@ The final 192^3 Richardson go was received November 2. Same frozen binary
 and physics, four threads, 160 GiB, 0.5 h per job; checkpoints OFF, full
 frames, keep-last three plotfiles. No other grids or longer runs.
 
-Last scratch check, second GPU node, **2026-11-02 10:04 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 10:06 MSK**: `_cache/`
 **47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
 Exactly three plotfiles per pilot retained as approved. No checkpoints.
 All original frames and slice caches remain on NFS; first node not listed.
