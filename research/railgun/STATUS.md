@@ -38,7 +38,7 @@ checkpoints. No scratch or frame removal. Discovery and both preceding
 amplitude studies are archived in results/railgun/studies/; **1278** package
 files and every per-study checksum pass verification.
 
-**Maximisation campaign partly stopped:** two independent CMA searches,
+**Maximisation campaign stopped on a CMA library error:** two independent searches,
 `railgun-ergoregion-max-seed271-20261102` on card 0 and
 `railgun-ergoregion-max-seed272-20261102` on card 1 of the authorised
 two-GPU node only. Both started **19:09:13 MSK**, source `a3d410421`.
@@ -48,12 +48,18 @@ four completed proposals. The one-dimensional CMA library raised
 population update. No refinement solve ran. Its strongest independently
 passing 160x20 candidate has shift/lapse **3.72079**, central lapse
 **0.129931**, and g_tt **+0.246798**; it remains provisional. All fields
-and records are retained; no automatic restart. Seed 272 continues on card 1.
+and records are retained; no automatic restart. Seed 272 stopped
+**19:21:32 MSK**, exit 1, after **46 search solves and 12 completed proposals**,
+with the same exception. It found an independently passing 160x20 candidate
+with refined equatorial peak shift/lapse **5.20846**, central clock about
+**6.0 minutes per distant hour**. It remains provisional. Both cards idle;
+no finalist refinement ran, and the best three-grid validated ring remains
+**1.080970704**. No physical maximum is established by these stopped searches.
 All **45 GPU regressions passed on each card**, in 75.86/74.67 seconds.
 Both source-reproduction solves pass independent equation checks, reproducing
-shift/lapse **1.080970704**; CMA continuation has started.
-No evolution time applies. Maximum remaining duration at launch **1 h**,
-deadline **20:09:13 MSK**; proposal speed is not yet measured.
+shift/lapse **1.080970704**. No evolution time applies. The one-hour cap
+was not reached: wall durations **0.1111 / 0.2053 h**, including regressions.
+The original deadline was **20:09:13 MSK**; neither run remains live.
 Start from archived `ergoregion-cma/finalists/01/accepted.npz`, SHA256
 `a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52`.
 Maximise peak shift/lapse on the same canonical k=1, m=1 branch. Central
@@ -76,6 +82,18 @@ Both H100s were idle immediately before launch. Scratch: **14 GB retained,
 544 GB free** in the four finished evolution folders and cache; three plotfiles
 per evolution, zero checkpoints, no scratch or frame removal. Commands/configs:
 RUNNING.md.
+
+**Measured explanatory comparison complete:**
+`results/railgun/figures/single-ring/ergoregion-comparison.png` and `.svg`
+compare the previous accepted ring with the strongest single-grid candidates
+from both searches, **1.08 / 3.72 / 5.21**, at the same coordinate scale.
+Blue matter, half-peak outlines, orange g_tt>0 boundaries and centre-clock
+leaders come from saved fields. The two current candidates are explicitly
+labelled as pending refinement. Immutable numeric profiles and source hashes
+are in `results/railgun/reports/ergoregion-comparison/`, snapshot 19:22 MSK;
+the figure rebuilds locally without JAX, a GPU or raw cluster files.
+Visual inspection and the label audit pass. This small figure snapshot is
+separate from a completed campaign archive. No new solve or trajectory ran.
 
 Completed discovery scope:
 [ergoregion_cma.json](studies/ergoregion_cma.json). The central-lapse border

@@ -2,6 +2,7 @@
 
 ## Latest explanatory figures
 
+- [Stronger rings: size, clocks and regions of forced rotation](single-ring/ergoregion-comparison.png) ([SVG](single-ring/ergoregion-comparison.svg)). The two search candidates await three-grid refinement.
 - [Single ring: clocks and dragging at each location](single-ring/ring070-physics.png) ([SVG](single-ring/ring070-physics.svg)).
 - [Separated rings: opposite rotation, clocks and the gap](two-rings/multiring-separated-space.png) ([SVG](two-rings/multiring-separated-space.svg)).
 - [Particles passing between the separated rings](particles/multiring-particles-in-gap.png) ([SVG](particles/multiring-particles-in-gap.svg)).

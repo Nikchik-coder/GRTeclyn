@@ -146,7 +146,7 @@ def render(snapshot_path, output):
     from matplotlib.colors import LinearSegmentedColormap
     from matplotlib.patches import Circle, Wedge, FancyArrowPatch, ConnectionPatch
     data = json.loads(Path(snapshot_path).read_text())
-    cases = data['cases']
+    cases = [data['cases'][0]]+sorted(data['cases'][1:], key=lambda c: c['drag_max']['value'])
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 12,
                          'text.color': INK, 'svg.fonttype': 'none'})
     fig = plt.figure(figsize=(21, 13), facecolor=PAPER)
@@ -166,7 +166,8 @@ def render(snapshot_path, output):
     rr = np.hypot(x, y)
     for i, case in enumerate(cases):
         left = .045+i*.315
-        fig.text(left, .817, case['title'], fontsize=17, weight='bold')
+        title = ['Previous validated maximum', 'Stronger search candidate', 'Strongest search candidate'][i]
+        fig.text(left, .817, title, fontsize=17, weight='bold')
         status = 'Three resolutions passed' if not case['provisional'] else 'Single grid passed · refinement pending'
         fig.text(left, .788, status, fontsize=11, color=TEAL if not case['provisional'] else ORANGE)
         fig.text(left, .739, f'{case["drag_max"]["value"]:.2f}', fontsize=35, weight='bold', color=TEAL)
@@ -178,7 +179,7 @@ def render(snapshot_path, output):
                   cmap=cmap, vmin=0, vmax=1, interpolation='bilinear', rasterized=True)
         inner, outer = case['ergoregion_edges']
         ax.add_patch(Wedge((0, 0), outer, 0, 360, width=outer-inner,
-                           facecolor='#f2a647', alpha=.23, edgecolor='none', zorder=3))
+                           facecolor='#f2a647', alpha=.13, edgecolor='none', zorder=3))
         for r in (inner, outer):
             ax.add_patch(Circle((0, 0), r, fill=False, color=ORANGE, lw=1.4, ls=(0, (4, 3)), zorder=5))
         for r in case['half_peak_edges']:

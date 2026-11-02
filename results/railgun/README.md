@@ -49,6 +49,23 @@ companions are in `reports/multiring-explanatory.json`. Rebuild with:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_multiring_experiments
 ```
 
+**Stronger-ring comparison:** [same-scale spatial comparison](figures/single-ring/ergoregion-comparison.png)
+([SVG](figures/single-ring/ergoregion-comparison.svg)) shows the previous
+three-grid accepted ring and two independently passing single-grid candidates.
+Their equatorial peak dragging measures are 1.08, 3.72 and 5.21. The two new
+candidates have not passed three-grid refinement. Blue shows relative matter
+density; solid outlines mark half its peak and orange marks the equatorial
+region where fixed positions are impossible. Purple clocks refer only to the
+centre of the hole. All panels share one coordinate-distance scale.
+The immutable 19:22 MSK figure-input snapshot, source hashes and label audit
+are in `reports/ergoregion-comparison/`; this is not a completed search archive.
+Rebuild from the saved numeric profiles, without a GPU or cluster access:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_comparison \
+  --snapshot results/railgun/reports/ergoregion-comparison/search-snapshot.json
+```
+
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
 omega=0.70 ring was exported to 96^3 / 128^3 / 192^3 Cartesian grids and
 evolved with RadialRecipe's canonical complex scalar through t=2. All finished;
