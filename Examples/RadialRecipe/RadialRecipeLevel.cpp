@@ -881,8 +881,8 @@ void RadialRecipeLevel::write_complex_scalar_diagnostics()
         file.write_header_line({"Q_box", "Jz_matter_box", "integral_abs_Phi_sq",
                                 "m2_re", "m2_im", "max_abs_Phi_sq"});
     const auto norm = std::max(total[2], amrex::Real(1.e-300));
-    file.write_time_data_line({total[0], total[1], total[2], total[3]/norm,
-                               total[4]/norm, total[5]});
+    file.write_time_data_line(std::vector<double>{total[0], total[1], total[2],
+                              total[3]/norm, total[4]/norm, total[5]});
 }
 
 void RadialRecipeLevel::specificPostTimeStep()
