@@ -44,7 +44,11 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 ## Automatic CMA-ES ergoregion search
 
-### Verified restart from the accepted 3.72 ring, prepared
+### Verified restart from the accepted 3.72 ring, launched
+
+Both renewed jobs launched November 2 at **19:53:49 MSK**, source
+`6a9da2844`, after the explicit go for both GPUs and checkpoints OFF.
+Their one-hour deadline is **20:53:49 MSK**. STATUS.md tracks live progress.
 
 The candidate validation is complete: seed 271 passes 160x20 / 192x24 /
 224x28 and all original gates, giving common-point shift/lapse 3.720789536602.
@@ -68,8 +72,7 @@ for four promotion attempts; max 30 Newton iterations/minimum two updates,
 fresh Jacobians, Newton 1e-14; four CPU threads, 160 GiB, one hour including
 GPU regressions, chunks 128. Stop when the next three-grid check cannot be
 reserved, or at the proposal/solve/time cap. Combined: 64 proposals/184 solves,
-eight threads/320 GiB. Checkpoints OFF proposed; retain all fields/logs.
-No GPU startup before the renewed jobs' run-specific go and checkpoint choice.
+eight threads/320 GiB. Checkpoints OFF confirmed; retain all fields/logs.
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-seed271-20261102 \
