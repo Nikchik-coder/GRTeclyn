@@ -41,6 +41,61 @@ folder reorganisation, run `python3 research/railgun/organize_runs.py`; use
 `--apply` only after checking that no running job uses the folders being moved.
 The script verifies every moved file and leaves `evolution/` untouched.
 
+## Amplitude continuation toward a single-ring ergoregion
+
+Prepared scope: [ergoregion_amplitude.json](studies/ergoregion_amplitude.json).
+This is a new stationary study; it has not received a run-specific go.
+The dry run reads only NumPy data and does not initialise JAX:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.ergoregion_scan \
+  research/railgun/studies/ergoregion_amplitude.json \
+  --source results/railgun/studies/frequency-deep/frequency_01/accepted.npz \
+  --out runs/railgun/single-ring/scans/ergoregion-amplitude-20261102 --gpu 0 --dry-run
+```
+
+The source hash and the 27-solve profile are checked before JAX starts. First
+reproduce omega=0.70 after changing the radial scale to 2.5 and moving the
+pin from radius 5 to the source's equatorial scalar peak, radius 1.202893.
+Interpolation evaluates the old solution at the new nodes' physical radii;
+copying values at equal compactified coordinates would change the geometry.
+The initial pinned amplitude is 0.307398668. Eight subsequent steps increase
+it by 6% each, up to 0.489946775. Frequency is solved, not prescribed. After
+two accepted points, extrapolate every field and frequency with a secant in
+the pin value. The pin radius remains fixed throughout the scan.
+
+Every point uses 128x16 / 160x20 / 192x24, fresh Jacobians, Newton 1e-14,
+30 iterations maximum and two updates minimum. All original acceptance
+checks remain. Extra strong-field observable/frequency checks and the initial
+source-reproduction check run before any accepted file is written. A sampled
+ergoregion needs positive g_tt on all three grids, exceeding both 1e-8 and
+their measured spread, with shift/lapse above one. Stop on a rejected point
+or that resolved sign. No automatic retries, k=2 solve or further refinement.
+A pin at fixed radius can itself turn; this experiment does not assume a
+monotone physical branch, a known frequency floor or guaranteed formation.
+Shift/lapse is an observer-dependent metric ratio, not the matter's speed.
+
+After a go, run the new test file and the existing frequency, geometry and
+diagnostic tests on the named card first. Require CUDA and float64; pass
+`JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES=0 WH_JAC_CHUNK=128` with platform
+allocation and preallocation off. Then run the command above without
+`--dry-run`, under `capped_job.sh`, four CPU threads, 160 GiB, 1800 seconds.
+Keep every attempted field and log under the grouped paths. No 3+1 evolution
+or AMR checkpoints are part of the proposed stationary study.
+
+Prepared sequential test/scan command, only after the run-specific go:
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-20261102 \
+  --threads 4 --mem 160 --timeout 1800 --gpu -- \
+  bash research/railgun/run_ergoregion_amplitude.sh
+```
+
+The script checks card 0 is free again, writes the GPU regression report to
+`runs/railgun/checks/`, and starts the scan only if those tests pass. Its
+1800-second cap covers tests and continuation together; timeout retains all
+completed files and requires a new bounded proposal before any continuation.
+
 From the repository root:
 
 ```bash

@@ -15,6 +15,30 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**Prepared, awaiting a run-specific go:** single-ring ergoregion search,
+[ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
+hash-checked accepted omega=0.70 state; k=1, m=1 and the matter model stay fixed.
+First reproduce it on radial scale 2.5, with the amplitude pinned at its scalar
+maximum: radius 1.202893, amplitude 0.307398668. The old radius-5 pin measured
+only 0.015689536; it is not the scalar peak. Then take eight 6% pin increases,
+up to 0.489946775, solving frequency as an unknown. The radius stays fixed.
+Use secant guesses after two accepted points, fresh Jacobians, Newton 1e-14,
+at least two updates and at most 30 iterations per solve. Three grids per
+point: 128x16 / 160x20 / 192x24; maximum 27 solves, including the initial
+three-grid reproduction. Stop at rejection or a resolved sampled ergoregion.
+Original 1e-8 equation/flux and 1e-6 tail/observable checks stay unchanged;
+additional lapse/g_tt/shift/frequency convergence checks run before writing
+an accepted state. Positive g_tt must occur on all three grids with a margin
+larger than their spread and 1e-8. No automatic k=2 branch or extra solves.
+Seven CPU-only preparation/remapping/predictor/acceptance regressions pass;
+the new CUDA border test and existing field tests await the same go.
+Proposed second GPU node/card 0, four CPU threads, 160 GiB, 0.5 h per job,
+Jacobian chunks 128; retain logs and all attempted fields. Checkpoint choice
+awaits confirmation; this stationary solve needs no AMR checkpoint. A frequency
+turning point is a hypothesis, not established by the rejected omega=0.67
+Newton solve. A fixed-radius amplitude pin can turn too; no guaranteed
+ergoregion or nonsingular Jacobian is assumed. No new GPU work has started.
+
 **GPU evolution complete:** `railgun-ring070-evolve-n192-t50-20261102`,
 second GPU node/card 0, source `b64bf13ff`, ran from **11:13:00 to
 12:56:40 MSK** (1.728 h including final image processing), exit 0,

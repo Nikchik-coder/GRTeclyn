@@ -65,7 +65,7 @@ def branch_checks(record,problem,u,config):
     return record
 
 
-def run_study(config, directory, *, reference=None, seed_path=None):
+def run_study(config, directory, *, reference=None, seed_path=None, acceptance_check=None):
     from .problem import RingProblem
     from .diagnostics import converged_records, validate
     from ..solver.newton import newton
@@ -90,6 +90,7 @@ def run_study(config, directory, *, reference=None, seed_path=None):
         if old.target_j != config.get('target_j') or old.length != config.get('length', 6.):
             raise ValueError('seed topology, radial scale and J condition must match')
         previous = old, old_u
+        manifest['seed_sha256'] = hashlib.sha256(Path(seed_path).read_bytes()).hexdigest()
     write_json(directory/'manifest.json', manifest)
     if reference is not None:
         write_json(directory/'reference_ode.json', {key: value for key,value in reference.items()
@@ -118,6 +119,7 @@ def run_study(config, directory, *, reference=None, seed_path=None):
         # Two real corrections are required on finer grids, not acceptance of
         # an interpolant whose equilibrated residual is already small.
         u, info = newton(p.residual, p.jacobian, u0, tol=config.get('newton_tol', 1e-12),
+                         chord_ratio=config.get('chord_ratio', 0.1),
                          max_iter=config.get('max_iter', 30), min_updates=config.get('min_updates',2 if index else 0),
                          verbose=True)
         solve_elapsed = time.monotonic()-started
@@ -149,6 +151,12 @@ def run_study(config, directory, *, reference=None, seed_path=None):
         if max(errors.values()) > config.get('reference_tol', 1e-5):
             accepted = outcome['accepted'] = False
             outcome['reasons'].append('spherical_reference_mismatch')
+    if acceptance_check is not None:
+        extra = acceptance_check(records)
+        outcome['additional_acceptance'] = extra
+        if not extra['passed']:
+            accepted = outcome['accepted'] = False
+            outcome['reasons'].append('additional_acceptance')
     if accepted:
         save_state(directory/'accepted.npz', p, u, validated=True)
     write_json(directory/'outcome.json', outcome)
