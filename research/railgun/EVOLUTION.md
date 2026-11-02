@@ -92,6 +92,10 @@ RK4, covariant CCZ4 with kappa1=0.1 and sigma=0.1. All six outer faces use
 Sommerfeld conditions. This short box/time is for checking the handoff;
 boundary extent, three-resolution convergence and many dynamical times are
 separate requirements for a physical stability result.
+The first 96^3 run wrote one extra step at t=2.0066667 because the floating
+time remained just below the stop boundary. Its analysis is restricted to
+t<=2. The template now additionally limits the step count (300/400) without
+changing dt, stopping the 128^3 run at its approved duration.
 
 Run sequentially and stop on failed core, import, preflight or nonfinite
 state. First use `--preflight-only` on each grid and inspect its retained

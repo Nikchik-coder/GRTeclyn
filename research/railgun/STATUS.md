@@ -22,11 +22,16 @@ See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-evolve-n96-20261102`, second GPU node/card 0,
-source `8f4c7a63b`, started **09:21 MSK**, full launch preflight then t<=2.
-Initial t=0; speed/ETA not measured yet; hard cap **0.5 h, 09:51 MSK**.
-Run name `ring070-n96-t2-r2-20261102`. The old/new template diff contains
-only removal of unread `hdf5_subpath`; physics and cadence are unchanged.
+**Live:** `railgun-ring070-export-n128-20261102`, second GPU node/card 0,
+source `8f4c7a63b`, started **09:25:16 MSK**. Core certification and 128^3
+export; no finer-grid evolution yet. ETA not measured; hard cap
+**0.5 h, 09:55:16 MSK**.
+**96^3 pilot complete:** `ring070-n96-t2-r2-20261102`, exit 0, all frames
+rendered and exactly three plotfiles retained. It advanced one floating-point
+stop-boundary step to 2.0066667; trust/analysis is limited to saved t<=2.
+The next template also caps the step count (400 for 128^3) to enforce t<=2.
+At t=2, Q changed by -0.069%; refinement comparison is pending. This is
+not a stability result. The run's template diff removed only `hdf5_subpath`.
 96^3 export finished **09:12:07 MSK**, exit 0, **0.0942 h**; det(h) and trace-A
 defects 8.89e-16 / 4.05e-17, Q_box=1.306322367390 and J=-Q.
 New-core maximum Einstein/KG 1.70e-10 / 1.13e-10; degree-comparison
@@ -39,10 +44,10 @@ including CUDA/float64 assertion, geometry benchmarks and exporter tests.
 **Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
 inspectable t=0 checks and full launch preflights, then t<=2
 unperturbed evolutions. Maximum two exports, four zero-step preflights and
-two evolutions. One zero-step startup is spent, the second is starting;
+two evolutions. Two zero-step startups and one evolution are spent;
 the saved 96^3 t=0 rows
 have been inspected. The corrected launch uses a full preflight, followed
-by the 128^3 t=0-only and full-launch preflights: three startups remain.
+by the 128^3 t=0-only and full-launch preflights: two startups remain.
 No check is skipped or relaxed. Sequential on card 0; stop on failure. Four threads,
 160 GiB and 0.5 h per job, no checkpoints; full frames and keep-last 3.
 All earlier stationary/particle correction budgets are closed.
@@ -55,9 +60,9 @@ Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
 
-Last scratch check, second GPU node, **2026-11-02 09:21 MSK**: **47 MB** in `_cache/`
-only, **560 GB free**. First node not listed. These stationary and transport
-jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
+Last scratch check, second GPU node, **2026-11-02 09:25 MSK**: `_cache/` **47 MB**,
+96^3 pilot **709 MB** (three retained plotfiles), **559 GB free**. First node
+not listed. No AMR checkpoints; all frames and slice caches retained.
 
 - Strong-ring final phase check: card 0, code `4e0af89a`,
   **19:58:10–19:58:22 MSK (0.0033 h)**, exit 0.

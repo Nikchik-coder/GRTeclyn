@@ -28,6 +28,7 @@ def prepare(data_directory, template, *, checkpoints):
             or digest(grid) != outcome['gridinit_sha256']):
         raise ValueError('certified, hash-matched omega=.70 / L=32 / N=96 or 128 export required')
     n = manifest['n']
+    max_steps = round(2/(.02*32/n))
     layout = grid_layout(grid)
     width = n + 2*manifest['ghosts']
     if (layout['components'] != COMPONENTS or layout['shape'] != [width]*3
@@ -74,7 +75,7 @@ hi_boundary = 1 1 1
 lo_boundary = 1 1 1
 dt_multiplier = 0.02
 stop_time = 2
-max_steps = -1
+max_steps = {max_steps}
 max_spatial_derivative_order = 4
 nan_check = 1
 min_chi = 1e-8
@@ -105,7 +106,7 @@ calculate_curvature_invariants = 0
             raise ValueError('refusing to overwrite an existing run template')
     else:
         template.write_text(text)
-    return dict(template=str(template), n=n, length=32., stop_time=2.,
+    return dict(template=str(template), n=n, length=32., stop_time=2., max_steps=max_steps,
                 dx=32/n, checkpoints=False, max_level=0,
                 gridinit_sha256=outcome['gridinit_sha256'],
                 perturbation='none', stability='not_assessed')
