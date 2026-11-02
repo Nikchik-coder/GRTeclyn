@@ -1,5 +1,19 @@
 # Regular-centre scalar rings: validation data
 
+**Stationary single-ring ergoregion validated (November 2).** CMA-ES found
+it after five proposals on the unchanged canonical k=1, m=1 branch.
+All original checks pass at 128x16 / 160x20 / 192x24. On the finest grid,
+omega=0.655065086594, maximum shift/lapse=1.080970704 and maximum
+**g_tt=+0.0150110091**. The positive sign agrees across all three grids;
+minimum lapse=0.282624975. This is a stationary result, not a dynamical
+stability result. Full checks, fields, optimiser history and execution
+logs: [ergoregion-cma](studies/ergoregion-cma/); accepted source:
+[accepted_ergoregion.npz](studies/ergoregion-cma/accepted_ergoregion.npz).
+The earlier [initial reproduction](studies/ergoregion-amplitude-initial/)
+and [amplitude continuation](studies/ergoregion-amplitude-r2/) remain
+separate, with their original rejections and accepted intermediate ring.
+No original run or numerical file was removed or rewritten.
+
 Package layout: [figures/](figures/README.md) groups images into single rings,
 two-ring setups, particles and evolution; `reports/` contains
 regression reports and figure companion JSON/TSV; `studies/` contains complete

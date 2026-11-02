@@ -1,0 +1,53 @@
+{
+  "config": {
+    "fields": [
+      {
+        "winding": 1,
+        "mass": 1.0,
+        "amplitude": 0.3073986678634803,
+        "parity": "even",
+        "anchor_radius": 1.2028929844078005,
+        "quartic": 0.0,
+        "sextic": 0.0
+      }
+    ],
+    "length": 2.5,
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "max_iter": 30,
+    "min_updates": 2,
+    "newton_tol": 1e-14,
+    "chord_ratio": 0.0,
+    "perturbation": 1e-05,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "require_gpu": true,
+    "minimum_charges": [
+      0.001306322429243766
+    ],
+    "require_nodeless": true
+  },
+  "configuration_sha256": "46d5595775d60a53aab5881a65acf4b5915a738e6e6570e9a93f5d373528e302",
+  "commit": "ec764d6cc4a827dddc9dfbcc9c50691e9f47aa06",
+  "python": "3.12.14",
+  "schema": 1,
+  "stability": "not_assessed",
+  "seed_sha256": "277fe37819157c8fdd748b16be3412f792a069467d73b7c2e12da7cb0c29218f",
+  "jax": "0.11.2",
+  "platform": "gpu",
+  "device_kind": "NVIDIA H100 80GB HBM3",
+  "float64": true
+}

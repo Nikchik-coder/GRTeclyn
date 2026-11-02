@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "a0f19f2090a727be1c3b749e9f5777a3e16ef9ef06ad8aacd93888faaf184da8",
-      "bytes": 21292
+      "sha256": "9429d27b966a89e8acdcbd02414b0a3e5f8ea5ea8668ca801d357ca22ab1ed30",
+      "bytes": 22210
     },
     "figures/README.md": {
       "sha256": "88ad7b53be5a179a633793ff03b4f45f4028a4ebf3e6ced90d42904370d9beab",
@@ -1196,6 +1196,498 @@
     "studies/counter-rotation/sha256sums.txt": {
       "sha256": "862ea43d9ac9b2e5ed2f95a2363ccd23721882a65aff2ed84e24e5c332e3451c",
       "bytes": 2714
+    },
+    "studies/ergoregion-amplitude-initial/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_128x16.json": {
+      "sha256": "e9daaf66c178bf142342f73f7a7e574fdc19170dd9853e213ae0f19b19740638",
+      "bytes": 4163
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_128x16.npz": {
+      "sha256": "63a067317e02aa02bb60890631dc43a973517cbd447221e07c21e36cc7ad17aa",
+      "bytes": 79263
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_160x20.json": {
+      "sha256": "a67342bc5be482d602c277436e5a3f4add1b8deeae543cab9f45bd6e0f08dedd",
+      "bytes": 4063
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_160x20.npz": {
+      "sha256": "7fd30855d283373296740bba08394632189508b7a82b829c90b8ca4866371e8a",
+      "bytes": 121325
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_192x24.json": {
+      "sha256": "1398d7e83c7b173de9014d7e04ceb5b5049c2880d875fbd555509deb7323e76e",
+      "bytes": 4088
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/grid_192x24.npz": {
+      "sha256": "0b4a515f217bb48609cb872d1b25cba83f5d5c91deb4d5b43cb045a249f8d81b",
+      "bytes": 171776
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/manifest.json": {
+      "sha256": "c476e85738d03bb26b3e68b17fd574cb84cd4081b190e4ec1842fb102aade4a1",
+      "bytes": 1140
+    },
+    "studies/ergoregion-amplitude-initial/amplitude_00/outcome.json": {
+      "sha256": "87e5b3dfe9ca8304c30c1dd86dbd6d2515040eafa43b4ff5750c8288740fbc12",
+      "bytes": 14713
+    },
+    "studies/ergoregion-amplitude-initial/archive.json": {
+      "sha256": "48c18fe5cfb0bc5e1914973d0eb1cabbfbbddfe3ff93aeb2b641a36cf66f6a3e",
+      "bytes": 1385
+    },
+    "studies/ergoregion-amplitude-initial/execution.log": {
+      "sha256": "0afa0d900b1009f71ffd71fe1e5d2f3f0e06d72a4588d667d288e884dfcc9a86",
+      "bytes": 3579
+    },
+    "studies/ergoregion-amplitude-initial/exit_code.txt": {
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    "studies/ergoregion-amplitude-initial/guess_00.npz": {
+      "sha256": "277fe37819157c8fdd748b16be3412f792a069467d73b7c2e12da7cb0c29218f",
+      "bytes": 79266
+    },
+    "studies/ergoregion-amplitude-initial/manifest.json": {
+      "sha256": "3582ddfb04c0b5772082ddc57a9ef32d5ba09200f3b9afd32be7a7cc8e832b44",
+      "bytes": 1994
+    },
+    "studies/ergoregion-amplitude-initial/outcome.json": {
+      "sha256": "1649cb41e9b5a15bb156964147d5929c55b7cbe5b8979ee7e73fd939f1ae87e6",
+      "bytes": 975
+    },
+    "studies/ergoregion-amplitude-initial/progress.json": {
+      "sha256": "1f88a8919facfba946edc2287f6b7f20318e1f5494a35317eb17ac057771c37e",
+      "bytes": 706
+    },
+    "studies/ergoregion-amplitude-initial/regressions.xml": {
+      "sha256": "7c5d3d27e364cbba4df4db2e119bab0b91b45292c7d3f2a537c2b4b2c648e795",
+      "bytes": 3551
+    },
+    "studies/ergoregion-amplitude-initial/sha256sums.txt": {
+      "sha256": "466baf18d7e024cbf1391805cf907964ec17a8df5a86f09c7f922fd1681b9bf8",
+      "bytes": 1473
+    },
+    "studies/ergoregion-amplitude-r2/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/accepted.npz": {
+      "sha256": "04089cce49e2b855e4c49de64514cf311e901472be118e5553409f7745ae9d51",
+      "bytes": 171777
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_128x16.json": {
+      "sha256": "e9daaf66c178bf142342f73f7a7e574fdc19170dd9853e213ae0f19b19740638",
+      "bytes": 4163
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_128x16.npz": {
+      "sha256": "63a067317e02aa02bb60890631dc43a973517cbd447221e07c21e36cc7ad17aa",
+      "bytes": 79263
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_160x20.json": {
+      "sha256": "a67342bc5be482d602c277436e5a3f4add1b8deeae543cab9f45bd6e0f08dedd",
+      "bytes": 4063
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_160x20.npz": {
+      "sha256": "7fd30855d283373296740bba08394632189508b7a82b829c90b8ca4866371e8a",
+      "bytes": 121325
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_192x24.json": {
+      "sha256": "1398d7e83c7b173de9014d7e04ceb5b5049c2880d875fbd555509deb7323e76e",
+      "bytes": 4088
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/grid_192x24.npz": {
+      "sha256": "0b4a515f217bb48609cb872d1b25cba83f5d5c91deb4d5b43cb045a249f8d81b",
+      "bytes": 171776
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/manifest.json": {
+      "sha256": "c476e85738d03bb26b3e68b17fd574cb84cd4081b190e4ec1842fb102aade4a1",
+      "bytes": 1140
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/outcome.json": {
+      "sha256": "a2b006af27166036f9fb05f97e94c486c8791db0866b8dd331b6c2fa83ff5114",
+      "bytes": 15923
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_00/outcome.original.json": {
+      "sha256": "87e5b3dfe9ca8304c30c1dd86dbd6d2515040eafa43b4ff5750c8288740fbc12",
+      "bytes": 14713
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/accepted.npz": {
+      "sha256": "e586e4c1a4048773dcb4e3be87c67ce6cd523f7846b371a716cb4b1981b150ff",
+      "bytes": 171956
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_128x16.json": {
+      "sha256": "c9018f52226048be3c9cfbc5c8393e981687d835db640eee3d74f622bd3cbd69",
+      "bytes": 4284
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_128x16.npz": {
+      "sha256": "99de608368b1a15733aa60819133f93792412376b81dd35cb7e4f9e93993e62a",
+      "bytes": 79346
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_160x20.json": {
+      "sha256": "178ea55e89bc667fe9c22c59e073177cadfec48476ebbd237c557134c8bcfb13",
+      "bytes": 4069
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_160x20.npz": {
+      "sha256": "37f0d888d65cd74769fa51b4d80b7e9217236cc033357e3d77ebab282bdb5ef7",
+      "bytes": 121471
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_192x24.json": {
+      "sha256": "3402a0c3c6e1d497b8800f0e9196697e11c44afecf9dd9242bdaaad9e2431da6",
+      "bytes": 4078
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/grid_192x24.npz": {
+      "sha256": "5e678f447e70c87edacb32979ac6bb6d521be629c9621721497e0ddb0081323d",
+      "bytes": 171956
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/manifest.json": {
+      "sha256": "9eadef10f941bd1bce8330b1a3a28ce3fa32f277ff648cf4e3ffdebb7d41beb3",
+      "bytes": 1141
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_01/outcome.json": {
+      "sha256": "3d8085d7084dbd1d215de62466720cb30fe6dd184e2664e4f9b2e0bb2f7d838c",
+      "bytes": 16013
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_02/grid_128x16.json": {
+      "sha256": "468f5b6f0e8c76d665e194f585f9912c3241ee0ca70c8539b84b8c15de4050b7",
+      "bytes": 4340
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_02/grid_128x16.npz": {
+      "sha256": "a6290dc317fc4144c45292c9307a4a6b262161ab6f0cb60945422360d6175675",
+      "bytes": 80294
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_02/manifest.json": {
+      "sha256": "b3438506bd58c55535c3c14e8d47c5371dcbba1dde78b1c81e2fc23eea5c3d8f",
+      "bytes": 1141
+    },
+    "studies/ergoregion-amplitude-r2/amplitude_02/outcome.json": {
+      "sha256": "413a30668ad5e73dc18f2c19bd4e730c8940a92c15251a254eec020b337b3816",
+      "bytes": 5406
+    },
+    "studies/ergoregion-amplitude-r2/archive.json": {
+      "sha256": "0ac3876bedf2663a18ee98d6fa5844b7a719562302bc7e572bf17a2534cb6f86",
+      "bytes": 3030
+    },
+    "studies/ergoregion-amplitude-r2/execution.log": {
+      "sha256": "769e767c1981b37d651fc3d3054a93e4ac4a16bbde1493923a95940b6056fcb9",
+      "bytes": 5337
+    },
+    "studies/ergoregion-amplitude-r2/exit_code.txt": {
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    "studies/ergoregion-amplitude-r2/guess_01.npz": {
+      "sha256": "c40fbdad5a2bed97829502d36c7c8cdef29a0f013c9534658102916100eed736",
+      "bytes": 79222
+    },
+    "studies/ergoregion-amplitude-r2/guess_02.npz": {
+      "sha256": "9da3fab90de7747a83c76075f87e100bb554215c83d55b46d66e23689a8f1860",
+      "bytes": 79222
+    },
+    "studies/ergoregion-amplitude-r2/manifest.json": {
+      "sha256": "036fa4bb0cf2c9c91af072a31dabb0d127762b19e69f3014145119308f9642bf",
+      "bytes": 4875
+    },
+    "studies/ergoregion-amplitude-r2/outcome.json": {
+      "sha256": "5adec22f1f127589ac58b1a4ce6b885c3487200bc5370a7322ffa700985be8b4",
+      "bytes": 4655
+    },
+    "studies/ergoregion-amplitude-r2/progress.json": {
+      "sha256": "ada20ac9d8791f9462f0f210b5f06cbd3eb48f0ef9c2c28afb3b108178ea8fab",
+      "bytes": 4386
+    },
+    "studies/ergoregion-amplitude-r2/regressions.xml": {
+      "sha256": "054f0e4892af8701f6751e5cfcaca286591272ad36cac8e329306140679fbd46",
+      "bytes": 3868
+    },
+    "studies/ergoregion-amplitude-r2/sha256sums.txt": {
+      "sha256": "7b06824c0903a6a4eb6c4f36259812a1dfd25edcb4edb707d856d6d204c0cc24",
+      "bytes": 2971
+    },
+    "studies/ergoregion-cma/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergoregion-cma/accepted_ergoregion.npz": {
+      "sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+      "bytes": 172390
+    },
+    "studies/ergoregion-cma/archive.json": {
+      "sha256": "a8835b434774158ba617d55cd80abb0dd691de07626db5cbdbff312351c666dd",
+      "bytes": 6664
+    },
+    "studies/ergoregion-cma/attempts/001/manifest.json": {
+      "sha256": "f97f7ce0a024cb26e30870de5e9070d8f0a63714e4f1c4f434624403682af6fa",
+      "bytes": 254
+    },
+    "studies/ergoregion-cma/attempts/001/metric.json": {
+      "sha256": "65af7a7d1b472bfc1a31c70dab0b6927d2ef73d8c56e0024a35d33d9c3ac6c8b",
+      "bytes": 288
+    },
+    "studies/ergoregion-cma/attempts/001/record.json": {
+      "sha256": "7d87b07c442ac824d9d94824d9610d06efcbf072e924d3644df61f213627d236",
+      "bytes": 4078
+    },
+    "studies/ergoregion-cma/attempts/001/stage.json": {
+      "sha256": "fd044d860ed1a924cfe84d34fe1c095fcd182bda7e64abb46df4c5c8d1647cfa",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/001/state.npz": {
+      "sha256": "1a4b86e4f205b61f383409d5d7cd8a8d59aa134bdd7cfc5f2213f2d87dc00f4a",
+      "bytes": 79421
+    },
+    "studies/ergoregion-cma/attempts/002/manifest.json": {
+      "sha256": "6efd7f71132818b66b2dd185de270bb8378fafe3ee26f7f84e91a05ecc2db1c1",
+      "bytes": 255
+    },
+    "studies/ergoregion-cma/attempts/002/record.json": {
+      "sha256": "e8cd7ee328b2a829cbe7c6094f575a1446d88f61b77c19075712956dfcb1e2fa",
+      "bytes": 3780
+    },
+    "studies/ergoregion-cma/attempts/002/stage.json": {
+      "sha256": "09bfcc415aa6975ff511236e25d5bd04537089ce5ac30dbc0b5e62048f46e0db",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/002/state.npz": {
+      "sha256": "92e60b954da10cb2f645f044c884457e34605c4d6016138add420e51c56123dd",
+      "bytes": 79422
+    },
+    "studies/ergoregion-cma/attempts/003/manifest.json": {
+      "sha256": "83db7e12066beeadd98a777ee8c425f0029d473dc19a25dbf10b35e7faf84808",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/003/record.json": {
+      "sha256": "59b7c322cfa538f132333b10babfb316a44323c429ab953cd8cee808b61be6d9",
+      "bytes": 3717
+    },
+    "studies/ergoregion-cma/attempts/003/stage.json": {
+      "sha256": "5c3d918acbc7db134b33194349335001f953e5459367ccfcaa68923b100c05ef",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/003/state.npz": {
+      "sha256": "75840d2ca5baabf83afd489bc479cd909a3e32d39f757d29c0b5b8390e25b755",
+      "bytes": 79448
+    },
+    "studies/ergoregion-cma/attempts/004/manifest.json": {
+      "sha256": "d241f09cf073b37df77ffb143cc9cb27053c106d039962623d0190582213967a",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/004/record.json": {
+      "sha256": "b980cf9051bc7e5bfcd9844389c5f46d0ab6591351051d8b052ac324e7f58b40",
+      "bytes": 3715
+    },
+    "studies/ergoregion-cma/attempts/004/stage.json": {
+      "sha256": "c18371e3fdba8ac2d769b11ac52aa18933c968194e79dfa1be5c0831619aeb05",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/004/state.npz": {
+      "sha256": "4023385ebc7e0bc6deffbaf8f7d54a9f004006ebc54bf2b7381410470623905d",
+      "bytes": 79411
+    },
+    "studies/ergoregion-cma/attempts/005/manifest.json": {
+      "sha256": "b7f22c40cb471bada37e837ceb7bfab1ae3dcde1836b010f9c519dced3d9d1fd",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/005/metric.json": {
+      "sha256": "10a1f2de352629227642100dd32cdb3c1ed23cca55e0208f4c53a974a4485ceb",
+      "bytes": 290
+    },
+    "studies/ergoregion-cma/attempts/005/record.json": {
+      "sha256": "45b7fca8b3402e15ecf5f8da81fe3840d93dbfbe3148b7fc417c27b98b65c195",
+      "bytes": 4156
+    },
+    "studies/ergoregion-cma/attempts/005/stage.json": {
+      "sha256": "c2e016cfe1bc1eee294a27f88c1053d06cebb0b162c6cf3590ecb786baa92e09",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/005/state.npz": {
+      "sha256": "d3c8823ce99f39e06474d5fd690941bc619b6ed7b8685a32d4b87ae1aa3c792a",
+      "bytes": 79502
+    },
+    "studies/ergoregion-cma/attempts/006/manifest.json": {
+      "sha256": "bfd74766672cb2bae73e7c0e48774095e15e175227451fdd691d837739773ded",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/006/record.json": {
+      "sha256": "86f85b1a935273235562d8973fe71f69cded38e7b0d00e16e8a4555167101420",
+      "bytes": 3726
+    },
+    "studies/ergoregion-cma/attempts/006/stage.json": {
+      "sha256": "138caa6110830f6fd3110b17a982669dda34a6c711e9611dd19848e6cf869a60",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/006/state.npz": {
+      "sha256": "3c283d9adf9ae91cc3aa78a32855661fa1ab09d55917172fa62315c443d343e1",
+      "bytes": 79524
+    },
+    "studies/ergoregion-cma/attempts/007/manifest.json": {
+      "sha256": "896ae81cf2fbdaee4bdd796f3f0d658afcf43cacacf4627e3b57cd38d09e92af",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/007/metric.json": {
+      "sha256": "2e0dad3790fb871ad062dc7cccd909df5a52448475a36bfc2674c1e5e96b7209",
+      "bytes": 290
+    },
+    "studies/ergoregion-cma/attempts/007/record.json": {
+      "sha256": "8ff24dad9339d71234b5ca2e1fbf5c954704feb2a5850ab0cec8836f5ec80c39",
+      "bytes": 4162
+    },
+    "studies/ergoregion-cma/attempts/007/stage.json": {
+      "sha256": "16fa29954af170f615871e5383e8c185a13e391ddf6f16b472d3077aee3345fd",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/007/state.npz": {
+      "sha256": "7f521ad7b2565cad1338ba81d8a55def2cfa40817549da874751cab44c522acd",
+      "bytes": 79586
+    },
+    "studies/ergoregion-cma/attempts/008/manifest.json": {
+      "sha256": "2e33459ce43632ec830cacc09885c0b9c5cefe4ad4d6c9522b4188d4b61484c1",
+      "bytes": 241
+    },
+    "studies/ergoregion-cma/attempts/008/metric.json": {
+      "sha256": "adf6fd8f1ed35e7cf6d3b1c7f05d4ac51f68cc2c9fb21bc971d9efd9e6f3442f",
+      "bytes": 291
+    },
+    "studies/ergoregion-cma/attempts/008/record.json": {
+      "sha256": "b7dc160c635f00f90a9590a93835a47f7ea904d7aa5d2feb829843403abaff23",
+      "bytes": 4154
+    },
+    "studies/ergoregion-cma/attempts/008/stage.json": {
+      "sha256": "500f968369c389320513aff5e3d2e15fbb5ae5be469821728115bbd16589b6ec",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/008/state.npz": {
+      "sha256": "9276e798ee3fbe43af986ad4e840ad8eb5da7418c842c834bcbc52e3e9e37360",
+      "bytes": 79455
+    },
+    "studies/ergoregion-cma/attempts/009/manifest.json": {
+      "sha256": "b46b8e19aa028ffd6f27676c94e9bf00679e61948beeb6a45461135ba3475065",
+      "bytes": 241
+    },
+    "studies/ergoregion-cma/attempts/009/metric.json": {
+      "sha256": "e1b25a38a7c018ab8e6767cfa632acb738db9443b8b5206d020e02351b32cc71",
+      "bytes": 289
+    },
+    "studies/ergoregion-cma/attempts/009/record.json": {
+      "sha256": "706f4cbc35b1c0b675454f46ddd735080bd4c80c60cae481ec76d7d4e10b543f",
+      "bytes": 4109
+    },
+    "studies/ergoregion-cma/attempts/009/stage.json": {
+      "sha256": "380e29cf9828a7285b46cfbf1dc16b543b668eafdb0c666d055edf0c1ffa0638",
+      "bytes": 46
+    },
+    "studies/ergoregion-cma/attempts/009/state.npz": {
+      "sha256": "ab2fd825fd56960b4427b67ff7b1b7505a42da5f3831091ef3c24eb353816158",
+      "bytes": 79564
+    },
+    "studies/ergoregion-cma/attempts/010/manifest.json": {
+      "sha256": "065a96edcd706422d08717711bea328ebe60013d15a1835d7e775520aca4eb01",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/010/record.json": {
+      "sha256": "50259eb71634ace58ec5e981cd1f4182f8946031f3a44773710943a40943e73e",
+      "bytes": 3783
+    },
+    "studies/ergoregion-cma/attempts/010/stage.json": {
+      "sha256": "61ffe8b13e1f30175586b8d470bbbbdf5853e423a3a528364b19f24f293e2265",
+      "bytes": 47
+    },
+    "studies/ergoregion-cma/attempts/010/state.npz": {
+      "sha256": "2fe7948945815de2ae9888f92b2c087726798072705662434d86caebf734a6c6",
+      "bytes": 79617
+    },
+    "studies/ergoregion-cma/attempts/011/manifest.json": {
+      "sha256": "d254c979f0548c2d78697f633b30cc38f39185a08361c17f9dfdc391960bfb6a",
+      "bytes": 242
+    },
+    "studies/ergoregion-cma/attempts/011/metric.json": {
+      "sha256": "95f18fa59e309710e5444ec0db98aeb15186b9376f7319a5f12a3583e46837f2",
+      "bytes": 289
+    },
+    "studies/ergoregion-cma/attempts/011/record.json": {
+      "sha256": "0e7f68424dc57eee90da8341727c3d88b11262490d28a8b15418c82d956e3c89",
+      "bytes": 4147
+    },
+    "studies/ergoregion-cma/attempts/011/stage.json": {
+      "sha256": "de7507cb41a1692d4bd20ca1a87bcb416f1b65fb5146fd90a4edd8193c4cb4cb",
+      "bytes": 47
+    },
+    "studies/ergoregion-cma/attempts/011/state.npz": {
+      "sha256": "78751e7e275fe6a90a9f28d6470a7ab3c1213bbfeb60e5355d21159d9ea7f8cf",
+      "bytes": 79577
+    },
+    "studies/ergoregion-cma/best_validated.npz": {
+      "sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+      "bytes": 172390
+    },
+    "studies/ergoregion-cma/bootstrap.json": {
+      "sha256": "3384a64db7deb8b8f31ce21360ca6fe43369d416d5e08b1b0101e660d4bafdf6",
+      "bytes": 68
+    },
+    "studies/ergoregion-cma/execution.log": {
+      "sha256": "42efb605111427d52f154f13e7657ffdcabc87b6fe3349f5d1bca958006ce6fc",
+      "bytes": 8639
+    },
+    "studies/ergoregion-cma/exit_code.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "studies/ergoregion-cma/finalists/01/accepted.npz": {
+      "sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+      "bytes": 172390
+    },
+    "studies/ergoregion-cma/finalists/01/grid_128x16.json": {
+      "sha256": "eabcde0605f2185ac25cf47d8a8d6d35c570c813b12f5e3bfd18cfe2aa0e2ebb",
+      "bytes": 4168
+    },
+    "studies/ergoregion-cma/finalists/01/grid_128x16.npz": {
+      "sha256": "b0a212e4dd5dd264b76b7fba7b423591ea702908c47809377bffd770c8715c02",
+      "bytes": 79594
+    },
+    "studies/ergoregion-cma/finalists/01/grid_160x20.json": {
+      "sha256": "8001abb31db7b314d4715ae16e4514af9cc57525befd5c3fa172c3682ad89f45",
+      "bytes": 4124
+    },
+    "studies/ergoregion-cma/finalists/01/grid_160x20.npz": {
+      "sha256": "7f98a0f6ea50322b340938040a6df97fa1e5b4db5620b8ccf0aa947de2fdd0a0",
+      "bytes": 121655
+    },
+    "studies/ergoregion-cma/finalists/01/grid_192x24.json": {
+      "sha256": "eb66aefaab6398af40b0e27be84b1dade0b7e920b99d924bc2397661605d6a5b",
+      "bytes": 4099
+    },
+    "studies/ergoregion-cma/finalists/01/grid_192x24.npz": {
+      "sha256": "b388c497340b8f1dcaf4e5fe6ead0cad734f21cb815131c7972f01dcbe264bfb",
+      "bytes": 172391
+    },
+    "studies/ergoregion-cma/finalists/01/manifest.json": {
+      "sha256": "c4ba31c24376f187a52bfaceb42f6f904348e210cd590221e6f965404765a56e",
+      "bytes": 1184
+    },
+    "studies/ergoregion-cma/finalists/01/outcome.json": {
+      "sha256": "2af9ae89b801e82c0581ee3f8aac56e0e23916b0d82a519c1b8d6ca6d6cd6f16",
+      "bytes": 15954
+    },
+    "studies/ergoregion-cma/manifest.json": {
+      "sha256": "d7c65c4e0fe9c9f0a3d7689012a245ea0374714a097d63a1d90d0374f15833d5",
+      "bytes": 1856
+    },
+    "studies/ergoregion-cma/outcome.json": {
+      "sha256": "0991e404c71d7bcfa0b0bcc1891116b68a29311da01d91e38ddaddd98fd6d0f2",
+      "bytes": 565
+    },
+    "studies/ergoregion-cma/progress.json": {
+      "sha256": "560a957522ae66ce78817d6e8aa1de8058781ea14fc1d69f56050b43d57713bd",
+      "bytes": 5113
+    },
+    "studies/ergoregion-cma/regressions.xml": {
+      "sha256": "809046cbbef045102578a309ae2bb4125078d999cdbc387fd45e36d10fe4c806",
+      "bytes": 6314
+    },
+    "studies/ergoregion-cma/sha256sums.txt": {
+      "sha256": "84b40e048572b01028e5674cbcce89237860c2637f85fae5099442335ed1db4c",
+      "bytes": 6281
     },
     "studies/evolution-070-n128/README.md": {
       "sha256": "7617af85064fc6e3f7caeb1cf251bd0c8dc6a000a97a02d5a1636fc696e9b083",

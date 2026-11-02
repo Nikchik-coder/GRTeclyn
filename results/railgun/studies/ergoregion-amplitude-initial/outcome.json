@@ -1,0 +1,33 @@
+{
+  "scan_completed": false,
+  "solves": 3,
+  "records": [
+    {
+      "index": 0,
+      "pin": 0.3073986678634803,
+      "predictor": "physical_radius_remap_and_repin",
+      "directory": "amplitude_00",
+      "accepted": false,
+      "checks": {
+        "passed": false,
+        "drifts": {
+          "lapse_min": 1.2269582999047124e-06,
+          "gtt_max": 1.6971775197160976e-06,
+          "shift_norm_over_lapse_max": 1.1471449304689685e-05,
+          "frequency": 3.752553823233029e-14
+        },
+        "ergoregion_resolved": false,
+        "gtt_three_grid_spread": 1.3707140099183945e-05
+      },
+      "frequencies": [
+        0.7000000000006971,
+        0.7000000000006763,
+        0.7000000000006388
+      ]
+    }
+  ],
+  "ergoregion_resolved": false,
+  "seconds": 133.10444456199184,
+  "stability": "not_assessed",
+  "scope": "Stationary k=1 amplitude continuation; sampled ergoregion sign needs three-grid agreement. No horizon or dynamical stability claim."
+}

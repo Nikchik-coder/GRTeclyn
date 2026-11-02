@@ -1,0 +1,6 @@
+{
+  "central_lapse": 0.3675181488199365,
+  "seed": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/002/state.npz",
+  "seed_sha256": "92e60b954da10cb2f645f044c884457e34605c4d6016138add420e51c56123dd",
+  "independent": false
+}

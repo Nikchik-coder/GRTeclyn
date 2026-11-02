@@ -1,0 +1,100 @@
+[capped_job] start 2026-11-02T15:38:03Z threads=4 mem=160G timeout=3600s
+Mon Nov  2 15:38:03 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:4C:00.0 Off |                    0 |
+| N/A   31C    P0             68W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         1.8T  1.2T  541G  68% /
+47M	<scratch>/_cache
+1.7G	<scratch>/ring070-n128-t2-20261102
+5.6G	<scratch>/ring070-n192-t2-20261102
+5.6G	<scratch>/ring070-n192-t50-20261102
+709M	<scratch>/ring070-n96-t2-r2-20261102
+.........................................                                [100%]
+41 passed in 76.53s (0:01:16)
+[newton] iter 0: |R| 6.312e-06 -> 4.090e-10 (t = 1)
+[newton] iter 1: |R| 4.090e-10 -> 3.961e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 3.588e-16
+{"event": "cma_solve", "attempt": 1, "central_lapse": 0.39812765775247805, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.3845752423796211, "gtt_max": -0.09641220712280425, "shift_norm_over_lapse_max": 0.617781174800819, "gtt_max_point": {"rho": 0.9768455413424929, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+[newton] iter 0: |R| 1.360e+00 -> 1.961e-04 (t = 1)
+[newton] iter 1: |R| 1.962e-04 -> 1.515e-06 (t = 1)
+[newton] iter 2: |R| 1.515e-06 -> 3.446e-11 (t = 1)
+[newton] iter 3: |R| 3.446e-11 -> 5.504e-15 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 3.775e-15
+{"event": "cma_solve", "attempt": 2, "central_lapse": 0.38251684900303146, "independent": false, "verdict": "PASS", "reasons": [], "sample": null}
+[newton] iter 0: |R| 4.018e-04 -> 6.049e-06 (t = 1)
+[newton] iter 1: |R| 6.048e-06 -> 5.137e-10 (t = 1)
+[newton] iter 2: |R| 5.137e-10 -> 5.145e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.761e-16
+{"event": "cma_solve", "attempt": 3, "central_lapse": 0.3675181488199365, "independent": false, "verdict": "PASS", "reasons": [], "sample": null}
+[newton] iter 0: |R| 4.083e-04 -> 6.001e-06 (t = 1)
+[newton] iter 1: |R| 6.000e-06 -> 4.861e-10 (t = 1)
+[newton] iter 2: |R| 4.861e-10 -> 5.470e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.172e-16
+{"event": "cma_solve", "attempt": 4, "central_lapse": 0.3531075560830068, "independent": false, "verdict": "PASS", "reasons": [], "sample": null}
+[newton] iter 0: |R| 3.914e-04 -> 5.311e-06 (t = 1)
+[newton] iter 1: |R| 5.311e-06 -> 3.684e-10 (t = 1)
+[newton] iter 2: |R| 3.684e-10 -> 9.415e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 7.550e-15
+{"event": "cma_solve", "attempt": 5, "central_lapse": 0.33978558674276027, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.32545272409447146, "gtt_max": -0.03232811319121619, "shift_norm_over_lapse_max": 0.8476750395280435, "gtt_max_point": {"rho": 0.8425447506381962, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+[newton] iter 0: |R| 4.151e-04 -> 5.748e-06 (t = 1)
+[newton] iter 1: |R| 5.747e-06 -> 4.169e-10 (t = 1)
+[newton] iter 2: |R| 4.169e-10 -> 5.424e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 6.945e-16
+{"event": "cma_solve", "attempt": 6, "central_lapse": 0.3264624033186197, "independent": false, "verdict": "PASS", "reasons": [], "sample": null}
+[newton] iter 0: |R| 3.024e-04 -> 2.971e-06 (t = 1)
+[newton] iter 1: |R| 2.971e-06 -> 1.097e-10 (t = 1)
+[newton] iter 2: |R| 1.097e-10 -> 9.581e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 7.550e-15
+{"event": "cma_solve", "attempt": 7, "central_lapse": 0.31632356062873535, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.3017799857460295, "gtt_max": -0.006360714558537751, "shift_norm_over_lapse_max": 0.9677730665953665, "gtt_max_point": {"rho": 0.7959763598223818, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+[newton] iter 0: |R| 1.126e-04 -> 4.714e-07 (t = 1)
+[newton] iter 1: |R| 4.714e-07 -> 3.161e-12 (t = 1)
+[newton] iter 2: |R| 3.161e-12 -> 9.068e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 7.550e-15
+{"event": "cma_solve", "attempt": 8, "central_lapse": 0.3616621478213086, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.34758449191874063, "gtt_max": -0.056360091703261825, "shift_norm_over_lapse_max": 0.7514723035519321, "gtt_max_point": {"rho": 0.8911329701164076, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+[newton] iter 0: |R| 1.184e-05 -> 3.270e-09 (t = 1)
+[newton] iter 1: |R| 3.270e-09 -> 5.891e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 8.835e-16
+{"event": "cma_solve", "attempt": 9, "central_lapse": 0.3171494436734126, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.302610339031412, "gtt_max": -0.007275965781087606, "shift_norm_over_lapse_max": 0.9631682693904315, "gtt_max_point": {"rho": 0.7959763598223818, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+[newton] iter 0: |R| 1.183e+00 -> 1.647e-04 (t = 1)
+[newton] iter 1: |R| 1.648e-04 -> 8.550e-07 (t = 1)
+[newton] iter 2: |R| 8.550e-07 -> 9.040e-12 (t = 1)
+[newton] iter 3: |R| 9.040e-12 -> 9.473e-15 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 7.550e-15
+{"event": "cma_solve", "attempt": 10, "central_lapse": 0.3039203364071485, "independent": false, "verdict": "PASS", "reasons": [], "sample": null}
+[newton] iter 0: |R| 1.891e-04 -> 1.101e-06 (t = 1)
+[newton] iter 1: |R| 1.101e-06 -> 1.459e-11 (t = 1)
+[newton] iter 2: |R| 1.459e-11 -> 9.591e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 7.550e-15
+{"event": "cma_solve", "attempt": 11, "central_lapse": 0.29729052487253343, "independent": true, "verdict": "PASS", "reasons": [], "sample": {"lapse_min": 0.2826249746332093, "gtt_max": 0.015011009064832135, "shift_norm_over_lapse_max": 1.0809707039974938, "gtt_max_point": {"rho": 0.7513443025567917, "z": 0.0}, "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"}}
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 6.331e-06 -> 3.910e-10 (t = 1)
+[newton] iter 1: |R| 3.910e-10 -> 9.333e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 7.550e-15
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 30.346524455817416}
+[newton] iter 0: |R| 5.080e-06 -> 3.135e-10 (t = 1)
+[newton] iter 1: |R| 3.135e-10 -> 1.180e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 9.326e-15
+{"event": "grid", "grid": [160, 20], "verdict": "PASS", "reasons": [], "seconds": 43.955896579893306}
+[newton] iter 0: |R| 4.236e-06 -> 2.615e-10 (t = 1)
+[newton] iter 1: |R| 2.615e-10 -> 1.394e-14 (t = 1)
+[newton] iter 2: |R| 1.394e-14 -> 8.424e-15 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 8.264e-16
+{"event": "grid", "grid": [192, 24], "verdict": "PASS", "reasons": [], "seconds": 42.16068861912936}
+[capped_job] end 2026-11-02T15:44:52Z exit=0
