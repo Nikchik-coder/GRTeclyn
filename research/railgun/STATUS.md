@@ -29,13 +29,26 @@ stays unchanged. Prepare a common-physical-point comparison and a separately
 approved continuation reusing these three solves; no automatic restart.
 Checkpoints **OFF**. Scratch: 14 GB retained, 531 GB free, unchanged.
 
-**Live, corrected continuation:** `railgun-ergoregion-amplitude-r2-20261102`,
-two-GPU node/card 0, source `ec9b26998`, started **18:10:04 MSK**. Only this
-two-GPU node is authorised; no other cluster is used. All **25 GPU regressions
-pass** in 37.77 s. CUDA/H100/float64 confirmed; the first increased-amplitude
-Newton solve converges in five full updates and is undergoing independent
-checks. GPU 1 is free. Hard runtime cap **0.5 h**, ending by **18:40:04 MSK**;
-completion ETA and solve throughput not yet measured. Checkpoints **OFF**.
+**Stopped, stronger ring accepted:** `railgun-ergoregion-amplitude-r2-20261102`,
+two-GPU node/card 0, source `ec9b26998`, **18:10:04–18:13:36 MSK**, exit 2,
+**0.0589 h** including tests. All **25 GPU regressions pass** in 37.77 s.
+The first 6% amplitude increase passes all three grids and every original
+and added acceptance check: pin **0.325842588**, frequency **0.685955820263**,
+minimum lapse **0.384575**, maximum shift/lapse **0.617781** (previously
+0.510390), maximum g_tt **-0.0964122**. No sampled ergoregion. Common-point
+observable differences across the final pair are below 1.25e-13. Its saved
+accepted field is `runs/railgun/single-ring/scans/ergoregion-amplitude-20261102-r2/amplitude_01/accepted.npz`.
+
+The next 6% increase, pin 0.345393143, fails Newton on 128x16: one damped
+update, then a fresh-Jacobian line-search stall at scaled residual 2.95e-4.
+It also fails independent equation checks and remains rejected. Its frequency
+0.6750508 is provisional, not a physical branch result. This does not locate
+a turning point or a maximum spin. The approved stop-on-rejection rule ends
+the sequence: **four new solves**, **seven cumulative** including the reused
+three. No further amplitude or k=2 solve is queued. Both GPUs idle. Checkpoints
+**OFF**; all fields and logs retained. Scratch **14 GB retained, 531 GB free**,
+three plotfiles per old evolution, zero checkpoints. No scratch/frame removal.
+A smaller-step or arclength continuation requires a new bounded proposal/go.
 
 All states are compared at the same 385 radial by 50 angular physical points,
 including the origin, axis and equator. Nine CPU preparation tests cover the
@@ -43,8 +56,8 @@ comparison and three-solve reuse. The actual saved reproduction states agree
 at common points to **7.37e-14**; mass/J/frequency source drift **2.88e-12**.
 The original rejected directory stays unchanged; the new run records hashes,
 copies its passing grid evidence and saves `outcome.original.json`. Three
-prior solves count toward 27 total; at most **24 new solves** for eight 6%
-increases remain in this approved run. No reproduction solve is repeated.
+prior solves count toward the original 27-solve ceiling; four new solves were
+used before rejection closed the run. No reproduction solve was repeated.
 All thresholds and stop-on-rejection conditions remain. Four CPU threads,
 160 GiB, chunks 128, 0.5 h total including tests; retain all fields/logs.
 Scratch at startup: 14 GB retained, 531 GB free, three plotfiles per old

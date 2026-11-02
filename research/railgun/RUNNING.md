@@ -107,7 +107,10 @@ completed files and requires a new bounded proposal before any continuation.
 The first job stopped after three passing reproduction solves because the
 initial extra comparison used different sample positions. It remains rejected.
 The corrected continuation received its separate go and started at
-18:10:04 MSK on the two-GPU node/card 0, checkpoints OFF:
+18:10:04 MSK on the two-GPU node/card 0, checkpoints OFF. It stopped at
+18:13:36 MSK: the first 6% increase passed three grids (omega=0.685956,
+shift/lapse=0.617781); the next increase failed Newton on 128x16. This
+budget is closed, with four new/seven cumulative solves. No ergoregion:
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-r2-20261102 \
