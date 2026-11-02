@@ -46,7 +46,9 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 Prepared scope: [ergoregion_amplitude.json](studies/ergoregion_amplitude.json).
 The stationary study received its go November 2, checkpoints OFF, and started
-at 17:56:39 MSK on the second GPU node/card 0. See STATUS for progress.
+at 17:56:39 MSK on the second GPU node/card 0. It stopped at 17:59:36 MSK
+after all three reproduction grids passed the original checks: the added
+extrema comparison used different physical sample positions. See STATUS.
 The dry run reads only NumPy data and does not initialise JAX:
 
 ```bash

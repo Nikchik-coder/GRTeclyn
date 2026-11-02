@@ -15,11 +15,19 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Live:** `railgun-ergoregion-amplitude-20261102`, second GPU node/card 0,
-started **17:56:39 MSK** on source `ec764d6cc`. GPU regressions are running;
-the amplitude scan follows only on success. Hard runtime limit **0.5 h**,
-ending by **18:26:39 MSK** (not a measured completion ETA); solve throughput
-is not yet available. Checkpoints **OFF**, explicitly confirmed November 2.
+**Stopped:** `railgun-ergoregion-amplitude-20261102`, second GPU node/card 0,
+**17:56:39–17:59:36 MSK**, exit 2, 0.0492 h including tests. All **23 GPU
+regressions pass**. All three initial reproduction solves converge in two
+updates and pass every original field gate; recovered frequencies are
+0.700000000000697 / 0.700000000000676 / 0.700000000000639. The added
+strong-field comparison rejected differing sampled extrema (shift/lapse
+change 1.15e-5): those samples are at different positions on each grid.
+This is an error in the new comparison, not evidence of inconsistent fields.
+No amplitude increase was attempted. Three solves spent; all provisional
+fields retained, no accepted file written. Both GPUs idle. The stopped run
+stays unchanged. Prepare a common-physical-point comparison and a separately
+approved continuation reusing these three solves; no automatic restart.
+Checkpoints **OFF**. Scratch: 14 GB retained, 531 GB free, unchanged.
 Single-ring ergoregion search,
 [ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
 hash-checked accepted omega=0.70 state; k=1, m=1 and the matter model stay fixed.
@@ -36,7 +44,7 @@ additional lapse/g_tt/shift/frequency convergence checks run before writing
 an accepted state. Positive g_tt must occur on all three grids with a margin
 larger than their spread and 1e-8. No automatic k=2 branch or extra solves.
 Eleven CPU-only new/existing preparation and guard checks pass;
-the new CUDA border test and existing field tests are part of the live job.
+the new CUDA border test and existing field tests passed in the stopped job.
 Four CPU threads, 160 GiB, 0.5 h total, Jacobian chunks 128; retain logs
 and all attempted fields. Scratch at launch: 14 GB retained in four finished
 evolutions plus the 47 MB cache; 531 GB free, three plotfiles per evolution,
