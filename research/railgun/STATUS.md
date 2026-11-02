@@ -42,8 +42,10 @@ files and every per-study checksum pass verification.
 `railgun-ergoregion-max-seed271-20261102` on card 0 and
 `railgun-ergoregion-max-seed272-20261102` on card 1 of the authorised
 two-GPU node only. Both started **19:09:13 MSK**, source `a3d410421`.
-GPU regressions run first, then source reproduction and CMA proposals;
-no evolution time applies. Maximum remaining duration at launch **1 h**,
+All **45 GPU regressions passed on each card**, in 75.86/74.67 seconds.
+Both source-reproduction solves pass independent equation checks, reproducing
+shift/lapse **1.080970704**; CMA continuation has started.
+No evolution time applies. Maximum remaining duration at launch **1 h**,
 deadline **20:09:13 MSK**; proposal speed is not yet measured.
 Start from archived `ergoregion-cma/finalists/01/accepted.npz`, SHA256
 `a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52`.
@@ -59,7 +61,7 @@ updates, fresh Jacobians. Original 1e-8/1e-6 gates unchanged. Rejections
 receive penalties; automatic smaller steps remain within the budget.
 Four CPU threads, 160 GiB and one-hour cap per job, chunks 128. Combined
 maximum 64 proposals/184 solves, eight CPU threads/320 GiB; the node quota
-is 24 CPUs/488 GiB. GPU regression checks run on each card first. The
+is 24 CPUs/488 GiB. GPU regression checks ran on each card first. The
 checkpoint choice is explicitly **OFF** for both runs; no AMR evolution is proposed.
 Twenty-seven CPU preparation tests pass, including continuation after finding
 an ergoregion and preservation of a stronger field against a weaker finalist.
