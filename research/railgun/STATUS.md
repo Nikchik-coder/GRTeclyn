@@ -34,13 +34,31 @@ branch. Dynamical stability of this new ring has not been tested. The previous
 `runs/railgun/single-ring/scans/ergoregion-cma-20261102/accepted_ergoregion.npz`.
 Both GPUs idle. Checkpoints OFF; all fields and logs retained. Scratch:
 14 GB retained, **544 GB free**, three plotfiles per old evolution, zero
-checkpoints. No scratch or frame removal. Evidence packing is in progress.
+checkpoints. No scratch or frame removal. Discovery and both preceding
+amplitude studies are archived in results/railgun/studies/; **1278** package
+files and every per-study checksum pass verification.
 
-**Next: maximisation requested.** Prepare bounded CMA searches from this
-accepted ring, continuing after the first positive g_tt. Preserve all original
-physical and resolution gates; rank only fully validated final values. The
-best value found is conditional on the sampled branch/range, not a global
-maximum or a stability result. No maximisation GPU work has started.
+**Maximisation campaign prepared, awaiting its go:** two independent CMA
+searches, seeds 271/272 on cards 0/1 of the authorised two-GPU node only.
+Start from archived `ergoregion-cma/finalists/01/accepted.npz`, SHA256
+`a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52`.
+Maximise peak shift/lapse on the same canonical k=1, m=1 branch. Central
+lapse 0.08–0.32; frequency and amplitude free. Continue after the first
+positive g_tt, preserve the incumbent and strongest validated field, and
+record the bounds with `global_maximum_established=false`.
+
+Per run: 32 proposals, maximum 80 search + 12 refinement solves; four
+finalists separated by >=0.02 in log lapse. Search 160x20; final grids
+160x20 / 192x24 / 224x28. Newton 1e-14, max 30 iterations, minimum two
+updates, fresh Jacobians. Original 1e-8/1e-6 gates unchanged. Rejections
+receive penalties; automatic smaller steps remain within the budget.
+Four CPU threads, 160 GiB and one-hour cap per job, chunks 128. Combined
+maximum 64 proposals/184 solves, eight CPU threads/320 GiB; the node quota
+is 24 CPUs/488 GiB. GPU regression checks run on each card first. The
+checkpoint choice awaits confirmation; no AMR evolution is proposed.
+Twenty-seven CPU preparation tests pass, including continuation after finding
+an ergoregion and preservation of a stronger field against a weaker finalist.
+No maximisation GPU startup yet. Commands/configs: RUNNING.md.
 
 Completed discovery scope:
 [ergoregion_cma.json](studies/ergoregion_cma.json). The central-lapse border

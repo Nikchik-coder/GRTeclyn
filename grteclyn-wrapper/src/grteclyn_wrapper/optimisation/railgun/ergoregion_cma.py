@@ -119,10 +119,19 @@ def preflight(source, config):
                     search_grid=[128, 16], grids=[[128, 16], [160, 20], [192, 24]],
                     length=2.5, max_iter=30, newton_tol=1e-14, equation_tol=1e-8,
                     tail_tol=1e-6, observable_tol=1e-6)
+    maximising = config.get('mode') == 'maximise'
+    if maximising:
+        if config.get('seed') not in (271, 272):
+            raise ValueError('bounded maximisation seeds 271 or 272 required')
+        expected.update(mode='maximise', seed=config['seed'],
+            source_sha256='a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52',
+            central_lapse_bounds=[.08, .32], x0=.20, sigma0=.05,
+            max_finalists=4, max_refinement_solves=12, finalist_log_separation=.02,
+            search_grid=[160, 20], grids=[[160, 20], [192, 24], [224, 28]])
     if config != expected:
-        raise ValueError('the bounded 32-proposal, 80+9-solve CMA profile is required')
+        raise ValueError('one of the bounded discovery/maximisation CMA profiles is required')
     if hashlib.sha256(Path(source).read_bytes()).hexdigest() != config['source_sha256']:
-        raise ValueError('accepted omega=0.685955820263 source hash mismatch')
+        raise ValueError('accepted source hash mismatch')
     with np.load(source, allow_pickle=False) as data:
         meta = json.loads(str(data['metadata']))
         u = np.asarray(data['u'])
@@ -130,15 +139,19 @@ def preflight(source, config):
     n = (meta['nx']+1)*(meta['ny']+1)
     if (meta.get('schema') != 1 or meta.get('model') != 'canonical_regular_centre'
             or not meta.get('validated') or meta.get('target_j') is not None
-            or meta.get('central_lapse') is not None or any(meta.get('frequency_targets', []))
+            or (meta.get('central_lapse') is not None and not maximising)
+            or any(meta.get('frequency_targets', []))
             or len(fields) != 1 or fields[0]['winding'] != 1 or fields[0]['mass'] != 1
             or fields[0]['parity'] != 'even' or fields[0]['quartic'] or fields[0]['sextic']
             or meta['length'] != 2.5 or [meta['nx'], meta['ny']] != [192, 24]
             or u.shape != (5*n+1,) or not np.isfinite(u).all()):
         raise ValueError('accepted canonical single-ring source required')
     central = float(np.exp(np.mean(u[:n].reshape(193, 25)[-1])/2))
+    if maximising and (meta.get('central_lapse') is None or abs(meta['central_lapse']-central) > 1e-12):
+        raise ValueError('maximisation requires the accepted central-lapse ergoregion source')
     return dict(metadata=meta, central_lapse=central, initial_frequency=float(u[-1]),
-                max_newton_solves=89, numerical_execution=False,
+                max_newton_solves=config['max_search_solves']+config['max_refinement_solves'],
+                numerical_execution=False,
                 physical_parameters=['central lapse; frequency and amplitude solved'],
                 model='unchanged k=1, m=1 canonical free scalar')
 
@@ -159,6 +172,19 @@ class Search:
         self.pool = [dict(log=math.log(self.plan['central_lapse']), p=p, u=u, path=str(source))]
         self.evaluations, self.finalists = [], []
         self.found, self.best_path, self.best_ratio = False, None, -1.
+        self.best_ergo_ratio = -1.
+        self.best_log = self.pool[0]['log']
+        self.incumbent_ratio = None
+        if config.get('mode') == 'maximise':
+            sample = common_metric_samples(source)
+            if sample['gtt_max'] <= 0 or sample['shift_norm_over_lapse_max'] <= 1:
+                raise ValueError('positive ergoregion required in the maximisation source')
+            self.incumbent_ratio = self.best_ratio = self.best_ergo_ratio = sample['shift_norm_over_lapse_max']
+            self.found = True
+            self.best_path = str(self.directory/'incumbent.npz')
+            for name in ('incumbent.npz', 'best_validated.npz', 'accepted_ergoregion.npz'):
+                shutil.copy2(source, self.directory/name)
+            write(self.directory/'incumbent.json', sample)
         self.started = time.monotonic()
         self.manifest = dict(config=config, plan=self.plan, source=str(source),
                              commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
@@ -170,7 +196,11 @@ class Search:
         write(self.directory/'progress.json', dict(search_solves=self.budget.search_used,
               refinement_solves=self.budget.refinement_used, evaluations=self.evaluations,
               finalists=self.finalists, ergoregion_resolved=self.found, best_path=self.best_path,
+              best_ratio=self.best_ratio, incumbent_ratio=self.incumbent_ratio,
               seconds=time.monotonic()-self.started))
+
+    def should_stop(self):
+        return self.found and self.config.get('mode') != 'maximise'
 
     def solve(self, log_target, seed, *, independent):
         from .problem import RingProblem
@@ -182,7 +212,8 @@ class Search:
         path = self.directory/'attempts'/f'{self.budget.search_used:03d}'
         path.mkdir(parents=True)
         p = RingProblem([ScalarField(**f) for f in self.plan['metadata']['fields']],
-                        nx=128, ny=16, length=2.5, central_lapse=math.exp(log_target))
+                        nx=self.config['search_grid'][0], ny=self.config['search_grid'][1],
+                        length=2.5, central_lapse=math.exp(log_target))
         near = sorted(self.pool, key=lambda item: abs(item['log']-seed['log']))
         second = next((item for item in near if abs(item['log']-seed['log']) >= 1e-4), None)
         current = p.transfer(seed['p'], seed['u'])
@@ -252,7 +283,8 @@ class Search:
         from .workflow import run_study
         if (len(self.finalists) >= self.config['max_finalists']
                 or self.budget.refinement_limit-self.budget.refinement_used < 3
-                or any(abs(row['log_lapse']-item['log']) < 1e-4 for row in self.finalists)):
+                or any(abs(row['log_lapse']-item['log']) < self.config.get('finalist_log_separation',1e-4)
+                       for row in self.finalists)):
             return
         index = len(self.finalists)+1
         config = dict(fields=self.plan['metadata']['fields'], length=2.5, central_lapse=math.exp(item['log']),
@@ -279,10 +311,13 @@ class Search:
             ratio = result['additional_acceptance']['common_point_extrema'][-1]['shift_norm_over_lapse_max']
             if ratio > self.best_ratio:
                 self.best_ratio, self.best_path = ratio, str(path/'accepted.npz')
+                self.best_log = item['log']
                 shutil.copy2(path/'accepted.npz', self.directory/'best_validated.npz')
             if result['additional_acceptance']['ergoregion_resolved']:
                 self.found = True
-                shutil.copy2(path/'accepted.npz', self.directory/'accepted_ergoregion.npz')
+                if ratio > self.best_ergo_ratio:
+                    self.best_ergo_ratio = ratio
+                    shutil.copy2(path/'accepted.npz', self.directory/'accepted_ergoregion.npz')
         self.progress()
 
     def objective(self, target):
@@ -296,7 +331,8 @@ class Search:
                           passed=item['row']['verdict']=='PASS' and item['sample'] is not None,
                           sample=item['sample'])
             self.progress()
-            if item['sample'] is not None and item['sample']['gtt_max'] > 0:
+            if (self.config.get('mode') != 'maximise' and item['sample'] is not None
+                    and item['sample']['gtt_max'] > 0):
                 self.refine(item)
             return value
         except BudgetExhausted:
@@ -312,7 +348,8 @@ class Search:
         # Prove that the new border reproduces the initial physical solution.
         bootstrap = self.solve(self.pool[0]['log'], self.pool[0], independent=True)
         if bootstrap['row']['verdict'] != 'PASS':
-            write(self.directory/'outcome.json', dict(stage='bootstrap_rejected', ergoregion_resolved=False))
+            write(self.directory/'outcome.json', dict(stage='bootstrap_rejected', ergoregion_resolved=self.found,
+                  best_path=self.best_path, best_shift_norm_over_lapse=self.best_ratio))
             return False
         original = json.loads(self.source.with_name('grid_192x24.json').read_text())
         row = bootstrap['row']
@@ -320,14 +357,15 @@ class Search:
         drift = max(drift, abs(float(bootstrap['u'][-1])-self.plan['initial_frequency']))
         write(self.directory/'bootstrap.json', dict(reproduction_drift=drift, passed=drift <= 1e-6))
         if drift > 1e-6:
-            write(self.directory/'outcome.json', dict(stage='bootstrap_mismatch', ergoregion_resolved=False))
+            write(self.directory/'outcome.json', dict(stage='bootstrap_mismatch', ergoregion_resolved=self.found,
+                  best_path=self.best_path, best_shift_norm_over_lapse=self.best_ratio))
             return False
         cfg = self.config
-        stopped = bounded_cma(cfg, self.objective, lambda:self.found)
-        if not self.found:
+        stopped = bounded_cma(cfg, self.objective, self.should_stop)
+        if not self.should_stop():
             candidates = sorted((v for v in self.evaluations if v['passed']), key=lambda v:v['score'])
             for candidate in candidates:
-                if len(self.finalists) >= cfg['max_finalists'] or self.found:
+                if len(self.finalists) >= cfg['max_finalists'] or self.should_stop():
                     break
                 item = next(item for item in self.pool if item['path'] == candidate['path'])
                 self.refine(item)
@@ -335,11 +373,14 @@ class Search:
         self.manifest['cma_version'] = stopped['cma_version']
         write(self.directory/'manifest.json', self.manifest)
         write(self.directory/'outcome.json', dict(stage='complete', stop_reason=(
-              'validated_ergoregion' if self.found else stopped['reason']), cma_stop=stopped,
+              'validated_ergoregion' if self.should_stop() else stopped['reason']), cma_stop=stopped,
               ergoregion_resolved=self.found, best_path=self.best_path, evaluations=len(self.evaluations),
+              best_shift_norm_over_lapse=self.best_ratio, best_central_lapse=math.exp(self.best_log),
+              incumbent_ratio=self.incumbent_ratio, global_maximum_established=False,
+              searched_central_lapse_bounds=cfg['central_lapse_bounds'],
               search_solves=self.budget.search_used, refinement_solves=self.budget.refinement_used,
               seconds=time.monotonic()-self.started, stability='not_assessed',
-              scope='Fixed-model stationary search; no guaranteed ergoregion or dynamical stability claim.'))
+              scope='Fixed-model stationary search; best sampled branch values, no global maximum or stability claim.'))
         return self.found
 
 

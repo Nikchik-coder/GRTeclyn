@@ -134,6 +134,66 @@ def test_provisional_ergoregion_cannot_be_promoted_after_failed_refinement(tmp_p
     assert search.finalists[0]['accepted'] is False
 
 
+def test_maximisation_continues_after_an_ergoregion_is_found():
+    search = Search.__new__(Search)
+    search.found = True
+    search.config = dict(mode='maximise')
+    assert not search.should_stop()
+    search.config = {}
+    assert search.should_stop()
+
+
+def test_maximisation_keeps_strongest_accepted_field_not_the_last(tmp_path, monkeypatch):
+    from grteclyn_wrapper.optimisation.railgun import workflow
+    search = Search.__new__(Search)
+    search.config = json.loads((ROOT/'research/railgun/studies/ergoregion_max_seed271.json').read_text())
+    search.plan = dict(metadata=dict(fields=[]))
+    search.directory, search.source = tmp_path, tmp_path/'source.npz'
+    search.budget = SolveBudget(80, 12)
+    search.floor = .001
+    search.finalists, search.found = [], True
+    search.best_ratio = search.best_ergo_ratio = 1.081
+    search.best_path = None
+    search.progress = lambda:None
+    values = iter([1.4, 1.2])
+    def study(config, path, **kwargs):
+        ratio = next(values)
+        path.mkdir(parents=True)
+        (path/'accepted.npz').write_bytes(str(ratio).encode())
+        return dict(accepted=True, records=[{}, {}, {}], additional_acceptance=dict(
+                    ergoregion_resolved=True, common_point_extrema=[dict(shift_norm_over_lapse_max=ratio)]))
+    monkeypatch.setattr(workflow, 'run_study', study)
+    search.refine(dict(log=math.log(.2), path='first.npz'))
+    search.refine(dict(log=math.log(.25), path='second.npz'))
+    assert search.best_ratio == 1.4
+    assert (tmp_path/'best_validated.npz').read_bytes() == b'1.4'
+    assert (tmp_path/'accepted_ergoregion.npz').read_bytes() == b'1.4'
+    assert search.budget.refinement_used == 6
+
+
+def test_maximisation_budgets_and_range_are_fixed():
+    for seed in (271, 272):
+        config = json.loads((ROOT/f'research/railgun/studies/ergoregion_max_seed{seed}.json').read_text())
+        assert config['max_search_solves']+config['max_refinement_solves'] == 92
+        for key, value in [('max_search_solves', 81), ('max_finalists', 5),
+                           ('seed', 273), ('central_lapse_bounds', [.01, .32])]:
+            altered = deepcopy(config)
+            altered[key] = value
+            with pytest.raises(ValueError, match='bounded'):
+                preflight('/nonexistent', altered)
+
+
+def test_maximisation_starts_from_the_archived_validated_ergoregion():
+    source = ROOT/'results/railgun/studies/ergoregion-cma/finalists/01/accepted.npz'
+    for seed in (271, 272):
+        config = json.loads((ROOT/f'research/railgun/studies/ergoregion_max_seed{seed}.json').read_text())
+        plan = preflight(source, config)
+        assert plan['metadata']['validated']
+        assert plan['central_lapse'] == pytest.approx(.29729052487253343, abs=1e-12)
+        assert plan['max_newton_solves'] == 92
+        assert not plan['numerical_execution']
+
+
 @pytest.mark.parametrize('lapse', [0., 1., -1., np.nan])
 def test_invalid_central_targets_are_rejected_before_jax_startup(lapse):
     from grteclyn_wrapper.optimisation.railgun.problem import RingProblem

@@ -44,6 +44,48 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 ## Automatic CMA-ES ergoregion search
 
+### Maximisation campaign, prepared
+
+Continue from the accepted ergoregion instead of stopping on the first one.
+Two independent searches use cards 0/1 of the authorised two-GPU node only,
+seeds 271/272, with identical physics. The objective is peak shift/lapse;
+g_tt and the clock-rate measurements are also retained. Central lapse ranges
+from 0.08 to 0.32. Frequency and scalar amplitude remain solved unknowns.
+Each CMA run has 32 proposals, at most 80 search solves and 12 refinement
+solves for four distinct finalists (separated by at least 0.02 in log lapse).
+Search grid 160x20; final grids 160x20 / 192x24 / 224x28. Every original
+acceptance threshold is unchanged; rejected proposals receive penalties.
+
+The initial source is the byte-identical, archived three-grid accepted field
+`results/railgun/studies/ergoregion-cma/finalists/01/accepted.npz`.
+Each run keeps a copy as its incumbent and records the largest validated
+ratio. A weaker later finalist cannot overwrite the best field. It continues
+after positive g_tt and stops at its work/time cap or a CMA stop criterion.
+Outcomes record the searched bounds, best central lapse and
+`global_maximum_established=false`: these are bounded branch searches.
+
+Configs: `ergoregion_max_seed271.json` and `ergoregion_max_seed272.json` in
+`studies/`. Preview each with `railgun.ergoregion_cma --dry-run` and the archived
+source above. Prepared launch commands, after the campaign go:
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-seed271-20261102 \
+  --threads 4 --mem 160 --timeout 3600 --gpu -- \
+  bash research/railgun/run_ergoregion_maximise.sh 0
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-seed272-20261102 \
+  --threads 4 --mem 160 --timeout 3600 --gpu -- \
+  bash research/railgun/run_ergoregion_maximise.sh 1
+```
+
+Each checks its own card, runs GPU regressions, then optimises. Per job:
+four CPU threads, 160 GiB, one hour including tests, chunks 128. Combined
+caps are eight threads and 320 GiB, below the node's 24-CPU/488-GiB quota.
+Total proposal ceiling 64, total search/refinement solve ceiling 184. All
+attempts and the strongest accepted fields stay saved. No 3+1 evolution or
+AMR checkpoint is part of the proposal. These launches await their go.
+
+### Completed discovery
+
 Scope: [ergoregion_cma.json](studies/ergoregion_cma.json), approved November 2
 with checkpoints OFF; ran 18:38:03–18:44:52 MSK on the two-GPU node/card 0.
 It found a three-grid validated ergoregion after five proposals: shift/lapse

@@ -1,0 +1,43 @@
+{
+  "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+  "central_lapse_bounds": [
+    0.08,
+    0.32
+  ],
+  "x0": 0.2,
+  "sigma0": 0.05,
+  "seed": 271,
+  "popsize": 4,
+  "max_evaluations": 32,
+  "max_search_solves": 80,
+  "max_finalists": 4,
+  "max_refinement_solves": 12,
+  "max_log_lapse_step": 0.04,
+  "max_splits_per_evaluation": 4,
+  "search_grid": [
+    160,
+    20
+  ],
+  "grids": [
+    [
+      160,
+      20
+    ],
+    [
+      192,
+      24
+    ],
+    [
+      224,
+      28
+    ]
+  ],
+  "length": 2.5,
+  "max_iter": 30,
+  "newton_tol": 1e-14,
+  "equation_tol": 1e-08,
+  "tail_tol": 1e-06,
+  "observable_tol": 1e-06,
+  "mode": "maximise",
+  "finalist_log_separation": 0.02
+}
