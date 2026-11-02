@@ -15,11 +15,18 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** none. **Queued:** none. Both GPUs idle; every approved export,
-zero-step startup and evolution budget is spent. All GPU work used only the
-second GPU node, card 0. No ETA and no automatic longer run.
+**Live:** `railgun-richardson-regression-20261102`, second GPU node/card 0,
+source `fcb5ce624`, started **10:03:50 MSK**. Targeted 31-test suite alive;
+no evolution time yet. ETA **0.02 h, about 10:05 MSK**; per-job hard cap
+**0.5 h, 10:33:50 MSK**.
 
-Last scratch check, second GPU node, **2026-11-02 09:53 MSK**: `_cache/`
+**Approved queue:** one certified 192^3 export, inspectable t=0 preflight,
+then the full launch preflight and one t<=2 evolution. Stop on failed checks.
+The final 192^3 Richardson go was received November 2. Same frozen binary
+and physics, four threads, 160 GiB, 0.5 h per job; checkpoints OFF, full
+frames, keep-last three plotfiles. No other grids or longer runs.
+
+Last scratch check, second GPU node, **2026-11-02 10:04 MSK**: `_cache/`
 **47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
 Exactly three plotfiles per pilot retained as approved. No checkpoints.
 All original frames and slice caches remain on NFS; first node not listed.
@@ -70,7 +77,7 @@ Frozen CUDA binary: `main3d_ring070r2_3e6466ed_2026-11-02.ex`, source
 The four-thread CPU build finished at **08:51:40 MSK**, exit 0.
 Git push/pull through `myfork` only; no SCP.
 
-**Next, prepared and awaiting a run-specific go:** complete the **96^3 /
+**Approved and in progress:** complete the **96^3 /
 128^3 / 192^3 Richardson triplet**, following the spinning and Bondi papers.
 Only 192^3 needs a new export and evolution. The same frozen binary, source,
 box, gauge, timestep multiplier, physical duration and diagnostics are kept;
@@ -88,8 +95,8 @@ three-grid report and figure remain pending, with no fabricated third member.
 
 A larger-domain check, longer evolutions and explicit small nonaxisymmetric
 perturbations remain separate requirements for a dynamical-stability study.
-No new GPU run is queued or authorised. Earlier stationary/particle results
-remain below.
+Only the bounded 192^3 completion is authorised; no stability-study run
+is queued. Earlier stationary/particle results remain below.
 
 The November 1 field/particle close-out also passed **45 targeted CUDA
 tests** (6+39), following the preceding 37-test correction suite. Their

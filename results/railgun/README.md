@@ -14,8 +14,8 @@ all original frames are retained. Maximum charge drift is 0.068895% /
 are about three times smaller on the finer grid. This is a short unperturbed
 import test; long-term stability remains untested.
 These are two-grid improvements, not a Richardson convergence result.
-The matching 192^3 member and three-grid analysis are prepared, awaiting
-separate GPU authorisation; no third-grid result is present in this package.
+The matching 192^3 member is authorised and in progress; no third-grid
+result is present in this package yet.
 
 Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`.
 Summary: `reports/evolution-pilot-070.json`. Initial grid figures:

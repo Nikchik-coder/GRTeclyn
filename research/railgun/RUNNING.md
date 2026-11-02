@@ -4,7 +4,7 @@
 short evolution pilots finished. All approved budgets are closed.
 See [EVOLUTION.md](EVOLUTION.md) and [STATUS.md](STATUS.md).
 
-**Prepared, not launched:** the matching 192^3 run and a three-grid Richardson
+**Approved November 2, regressions running:** the matching 192^3 run and a three-grid Richardson
 analyser, specified in [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
 The two completed pilots alone do not establish Richardson convergence.
 

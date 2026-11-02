@@ -6,11 +6,13 @@ pilot**, not a long-time stability test. Its exact bounded scope is in
 The separate go for GPU tests, two production exports/core certificates,
 four zero-step preflights and two t<=2 evolutions was received November 2.
 All two exports, four zero-step startups and two evolutions are now spent.
-No further grids, perturbations or longer evolutions are authorised.
+A separate November 2 go now authorises only the matching 192^3 completion
+described below. Perturbations and longer evolutions remain outside scope.
 
 The next prepared step completes a **96^3 / 128^3 / 192^3 Richardson study**;
 its separate proposal is [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
-It awaits a run-specific go. Two-grid error reductions are refinement
+The final 192^3 member received its run-specific go November 2. Two-grid
+error reductions are refinement
 evidence, not a measured three-grid Richardson result.
 
 ## Source and physical model
@@ -202,7 +204,7 @@ frozen binary and exact source. Only N, its corresponding max_steps=600,
 and run/data paths change. The template regression diffs against the actual
 archived 128^3 parameters and refuses any further changed key.
 
-The proposed new budget is one targeted regression job, one 192^3
+The separately approved budget is one targeted regression job, one 192^3
 export/core certification, two zero-step startups (inspectable preflight
 and actual launch preflight), and one evolution. Each job has four threads,
 160 GiB and 1800 seconds, on the second node/card 0 only; checkpoints off,
