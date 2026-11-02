@@ -1,0 +1,26 @@
+{
+  "search_solves": 0,
+  "refinement_solves": 1,
+  "evaluations": [],
+  "finalists": [
+    {
+      "log_lapse": -2.3034471490295396,
+      "accepted": false,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-validate272-20261102/finalists/01",
+      "checks": {
+        "passed": false,
+        "ergoregion_resolved": false,
+        "drifts": {},
+        "frequencies": [
+          0.7075982948168819
+        ],
+        "common_point_extrema": []
+      }
+    }
+  ],
+  "ergoregion_resolved": true,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-validate272-20261102/incumbent.npz",
+  "best_ratio": 1.0809707039958907,
+  "incumbent_ratio": 1.0809707039958907,
+  "seconds": 43.62949966802262
+}

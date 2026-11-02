@@ -1,0 +1,48 @@
+[capped_job] start 2026-11-02T16:40:02Z threads=4 mem=160G timeout=1800s
+Mon Nov  2 16:40:02 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:4C:00.0 Off |                    0 |
+| N/A   31C    P0             68W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         1.8T  1.1T  544G  68% /
+47M	<scratch>/_cache
+1.7G	<scratch>/ring070-n128-t2-20261102
+5.6G	<scratch>/ring070-n192-t2-20261102
+5.6G	<scratch>/ring070-n192-t50-20261102
+709M	<scratch>/ring070-n96-t2-r2-20261102
+.....................................................                    [100%]
+53 passed in 70.79s (0:01:10)
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 5.059e-06 -> 2.534e-10 (t = 1)
+[newton] iter 1: |R| 2.534e-10 -> 2.157e-14 (t = 1)
+[newton] iter 2: |R| 2.157e-14 -> 1.088e-14 (t = 0.25)
+[newton] converged at iter 3: |R|_inf,scaled = 1.286e-15
+{"event": "grid", "grid": [160, 20], "verdict": "PASS", "reasons": [], "seconds": 43.5675505050458}
+[newton] iter 0: |R| 4.218e-06 -> 2.115e-10 (t = 1)
+[newton] iter 1: |R| 2.115e-10 -> 1.228e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.201e-15
+{"event": "grid", "grid": [192, 24], "verdict": "PASS", "reasons": [], "seconds": 40.61964578088373}
+[newton] iter 0: |R| 3.618e-06 -> 1.814e-10 (t = 1)
+[newton] iter 1: |R| 1.814e-10 -> 7.866e-14 (t = 1)
+[newton] iter 2: |R| 7.866e-14 -> 5.351e-14 (t = 1)
+[newton] iter 3: |R| 5.351e-14 -> 2.941e-14 (t = 1)
+[newton] iter 4: |R| 2.941e-14 -> 1.426e-14 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 1.494e-15
+{"event": "grid", "grid": [224, 28], "verdict": "PASS", "reasons": [], "seconds": 55.577359152026474}
+[capped_job] end 2026-11-02T16:43:40Z exit=0

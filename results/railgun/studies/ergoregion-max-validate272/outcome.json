@@ -1,0 +1,100 @@
+{
+  "stage": "complete",
+  "accepted": false,
+  "candidate": {
+    "seed": 272,
+    "source": "runs/railgun/single-ring/scans/ergoregion-max-seed272-20261102/attempts/038/state.npz",
+    "source_sha256": "1501de3ed442f7fa11c582c2b5b5d32bfc53217f99eb14489b591e3dffc05bd6",
+    "record": "runs/railgun/single-ring/scans/ergoregion-max-seed272-20261102/attempts/038/record.json",
+    "record_sha256": "ce3fe25fe76a37a84a68f325556a8e459c0bfedb183a4d8831b05f28641460ad",
+    "central_lapse": 0.09991383154280617,
+    "grids": [
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ],
+      [
+        224,
+        28
+      ]
+    ],
+    "maximum_new_solves": 3,
+    "max_iterations": 30,
+    "minimum_updates": 2,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "newton_tol": 1e-14,
+    "search_proposals": 0,
+    "source_reproduction_solves": 0,
+    "checkpoints": false,
+    "numerical_execution": false,
+    "config": {
+      "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+      "central_lapse_bounds": [
+        0.08,
+        0.32
+      ],
+      "x0": 0.2,
+      "sigma0": 0.05,
+      "seed": 272,
+      "popsize": 4,
+      "max_evaluations": 32,
+      "max_search_solves": 80,
+      "max_finalists": 4,
+      "max_refinement_solves": 12,
+      "max_log_lapse_step": 0.04,
+      "max_splits_per_evaluation": 4,
+      "search_grid": [
+        160,
+        20
+      ],
+      "grids": [
+        [
+          160,
+          20
+        ],
+        [
+          192,
+          24
+        ],
+        [
+          224,
+          28
+        ]
+      ],
+      "length": 2.5,
+      "max_iter": 30,
+      "newton_tol": 1e-14,
+      "equation_tol": 1e-08,
+      "tail_tol": 1e-06,
+      "observable_tol": 1e-06,
+      "mode": "maximise",
+      "finalist_log_separation": 0.02
+    }
+  },
+  "refinement": {
+    "log_lapse": -2.3034471490295396,
+    "accepted": false,
+    "directory": "runs/railgun/single-ring/scans/ergoregion-max-validate272-20261102/finalists/01",
+    "checks": {
+      "passed": false,
+      "ergoregion_resolved": false,
+      "drifts": {},
+      "frequencies": [
+        0.7075982948168819
+      ],
+      "common_point_extrema": []
+    }
+  },
+  "search_solves": 0,
+  "refinement_solves": 1,
+  "best_validated_ratio": 1.0809707039958907,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-validate272-20261102/incumbent.npz",
+  "stability": "not_assessed",
+  "global_maximum_established": false
+}

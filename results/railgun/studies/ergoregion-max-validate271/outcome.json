@@ -1,0 +1,139 @@
+{
+  "stage": "complete",
+  "accepted": true,
+  "candidate": {
+    "seed": 271,
+    "source": "runs/railgun/single-ring/scans/ergoregion-max-seed271-20261102/attempts/024/state.npz",
+    "source_sha256": "db7c8b7a5c488fe865ce2e6a476dee7ebd82db936a9058d0325b890e93d57981",
+    "record": "runs/railgun/single-ring/scans/ergoregion-max-seed271-20261102/attempts/024/record.json",
+    "record_sha256": "85348f604eeaecffa77f3596814d8b4e99f28dc684c120dd0e6eb6572dbcccaa",
+    "central_lapse": 0.12993066385192364,
+    "grids": [
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ],
+      [
+        224,
+        28
+      ]
+    ],
+    "maximum_new_solves": 3,
+    "max_iterations": 30,
+    "minimum_updates": 2,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "newton_tol": 1e-14,
+    "search_proposals": 0,
+    "source_reproduction_solves": 0,
+    "checkpoints": false,
+    "numerical_execution": false,
+    "config": {
+      "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+      "central_lapse_bounds": [
+        0.08,
+        0.32
+      ],
+      "x0": 0.2,
+      "sigma0": 0.05,
+      "seed": 271,
+      "popsize": 4,
+      "max_evaluations": 32,
+      "max_search_solves": 80,
+      "max_finalists": 4,
+      "max_refinement_solves": 12,
+      "max_log_lapse_step": 0.04,
+      "max_splits_per_evaluation": 4,
+      "search_grid": [
+        160,
+        20
+      ],
+      "grids": [
+        [
+          160,
+          20
+        ],
+        [
+          192,
+          24
+        ],
+        [
+          224,
+          28
+        ]
+      ],
+      "length": 2.5,
+      "max_iter": 30,
+      "newton_tol": 1e-14,
+      "equation_tol": 1e-08,
+      "tail_tol": 1e-06,
+      "observable_tol": 1e-06,
+      "mode": "maximise",
+      "finalist_log_separation": 0.02
+    }
+  },
+  "refinement": {
+    "log_lapse": -2.040754325796122,
+    "accepted": true,
+    "directory": "runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102/finalists/01",
+    "checks": {
+      "passed": true,
+      "drifts": {
+        "lapse_min": 1.6898982213575664e-13,
+        "gtt_max": 7.137068713802819e-13,
+        "shift_norm_over_lapse_max": 2.6294766973415497e-12,
+        "frequency": 4.2588155224621005e-13
+      },
+      "ergoregion_resolved": true,
+      "gtt_three_grid_spread": 7.137068713802819e-13,
+      "frequencies": [
+        0.6741001876996131,
+        0.6741001876998064,
+        0.6741001877002323
+      ],
+      "common_point_extrema": [
+        {
+          "lapse_min": 0.11774462779091585,
+          "gtt_max": 0.24679809284783608,
+          "shift_norm_over_lapse_max": 3.7207895365932924,
+          "gtt_max_point": {
+            "rho": 0.35974782295200164,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        },
+        {
+          "lapse_min": 0.11774462779094644,
+          "gtt_max": 0.24679809284775864,
+          "shift_norm_over_lapse_max": 3.720789536592029,
+          "gtt_max_point": {
+            "rho": 0.35974782295200164,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        },
+        {
+          "lapse_min": 0.11774462779077745,
+          "gtt_max": 0.24679809284847234,
+          "shift_norm_over_lapse_max": 3.7207895366018127,
+          "gtt_max_point": {
+            "rho": 0.35974782295200164,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        }
+      ]
+    }
+  },
+  "search_solves": 0,
+  "refinement_solves": 3,
+  "best_validated_ratio": 3.7207895366018127,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102/finalists/01/accepted.npz",
+  "stability": "not_assessed",
+  "global_maximum_established": false
+}
