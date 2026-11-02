@@ -31,6 +31,10 @@ class RadialRecipeLevel : public GRAMRLevel
     void tag_cells(amrex::TagBoxArray &a_tag_box_array,
                    amrex::Real a_regrid_threshold) final;
     void specificPostTimeStep() override;
+    void specific_post_init() override;
+
+    //! Composite Noether charge, matter Jz and scalar-shape modes; opt-in.
+    void write_complex_scalar_diagnostics();
 
     //! Persist / restore the recentring box's odometer alongside a checkpoint.
     //! Without it a restarted run resumes with the trajectory silently reset to

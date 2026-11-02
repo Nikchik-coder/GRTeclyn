@@ -1,6 +1,6 @@
 # Ring spacetimes and spin transport — status
 
-Updated **2026-11-01 (MSK)**. Branch: `feature/optimisation`.
+Updated **2026-11-02 (MSK)**. Branch: `feature/optimisation`.
 
 The minimal-exotic-matter wormhole optimisation campaign remains paused.
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
@@ -9,13 +9,19 @@ between-ring particle experiment are complete and accepted.** Every original
 physical acceptance limit is unchanged. Earlier failed studies remain rejected
 in their immutable archives.
 
+**New work:** the omega=0.70 single ring is being prepared for full Cartesian
+3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
+matter-J/m=2 diagnostics are implemented. Twelve local analytic/preflight
+tests pass. GPU export, new-core certification and time evolution have not
+started; their bounded pilot awaits a run-specific go. See [EVOLUTION.md](EVOLUTION.md).
+
 ## Live and queue
 
-**Live:** none; both GPU cards idle. **Queued:** none. No ETA.
+**Live GPU runs:** none; both GPU cards idle. **Queued GPU runs:** none. No ETA.
 All approved correction and conditional transport budgets are closed.
 
-Last scratch check, second GPU node, **20:17 MSK**: **47 MB** in `_cache/`
-only, **534 GB free**. First node not listed. These stationary and transport
+Last scratch check, second GPU node, **2026-11-02 08:42 MSK**: **47 MB** in `_cache/`
+only, **560 GB free**. First node not listed. These stationary and transport
 jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
 
 - Strong-ring final phase check: card 0, code `4e0af89a`,

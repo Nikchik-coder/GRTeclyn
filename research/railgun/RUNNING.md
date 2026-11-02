@@ -1,5 +1,8 @@
 # Running ring studies
 
+**New November 2:** the omega=0.70 Cartesian 3+1 import/pilot is prepared;
+see [EVOLUTION.md](EVOLUTION.md). GPU export and evolution await a separate go.
+
 **Completed November 1:** both numerical blockers are resolved. Accepted
 archives: `studies/strong-uphill-073-validated/`, `studies/annular-validated-k12/`
 and `studies/annular-transit-k12/` under results/railgun. All eight annular

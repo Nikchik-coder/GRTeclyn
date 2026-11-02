@@ -1,0 +1,17 @@
+# Preserve the full geometry and radiation frame set, plus both scalar parts.
+chi
+chi_minus_1
+K
+lapse
+shift1
+shift2
+shift3
+phi
+Pi
+phi_lump0
+Pi_lump0
+Weyl4_Re
+Weyl4_Im
+Weyl4_Mag
+scalar_activity
+local_speed

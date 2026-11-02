@@ -29,6 +29,8 @@ class SimulationParameters : public SimulationParametersBase
     void read_shared_params(GRParmParse &pp)
     {
         pp.load("calculate_constraint_norms", calculate_constraint_norms, false);
+        pp.load("calculate_complex_scalar_diagnostics",
+                calculate_complex_scalar_diagnostics, false);
         pp.load("calculate_energy_conditions", calculate_energy_conditions,
                 false);
         pp.load("calculate_curvature_invariants",
@@ -262,6 +264,11 @@ class SimulationParameters : public SimulationParametersBase
 
     void check_params()
     {
+        check_parameter("calculate_complex_scalar_diagnostics",
+                        calculate_complex_scalar_diagnostics,
+                        !calculate_complex_scalar_diagnostics ||
+                            recipe_matter_model == "grtresna_complex_scalar",
+                        "requires the single complex scalar model");
         check_parameter("recipe_num_bases", recipe_params.num_bases,
                         recipe_params.num_bases > 0 &&
                             recipe_params.num_bases <=
@@ -307,6 +314,7 @@ class SimulationParameters : public SimulationParametersBase
     }
 
     bool calculate_constraint_norms{};
+    bool calculate_complex_scalar_diagnostics{};
     bool calculate_energy_conditions{};
     bool calculate_curvature_invariants{};
     bool recipe_exotic_matter{};
