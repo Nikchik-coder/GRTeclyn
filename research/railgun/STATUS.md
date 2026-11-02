@@ -15,7 +15,11 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**CMA-ES search prepared, awaiting its bounded go:**
+**Live CMA-ES search:** `railgun-ergoregion-cma-20261102`, two-GPU node/card 0,
+source `052487e5d`, started **18:38:03 MSK**. GPU regressions run first;
+search follows only on success. One-hour hard cap, ending by **19:38:03 MSK**;
+completion ETA/throughput not yet measured. Checkpoints **OFF**, explicitly
+confirmed November 2. GPU 1 remains free. Scope:
 [ergoregion_cma.json](studies/ergoregion_cma.json). Automate trial selection
 using the same CMA-ES ask/tell algorithm as the exotic-matter search. For the
 unchanged canonical k=1, m=1 single-field model, search the continuous branch
@@ -42,12 +46,12 @@ No new matter potential, winding, 3+1 evolution or physical stability claim.
 
 Twenty-three CPU preparation/engine/acceptance tests pass, including actual
 bounded CMA generations, failure ranking and automatic bisection. Two new
-CUDA border/recovery tests await the same go. Prepared card 0 on the authorised
+CUDA border/recovery tests are included in the live job. Card 0 on the authorised
 two-GPU node only, four CPU threads, 160 GiB, chunks 128, **one-hour** job
-cap including regressions and search. Checkpoint choice awaits confirmation;
-the stationary search writes fields/logs, not AMR evolution checkpoints.
-No CMA GPU work has started. Both H100s idle at preparation; scratch retains
-14 GB, with 531 GB free; no scratch or frame removal.
+cap including regressions and search. The stationary search writes fields/logs,
+not AMR evolution checkpoints. Both H100s were free before launch. Scratch
+at launch: 14 GB retained, **541 GB free**, three plotfiles per old evolution,
+zero checkpoints; no scratch or frame removal.
 
 **Stopped:** `railgun-ergoregion-amplitude-20261102`, second GPU node/card 0,
 **17:56:39–17:59:36 MSK**, exit 2, 0.0492 h including tests. All **23 GPU

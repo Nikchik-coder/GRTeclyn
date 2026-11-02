@@ -44,8 +44,8 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 ## Automatic CMA-ES ergoregion search
 
-Prepared scope: [ergoregion_cma.json](studies/ergoregion_cma.json), awaiting
-its run-specific go. The same `cma.CMAEvolutionStrategy` ask/tell algorithm as
+Scope: [ergoregion_cma.json](studies/ergoregion_cma.json), approved November 2
+with checkpoints OFF and launched at 18:38:03 MSK on the two-GPU node/card 0. The same `cma.CMAEvolutionStrategy` ask/tell algorithm as
 the wormhole search chooses **central lapse**, the central clock rate relative
 to infinity, between 0.14 and 0.41. For this fixed k=1, m=1 free scalar model
 there is one continuous branch coordinate; map scale is a numerical choice,
