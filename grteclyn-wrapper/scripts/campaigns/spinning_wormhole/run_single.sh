@@ -466,8 +466,16 @@ if [[ "${SWH_CONSUME:-1}" != "0" ]]; then
   # directory instead and the process is named after the run's label.
   cat > "${RUN_DIR}/post.py" <<PY
 # written by run_single.sh: entry point for the plotfile consumer
+import os
 import runpy
-runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
+if __name__ == "__main__":
+    # Spawned workers import this file as __mp_main__; only the parent enters
+    # the CLI. Long runs can cap each consumer worker independently of AMReX.
+    if "SWH_CONSUMER_THREADS" in os.environ:
+        for key in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                    "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
+            os.environ[key] = os.environ["SWH_CONSUMER_THREADS"]
+    runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
 PY
 fi
 # What the preflight checks and renders the frames with (through the

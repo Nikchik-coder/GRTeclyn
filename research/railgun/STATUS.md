@@ -15,12 +15,28 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Live:** none. **Queued:** none. The final 192^3 job finished at
+**Live:** none. **Requested, awaiting the mandatory checkpoint choice:**
+`ring070-n192-t50-20261102`, second GPU node/card 0, same certified t=0
+cube and frozen binary, N=192, box 32, stop_time=50, max_steps=15000.
+No new GPU startup yet. A checkpoint choice was asked directly; no answer
+has been recorded. The earlier t=2 run has no restart checkpoint.
+
+The new duration is requested. Physics, box, timestep, gauge and plot cadence
+stay unchanged. Two single-thread consumer workers preserve all 16 fields
+without the serial backlog; the generated entry point now guards spawn.
+Ten local preparation/spawn/preflight regressions pass. Four evolution CPU
+threads, 160 GiB per process, 3 h job cap, keep-last three plotfiles.
+See [evolution_long_070.json](studies/evolution_long_070.json).
+The original box can affect the ring before t=50; this is an exploratory
+duration test, not an isolated-ring stability result. No start ETA until
+the checkpoint choice is supplied.
+
+**Previous run complete:** the final 192^3 Richardson job finished at
 **10:24:52 MSK**, exit 0, exactly **t=2**, all frames processed. Evolution
 speed was approximately **30.4 code units/h**. All authorised budgets are
-spent; both GPUs idle. No remaining ETA and no automatic extension.
+spent; both GPUs idle. Its budget is closed; the t=50 request is separate.
 
-Last scratch check, second GPU node, **2026-11-02 10:32 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 10:43 MSK**: `_cache/`
 **47 MB**, 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3 **5.6 GB**;
 **539 GB free**. Exactly three plotfiles per run, zero checkpoints.
 All original frames and slice caches retained on NFS; first node not listed.

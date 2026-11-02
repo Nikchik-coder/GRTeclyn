@@ -1,5 +1,10 @@
 # Running ring studies
 
+**Requested November 2:** N=192 to t=50, same original box and certified
+t=0 cube. The new launcher and parallel-consumer fix are prepared; GPU
+startup waits for the explicitly requested checkpoint choice.
+Scope: [studies/evolution_long_070.json](studies/evolution_long_070.json).
+
 **Completed November 2:** the omega=0.70 Cartesian 3+1 import and full
 96^3 / 128^3 / 192^3 Richardson study through t=2 finished. All approved
 budgets are closed; both GPUs idle. The finest pair's Ham/Mom orders at

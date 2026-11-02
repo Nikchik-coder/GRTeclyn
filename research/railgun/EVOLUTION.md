@@ -271,3 +271,32 @@ then compare an unperturbed control with explicit small nonaxisymmetric
 perturbations. Measure constraint convergence, charge loss/boundary flux,
 shape-mode growth and, if collapse occurs, 3D MOTS. A finite quiet run bounds
 growth over its tested interval; it does not prove indefinite stability.
+
+## Requested N=192 evolution through t=50
+
+The November 2 request extends the same 192^3 run to t=50 in its original
+box. No checkpoint exists at t=2, so reuse the accepted, hash-matched t=0
+cube. `evolution_long.py` starts from the actual packed 192^3 params and
+changes only stop_time=50, max_steps=15000, run/data paths and the explicit
+checkpoint policy. Source, binary, grid, matter, gauge, timestep and output
+cadence are verified against the earlier run. No new production export or
+JAX startup is needed. A full launch preflight is still mandatory.
+
+The generated consumer entry point now has a multiprocessing main guard;
+two spawned workers can process the unchanged 25-step plot cadence. Each
+consumer worker uses one CPU thread, while AMReX retains four. The local
+regression actually starts spawned children through the generated entry
+point. Ten duration/identity/spawn/shared-preflight checks pass. All default
+frames and caches remain mandatory, keep-last is three, host address-space
+cap is 160 GiB per process, and the complete foreground job has a 3 h cap.
+
+Before GPU startup the checkpoint choice must be answered explicitly for
+this run: off, or on every 1500 steps (5 time units), keep three. The latter
+requires `amr.checkpoint_files_output=1`, `checkpoint_interval=1500` and
+`checkpoint_keep=3`; both choices are covered by the preparer tests.
+The run definition is [studies/evolution_long_070.json](studies/evolution_long_070.json).
+
+The box is only 32 wide and already has boundary-dominated whole-box
+constraint norms. Boundary effects can reach the interior before t=50.
+The requested run measures longer behaviour in that box; it does not add
+long-time Richardson convergence or establish isolated-ring stability.
