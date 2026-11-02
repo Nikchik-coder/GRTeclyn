@@ -9,7 +9,7 @@ import pytest
 
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import lobatto
 from grteclyn_wrapper.optimisation.railgun.ergoregion_scan import (
-    convergence_checks, preflight, remap_arrays, secant_guess)
+    common_metric_samples, convergence_checks, preflight, remap_arrays, secant_guess)
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT/'results/railgun/studies/frequency-deep/frequency_01/accepted.npz'
@@ -84,6 +84,73 @@ def test_ergoregion_needs_three_passing_grids_and_a_resolved_positive_sign():
     assert not convergence_checks(rows, [.7, .7, .7001])['passed']
     assert not convergence_checks(rows, [.7, .7, np.nan])['passed']
     assert not convergence_checks(rows[:2], [.7]*2)['passed']
+
+
+def test_common_point_extrema_remove_grid_position_error(tmp_path):
+    results, raw_minima = [], []
+    for nx, ny in [(16, 6), (24, 8), (32, 10)]:
+        s, _ = lobatto(nx)
+        y, _ = lobatto(ny)
+        f = -1+(s[:, None]-.137)**2+.2*(y[None, :]+.4)**2
+        arrays = [f]+[np.zeros_like(f) for _ in range(4)]
+        meta = dict(schema=1, model='canonical_regular_centre', nx=nx, ny=ny,
+                    length=2.5, fields=[{}], validated=False)
+        path = tmp_path/f'{nx}.npz'
+        np.savez(path, metadata=json.dumps(meta), u=np.r_[np.array(arrays).ravel(), .7])
+        sample = common_metric_samples(path)
+        results.append(dict(verdict='PASS', **sample))
+        raw_minima.append(float(np.exp(f.min()/2)))
+    assert np.ptp(raw_minima) > 1e-5
+    checks = convergence_checks(results, [.7]*3)
+    assert checks['passed']
+    assert max(checks['drifts'].values()) < 1e-13
+    assert not checks['ergoregion_resolved']
+
+
+def test_bootstrap_reuse_preserves_three_spent_solves_and_refuses_promoted_evidence(tmp_path):
+    from grteclyn_wrapper.optimisation.railgun.ergoregion_scan import bootstrap_preflight
+    config = json.loads(CONFIG.read_text())
+    plan = preflight(SOURCE, config)
+    previous = tmp_path/'previous'
+    target = previous/'amplitude_00'
+    target.mkdir(parents=True)
+    def write(path, value):
+        path.write_text(json.dumps(value))
+    write(previous/'manifest.json', dict(config=config))
+    write(previous/'outcome.json', dict(solves=3, records=[dict(index=0, accepted=False)]))
+    write(target/'manifest.json', dict(config=config))
+    original = json.loads((SOURCE.parent/'grid_160x20.json').read_text())
+    with np.load(SOURCE) as data:
+        meta = json.loads(str(data['metadata']))
+        old_arrays = data['u'][:-1].reshape(5, 161, 21)
+    old_s, _ = lobatto(160)
+    old_y, _ = lobatto(20)
+    rows = []
+    for nx, ny in config['grids']:
+        s, _ = lobatto(nx)
+        y, _ = lobatto(ny)
+        arrays = remap_arrays(dict(enumerate(old_arrays)), old_s, old_y, 5., s, y, 2.5)
+        changed = dict(meta, nx=nx, ny=ny, length=2.5, validated=False,
+                       fields=[dict(meta['fields'][0], amplitude=plan['initial_pin'],
+                                    anchor_radius=plan['anchor_radius'])])
+        changed.pop('frequency_targets')
+        np.savez(target/f'grid_{nx}x{ny}.npz', metadata=json.dumps(changed),
+                 u=np.r_[np.array(list(arrays.values())).ravel(), .7])
+        row = dict(grid=[nx, ny], verdict='PASS', newton=dict(converged=True, newton_steps=[1., 1.]),
+                   M_ADM_estimate=original['M_ADM_estimate'], J_volume=original['J_volume'])
+        rows.append(row)
+        write(target/f'grid_{nx}x{ny}.json', row)
+    study = dict(accepted=False, reasons=['additional_acceptance'], records=rows)
+    write(target/'outcome.json', study)
+    reuse = bootstrap_preflight(previous, SOURCE, config, plan)
+    assert reuse['solves_spent'] == 3
+    assert reuse['solves_remaining'] == 24
+    assert reuse['checks']['passed']
+    assert len(reuse['hashes']) == 10
+    study['accepted'] = True
+    write(target/'outcome.json', study)
+    with pytest.raises(ValueError, match='stopped'):
+        bootstrap_preflight(previous, SOURCE, config, plan)
 
 
 @pytest.mark.parametrize('extra_passes', [False, True])

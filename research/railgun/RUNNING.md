@@ -78,6 +78,10 @@ or that resolved sign. No automatic retries, k=2 solve or further refinement.
 A pin at fixed radius can itself turn; this experiment does not assume a
 monotone physical branch, a known frequency floor or guaranteed formation.
 Shift/lapse is an observer-dependent metric ratio, not the matter's speed.
+Strong-field maxima are now sampled on identical physical points for every
+resolution: 385 radial by 50 angular, including the origin, axis and equator.
+The raw grid-dependent sampled maxima remain in the original grid reports;
+the common-point values and positive-g_tt coordinates go in the added checks.
 
 After a go, run the new test file and the existing frequency, geometry and
 diagnostic tests on the named card first. Require CUDA and float64; pass
@@ -87,7 +91,7 @@ allocation and preallocation off. Then run the command above without
 Keep every attempted field and log under the grouped paths. No 3+1 evolution
 or AMR checkpoints are part of the proposed stationary study.
 
-Prepared sequential test/scan command, only after the run-specific go:
+Original sequential test/scan command, retained for reproduction:
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-20261102 \
@@ -99,6 +103,27 @@ The script checks card 0 is free again, writes the GPU regression report to
 `runs/railgun/checks/`, and starts the scan only if those tests pass. Its
 1800-second cap covers tests and continuation together; timeout retains all
 completed files and requires a new bounded proposal before any continuation.
+
+The first job stopped after three passing reproduction solves because the
+initial extra comparison used different sample positions. It remains rejected.
+The corrected continuation is prepared, awaiting a separate go:
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-r2-20261102 \
+  --threads 4 --mem 160 --timeout 1800 --gpu -- \
+  bash research/railgun/run_ergoregion_amplitude.sh --resume-bootstrap
+```
+
+Before any GPU startup, preview it with the dry-run command above plus
+`--resume-bootstrap runs/railgun/single-ring/scans/ergoregion-amplitude-20261102`.
+It checks the existing three passing grid reports, hashes every reused input,
+verifies the model/pin and rechecks source reproduction at the unchanged
+limits. No old evidence changes. A new `ergoregion-amplitude-20261102-r2/`
+directory copies and recertifies those three fields; `outcome.original.json`
+preserves the earlier rejection. The remaining eight increases use at most
+24 new solves, with three prior solves counted toward the original 27.
+Nine CPU tests cover the correction and reuse; GPU tests must pass again
+before continuation. The new 1800-second cap includes tests and solves.
 
 From the repository root:
 

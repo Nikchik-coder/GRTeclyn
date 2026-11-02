@@ -28,6 +28,20 @@ fields retained, no accepted file written. Both GPUs idle. The stopped run
 stays unchanged. Prepare a common-physical-point comparison and a separately
 approved continuation reusing these three solves; no automatic restart.
 Checkpoints **OFF**. Scratch: 14 GB retained, 531 GB free, unchanged.
+
+**Correction prepared, awaiting go:** compare all states at the same 385 radial
+by 50 angular physical points, including the origin, axis and equator. This
+removes grid-position error in sampled maxima without changing any threshold.
+Nine CPU preparation tests pass, including an analytic example whose raw
+nodal minima disagree but common-point values agree, and three-solve reuse
+with hash-recorded evidence. The prepared `--resume-bootstrap` mode checks
+all original passing grid reports, model/pin metadata, physical reproduction
+and corrected comparisons before GPU startup. It preserves the rejected
+directory, copies its evidence to a new run, and carries forward three spent
+solves. At most **24 new solves** remain for the eight increases, cumulative
+27. Source reproduction is not solved again. Proposed same card/resources,
+0.5 h cap for tests and continuation, checkpoints OFF; no restart launched.
+
 Single-ring ergoregion search,
 [ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
 hash-checked accepted omega=0.70 state; k=1, m=1 and the matter model stay fixed.
