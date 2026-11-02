@@ -21,9 +21,15 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 **19:53:49 MSK**, after the explicit go for both renewed jobs and
 checkpoints **OFF**. All **55 GPU regressions pass on each card**, in
 **70.77 / 71.39 s**. Both accepted-source reproductions pass; CMA
-continuation is advancing. At **19:56:27 MSK**, cards 0/1 had started
-**9 / 4 search solves**, zero verification solves; no new accepted result.
-Best accepted value remains **3.720789536602**.
+continuation is advancing. At **20:10:04 MSK**, cards 0/1 had started
+**49 / 18 search solves** and **3 / 10 verification solves**, with
+**17 / 9 proposals** recorded. Both jobs remain live. New three-grid accepted
+bests are **5.134883762021 / 4.479246034814**. The overall accepted leader,
+card 0 finalist 01, has frequency **0.705895369384**, central lapse
+**0.101057428**, minimum lapse **0.090379267**, and maximum
+**g_tt=+0.307346211927**. Its final-pair dragging difference is **2.32e-12**;
+three-grid g_tt spread **7.02e-13**. Card 1 finalist 01 was rejected;
+finalists 02 and 03 passed. No global maximum or dynamical stability claim.
 **Every potential new best immediately passes all three grids before receiving
 a successful score; otherwise it is rejected.** No deferred finalist phase.
 One-hour cap per job including tests; deadline **20:53:49 MSK**,
@@ -34,6 +40,26 @@ chunks 128, fresh Jacobians, max 30 iterations/minimum two updates, original
 1e-8/1e-6 acceptance limits unchanged. No evolution time applies. Both cards
 were idle before launch. Scratch: **14 GB retained, 544 GB free**, three
 plotfiles per old evolution, zero checkpoints; no scratch/frame removal.
+
+**Physical-interpretation audit:** the saved 3.72 ring does have an
+equatorial ergoregion at coordinate radii **0.0583–0.8525**, but shift/lapse
+is not a locally measured speed. Explicit metric contractions give local
+photon speed c in both directions. The half-peak matter contour is not a
+surface: matter energy density is **24%** of peak at radius 0.50 and **46%**
+at 0.08, so the claimed near-empty halo and hole fail the 1e-6 criterion.
+Negative energy relative to infinity is locally possible; an escaping
+Penrose split and a boomerang photon trajectory have not been integrated.
+The asserted 35% gain is unsupported. For one neutral unpowered two-body
+decay of a massive particle arriving from infinity, the photon-limit local
+gain bound is **5.83%**, before escape restrictions; this is not a measured
+gain or a bound on powered/collisional processes. Frequency endpoints support
+a turn but do not locate it. Close three-grid agreement is not a twelve-digit
+bound on every physical quantity, and one stalled Newton correction does not
+establish a universal floating-point limit. The new accepted 5.13 result
+already exceeds the proposed 4.3–4.8 ceiling. Reproduce this CPU-only audit
+with `research/railgun/audit_ring_claims.py`; its hash-checked field results
+are in `results/railgun/reports/ergoregion-comparison/claims-audit.json`.
+No new field solves or particle tracks were run for the audit.
 
 **Saved-candidate validation COMPLETE: 3.72 accepted, 5.21 rejected**,
 source `a9eb87a8a`:

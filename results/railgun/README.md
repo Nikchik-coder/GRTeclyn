@@ -64,12 +64,25 @@ companion `validated-comparison.json`, source hashes and label audit are in
 archived in `studies/ergoregion-max-validate271/` and `...validate272/`.
 The accepted common-point dragging measure is 3.720789536602; all original
 equation/flux and three-grid convergence gates pass. Dynamical stability
-is untested. This is the best validated ring found here, not a global maximum.
+is untested. This was the best validated ring at the comparison's snapshot;
+the continuing search has since accepted stronger rings
+(see [current status](../../research/railgun/STATUS.md)).
 Rebuild from the saved numeric profiles, without a GPU or cluster access:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_comparison \
   --snapshot results/railgun/reports/ergoregion-comparison/validated-comparison.json
+```
+
+The [physical-claims audit](reports/ergoregion-comparison/claims-audit.json)
+checks this accepted 3.72 field directly. It confirms the ergoregion and local
+negative-energy directions, rejects the faster-than-light and near-empty-halo
+interpretations, and derives a conditional single-decay energy bound.
+It does not integrate photon paths or perform an energy-extraction experiment.
+Reproduce it on a CPU, without JAX or cluster access:
+
+```bash
+grteclyn-wrapper/.venv/bin/python research/railgun/audit_ring_claims.py
 ```
 
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
