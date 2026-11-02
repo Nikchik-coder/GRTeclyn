@@ -18,8 +18,8 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 **Live:** `railgun-ring070-evolve-n192-t50-20261102`, second GPU node/card 0,
 source `b64bf13ff`, started **11:13:00 MSK**. Full launch preflight passed;
 unperturbed evolution has started, **stop_time=50**, max_steps=15000.
-At **11:13:49 MSK**, t=0.0767, early speed **32.0 code units/h**.
-ETA including processing **1.7 h, about 12:55 MSK**; hard cap **3 h,
+At **11:22:14 MSK**, t=4.1833, speed **29.3 code units/h**; GPU 0 at 92%.
+ETA including processing **1.6 h, about 12:58 MSK**; hard cap **3 h,
 14:13 MSK**. **Checkpoints OFF**, explicitly chosen November 2.
 
 Same certified t=0 cube and frozen binary, N=192, box 32. Physics, timestep,
@@ -38,11 +38,21 @@ not a new long-time Richardson or isolated-ring stability result.
 speed was approximately **30.4 code units/h**. All authorised budgets are
 spent. Its budget is closed; the t=50 run has its separate go.
 
-Last scratch check, second GPU node, **2026-11-02 11:13 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 11:22 MSK**: `_cache/`
 **47 MB**, old 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3/t2 **5.6 GB**,
-live 192^3/t50 **1.9 GB**; **537 GB free**. Old runs have three plotfiles
-each; the live consumer is configured to retain three. Zero checkpoints.
+live 192^3/t50 **12 GB**; **528 GB free**. Old runs retain three plotfiles;
+live scratch has six including pending processing, with keep-last three
+configured and its size stable over several checks. Zero checkpoints.
 All original frames and caches stay on NFS; first node not listed.
+
+**Start verified:** full preflight passed, imported Q/J match the original
+192^3 t=0 values. Actual preflight and live frame 0 are byte-identical to the
+previously inspected reference PNG, SHA256
+`c876db701540a2fe40d941ccc0d8467fafb0d68a6b1e5ea3ee0522a1fd9790c1`.
+Both spawned image workers are active; 45 plotfiles processed through step
+1100, boundary-flux rows advancing. Recent throughput 9.85 s/plot versus
+production about 10.4 s/plot; the initial processing lag remains bounded.
+See `results/railgun/reports/evolution-long-startup.json`.
 
 **192^3 sequence:** 31 GPU regressions passed in 24.63 s; certified export
 **10:05:32–10:12:36 MSK**, eight million padded cells / 1.856 GB; inspectable
