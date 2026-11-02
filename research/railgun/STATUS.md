@@ -20,11 +20,11 @@ started; their bounded pilot awaits a run-specific go. See [EVOLUTION.md](EVOLUT
 **Live GPU runs:** none; both GPU cards idle. **Queued GPU runs:** none. No ETA.
 All approved correction and conditional transport budgets are closed.
 
-**CPU compilation:** the first build (`railgun-evolution-build-20261102`,
-source `cfebfada`, started **08:46 MSK**) was stopped after the compiler
-flagged a diagnostic-output template type mismatch. The explicit vector
-argument is corrected before a fresh build. Four threads and 160 GiB cap;
-no GPU context has started. No build is currently live.
+**CPU compilation live:** `railgun-evolution-build-r2-20261102`, second GPU
+node, source `3e6466ed`, started **08:48:56 MSK**, four threads, 160 GiB cap.
+It includes the compiler-caught diagnostic vector-type fix; the earlier build
+was stopped. No GPU context has started. Build ETA not yet measured;
+hard wall limit **1 h, 09:48:56 MSK**.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; no GPU launch is authorised yet.
 
