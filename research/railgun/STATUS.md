@@ -29,23 +29,26 @@ stays unchanged. Prepare a common-physical-point comparison and a separately
 approved continuation reusing these three solves; no automatic restart.
 Checkpoints **OFF**. Scratch: 14 GB retained, 531 GB free, unchanged.
 
-**Correction prepared, awaiting go:** compare all states at the same 385 radial
-by 50 angular physical points, including the origin, axis and equator. This
-removes grid-position error in sampled maxima without changing any threshold.
-Nine CPU preparation tests pass, including an analytic example whose raw
-nodal minima disagree but common-point values agree, and three-solve reuse
-with hash-recorded evidence. The prepared `--resume-bootstrap` mode checks
-all original passing grid reports, model/pin metadata, physical reproduction
-and corrected comparisons before GPU startup. It preserves the rejected
-directory, copies its evidence to a new run, and carries forward three spent
-solves. At most **24 new solves** remain for the eight increases, cumulative
-27. Source reproduction is not solved again. Proposed same card/resources,
-0.5 h cap for tests and continuation, checkpoints OFF; no restart launched.
-CPU-only checks on the actual saved fields now pass: common-point lapse/g_tt/
-shift/frequency differences are at most **7.37e-14**; source-reproduction
-mass/J/frequency drift is **2.88e-12**. Thus the stopped comparison was a
-sampling-position error. Reused-field hashes are recorded in the dry plan;
-no further Newton solve or GPU initialisation was used for this check.
+**Live, corrected continuation:** `railgun-ergoregion-amplitude-r2-20261102`,
+two-GPU node/card 0, source `ec9b26998`, started **18:10:04 MSK**. Only this
+two-GPU node is authorised; no other cluster is used. All **25 GPU regressions
+pass** in 37.77 s. CUDA/H100/float64 confirmed; the first increased-amplitude
+Newton solve converges in five full updates and is undergoing independent
+checks. GPU 1 is free. Hard runtime cap **0.5 h**, ending by **18:40:04 MSK**;
+completion ETA and solve throughput not yet measured. Checkpoints **OFF**.
+
+All states are compared at the same 385 radial by 50 angular physical points,
+including the origin, axis and equator. Nine CPU preparation tests cover the
+comparison and three-solve reuse. The actual saved reproduction states agree
+at common points to **7.37e-14**; mass/J/frequency source drift **2.88e-12**.
+The original rejected directory stays unchanged; the new run records hashes,
+copies its passing grid evidence and saves `outcome.original.json`. Three
+prior solves count toward 27 total; at most **24 new solves** for eight 6%
+increases remain in this approved run. No reproduction solve is repeated.
+All thresholds and stop-on-rejection conditions remain. Four CPU threads,
+160 GiB, chunks 128, 0.5 h total including tests; retain all fields/logs.
+Scratch at startup: 14 GB retained, 531 GB free, three plotfiles per old
+evolution, zero checkpoints. No scratch or frame was removed.
 
 Single-ring ergoregion search,
 [ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the

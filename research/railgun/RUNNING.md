@@ -106,7 +106,8 @@ completed files and requires a new bounded proposal before any continuation.
 
 The first job stopped after three passing reproduction solves because the
 initial extra comparison used different sample positions. It remains rejected.
-The corrected continuation is prepared, awaiting a separate go:
+The corrected continuation received its separate go and started at
+18:10:04 MSK on the two-GPU node/card 0, checkpoints OFF:
 
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-r2-20261102 \
