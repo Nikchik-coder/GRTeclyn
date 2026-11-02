@@ -6,6 +6,20 @@ run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
+**Spatial guide to the omega=0.70 ring:** `figures/ring070-physics.png`
+(also vector SVG) is one equatorial spatial map with measurements attached
+directly to the centre, ring wall and surrounding space. The central clock ticks 26.06 minutes
+per distant hour; the slowest clock held at fixed coordinates ticks 22.18
+minutes at equatorial radius 1.064. The lapse minimum is instead at radius
+0.819, not at the origin. Angular dragging peaks at the origin; the drag ratio
+peaks at radius 1.237. Both radii are coordinate measurements. No ergoregion
+is found. Dense-map/extremum measurements and observer definitions are in
+`reports/ring070-physics.json` and its profile TSV. Rebuild without a GPU:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_physics
+```
+
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
 omega=0.70 ring was exported to 96^3 / 128^3 / 192^3 Cartesian grids and
 evolved with RadialRecipe's canonical complex scalar through t=2. All finished;

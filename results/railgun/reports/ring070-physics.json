@@ -1,0 +1,53 @@
+{
+  "source": "results/railgun/studies/frequency-deep/frequency_01/accepted.npz",
+  "source_sha256": "bf92fd0c8a9be3bb75481e693f6927ea82757e30f843d06305e053a77280d82e",
+  "centre": {
+    "lapse": 0.43439094881985474,
+    "fixed_clock": 0.43439094881985474,
+    "angular_drag": 0.13047193773418983,
+    "drag_ratio": 0.0,
+    "gtt": -0.18869549641661365
+  },
+  "extrema": {
+    "lapse": {
+      "rho": 0.8193015133570984,
+      "z": 4.7873990362825565e-17,
+      "value": 0.4214558878260905
+    },
+    "fixed_clock": {
+      "rho": 1.0635409216224279,
+      "z": 0.0,
+      "value": 0.3697270832871459
+    },
+    "angular_drag": {
+      "rho": 0.0,
+      "z": 0.0,
+      "value": 0.13047193773418983
+    },
+    "drag_ratio": {
+      "rho": 1.2370163056233727,
+      "z": 0.0,
+      "value": 0.5104073602580259
+    },
+    "gtt": {
+      "rho": 1.0635409216224279,
+      "z": 0.0,
+      "value": -0.13669811611602012
+    }
+  },
+  "mass": 1.2610721027861238,
+  "angular_momentum": -1.3063224292437658,
+  "dimensionless_spin_abs": 0.8214299751378653,
+  "density_peak_radius": 1.14500771,
+  "outside_rho3": {
+    "lapse": 0.6464401423689883,
+    "fixed_clock": 0.6319396471170322,
+    "angular_drag": 0.03045405533361148,
+    "drag_ratio": 0.21061681865523313,
+    "gtt": -0.3993477175983992
+  },
+  "clocks": "Held fixed: sqrt(-g_tt). Locally nonrotating: lapse exp(f/2). Both relative to asymptotic Killing time.",
+  "map": "One equatorial spatial view. Leader lines attach each measurement to its own position.",
+  "search": "Compactified radial scan and multistart location refinement. Coordinate, not proper, radii.",
+  "no_ergoregion": true
+}

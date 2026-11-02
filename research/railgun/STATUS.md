@@ -76,6 +76,23 @@ Actual template differences are only N=192, max_steps=600 and run/data paths.
 Grid SHA256 `64a606f3f248ecd939d4088c28116776847c2a6b0831d572b0d8ef67ec61bd58`.
 No NaN/Inf in its own evolution log; every matter diagnostic is finite.
 
+## Spatial interpretation of the initial omega=0.70 ring
+
+The completed spatial guide is `results/railgun/figures/ring070-physics.png`
+and `.svg`; profiles/extrema are in `reports/ring070-physics.json` and `.tsv`.
+NumPy/SciPy analysis of the existing accepted state, no new solve or GPU work.
+The origin lapse is **0.434391**, verified directly against every angular
+endpoint node: **26.06 minutes per distant hour**, not the previously quoted
+minimum-lapse value. The minimum lapse **0.421456** is at rho=0.8193.
+For clocks held at fixed coordinates the rate is sqrt(-g_tt), with a smaller
+minimum **0.369727** at rho=1.06354: **22.18 minutes per distant hour**.
+Angular dragging peaks at the origin, whereas |shift|/lapse peaks at
+rho=1.23702, value **0.510407**. Maximum g_tt=-0.136698; no sampled ergoregion.
+The search covers the compactified radial domain and refines the extrema;
+coordinates are not proper distances. One equatorial ring map attaches the
+clock/dragging measurements to each named location. The central particle
+route is described as axial, perpendicular to the map. Render checked.
+
 ## Three-grid Richardson result: 96^3 / 128^3 / 192^3
 
 Completed at fixed box 32, source omega=0.70, t<=2, no perturbation.

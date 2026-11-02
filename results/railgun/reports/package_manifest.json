@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "20eea9e3934e6720e316bcd67622968416128745711023d2c536e5dc357a5590",
-      "bytes": 19174
+      "sha256": "a05b56754de676cc4c72f3a2ed0ae7afd97c04b42864275044018a3e62063856",
+      "bytes": 19983
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -72,6 +72,14 @@
     "figures/ring070-n96-initial.png": {
       "sha256": "a7f0158f6d82dfea3ac522c30d5302dd5f3b9d4b5036be1ffd0384d541970503",
       "bytes": 37801
+    },
+    "figures/ring070-physics.png": {
+      "sha256": "89c180dadbb697137dfa1c48f4649687e466a495973a12bd1d723a61e83af64d",
+      "bytes": 1061718
+    },
+    "figures/ring070-physics.svg": {
+      "sha256": "7ba680081b25b78e80d5a97fb88181f7c3fccb067d288acc0e6f1c53e5cd5ca0",
+      "bytes": 405135
     },
     "figures/single-ring-frequency-sequence.png": {
       "sha256": "c4b63c9ec71b639988429d4b419ba6a1326b5b0a2d170809420ba7b372181f47",
@@ -236,6 +244,14 @@
     "reports/gpu_uphill_regression.json": {
       "sha256": "423e24f858881c19e6b795c162823ed346ac291412a60d94b286d7d4a33e6abd",
       "bytes": 8098
+    },
+    "reports/ring070-physics.json": {
+      "sha256": "a019b3e5e00cef1225c3871fd1601291e4911b35a29947aeda7475231881583e",
+      "bytes": 1642
+    },
+    "reports/ring070-physics.tsv": {
+      "sha256": "b7ddeaaeb7802eb4231b5aa32a00d2a055c0716551cca4c547edfdb39527072d",
+      "bytes": 277443
     },
     "reports/strong-profile-comparison.json": {
       "sha256": "068a8b046369e4f7ed7a890f8a589effad179aed0c65097e1e24aed22457d68c",
