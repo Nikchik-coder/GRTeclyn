@@ -18,14 +18,14 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 **Live:** `railgun-ring070-evolve-n192-t50-20261102`, second GPU node/card 0,
 source `b64bf13ff`, started **11:13:00 MSK**. Full launch preflight passed;
 unperturbed evolution has started, **stop_time=50**, max_steps=15000.
-At **11:22:14 MSK**, t=4.1833, speed **29.3 code units/h**; GPU 0 at 92%.
-ETA including processing **1.6 h, about 12:58 MSK**; hard cap **3 h,
+At **11:50:05 MSK**, t=17.9333, speed **29.54 code units/h**; GPU 0 at 92%.
+ETA including processing **1.1 h, about 12:56 MSK**; hard cap **3 h,
 14:13 MSK**. **Checkpoints OFF**, explicitly chosen November 2.
 
 Same certified t=0 cube and frozen binary, N=192, box 32. Physics, timestep,
 gauge and 25-step plot cadence unchanged; only duration/step limit and paths
 change. Two single-thread image workers, four evolution CPU threads, 160 GiB
-address-space cap per process, keep-last three plotfiles. No run is queued.
+address-space cap per process, keep-last three plotfiles. No evolution is queued.
 Eleven local preparation/spawn/preflight regressions pass; actual-cube
 CPU-only preparation passes both checkpoint policies. The image-worker
 entry point guards spawn and waits for workers before the final drain.
@@ -33,12 +33,24 @@ Scope: [evolution_long_070.json](studies/evolution_long_070.json).
 The original box can affect the ring before t=50; this is exploratory,
 not a new long-time Richardson or isolated-ring stability result.
 
+**Queued after completion:** CPU job `railgun-ring070-t50-movies-20261102`
+waits for the successful finished manifest, including the final consumer drain.
+It requires all 601 slices in each of the 16 fields and finite, complete
+diagnostics through t=50. It redraws into `movie_render/frames` using fixed
+colour scales, then encodes the full set into the run's `movies/`; every
+original frame and cache remains untouched. Two CPU cores, 16 GiB address-space
+cap, six-hour total timeout including up to three hours waiting; no GPU work.
+Encoded frame counts/durations are checked and consecutive decoded contact
+sheets are saved in `movie_render/qa` for visual review. These are exploratory
+finite-box movies, not an isolated-ring stability certification. Three CPU
+completion/cadence/invalid-data regression tests pass.
+
 **Previous run complete:** the final 192^3 Richardson job finished at
 **10:24:52 MSK**, exit 0, exactly **t=2**, all frames processed. Evolution
 speed was approximately **30.4 code units/h**. All authorised budgets are
 spent. Its budget is closed; the t=50 run has its separate go.
 
-Last scratch check, second GPU node, **2026-11-02 11:22 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 11:50 MSK**: `_cache/`
 **47 MB**, old 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3/t2 **5.6 GB**,
 live 192^3/t50 **12 GB**; **528 GB free**. Old runs retain three plotfiles;
 live scratch has six including pending processing, with keep-last three
