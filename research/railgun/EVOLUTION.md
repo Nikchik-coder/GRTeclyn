@@ -1,11 +1,17 @@
 # Cartesian 3+1 evolution of the stronger scalar ring
 
-The first experiment is an **unperturbed import and short-evolution pilot**,
-not a long-time stability test. Its prepared scope is in
+The first experiment is a completed **unperturbed import and short-evolution
+pilot**, not a long-time stability test. Its exact bounded scope is in
 [studies/evolution_pilot_070.json](studies/evolution_pilot_070.json).
 The separate go for GPU tests, two production exports/core certificates,
 four zero-step preflights and two t<=2 evolutions was received November 2.
-It does not authorise further grids, perturbations or longer evolutions.
+All two exports, four zero-step startups and two evolutions are now spent.
+No further grids, perturbations or longer evolutions are authorised.
+
+The next prepared step completes a **96^3 / 128^3 / 192^3 Richardson study**;
+its separate proposal is [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
+It awaits a run-specific go. Two-grid error reductions are refinement
+evidence, not a measured three-grid Richardson result.
 
 ## Source and physical model
 
@@ -170,11 +176,83 @@ spatially varying rotation and the sign of K_ij, J=-k Q, nonflat conformal
 connections, a time-dependent metric's K sign, exact cell/ghost alignment,
 the C6 join and its batch derivatives, and rejection of unarchived/uncertified
 or mismatched inputs. Shell syntax
-checks pass. The stamped CUDA executable compiles successfully; the new GPU
-numerical tests, actual export and evolution are still required. No ring
-evolution has been run yet.
+checks pass. The stamped CUDA executable compiles successfully; 22 GPU
+regressions pass. Both exports and short GRTeclyn evolutions are complete.
+The initial unused `hdf5_subpath` key was removed after a refused startup;
+that refusal remains archived separately, with no relaxed check.
 
-After the pilot, choose a sufficiently large domain and three resolutions,
+Through saved t<=2 the coarse/fine maximum charge drift is
+0.068895% / 0.017787% (3.8734-fold reduction). Interior Hamiltonian L2 is
+1.0334e-4 / 3.4831e-5 at t=0 and 2.4758e-4 / 8.2997e-5 at t=2;
+the errors grow during each short run but remain about three times smaller
+on the finer grid. Whole-box boundary contamination is retained separately.
+Both run logs are finite, all default frames are saved and three plotfiles
+per run remain. Archives and portable slice inputs are in
+`results/railgun/studies/evolution-070-n96/` and `evolution-070-n128/`.
+Summary: `results/railgun/reports/evolution-pilot-070.json`.
+
+## Prepared three-resolution Richardson study
+
+The spinning paper's appendix uses N=96/128/192 and
+Q_p=(h96^p-h128^p)/(h128^p-h192^p); the Bondi appendix measures constraint
+orders in fixed physical interiors, avoiding the absorbing boundary layer.
+Follow those methods here with the existing 96^3 and 128^3 archives and one
+new **192^3** run. Retain box 32, t<=2, every physical/gauge setting, the
+frozen binary and exact source. Only N, its corresponding max_steps=600,
+and run/data paths change. The template regression diffs against the actual
+archived 128^3 parameters and refuses any further changed key.
+
+The proposed new budget is one targeted regression job, one 192^3
+export/core certification, two zero-step startups (inspectable preflight
+and actual launch preflight), and one evolution. Each job has four threads,
+160 GiB and 1800 seconds, on the second node/card 0 only; checkpoints off,
+all frames and slice caches retained, at most three plotfiles. No new GPU
+work starts before its separate run-specific go. Stop on failed checks.
+The 200^3 padded initial cube is approximately 1.86 GB; it stays on NFS.
+
+`optimisation/railgun/evolution_convergence.py` validates every archive's
+checksums, matching source/core contract, frozen binary, physics and gauge.
+It selects actual samples at **t=0/0.5/1/1.5/2**, without time interpolation
+or using the coarse pilot's t>2 row. For Ham and Mom, whose exact continuum
+values are zero, report the two adjacent-grid orders at each time, L0 only,
+over the same physical sphere r<8. Do not extrapolate their norms as if
+they were a nonzero physical observable.
+
+For finite-box Q, Q(t)-Q(0), matter Jz and integral |Phi|^2, fit the signed
+three-grid differences to f(h)=f(0)+C h^p with the unequal spacing ratios.
+Print measured p, the extrapolated continuum value and estimated fine-grid
+error. Differences <=1e-9 (above the diagnostic printing uncertainty),
+nonmonotone triples and orders outside 0<p<=12 remain explicitly unresolved;
+there is no assumed p=4 fallback. Fourth-order difference scaling is only a
+comparison curve. Q(t)-Q(0) at t=0 is identically zero and has no order.
+Raw grid-maximum scalar amplitudes are not used for Richardson fitting,
+since the maximizing physical cell changes with resolution.
+
+Nine manufactured-solution and identity regressions pass, covering fractional
+orders, either error sign, unequal spacing, exact shared times, noisy and
+oscillatory rejection, checksum/gauge/binary mismatches, and the 192^3
+template diff. The analysis and plot require all three finished members;
+no missing member is synthesized. Once the new run is accepted and packed:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m \
+  grteclyn_wrapper.optimisation.railgun.evolution_convergence \
+  results/railgun/studies/evolution-070-n96 \
+  results/railgun/studies/evolution-070-n128 \
+  results/railgun/studies/evolution-070-n192 \
+  --out results/railgun/reports/evolution-richardson-070.json
+grteclyn-wrapper/.venv/bin/python -m \
+  grteclyn_wrapper.visualisation.optimisation.plot_ring_convergence \
+  results/railgun/studies/evolution-070-n96 \
+  results/railgun/studies/evolution-070-n128 \
+  results/railgun/studies/evolution-070-n192
+```
+
+The JSON has a companion Markdown order table; figures go under figures/,
+reports under reports/. Three-grid estimates through t=2 validate the
+short-duration numerical handoff, not long-time dynamical stability.
+
+After this triplet, choose a sufficiently large domain and three resolutions,
 then compare an unperturbed control with explicit small nonaxisymmetric
 perturbations. Measure constraint convergence, charge loss/boundary flux,
 shape-mode growth and, if collapse occurs, 3D MOTS. A finite quiet run bounds

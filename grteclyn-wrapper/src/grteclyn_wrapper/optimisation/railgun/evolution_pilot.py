@@ -23,10 +23,10 @@ def prepare(data_directory, template, *, checkpoints):
             or manifest.get('components') != COMPONENTS
             or manifest.get('matter_model') != 'grtresna_complex_scalar'
             or manifest.get('perturbation') != 'none'
-            or manifest.get('n') not in (96, 128) or manifest.get('length') != 32.
+            or manifest.get('n') not in (96, 128, 192) or manifest.get('length') != 32.
             or manifest.get('ghosts', 0) < 4 or abs(manifest.get('frequency', 0)-.70) > 1e-10
             or digest(grid) != outcome['gridinit_sha256']):
-        raise ValueError('certified, hash-matched omega=.70 / L=32 / N=96 or 128 export required')
+        raise ValueError('certified, hash-matched omega=.70 / L=32 / N=96, 128 or 192 export required')
     n = manifest['n']
     max_steps = round(2/(.02*32/n))
     layout = grid_layout(grid)

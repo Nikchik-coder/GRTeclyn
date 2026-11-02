@@ -9,83 +9,91 @@ between-ring particle experiment are complete and accepted.** Every original
 physical acceptance limit is unchanged. Earlier failed studies remain rejected
 in their immutable archives.
 
-**New work:** the omega=0.70 single ring is being prepared for full Cartesian
-3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
-matter-J/m=2 diagnostics are implemented. Fourteen local analytic/preflight
-tests pass, and the separate CUDA evolution binary compiles successfully.
-All **22 GPU regressions pass**. The 96^3 export and new-core certificate
-pass. Its first GRTeclyn zero-step load completed, but full preflight refused
-the obsolete, unread `hdf5_subpath` output key; it is removed before evolution.
-The refused report remains refused. The export uses a C6
-centre join with finite inactive branches under JAX batching.
-See [EVOLUTION.md](EVOLUTION.md).
+**The omega=0.70 single ring has now been interpolated onto Cartesian
+GRTeclyn grids and evolved in full 3+1.** Both short, unperturbed pilots
+finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-evolve-n128-20261102`, second GPU node/card 0,
-source `d53f4b659`, started **09:35:54 MSK**. Full launch preflight then t<=2,
-max_steps=400. Initial t=0; speed not yet measured. Estimated completion
-including frames **0.05 h, about 09:39 MSK**; hard cap **0.5 h, 10:05:54 MSK**.
-All GPU work stays on the second GPU node only.
-128^3 inspectable t=0 preflight passed at **09:32:57 MSK**, all 16 fields
-rendered; initial ring/centre-hole image visually checked. Interior initial
-Hamiltonian/momentum L2=3.4831e-5 / 3.0843e-5, 2.97 / 2.86 times below 96^3.
-Charge=1.3063224291 matches its export within 1e-10 relative.
-128^3 export finished **09:31:20 MSK**, exit 0, **0.0998 h**. Core passes;
-det(h)/trace-A defects 8.89e-16 / 3.42e-17; Q_box=1.306322429105, J=-Q.
-**96^3 pilot complete:** `ring070-n96-t2-r2-20261102`, exit 0, all frames
-rendered and exactly three plotfiles retained. It advanced one floating-point
-stop-boundary step to 2.0066667; trust/analysis is limited to saved t<=2.
-The next template also caps the step count (400 for 128^3) to enforce t<=2.
-At t=2, Q changed by -0.069%; refinement comparison is pending. This is
-not a stability result. The run's template diff removed only `hdf5_subpath`.
-96^3 export finished **09:12:07 MSK**, exit 0, **0.0942 h**; det(h) and trace-A
-defects 8.89e-16 / 4.05e-17, Q_box=1.306322367390 and J=-Q.
-New-core maximum Einstein/KG 1.70e-10 / 1.13e-10; degree-comparison
-curvature 8.60e-9, all below 1e-8. Source/core acceptance limits unchanged.
-GRTeclyn t=0 charge 1.3063223674 matches the export within 1e-10 relative;
-interior Hamiltonian/momentum L2 are 1.0334e-4 / 8.8114e-5. Its finite-
-difference matter J=-1.3053329044 awaits refinement comparison.
-Regressions finished **09:05:26 MSK**, exit 0: **22 passed in 23.81 s**,
-including CUDA/float64 assertion, geometry benchmarks and exporter tests.
-**Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
-inspectable t=0 checks and full launch preflights, then t<=2
-unperturbed evolutions. Maximum two exports, four zero-step preflights and
-two evolutions. Three zero-step startups and one evolution are spent;
-the fourth startup and second evolution are now running. No further GPU
-startup or evolution remains after this pilot.
-the saved 96^3 t=0 rows
-have been inspected. The corrected launch uses a full preflight, followed
-by the 128^3 t=0-only and full-launch preflights: two startups remain.
-No check is skipped or relaxed. Sequential on card 0; stop on failure. Four threads,
-160 GiB and 0.5 h per job, no checkpoints; full frames and keep-last 3.
-All earlier stationary/particle correction budgets are closed.
+**Live:** none. **Queued:** none. Both GPUs idle; every approved export,
+zero-step startup and evolution budget is spent. All GPU work used only the
+second GPU node, card 0. No ETA and no automatic longer run.
 
-**CPU compilation complete:** `railgun-evolution-build-r2-20261102`, second
-GPU node, source `3e6466ed`, **08:48:56–08:51:40 MSK (0.0456 h)**, exit 0.
-Frozen binary `runs/railgun/evolution/bin/main3d_ring070r2_3e6466ed_2026-11-02.ex`,
-SHA256 `14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc`.
-Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
-The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
-in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
+Last scratch check, second GPU node, **2026-11-02 09:53 MSK**: `_cache/`
+**47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
+Exactly three plotfiles per pilot retained as approved. No checkpoints.
+All original frames and slice caches remain on NFS; first node not listed.
 
-Last scratch check, second GPU node, **2026-11-02 09:35 MSK**: `_cache/` **47 MB**,
-96^3 pilot **709 MB** (three retained plotfiles), **559 GB free**. First node
-not listed. No AMR checkpoints; all frames and slice caches retained.
+## Cartesian ring evolution: first two-grid pilot complete
 
-- Strong-ring final phase check: card 0, code `4e0af89a`,
-  **19:58:10–19:58:22 MSK (0.0033 h)**, exit 0.
-- Concentric field recovery: card 1, code `4e0af89a`,
-  **19:58:10–20:02:35 MSK (0.0736 h)**, exit 0.
-- Between-ring particles: card 1, code `7b00be94`,
-  **20:05:01–20:07:55 MSK (0.0483 h)**, exit 0.
+Source: accepted `frequency-deep/frequency_01/accepted.npz`, omega=0.70,
+k=+1, m=1. Evolved with **RadialRecipe's canonical complex scalar**, sign +1,
+Phi=chi_complex/sqrt(4 pi), Pi=+n.partial(Phi), correct rotational K_ij and
+conformal connections. Box 32, no reflection symmetry or added perturbation,
+fourth spatial derivatives, RK4, CCZ4, initial stationary lapse/shift followed
+by 1+log/Gamma-driver gauge. Four CPU threads, 160 GiB, 0.5 h per GPU job.
 
-Final targeted CUDA suites: **45 passed** (6 + 39), code `f898960d`.
-The preceding transport/recovery suite passed **37 tests**. Reports retain
-individual cases, float64/device checks and execution logs. Each job used
-four CPU threads, 160 GiB host address space, 0.5 h maximum, Jacobian chunks
-128, and no AMR checkpoints. Synchronisation was Git push/pull through
-`myfork`; no SCP.
+- **96^3:** `ring070-n96-t2-r2-20261102`, **09:21:00–09:23:10 MSK
+  (0.0361 h)**, exit 0, all frames rendered. One floating-point stop-boundary
+  step reached 2.0066667; trust and figures use saved **t<=2** only.
+- **128^3:** `ring070-n128-t2-20261102`, **09:35:54–09:39:05 MSK
+  (0.0531 h)**, exit 0, exactly **t=2**, max_steps=400. All frames rendered.
+- Both exports pass the new C6 core certificate and algebraic CCZ4 checks.
+  Core Einstein/KG maxima 1.70e-10 / 1.13e-10; degree-comparison curvature
+  8.60e-9, below the unchanged 1e-8 gate. Export det(h)/trace-A defects
+  below 8.89e-16 / 4.05e-17. C++ t=0 charges match each export within 1e-10.
+- Maximum finite-box charge drift through t=2: **0.068895% / 0.017787%**,
+  a **3.8734-fold** reduction on refinement. Initial interior Hamiltonian
+  L2: **1.0334e-4 / 3.4831e-5**; final: **2.4758e-4 / 8.2997e-5**.
+  These interior errors shrink by **2.97 / 2.98**. Momentum errors also shrink.
+  Boundary-contaminated whole-box norms are retained, not used for this claim.
+- No NaN in either run's own evolution log; finite matter diagnostics.
+  The imported ring and centre hole are visible in frame 0. The m=2 shape
+  diagnostic stays below 7.1e-17 in these unperturbed, symmetric-grid tests;
+  this does not excite or bound an unstable mode's growth rate.
+- **22 GPU regressions pass** (including CUDA/float64 assertions), plus 14
+  local analytic/preflight checks. Two exports, four zero-step startups and
+  two evolutions consumed. The first startup remains explicitly refused for
+  obsolete `hdf5_subpath`; removing it changed no physics or tolerances.
+
+The portable archives are `studies/evolution-070-n96/` and
+`studies/evolution-070-n128/`, under results/railgun. They contain actual
+params, logs, t=0 preflight reports, source/core hashes, diagnostics and
+selected numeric slice inputs. The refused startup has a separate immutable
+archive. Summary: `reports/evolution-pilot-070.json`; comparison figure:
+`figures/ring070-evolution-pilot.png`. Large initial cubes and the approved
+last three plotfiles stay in the run/scratch tree; no frame was deleted.
+
+Frozen CUDA binary: `main3d_ring070r2_3e6466ed_2026-11-02.ex`, source
+`3e6466ed`, SHA256
+`14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc`.
+The four-thread CPU build finished at **08:51:40 MSK**, exit 0.
+Git push/pull through `myfork` only; no SCP.
+
+**Next, prepared and awaiting a run-specific go:** complete the **96^3 /
+128^3 / 192^3 Richardson triplet**, following the spinning and Bondi papers.
+Only 192^3 needs a new export and evolution. The same frozen binary, source,
+box, gauge, timestep multiplier, physical duration and diagnostics are kept;
+the prepared template differs from the actual 128^3 params only in N,
+max_steps and run/data paths. The nine local convergence regressions pass.
+See [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
+
+Report Ham/Mom L0 pair orders in the fixed physical sphere r<8 at
+t=0/0.5/1/1.5/2, then fit the generalized unequal-ratio Richardson order,
+continuum value and estimated finest-grid error for Q, its change, matter J
+and integrated scalar amplitude. Same-sign resolved differences are required;
+unresolved/oscillatory triples do not get an invented order. **The existing
+two-grid improvements are not a Richardson convergence result.** The
+three-grid report and figure remain pending, with no fabricated third member.
+
+A larger-domain check, longer evolutions and explicit small nonaxisymmetric
+perturbations remain separate requirements for a dynamical-stability study.
+No new GPU run is queued or authorised. Earlier stationary/particle results
+remain below.
+
+The November 1 field/particle close-out also passed **45 targeted CUDA
+tests** (6+39), following the preceding 37-test correction suite. Their
+reports and execution evidence remain in the immutable result package.
 
 ## Primary target: concentric rings with a clear annular channel
 

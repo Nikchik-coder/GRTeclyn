@@ -105,6 +105,8 @@ __pycache__/
 # absolute output/plotfile paths of whoever ran it -- home dirs and scratch
 # paths that must never enter git.  It is a run artefact, not configuration.
 parameters_and_version.txt
+# Completed ring packs contain the packer's portable, path-sanitized copy.
+!results/railgun/studies/evolution-*/parameters_and_version.txt
 
 # Frames belong to the run that produced them, under runs/<campaign>/<run>/frames.
 # consume_plotfiles once defaulted --frames-out into this source directory, so

@@ -6,7 +6,27 @@ run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
-The latest completed experiments pass every original acceptance gate:
+**November 2: first full 3+1 ring pilots complete.** The accepted omega=0.70
+single ring was exported to 96^3 / 128^3 Cartesian grids and evolved with
+RadialRecipe's canonical complex scalar through saved t=2. Both finished;
+all original frames are retained. Maximum charge drift is 0.068895% /
+0.017787%, decreasing 3.87-fold on refinement. Interior Hamiltonian errors
+are about three times smaller on the finer grid. This is a short unperturbed
+import test; long-term stability remains untested.
+These are two-grid improvements, not a Richardson convergence result.
+The matching 192^3 member and three-grid analysis are prepared, awaiting
+separate GPU authorisation; no third-grid result is present in this package.
+
+Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`.
+Summary: `reports/evolution-pilot-070.json`. Initial grid figures:
+`figures/ring070-n96-initial.png`, `figures/ring070-n128-initial.png`.
+Rebuild the time comparison from portable numerical slice/diagnostic inputs:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_evolution
+```
+
+The completed stationary/particle experiments pass every original acceptance gate:
 
 - **Concentric gapped rings:** `studies/annular-validated-k12/`, k1=+1/k2=-12,
   three grids 192x16/224x18/256x20. Zero volume/infinity J agrees with finite
