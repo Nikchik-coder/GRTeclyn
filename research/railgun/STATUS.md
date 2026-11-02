@@ -15,6 +15,23 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**LIVE: saved-candidate three-resolution validation**, source `a9eb87a8a`:
+`railgun-ergoregion-max-validate271-20261102` on two-GPU node/card 0
+(candidate 3.72), and `railgun-ergoregion-max-validate272-20261102` on
+card 1 (candidate 5.21). Both started **19:40:02 MSK** after the explicit
+go for both jobs and checkpoints **OFF**. GPU regressions first, then at
+most three fresh solves each on 160x20 / 192x24 / 224x28. No evolution
+time or new search proposals. Maximum duration **0.5 h** including tests;
+deadline **20:10:02 MSK**, solve speed not yet measured. Four threads,
+160 GiB per job, chunks 128, max 30 iterations/minimum two fresh updates;
+all original acceptance limits unchanged. Stop on rejection and retain
+every field/log. Both H100s were free before launch. Scratch: **14 GB
+retained, 544 GB free**, three plotfiles per old evolution, zero checkpoints;
+no scratch/frame removal. Best accepted result remains **1.080970704**
+until a new candidate passes all three grids. If a candidate fails, prepare
+a renewed search with immediate three-grid verification of each potential
+new best; do not return to deferred checks.
+
 **Validated ergoregion found:** `railgun-ergoregion-cma-20261102`, two-GPU
 node/card 0, source `052487e5d`, **18:38:03–18:44:52 MSK**, exit 0,
 **0.1136 h** including all 41 passing GPU regressions. CMA-ES stopped at the
@@ -56,7 +73,7 @@ with refined equatorial peak shift/lapse **5.20846**, central clock about
 no finalist refinement ran, and the best three-grid validated ring remains
 **1.080970704**. No physical maximum is established by these stopped searches.
 
-**Promotion rule corrected, GPU validation jobs prepared but not launched:**
+**Promotion rule corrected; the approved GPU validation jobs are live above:**
 every improving proposal now runs 160x20 / 192x24 / 224x28 **before** receiving
 a successful CMA score. Only complete three-grid equation, flux, tail and
 common-point convergence checks permit promotion. Failed or skipped refinement
@@ -73,10 +90,10 @@ Separate prepared jobs will test only the saved **3.72 / 5.21** candidates,
 one per card, with no new CMA proposal or source-reproduction solve.
 Three fresh solves each, six total maximum; original grids and 1e-8/1e-6
 gates, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14.
-Proposed resources: four threads, 160 GiB, 0.5 h per job including GPU
+Approved resources: four threads, 160 GiB, 0.5 h per job including GPU
 regressions, chunks 128, checkpoints OFF, retain fields/logs. Source and
-record hashes are fixed by the figure snapshot. Fresh run-specific go and
-checkpoint confirmation required; no GPU startup has occurred. RUNNING.md
+record hashes are fixed by the figure snapshot. Run-specific go and
+checkpoints OFF were explicitly confirmed for both jobs. RUNNING.md
 contains the concrete commands. The stopped raw evidence stays immutable.
 
 All **45 GPU regressions passed on each card**, in 75.86/74.67 seconds.
