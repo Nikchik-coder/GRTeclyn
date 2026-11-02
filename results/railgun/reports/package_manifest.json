@@ -57,6 +57,10 @@
       "sha256": "d12d7e101b9b2893bbc19836f548beb4dd680c5eee4b0d9a0547ab8ec175199f",
       "bytes": 40318
     },
+    "figures/ring070-n192-initial.png": {
+      "sha256": "c876db701540a2fe40d941ccc0d8467fafb0d68a6b1e5ea3ee0522a1fd9790c1",
+      "bytes": 44563
+    },
     "figures/ring070-n96-initial.png": {
       "sha256": "a7f0158f6d82dfea3ac522c30d5302dd5f3b9d4b5036be1ffd0384d541970503",
       "bytes": 37801
@@ -97,6 +101,10 @@
       "sha256": "ff90a42bcd7cfa7049f7f3823ee984728dccc7024dac217bef45964519c4578b",
       "bytes": 10151
     },
+    "reports/evolution-070-n192-preflight.json": {
+      "sha256": "7a08127f8c11a42dd0e268565d01c764a43bd9e13ed268494282e25da78632c6",
+      "bytes": 6867
+    },
     "reports/evolution-pilot-070.json": {
       "sha256": "357d8ea3a2fea9e1bd502fbb2ecad9b005ac3d73640f6d3eb1fc039a8357c03c",
       "bytes": 5110
@@ -136,6 +144,10 @@
     "reports/gpu_evolution_regression.json": {
       "sha256": "ce7857f3cc8dd5301eed995c653b8f5e9c700e554dd96b8ae161a8fb0dae5fc1",
       "bytes": 4983
+    },
+    "reports/gpu_evolution_richardson_regression.json": {
+      "sha256": "8b4fbe9c20e0dca3f8e9bcdb0f5b1c857dacdc9d95dba3f397510987be57854c",
+      "bytes": 6964
     },
     "reports/gpu_falloff_regression.json": {
       "sha256": "94eb2fd3ea60909a9cde268fa587640e066cb2c6d74dadb3466c2875d62d7c59",
