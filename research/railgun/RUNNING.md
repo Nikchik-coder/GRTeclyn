@@ -1,8 +1,8 @@
 # Running ring studies
 
-**Requested November 2:** N=192 to t=50, same original box and certified
-t=0 cube. The new launcher and parallel-consumer fix are prepared; GPU
-startup waits for the explicitly requested checkpoint choice.
+**Running November 2:** N=192 to t=50 on the second GPU node/card 0, same
+original box and certified t=0 cube. Checkpoints explicitly OFF. Started
+11:13 MSK; full preflight passed. See STATUS for live progress and storage.
 Scope: [studies/evolution_long_070.json](studies/evolution_long_070.json).
 
 **Completed November 2:** the omega=0.70 Cartesian 3+1 import and full

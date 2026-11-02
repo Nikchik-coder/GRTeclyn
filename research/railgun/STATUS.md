@@ -15,33 +15,34 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Live:** none. **Requested, awaiting the mandatory checkpoint choice:**
-`ring070-n192-t50-20261102`, second GPU node/card 0, same certified t=0
-cube and frozen binary, N=192, box 32, stop_time=50, max_steps=15000.
-No new GPU startup yet. A checkpoint choice was asked directly; no answer
-has been recorded. The earlier t=2 run has no restart checkpoint.
+**Live:** `railgun-ring070-evolve-n192-t50-20261102`, second GPU node/card 0,
+source `b64bf13ff`, started **11:13:00 MSK**. Full launch preflight passed;
+unperturbed evolution has started, **stop_time=50**, max_steps=15000.
+At **11:13:49 MSK**, t=0.0767, early speed **32.0 code units/h**.
+ETA including processing **1.7 h, about 12:55 MSK**; hard cap **3 h,
+14:13 MSK**. **Checkpoints OFF**, explicitly chosen November 2.
 
-The new duration is requested. Physics, box, timestep, gauge and plot cadence
-stay unchanged. Two single-thread consumer workers are configured for all 16 fields;
-the generated entry point now guards spawn. Live throughput must be checked.
-Eleven local preparation/spawn/preflight regressions pass. Both checkpoint
-options also pass CPU-only preparation against the actual pinned cluster
-cube and frozen binary, exit 0. Four evolution CPU
-threads, 160 GiB per process, 3 h job cap, keep-last three plotfiles.
-See [evolution_long_070.json](studies/evolution_long_070.json).
-The original box can affect the ring before t=50; this is an exploratory
-duration test, not an isolated-ring stability result. No start ETA until
-the checkpoint choice is supplied.
+Same certified t=0 cube and frozen binary, N=192, box 32. Physics, timestep,
+gauge and 25-step plot cadence unchanged; only duration/step limit and paths
+change. Two single-thread image workers, four evolution CPU threads, 160 GiB
+address-space cap per process, keep-last three plotfiles. No run is queued.
+Eleven local preparation/spawn/preflight regressions pass; actual-cube
+CPU-only preparation passes both checkpoint policies. The image-worker
+entry point guards spawn and waits for workers before the final drain.
+Scope: [evolution_long_070.json](studies/evolution_long_070.json).
+The original box can affect the ring before t=50; this is exploratory,
+not a new long-time Richardson or isolated-ring stability result.
 
 **Previous run complete:** the final 192^3 Richardson job finished at
 **10:24:52 MSK**, exit 0, exactly **t=2**, all frames processed. Evolution
 speed was approximately **30.4 code units/h**. All authorised budgets are
-spent; both GPUs idle. Its budget is closed; the t=50 request is separate.
+spent. Its budget is closed; the t=50 run has its separate go.
 
-Last scratch check, second GPU node, **2026-11-02 11:00 MSK**: `_cache/`
-**47 MB**, 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3 **5.6 GB**;
-**539 GB free**. Exactly three plotfiles per run, zero checkpoints.
-All original frames and slice caches retained on NFS; first node not listed.
+Last scratch check, second GPU node, **2026-11-02 11:13 MSK**: `_cache/`
+**47 MB**, old 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3/t2 **5.6 GB**,
+live 192^3/t50 **1.9 GB**; **537 GB free**. Old runs have three plotfiles
+each; the live consumer is configured to retain three. Zero checkpoints.
+All original frames and caches stay on NFS; first node not listed.
 
 **192^3 sequence:** 31 GPU regressions passed in 24.63 s; certified export
 **10:05:32–10:12:36 MSK**, eight million padded cells / 1.856 GB; inspectable

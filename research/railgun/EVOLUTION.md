@@ -300,3 +300,7 @@ The box is only 32 wide and already has boundary-dominated whole-box
 constraint norms. Boundary effects can reach the interior before t=50.
 The requested run measures longer behaviour in that box; it does not add
 long-time Richardson convergence or establish isolated-ring stability.
+
+The checkpoint choice was received November 2: **OFF**. The t=50 job
+started at **11:13:00 MSK** on the second node/card 0 with the full
+launch preflight; numerical evolution is running. See STATUS for progress.
