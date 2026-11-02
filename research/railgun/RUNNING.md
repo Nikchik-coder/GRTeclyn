@@ -1,8 +1,8 @@
 # Running ring studies
 
-**Running November 2:** N=192 to t=50 on the second GPU node/card 0, same
-original box and certified t=0 cube. Checkpoints explicitly OFF. Started
-11:13 MSK; full preflight passed. See STATUS for live progress and storage.
+**Completed November 2:** N=192 reached t=50 at 12:56:40 MSK, exit 0.
+The 16 movies finished encoding at 14:02:43 MSK; contact sheets await visual
+review. Checkpoints OFF. No ring jobs remain live. See STATUS for storage.
 Scope: [studies/evolution_long_070.json](studies/evolution_long_070.json).
 
 **Completed November 2:** the omega=0.70 Cartesian 3+1 import and full
@@ -24,6 +24,23 @@ Read [STATUS.md](STATUS.md), [EQUATIONS.md](EQUATIONS.md) and the repository
 identified in the untracked `runs/railgun/NODES.local.md`. No command below
 reserves a GPU or grants a launch authorisation.
 
+Raw runs are grouped under `runs/railgun/`:
+
+- `spherical/`: reference solutions.
+- `single-ring/`: `construction/`, `profiles/` and `scans/`.
+- `two-rings/`: `separated/`, `overlapping/` and `seeds/`.
+- `particles/`: `single-ring/` and `two-rings/` experiments.
+- `evolution/`: Cartesian imports, binaries, pilots and long evolutions.
+- `checks/`, `logs/`, `manifests/`: test reports, operational logs and path mappings.
+
+The root README indexes the groups. Evolution and movie paths stay fixed.
+Historical logs and saved JSONs retain their original paths; the layout JSON
+in `manifests/` maps each old path to its current location and records checksums.
+New output directories belong in the matching group. To preview a legacy
+folder reorganisation, run `python3 research/railgun/organize_runs.py`; use
+`--apply` only after checking that no running job uses the folders being moved.
+The script verifies every moved file and leaves `evolution/` untouched.
+
 From the repository root:
 
 ```bash
@@ -32,13 +49,13 @@ MOD=grteclyn_wrapper.optimisation.commands.railgun
 
 # Does not initialise JAX.
 $PY -m "$MOD" solve research/railgun/studies/single_ring.json \
-  --gpu 0 --out runs/railgun/single-pilot --dry-run
+  --gpu 0 --out runs/railgun/single-ring/construction/single-pilot --dry-run
 
 # Run only after the named pilot has a go and nvidia-smi/storage are checked.
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-spherical-pilot \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
   "$PY" -m "$MOD" solve research/railgun/studies/spherical_reference.json \
-  --gpu 0 --jac-chunk 128 --out runs/railgun/spherical-pilot
+  --gpu 0 --jac-chunk 128 --out runs/railgun/spherical/spherical-pilot
 ```
 
 A new output directory is required. Solved fields on every attempted grid
@@ -60,10 +77,10 @@ for a warm start. It does not silently change winding, parity or topology.
 After an accepted background, separate bounded jobs can call:
 
 ```bash
-$PY -m "$MOD" profile runs/railgun/single-pilot/accepted.npz \
-  --gpu 0 --out runs/railgun/single-axis --z-min .1 --z-max 30 --samples 101
-$PY -m "$MOD" transport runs/railgun/single-pilot/accepted.npz \
-  --gpu 0 --out runs/railgun/single-tracks --z 5 --spin .001 --speed .2 \
+$PY -m "$MOD" profile runs/railgun/single-ring/construction/single-pilot/accepted.npz \
+  --gpu 0 --out runs/railgun/single-ring/profiles/single-axis --z-min .1 --z-max 30 --samples 101
+$PY -m "$MOD" transport runs/railgun/single-ring/construction/single-pilot/accepted.npz \
+  --gpu 0 --out runs/railgun/particles/single-ring/single-tracks --z 5 --spin .001 --speed .2 \
   --duration 10 --max-step .2
 ```
 
@@ -100,7 +117,7 @@ The spherical-to-ring branch has a separate bounded initializer:
 ```bash
 $PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring.json \
   --source results/railgun/studies/spherical-validated/accepted.npz \
-  --gpu 0 --out runs/railgun/spherical-to-ring --dry-run
+  --gpu 0 --out runs/railgun/single-ring/construction/spherical-to-ring --dry-run
 ```
 
 An actual homotopy requires its own go and capped job. It tests for a bound
@@ -127,7 +144,7 @@ the grids to 72x10 / 96x12 / 128x16:
 $PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring_refined.json \
   --source results/railgun/studies/spherical-validated/accepted.npz \
   --resume results/railgun/studies/spherical-to-ring-resumed --refine-resume \
-  --gpu 0 --jac-chunk 128 --out runs/railgun/spherical-to-ring-refined --dry-run
+  --gpu 0 --jac-chunk 128 --out runs/railgun/single-ring/construction/spherical-to-ring-refined --dry-run
 ```
 
 The saved run has spent 17 of 24 coupled solves and all six bisections.
@@ -147,7 +164,7 @@ The separated-ring screen has a dedicated nonlinear recovery, with its own go:
 $PY -m grteclyn_wrapper.optimisation.railgun.annular_recovery \
   research/railgun/studies/annular_recovery_k12.json \
   --source results/railgun/studies/annular-gap-screen/k12_128x16.npz \
-  --out runs/railgun/annular-recovery-k12 --gpu 0 --dry-run
+  --out runs/railgun/two-rings/separated/annular-recovery-k12 --gpu 0 --dry-run
 ```
 
 The dry run imports no JAX and checks the seed checksum, passing two-grid
@@ -185,7 +202,7 @@ $PY -m grteclyn_wrapper.optimisation.railgun.uphill \
   research/railgun/studies/uphill_transit.json \
   --source results/railgun/studies/ring-validated/accepted.npz \
   --profile results/railgun/studies/ring-profile \
-  --out runs/railgun/uphill --gpu 0 --dry-run
+  --out runs/railgun/particles/single-ring/uphill --gpu 0 --dry-run
 ```
 
 After a run-specific go, use the capped GPU launcher with four threads,
@@ -202,7 +219,7 @@ The independently gated compactness scan has its own dry run and go:
 $PY -m grteclyn_wrapper.optimisation.railgun.compactness \
   research/railgun/studies/compactness_scan.json \
   --source results/railgun/studies/ring-validated/accepted.npz \
-  --out runs/railgun/compactness --gpu 0 --dry-run
+  --out runs/railgun/single-ring/scans/compactness --gpu 0 --dry-run
 ```
 
 Seven amplitude pins are attempted in order, at most 21 solves. Every point
@@ -220,7 +237,7 @@ at a fixed coordinate radius:
 $PY -m grteclyn_wrapper.optimisation.railgun.frequency_scan \
   research/railgun/studies/frequency_scan.json \
   --source results/railgun/studies/compactness-scan/amplitude_03/accepted.npz \
-  --out runs/railgun/frequency-scan --gpu 0 --dry-run
+  --out runs/railgun/single-ring/scans/frequency-scan --gpu 0 --dry-run
 ```
 
 The frequency border replaces the pin condition without adding unknowns.
@@ -252,7 +269,7 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refi
   grteclyn-wrapper/.venv/bin/python -u -m grteclyn_wrapper.optimisation.commands.railgun solve \
   research/railgun/studies/frequency_073_refined.json \
   --seed results/railgun/studies/frequency-scan/frequency_05/grid_72x10.npz \
-  --out runs/railgun/frequency-073-refined-20261101 --gpu 0 --jac-chunk 128
+  --out runs/railgun/single-ring/scans/frequency-073-refined-20261101 --gpu 0 --jac-chunk 128
 ```
 
 Three solves maximum, 30 iterations each, four threads, 160 GiB, 0.5 h.
