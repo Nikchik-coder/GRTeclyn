@@ -21,15 +21,23 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 **19:53:49 MSK**, after the explicit go for both renewed jobs and
 checkpoints **OFF**. All **55 GPU regressions pass on each card**, in
 **70.77 / 71.39 s**. Both accepted-source reproductions pass; CMA
-continuation is advancing. At **20:10:04 MSK**, cards 0/1 had started
-**49 / 18 search solves** and **3 / 10 verification solves**, with
-**17 / 9 proposals** recorded. Both jobs remain live. New three-grid accepted
-bests are **5.134883762021 / 4.479246034814**. The overall accepted leader,
-card 0 finalist 01, has frequency **0.705895369384**, central lapse
-**0.101057428**, minimum lapse **0.090379267**, and maximum
-**g_tt=+0.307346211927**. Its final-pair dragging difference is **2.32e-12**;
-three-grid g_tt spread **7.02e-13**. Card 1 finalist 01 was rejected;
-finalists 02 and 03 passed. No global maximum or dynamical stability claim.
+continuation is advancing on card 0. At **20:15:16 MSK**, it had recorded
+**21 proposals, 55 search solves and six verification solves**; accepted best
+**5.134883762021**. A stronger 5.4872 single-grid trial is undergoing
+three-grid verification and is not accepted yet. Search speed so far is about
+**2.6 search solves/minute** including startup and verification; there is no
+evolution time. Hard remaining wall limit **0.64 h**, until **20:53:49 MSK**;
+the solve/proposal budgets may finish it earlier.
+
+**Card 1 COMPLETE**, exit 0 at **20:10:18 MSK**, after **0.275 h** including
+regressions. Its new best **5.231237832496** passed all three resolutions
+(160x20 / 192x24 / 224x28). Central lapse **0.099554349**. It used **18 search
+solves and ten verification solves**, four promotion attempts, and stopped
+normally because fewer than three verification calls remained for a new
+proposal. Nine completed proposals; a tenth evaluation was blocked before
+new work. Card 1 is idle. No automatic renewed search is approved. All fields,
+logs and tests are archived in `results/railgun/studies/ergoregion-max-r2-seed272/`;
+all archive checksums pass. No global maximum or dynamical stability claim.
 **Every potential new best immediately passes all three grids before receiving
 a successful score; otherwise it is rejected.** No deferred finalist phase.
 One-hour cap per job including tests; deadline **20:53:49 MSK**,

@@ -1,0 +1,6 @@
+{
+  "central_lapse": 0.12659464671946097,
+  "seed": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/007/state.npz",
+  "seed_sha256": "f1ed03dfed908b779b47002185c6cf44526a37dff57d32a0fbd84dc5802d45e7",
+  "independent": true
+}

@@ -1,0 +1,10 @@
+{
+  "lapse_min": 0.117744627790918,
+  "gtt_max": 0.2467980928478301,
+  "shift_norm_over_lapse_max": 3.7207895365931805,
+  "gtt_max_point": {
+    "rho": 0.35974782295200164,
+    "z": 0.0
+  },
+  "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+}

@@ -49,6 +49,13 @@ companions are in `reports/multiring-explanatory.json`. Rebuild with:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_multiring_experiments
 ```
 
+**Verified maximisation restart, seed 272:**
+[completed evidence](studies/ergoregion-max-r2-seed272/outcome.json) accepts
+peak shift/lapse **5.231237832496** on 160x20 / 192x24 / 224x28. The search
+finished normally at its verification budget; all fields, independent checks,
+Newton histories and regression logs are retained with verified checksums.
+This is a stationary result, with no dynamical stability or global maximum claim.
+
 **Stronger-ring comparison:** [same-scale spatial comparison](figures/single-ring/ergoregion-comparison.png)
 ([SVG](figures/single-ring/ergoregion-comparison.svg)) shows the previous
 accepted ring, the new accepted best and the rejected stronger trial.
