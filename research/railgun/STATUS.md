@@ -32,14 +32,19 @@ This establishes a stationary ergoregion on the fixed canonical k=1, m=1
 branch. Dynamical stability of this new ring has not been tested. The previous
 3+1 evolutions used the weaker omega=0.70 ring. Accepted field:
 `runs/railgun/single-ring/scans/ergoregion-cma-20261102/accepted_ergoregion.npz`.
-Both GPUs idle. Checkpoints OFF; all fields and logs retained. Scratch:
+Discovery completed with checkpoints OFF; all fields and logs retained. Scratch:
 14 GB retained, **544 GB free**, three plotfiles per old evolution, zero
 checkpoints. No scratch or frame removal. Discovery and both preceding
 amplitude studies are archived in results/railgun/studies/; **1278** package
 files and every per-study checksum pass verification.
 
-**Maximisation campaign prepared, awaiting its go:** two independent CMA
-searches, seeds 271/272 on cards 0/1 of the authorised two-GPU node only.
+**Maximisation campaign LIVE:** two independent CMA searches,
+`railgun-ergoregion-max-seed271-20261102` on card 0 and
+`railgun-ergoregion-max-seed272-20261102` on card 1 of the authorised
+two-GPU node only. Both started **19:09:13 MSK**, source `a3d410421`.
+GPU regressions run first, then source reproduction and CMA proposals;
+no evolution time applies. Maximum remaining duration at launch **1 h**,
+deadline **20:09:13 MSK**; proposal speed is not yet measured.
 Start from archived `ergoregion-cma/finalists/01/accepted.npz`, SHA256
 `a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52`.
 Maximise peak shift/lapse on the same canonical k=1, m=1 branch. Central
@@ -55,10 +60,13 @@ receive penalties; automatic smaller steps remain within the budget.
 Four CPU threads, 160 GiB and one-hour cap per job, chunks 128. Combined
 maximum 64 proposals/184 solves, eight CPU threads/320 GiB; the node quota
 is 24 CPUs/488 GiB. GPU regression checks run on each card first. The
-checkpoint choice awaits confirmation; no AMR evolution is proposed.
+checkpoint choice is explicitly **OFF** for both runs; no AMR evolution is proposed.
 Twenty-seven CPU preparation tests pass, including continuation after finding
 an ergoregion and preservation of a stronger field against a weaker finalist.
-No maximisation GPU startup yet. Commands/configs: RUNNING.md.
+Both H100s were idle immediately before launch. Scratch: **14 GB retained,
+544 GB free** in the four finished evolution folders and cache; three plotfiles
+per evolution, zero checkpoints, no scratch or frame removal. Commands/configs:
+RUNNING.md.
 
 Completed discovery scope:
 [ergoregion_cma.json](studies/ergoregion_cma.json). The central-lapse border
