@@ -15,36 +15,58 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** `railgun-ring070-evolve-n192-20261102`, second GPU node/card 0,
-source `9def79155`, started **10:17:54 MSK**. Full launch preflight then
-unperturbed evolution, **stop t=2**, max_steps=600. Initial t=0; speed not
-yet measured. ETA including frames **0.17 h, about 10:28 MSK**; hard cap
-**0.5 h, 10:47:54 MSK**. Checkpoints OFF, full frames and keep-last three.
-The inspectable t=0 preflight passed **10:14:34–10:14:59 MSK**; 16/16
-fields rendered and the ring/centre-hole image visually checked. Imported
-Q differs from the export by 1.27e-11; interior Ham/Mom L2=7.1962e-6 /
-6.5839e-6. The actual launch repeats every full check.
+**Live:** none. **Queued:** none. The final 192^3 job finished at
+**10:24:52 MSK**, exit 0, exactly **t=2**, all frames processed. Evolution
+speed was approximately **30.4 code units/h**. All authorised budgets are
+spent; both GPUs idle. No remaining ETA and no automatic extension.
 
-**192^3 export complete:** **10:05:32–10:12:36 MSK**, exit 0, 8,000,000
-padded cells / 1,856,000,388 bytes. Fresh C6 core accepted; Einstein/KG
-1.70e-10 / 1.13e-10, order-curvature difference 8.60e-9. Export det(h)/tr A
-errors 1.12e-15 / 4.67e-17; Q_box=1.306322429183444, J=-Q.
+Last scratch check, second GPU node, **2026-11-02 10:25 MSK**: `_cache/`
+**47 MB**, 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3 **5.6 GB**;
+**539 GB free**. Exactly three plotfiles per run, zero checkpoints.
+All original frames and slice caches retained on NFS; first node not listed.
+
+**192^3 sequence:** 31 GPU regressions passed in 24.63 s; certified export
+**10:05:32–10:12:36 MSK**, eight million padded cells / 1.856 GB; inspectable
+t=0 preflight **10:14:34–10:14:59 MSK**; full-preflight/evolution/drain
+**10:17:54–10:24:52 MSK (0.1161 h)**. The initial ring/hole image was checked.
+Export det(h)/tr A defects 1.12e-15 / 4.67e-17; imported Q matches its export
+within 1.27e-11. The source, frozen binary, core and physics are unchanged.
+Actual template differences are only N=192, max_steps=600 and run/data paths.
 Grid SHA256 `64a606f3f248ecd939d4088c28116776847c2a6b0831d572b0d8ef67ec61bd58`.
-The actual prepared 192^3 template differs from the archived 128^3 params
-only in resolution, max_steps and run/data paths; frozen binary hash matches.
+No NaN/Inf in its own evolution log; every matter diagnostic is finite.
 
-**Regressions complete:** `railgun-richardson-regression-20261102`,
-**10:03:50–10:04:17 MSK**, exit 0, **31 passed in 24.63 s**.
+## Three-grid Richardson result: 96^3 / 128^3 / 192^3
 
-**Queue:** none. The final approved 192^3 evolution is now running.
-One regression job, one export and both zero-step startups are consumed;
-there is no further export, startup, evolution, grid or longer-run budget.
-The final Richardson go was received November 2. No automatic extension.
+Completed at fixed box 32, source omega=0.70, t<=2, no perturbation.
+[Measured order table](../../results/railgun/reports/evolution-richardson-070.md)
+and [full extrapolations](../../results/railgun/reports/evolution-richardson-070.json)
+come from actual matched t=0/0.5/1/1.5/2 samples. Ham/Mom are L0 L2 norms
+inside the same physical r<8 sphere; whole-box boundary-contaminated norms
+remain in every archive and are not used for the interior convergence claim.
 
-Last scratch check, second GPU node, **2026-11-02 10:17 MSK**: `_cache/`
-**47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
-Exactly three plotfiles per pilot retained as approved. No checkpoints.
-All original frames and slice caches remain on NFS; first node not listed.
+- At t=2 the Ham order is **3.80 / 4.01** and Mom **3.62 / 3.83**
+  for 96→128 / 128→192. The finer pair moves toward fourth order.
+- Signed three-grid charge-change differences give **p=4.677** at t=2
+  (4.689→4.677 over t=0.5→2). Matter J gives **p=4.269** at t=2.
+  Orders use the unequal spacings, not a fixed ratio or assumed p=4.
+- Maximum charge drift is **0.068895% / 0.017787% / 0.0024917%**.
+  Finest final interior Ham/Mom L2=**1.63065e-5 / 1.10072e-5**.
+- The estimated fine-grid Q error at t=2 is 3.529e-5; extrapolated
+  Q=1.3063251693. The three-point continuum charge-change estimate is
+  +2.745e-6, not exact conservation. These are asymptotic estimates,
+  not independent error bounds. Initial charge/amplitude differences at
+  t=0 are below the diagnostic precision gate and have no fitted order.
+- All three finished archives pass matching source/binary/core/parameter
+  and checksum checks. Nine manufactured/identity tests and 31 GPU checks
+  pass. No missing data or unresolved order is filled with synthetic values.
+
+Archive: `results/railgun/studies/evolution-070-n192/`, alongside the original
+two immutable pilot archives. Three-grid figure: `figures/ring070-evolution-convergence.png`
+under results/railgun, rebuilt from the portable diagnostics. The completed
+budget is [evolution_richardson_070.json](studies/evolution_richardson_070.json).
+This establishes short-duration numerical convergence of the import/evolution;
+long-time stability remains untested. A larger-domain, longer, explicitly
+perturbed three-resolution study requires a separate proposal and go.
 
 ## Cartesian ring evolution: first two-grid pilot complete
 
@@ -92,26 +114,8 @@ Frozen CUDA binary: `main3d_ring070r2_3e6466ed_2026-11-02.ex`, source
 The four-thread CPU build finished at **08:51:40 MSK**, exit 0.
 Git push/pull through `myfork` only; no SCP.
 
-**Approved and in progress:** complete the **96^3 /
-128^3 / 192^3 Richardson triplet**, following the spinning and Bondi papers.
-Only 192^3 needs a new export and evolution. The same frozen binary, source,
-box, gauge, timestep multiplier, physical duration and diagnostics are kept;
-the prepared template differs from the actual 128^3 params only in N,
-max_steps and run/data paths. The nine local convergence regressions pass.
-See [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
-
-Report Ham/Mom L0 pair orders in the fixed physical sphere r<8 at
-t=0/0.5/1/1.5/2, then fit the generalized unequal-ratio Richardson order,
-continuum value and estimated finest-grid error for Q, its change, matter J
-and integrated scalar amplitude. Same-sign resolved differences are required;
-unresolved/oscillatory triples do not get an invented order. **The existing
-two-grid improvements are not a Richardson convergence result.** The
-three-grid report and figure remain pending, with no fabricated third member.
-
-A larger-domain check, longer evolutions and explicit small nonaxisymmetric
-perturbations remain separate requirements for a dynamical-stability study.
-Only the bounded 192^3 completion is authorised; no stability-study run
-is queued. Earlier stationary/particle results remain below.
+The final 192^3 completion and generalized Richardson analysis are now done,
+as reported above. Every earlier stationary/particle result remains below.
 
 The November 1 field/particle close-out also passed **45 targeted CUDA
 tests** (6+39), following the preceding 37-test correction suite. Their

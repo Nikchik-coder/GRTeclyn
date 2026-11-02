@@ -109,9 +109,17 @@
       "sha256": "357d8ea3a2fea9e1bd502fbb2ecad9b005ac3d73640f6d3eb1fc039a8357c03c",
       "bytes": 5110
     },
+    "reports/evolution-richardson-070.json": {
+      "sha256": "dd82a3d31820a66b95558975cf5a92350ffe4320776d75dc17888e8c83a79d25",
+      "bytes": 12226
+    },
+    "reports/evolution-richardson-070.md": {
+      "sha256": "48df6cebc11d155fddf377348213008af863897eef99c6f928c3ab9763d095c5",
+      "bytes": 303
+    },
     "reports/evolution-richardson-preparation.json": {
-      "sha256": "1f8313cd561c408100460ed7a9a2bc698bdb80be706553b0e282b52c8ede374d",
-      "bytes": 846
+      "sha256": "c4214198b34c50bf82a169cea8230ebef617042a55f497afb8da96dd94dc9363",
+      "bytes": 839
     },
     "reports/evolution_binaries.tsv": {
       "sha256": "9738111039e5c2d227df0abd9440783951b6d35a971de7771bcaa907b2932242",
@@ -1228,6 +1236,102 @@
     "studies/evolution-070-n128/summary.json": {
       "sha256": "2722177bd9a6c0a48af3522e2d0689b963c537ec0b42bb7cd407a42447a016a5",
       "bytes": 1886
+    },
+    "studies/evolution-070-n192/README.md": {
+      "sha256": "099320528e7c87d6fb52a6135da0ba0710f800138a9828938506bafa278f213c",
+      "bytes": 435
+    },
+    "studies/evolution-070-n192/consumer.log": {
+      "sha256": "0f6b2cde0a930041dd5e97d189de47d37b513b8222f13852bfcafdd6963cfdc3",
+      "bytes": 3030
+    },
+    "studies/evolution-070-n192/data/collapse_diagnostics.dat": {
+      "sha256": "222ca96bbf01f957801fdd79cfec4b5e4fcce377ffef4c339877642b325183d1",
+      "bytes": 176386
+    },
+    "studies/evolution-070-n192/data/complex_scalar_diagnostics.dat": {
+      "sha256": "f3a5457e5f1a8ef4007eb3d108206767c704a0cf77541b847a07ffb9a1ab42d0",
+      "bytes": 80066
+    },
+    "studies/evolution-070-n192/data/constraint_norms.dat": {
+      "sha256": "090146b2d3f54db7792bf62dc303226959e397bfd9d30765f31820367c8f192a",
+      "bytes": 224546
+    },
+    "studies/evolution-070-n192/execution.log": {
+      "sha256": "b037d910cb452dc1810ce0081c8c47bf759c169b3957ebc8c32788797918af5d",
+      "bytes": 234599
+    },
+    "studies/evolution-070-n192/export/corridor.json": {
+      "sha256": "26b0030c8ced87081929fc2ba4f380807743a431dc34d7ada02bf35e2f057f56",
+      "bytes": 24776
+    },
+    "studies/evolution-070-n192/export/manifest.json": {
+      "sha256": "e3d2f0f4fb38a34267f04bb60dca0aa6cfbdc75fc3266868c80cbf4f0861e461",
+      "bytes": 997
+    },
+    "studies/evolution-070-n192/export/outcome.json": {
+      "sha256": "b510db80ccc7e6f6257f4f258fc3abbd6886600b01570b8245d9218977145867",
+      "bytes": 616
+    },
+    "studies/evolution-070-n192/export/progress.json": {
+      "sha256": "eecbe282dc3be46db043e4038e452119e23cd398adb054a0617bfcd3d5b8466b",
+      "bytes": 75
+    },
+    "studies/evolution-070-n192/parameters_and_version.txt": {
+      "sha256": "e64ecb95f49442f533d6fb0b0b5e96e91615b42834346e5e3cbbd5567ed4983a",
+      "bytes": 3141
+    },
+    "studies/evolution-070-n192/params.txt": {
+      "sha256": "bf750fc273293f4db7e7cc30640335d70cf5c93b7172aa463b962aa24c5f1799",
+      "bytes": 1725
+    },
+    "studies/evolution-070-n192/preflight.json": {
+      "sha256": "573e804f0ce9e85d138d0f99eab18cd6deb72883d6be99380e7adfbf7a360485",
+      "bytes": 5952
+    },
+    "studies/evolution-070-n192/run.log": {
+      "sha256": "c4c061cb2029c67cf577769aa43f561c5224f0ac62a444fb5aae805e04a817ca",
+      "bytes": 227419
+    },
+    "studies/evolution-070-n192/run_manifest.json": {
+      "sha256": "125fa2cc0776f9d9e6b6210c238e43682ef683af4953506cb3cc61a484c4dd47",
+      "bytes": 12622
+    },
+    "studies/evolution-070-n192/sha256sums.txt": {
+      "sha256": "068e8515d975464385a528493e987aa5198de03f88e1164bfaa61db831cf94ed",
+      "bytes": 1999
+    },
+    "studies/evolution-070-n192/slices/chi_0000.npz": {
+      "sha256": "dea52b9ada49aabbaaeeaf6c6f48d91ae4e1e91e7092a154f10dd7f3dfb52027",
+      "bytes": 11213
+    },
+    "studies/evolution-070-n192/slices/chi_0600.npz": {
+      "sha256": "a5729e868e1b3bc25555f8d70a3724070b6e22fdccc5d760e26c68231d6a44ce",
+      "bytes": 15553
+    },
+    "studies/evolution-070-n192/slices/lapse_0000.npz": {
+      "sha256": "f5863e58b5d874cbcb106b4933bc628c2a44ead73262f7ce13bb1d3aadf867eb",
+      "bytes": 11176
+    },
+    "studies/evolution-070-n192/slices/lapse_0600.npz": {
+      "sha256": "47023c3f134e0540f217d5778577aaf8ba90f4958d6318af70aba6a3f4ecc6a6",
+      "bytes": 15548
+    },
+    "studies/evolution-070-n192/slices/scalar_activity_0000.npz": {
+      "sha256": "4e2a59b604930263e29960d4b489b602b879f23578441a201a8dc505e22eb098",
+      "bytes": 11518
+    },
+    "studies/evolution-070-n192/slices/scalar_activity_0600.npz": {
+      "sha256": "ca6697d6220efc75748e90ca44c157d8e90da42e42fc94e6c324d3bdc322dc5e",
+      "bytes": 22696
+    },
+    "studies/evolution-070-n192/small_data/boundary_flux.dat": {
+      "sha256": "17dc5d892c69c5748ac9d927b4bd9532f7328cc86fb375e56a4ab0212a5451f7",
+      "bytes": 1826
+    },
+    "studies/evolution-070-n192/summary.json": {
+      "sha256": "84a1437a0df597850ae0dcbc3b86405f934c6f05b810a248d6cfe078546c5be7",
+      "bytes": 1888
     },
     "studies/evolution-070-n96/README.md": {
       "sha256": "94778a58e42b98ab7917d32022be362e337bbe9730cf09e45c325f9145455251",

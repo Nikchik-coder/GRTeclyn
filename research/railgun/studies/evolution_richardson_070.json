@@ -1,5 +1,5 @@
 {
-  "stage": "approved_in_progress",
+  "stage": "completed",
   "purpose": "Complete the fixed-box 96/128/192 triplet; measure Richardson convergence through t=2.",
   "reference_methods": [
     "research/spinningwormhole/article/research.tex: appendix Convergence of the evolutions",
@@ -83,5 +83,7 @@
     "nonfinite state"
   ],
   "scope": "Import and short-evolution convergence. A larger-domain and long-duration perturbed three-grid stability study remains separate.",
-  "go": "Received November 2 for the final 192^3 Richardson member; checkpoints off."
+  "go": "Received November 2 for the final 192^3 Richardson member; checkpoints off.",
+  "outcome": "All three t<=2 members completed; measured constraint and observable orders archived. Long-time stability not assessed.",
+  "report": "results/railgun/reports/evolution-richardson-070.json"
 }

@@ -1,5 +1,5 @@
 {
-  "stage": "approved_in_progress",
+  "stage": "completed",
   "local_tests": {
     "passed": 9,
     "module": "grteclyn-wrapper/tests/optimisation/test_railgun_evolution_convergence.py",
@@ -9,11 +9,12 @@
   },
   "completed_resolutions": [
     96,
-    128
+    128,
+    192
   ],
-  "pending_resolution": 192,
-  "new_gpu_jobs_started": 1,
+  "pending_resolution": null,
+  "new_gpu_jobs_started": 4,
   "figure_QA": "Two-grid pilot rendered from portable archives; three-grid layout checked with manufactured data only, outside the results package.",
   "plan": "research/railgun/studies/evolution_richardson_070.json",
-  "interpretation": "Two-grid improvements are not a Richardson convergence result; no long-time stability result."
+  "interpretation": "Three-grid results are in evolution-richardson-070.json; no long-time stability result."
 }
