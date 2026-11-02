@@ -320,6 +320,23 @@ def test_saved_candidate_plan_is_cpu_only_and_refuses_changed_evidence(tmp_path)
         candidate_plan(271, snapshot=snapshot)
 
 
+@pytest.mark.parametrize('seed', [271, 272])
+def test_verified_restart_uses_only_the_new_three_grid_accepted_source(seed):
+    config = json.loads((ROOT/f'research/railgun/studies/ergoregion_max_r2_seed{seed}.json').read_text())
+    source = ROOT/'results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz'
+    plan = preflight(source, config)
+    assert plan['metadata']['validated']
+    assert [plan['metadata']['nx'], plan['metadata']['ny']] == [224, 28]
+    assert plan['central_lapse'] == pytest.approx(config['x0'], abs=1e-12)
+    assert plan['max_newton_solves'] == 92 and not plan['numerical_execution']
+    assert config['central_lapse_bounds'] == [.08, .32]
+    assert config['grids'] == [[160,20], [192,24], [224,28]]
+    changed = deepcopy(config)
+    changed['observable_tol'] = 1e-5
+    with pytest.raises(ValueError, match='bounded'):
+        preflight(source, changed)
+
+
 @pytest.mark.parametrize('lapse', [0., 1., -1., np.nan])
 def test_invalid_central_targets_are_rejected_before_jax_startup(lapse):
     from grteclyn_wrapper.optimisation.railgun.problem import RingProblem

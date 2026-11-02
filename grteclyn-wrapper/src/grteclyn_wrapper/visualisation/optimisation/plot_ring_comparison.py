@@ -139,6 +139,28 @@ def snapshot(out):
                          dragging=[c['drag_max'] for c in cases]), indent=2))
 
 
+def validated_snapshot(out):
+    """Keep the earlier snapshot immutable and attach completed acceptance."""
+    out = Path(out)
+    if out.exists():
+        raise ValueError('validated figure inputs already exist')
+    previous = json.loads(out.with_name('search-snapshot.json').read_text())
+    accepted = Path('results/railgun/studies/ergoregion-max-validate271')
+    rejected = Path('results/railgun/studies/ergoregion-max-validate272')
+    a, b = [json.loads((p/'outcome.json').read_text()) for p in (accepted, rejected)]
+    if not a['accepted'] or b['accepted']:
+        raise ValueError('completed accepted/rejected outcomes required')
+    trial = next(c for c in previous['cases'] if c['source_sha256'] == b['candidate']['source_sha256'])
+    trial.update(rejected=True, rejection_reason='First-grid Newton check failed',
+                 validation_outcome=str(rejected/'outcome.json'))
+    new = profile(accepted/'finalists/01/accepted.npz',
+                  accepted/'finalists/01/grid_224x28.json', provisional=False)
+    new.update(title='New accepted best', validation_outcome=str(accepted/'outcome.json'))
+    out.write_text(json.dumps(dict(timestamp_msk=previous['timestamp_msk'],
+        validation_complete=True, cases=[previous['cases'][0], new, trial],
+        scope='Completed three-grid validation; rejected trial retained explicitly as a failed candidate.'), indent=2)+'\n')
+
+
 def render(snapshot_path, output):
     import matplotlib
     matplotlib.use('Agg')
@@ -150,8 +172,12 @@ def render(snapshot_path, output):
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 12,
                          'text.color': INK, 'svg.fonttype': 'none'})
     fig = plt.figure(figsize=(21, 13), facecolor=PAPER)
-    fig.text(.045, .953, 'Smaller rings drag space more strongly', fontsize=29, weight='bold')
-    fig.text(.045, .913, 'The same rotating matter model, concentrated into a smaller region. '
+    complete = data.get('validation_complete', False)
+    fig.text(.045, .953, 'A stronger ring passes all three resolutions' if complete else
+             'Smaller rings drag space more strongly', fontsize=29, weight='bold')
+    fig.text(.045, .913, 'The 3.72 ring passes. The 5.21 candidate is rejected. '
+             'All maps use the same distance scale.' if complete else
+             'The same rotating matter model, concentrated into a smaller region. '
              'Every ring below uses the same distance scale.', fontsize=14, color=MUTED)
     # One key above all panels; orange encodes the actual g_tt > 0 interval.
     legend_y = .871
@@ -166,12 +192,18 @@ def render(snapshot_path, output):
     rr = np.hypot(x, y)
     for i, case in enumerate(cases):
         left = .045+i*.315
-        title = ['Previous validated maximum', 'Stronger search candidate', 'Strongest search candidate'][i]
+        title = (['Previous accepted ring', 'New accepted best', 'Rejected search candidate'] if complete else
+                 ['Previous validated maximum', 'Stronger search candidate', 'Strongest search candidate'])[i]
         fig.text(left, .817, title, fontsize=17, weight='bold')
         status = 'Three resolutions passed' if not case['provisional'] else 'Single grid passed · refinement pending'
-        fig.text(left, .788, status, fontsize=11, color=TEAL if not case['provisional'] else ORANGE)
-        fig.text(left, .739, f'{case["drag_max"]["value"]:.2f}', fontsize=35, weight='bold', color=TEAL)
-        fig.text(left+.080, .743, 'peak dragging measure', fontsize=12, color=TEAL)
+        if case.get('rejected'):
+            status = 'REJECTED · required numerical check failed'
+        fig.text(left, .788, status, fontsize=11, color='#b74837' if case.get('rejected') else
+                 (TEAL if not case['provisional'] else ORANGE))
+        ratio_color = MUTED if case.get('rejected') else TEAL
+        fig.text(left, .739, f'{case["drag_max"]["value"]:.2f}', fontsize=35, weight='bold', color=ratio_color)
+        fig.text(left+.080, .743, 'trial dragging measure' if case.get('rejected') else
+                 'peak dragging measure', fontsize=12, color=ratio_color)
         ax = fig.add_axes([left-.008, .362, .297, .365])
         profile = case['profile']
         relative = np.interp(rr, profile['radius'], np.array(profile['density'])/case['density_peak']['value'])
@@ -218,14 +250,16 @@ def render(snapshot_path, output):
         # Identical scale bars make the contraction visible without rescaling.
         ax.plot([-.5, .5], [-1.50, -1.50], color=INK, lw=1.4)
         ax.text(0, -1.57, '1 coordinate unit', fontsize=9, ha='center', va='top', color=MUTED)
-    fig.text(.045, .104, 'Stronger local dragging comes from tighter concentration and slower clocks, '
+    fig.text(.045, .104, 'Accepted best: 3.72. Its matter is more concentrated and the clock at the centre runs more slowly.'
+             if complete else 'Stronger local dragging comes from tighter concentration and slower clocks, '
              'even though total spin decreases.', fontsize=15, weight='bold')
     fig.text(.045, .067, 'Dragging above 1 means holding a fixed position is impossible; it is not a matter speed. '
              'Solid outlines mark half the peak density; faint matter extends beyond them.', fontsize=11, color=MUTED)
     fig.text(.045, .039, 'Clocks shown are held at the centre of the hole. Distances, mass and spin use simulation units. '
              'Dynamical stability is untested.', fontsize=11, color=MUTED)
     stamp = datetime.fromisoformat(data['timestamp_msk']).strftime('%d %b %Y, %H:%M MSK')
-    fig.text(.045, .015, f'Saved search snapshot: {stamp}. Blue intensity is relative to each ring’s own peak.',
+    fig.text(.045, .015, f'Saved search snapshot: {stamp}. Blue intensity is relative to each ring’s own peak.'+
+             (' The rejected panel is a trial field, not a verified spacetime.' if complete else ''),
              fontsize=10, color=MUTED)
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -252,9 +286,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--snapshot', type=Path, required=True)
     ap.add_argument('--capture', action='store_true')
+    ap.add_argument('--capture-validation', action='store_true')
     ap.add_argument('--out', type=Path, default=Path('results/railgun/figures/single-ring/ergoregion-comparison.png'))
     args = ap.parse_args()
-    if args.capture:
+    if args.capture_validation:
+        validated_snapshot(args.snapshot)
+    elif args.capture:
         snapshot(args.snapshot)
     else:
         render(args.snapshot, args.out)

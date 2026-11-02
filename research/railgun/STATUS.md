@@ -15,29 +15,53 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Saved-candidate validation: card 0 live, card 1 rejected**, source `a9eb87a8a`:
+**Saved-candidate validation COMPLETE: 3.72 accepted, 5.21 rejected**,
+source `a9eb87a8a`:
 `railgun-ergoregion-max-validate271-20261102` on two-GPU node/card 0
 (candidate 3.72), and `railgun-ergoregion-max-validate272-20261102` on
 card 1 (candidate 5.21). Both started **19:40:02 MSK** after the explicit
-go for both jobs and checkpoints **OFF**. GPU regressions first, then at
-most three fresh solves each on 160x20 / 192x24 / 224x28. No evolution
-time or new search proposals. Maximum duration **0.5 h** including tests;
-deadline **20:10:02 MSK**, solve speed not yet measured. Four threads,
+go for both jobs and checkpoints **OFF**. Card 0 finished **19:43:40 MSK**,
+exit 0, **0.0606 h** including tests: all three fresh solves on
+160x20 / 192x24 / 224x28 and all acceptance checks PASS. New accepted
+peak shift/lapse **3.720789536602**, g_tt **+0.246798092848**, central lapse
+**0.129930664**, minimum lapse **0.117744628**, frequency **0.674100187700**.
+Final-pair observable/frequency differences are below **2.63e-12**;
+three-grid g_tt spread **7.14e-13**. No evolution time or new proposals.
+Original cap **0.5 h**, deadline **20:10:02 MSK**. Four threads,
 160 GiB per job, chunks 128, max 30 iterations/minimum two fresh updates;
 all original acceptance limits unchanged. Stop on rejection and retain
 every field/log. Both H100s were free before launch. Scratch: **14 GB
 retained, 544 GB free**, three plotfiles per old evolution, zero checkpoints;
-no scratch/frame removal. Best accepted result remains **1.080970704**
-until a new candidate passes all three grids. Card 0 passed 160x20 and
-continues at 192x24. Card 1 stopped **19:42:03 MSK**, exit 2, after its
+no scratch/frame removal. Both GPUs idle. The best accepted result is now
+**3.720789536602**. Its accepted field SHA256 is
+`dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd`.
+Card 1 stopped **19:42:03 MSK**, exit 2, after its
 first 160x20 solve: fresh Newton stalled at scaled residual **1.865e-14**,
 above the unchanged 1e-14 target. Its equation checks passed, but this is
 not a complete passing resolution study: **5.21 is rejected as a new best**.
 One of its three permitted solves was used; no automatic correction rerun.
 All **53 GPU regressions pass on each card**, in **70.79 / 69.37 s**.
-If a candidate fails, prepare
-a renewed search with immediate three-grid verification of each potential
-new best; do not return to deferred checks.
+The requested conditional renewed search will start from the accepted 3.72
+ring and immediately verify every potential new best; no deferred checks.
+Its run-specific scope and checkpoint choice must be confirmed before startup.
+Both completed studies are archived as `ergoregion-max-validate271` and
+`ergoregion-max-validate272`; all archive checksums pass. Worst independent
+Einstein/KG over the passing three grids: **5.18e-10 / 8.28e-11**;
+surface-J error **8.76e-11**, all below the original 1e-8 limits.
+
+**Prepared verified restart, awaiting go:** independent seeds 271/272 on
+cards 0/1, from the new hash-checked 224x28 accepted field. Initial CMA
+mean **0.129930664**, width **0.025**; physical central-lapse bounds stay
+**0.08–0.32**. Same k=1, m=1 physics; no tolerance changes. Every potential
+new best must pass 160x20 / 192x24 / 224x28 before receiving a successful
+CMA score. Missing, failed or skipped checks reject promotion. Up to four
+promotion attempts per run; stop before a new proposal if fewer than three
+refinement calls remain. Per job: 32 proposals, 80 search + 12 refinement
+solves, max 30 iterations/minimum two fresh corrections, Newton 1e-14;
+four threads, 160 GiB, one hour including tests, chunks 128. Combined ceiling
+64 proposals/184 solves. Checkpoints OFF proposed, retain all evidence.
+**37 CPU tests pass**; both new source-hash profiles pass CPU-only planning.
+No restarted GPU job is running. Runner/configs and exact commands: RUNNING.md.
 
 **Validated ergoregion found:** `railgun-ergoregion-cma-20261102`, two-GPU
 node/card 0, source `052487e5d`, **18:38:03–18:44:52 MSK**, exit 0,
@@ -80,7 +104,7 @@ with refined equatorial peak shift/lapse **5.20846**, central clock about
 no finalist refinement ran, and the best three-grid validated ring remains
 **1.080970704**. No physical maximum is established by these stopped searches.
 
-**Promotion rule corrected; the approved GPU validation jobs are live above:**
+**Promotion rule corrected; the approved GPU validation jobs are complete above:**
 every improving proposal now runs 160x20 / 192x24 / 224x28 **before** receiving
 a successful CMA score. Only complete three-grid equation, flux, tail and
 common-point convergence checks permit promotion. Failed or skipped refinement
@@ -93,7 +117,7 @@ Both seeded CPU searches finish their full 32-proposal tests. **35 CPU tests
 pass**, covering rejected leaders, missing finest grids, budget exhaustion,
 hash-checked saved-candidate plans and preservation of the accepted best.
 
-Separate prepared jobs will test only the saved **3.72 / 5.21** candidates,
+The completed validation jobs tested only the saved **3.72 / 5.21** candidates,
 one per card, with no new CMA proposal or source-reproduction solve.
 Three fresh solves each, six total maximum; original grids and 1e-8/1e-6
 gates, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14.

@@ -123,6 +123,7 @@ def preflight(source, config):
                     length=2.5, max_iter=30, newton_tol=1e-14, equation_tol=1e-8,
                     tail_tol=1e-6, observable_tol=1e-6)
     maximising = config.get('mode') == 'maximise'
+    restart = maximising and config.get('campaign') == 'verified-r2'
     if maximising:
         if config.get('seed') not in (271, 272):
             raise ValueError('bounded maximisation seeds 271 or 272 required')
@@ -131,6 +132,10 @@ def preflight(source, config):
             central_lapse_bounds=[.08, .32], x0=.20, sigma0=.05,
             max_finalists=4, max_refinement_solves=12, finalist_log_separation=.02,
             search_grid=[160, 20], grids=[[160, 20], [192, 24], [224, 28]])
+        if restart:
+            expected.update(campaign='verified-r2',
+                source_sha256='dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd',
+                x0=.12993066385192364, sigma0=.025)
     if config != expected:
         raise ValueError('one of the bounded discovery/maximisation CMA profiles is required')
     if hashlib.sha256(Path(source).read_bytes()).hexdigest() != config['source_sha256']:
@@ -146,10 +151,10 @@ def preflight(source, config):
             or any(meta.get('frequency_targets', []))
             or len(fields) != 1 or fields[0]['winding'] != 1 or fields[0]['mass'] != 1
             or fields[0]['parity'] != 'even' or fields[0]['quartic'] or fields[0]['sextic']
-            or meta['length'] != 2.5 or [meta['nx'], meta['ny']] != [192, 24]
+            or meta['length'] != 2.5 or [meta['nx'], meta['ny']] != ([224, 28] if restart else [192, 24])
             or u.shape != (5*n+1,) or not np.isfinite(u).all()):
         raise ValueError('accepted canonical single-ring source required')
-    central = float(np.exp(np.mean(u[:n].reshape(193, 25)[-1])/2))
+    central = float(np.exp(np.mean(u[:n].reshape(meta['nx']+1, meta['ny']+1)[-1])/2))
     if maximising and (meta.get('central_lapse') is None or abs(meta['central_lapse']-central) > 1e-12):
         raise ValueError('maximisation requires the accepted central-lapse ergoregion source')
     return dict(metadata=meta, central_lapse=central, initial_frequency=float(u[-1]),
@@ -364,6 +369,10 @@ class Search:
                             self.pool = [v for v in self.pool if v['path'] != item['path']]
                     else:
                         record['rejection_reason'] = 'does_not_improve_validated_best'
+                        # Rejected values stay above every verified feasible
+                        # score, but retain direction when a population lies
+                        # entirely below the accepted incumbent.
+                        record['score'] = 2.+score(item['row'], item['sample'])
                 record['stage'] = 'complete'
                 value = record['score']
             self.progress()
@@ -387,7 +396,8 @@ class Search:
             write(self.directory/'outcome.json', dict(stage='bootstrap_rejected', ergoregion_resolved=self.found,
                   best_path=self.best_path, best_shift_norm_over_lapse=self.best_ratio))
             return False
-        original = json.loads(self.source.with_name('grid_192x24.json').read_text())
+        meta = self.plan['metadata']
+        original = json.loads(self.source.with_name(f'grid_{meta["nx"]}x{meta["ny"]}.json').read_text())
         row = bootstrap['row']
         drift = max(abs(row[k]-original[k])/max(1., abs(original[k])) for k in ('M_ADM_estimate','J_volume'))
         drift = max(drift, abs(float(bootstrap['u'][-1])-self.plan['initial_frequency']))

@@ -44,6 +44,46 @@ The script verifies every moved file and leaves `evolution/` untouched.
 
 ## Automatic CMA-ES ergoregion search
 
+### Verified restart from the accepted 3.72 ring, prepared
+
+The candidate validation is complete: seed 271 passes 160x20 / 192x24 /
+224x28 and all original gates, giving common-point shift/lapse 3.720789536602.
+Seed 272's 5.21 trial fails first-grid Newton convergence and is rejected.
+Both completed studies are archived under `results/railgun/studies/` as
+`ergoregion-max-validate271` and `ergoregion-max-validate272`.
+
+The prepared restarted searches use the stronger accepted 224x28 source
+`ergoregion-max-validate271/finalists/01/accepted.npz`, SHA256
+`dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd`.
+Two independent seeds 271/272 on cards 0/1; CMA initial mean equals its
+central lapse 0.129930664 and initial width is 0.025. Physical bounds remain
+0.08--0.32; same k=1, m=1 model and original 1e-8/1e-6 acceptance gates.
+Search 160x20; **each potential new best immediately receives three-grid
+160x20 / 192x24 / 224x28 verification before a successful score**. Otherwise
+it is rejected. Nonimproving single-grid values receive penalties above all
+verified scores, with direction preserved to avoid a flat rejected population.
+
+Per job: at most 32 proposals, 80 search solves plus 12 refinement solves
+for four promotion attempts; max 30 Newton iterations/minimum two updates,
+fresh Jacobians, Newton 1e-14; four CPU threads, 160 GiB, one hour including
+GPU regressions, chunks 128. Stop when the next three-grid check cannot be
+reserved, or at the proposal/solve/time cap. Combined: 64 proposals/184 solves,
+eight threads/320 GiB. Checkpoints OFF proposed; retain all fields/logs.
+No GPU startup before the renewed jobs' run-specific go and checkpoint choice.
+
+```bash
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-seed271-20261102 \
+  --threads 4 --mem 160 --timeout 3600 --gpu -- \
+  bash research/railgun/run_ergoregion_maximise_r2.sh 0
+bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-seed272-20261102 \
+  --threads 4 --mem 160 --timeout 3600 --gpu -- \
+  bash research/railgun/run_ergoregion_maximise_r2.sh 1
+```
+
+Configs: `studies/ergoregion_max_r2_seed271.json` and `...seed272.json`.
+CPU-only `--dry-run` reads and hashes the accepted field without starting JAX.
+The original failed jobs and the completed validation remain immutable.
+
 ### Maximisation campaigns stopped; immediate resolution checks
 
 The initial seed-271/272 jobs stopped on pycma's one-dimensional standard-

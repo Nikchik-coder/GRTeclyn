@@ -51,19 +51,25 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 
 **Stronger-ring comparison:** [same-scale spatial comparison](figures/single-ring/ergoregion-comparison.png)
 ([SVG](figures/single-ring/ergoregion-comparison.svg)) shows the previous
-three-grid accepted ring and two independently passing single-grid candidates.
-Their equatorial peak dragging measures are 1.08, 3.72 and 5.21. The two new
-candidates have not passed three-grid refinement. Blue shows relative matter
+accepted ring, the new accepted best and the rejected stronger trial.
+Their equatorial peak dragging measures are 1.08, 3.72 and 5.21. **3.72 passed
+all three resolutions; 5.21 failed the first-grid Newton acceptance check and
+is rejected.** The image now shows these completed decisions. Blue shows relative matter
 density; solid outlines mark half its peak and orange marks the equatorial
 region where fixed positions are impossible. Purple clocks refer only to the
 centre of the hole. All panels share one coordinate-distance scale.
-The immutable 19:22 MSK figure-input snapshot, source hashes and label audit
-are in `reports/ergoregion-comparison/`; this is not a completed search archive.
+The immutable 19:22 MSK figure-input snapshot, its completed-validation
+companion `validated-comparison.json`, source hashes and label audit are in
+`reports/ergoregion-comparison/`. Full acceptance and rejection evidence are
+archived in `studies/ergoregion-max-validate271/` and `...validate272/`.
+The accepted common-point dragging measure is 3.720789536602; all original
+equation/flux and three-grid convergence gates pass. Dynamical stability
+is untested. This is the best validated ring found here, not a global maximum.
 Rebuild from the saved numeric profiles, without a GPU or cluster access:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_comparison \
-  --snapshot results/railgun/reports/ergoregion-comparison/search-snapshot.json
+  --snapshot results/railgun/reports/ergoregion-comparison/validated-comparison.json
 ```
 
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
