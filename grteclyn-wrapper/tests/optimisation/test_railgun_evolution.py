@@ -132,7 +132,9 @@ def test_pilot_requires_a_certified_matching_export_and_explicit_checkpoint_choi
     with pytest.raises(ValueError, match='certified'):
         prepare(tmp_path, template, checkpoints='off')
     assert not template.exists()
-    (tmp_path/'corridor.json').write_text(json.dumps(dict(accepted=True)))
+    (tmp_path/'corridor.json').write_text(json.dumps(dict(accepted=True,
+        radius=.4, degree=6, comparison_degree=8, tolerance=1e-8,
+        join_continuity='C6; degree-13 Bernstein step')))
     with pytest.raises(ValueError, match='without checkpoints'):
         prepare(tmp_path, template, checkpoints='on')
     plan = prepare(tmp_path, template, checkpoints='off')
@@ -157,3 +159,37 @@ def test_malformed_grid_layout_is_rejected(tmp_path):
     path.write_bytes(b'GRTECLYN_GRID_INIT_V2\nnum_components 2\n')
     with pytest.raises(ValueError, match='header'):
         grid_layout(path)
+
+
+def test_evolution_join_has_six_continuous_derivatives_and_stays_convex():
+    from grteclyn_wrapper.optimisation.railgun.evolution import smooth_join_weight
+    jax = configure_jax(); xp = jax.numpy
+    nodes = np.linspace(0, 1, 101)
+    values = smooth_join_weight(nodes, np)
+    assert values[0] == 0 and values[-1] == 1
+    assert np.all(np.diff(values) >= -1e-15)
+    assert np.all((values >= 0) & (values <= 1+1e-15))
+    np.testing.assert_allclose(values+values[::-1], 1, atol=3e-15)
+    derivative = lambda t: smooth_join_weight(t, xp)
+    for _ in range(6):
+        derivative = jax.jacfwd(derivative)
+        ends = np.asarray(jax.jit(jax.vmap(derivative))(xp.array([0., 1.])))
+        np.testing.assert_allclose(ends, 0, atol=0)
+
+
+def test_batched_core_metric_derivatives_stay_finite_at_origin_and_far_from_patch():
+    from grteclyn_wrapper.optimisation.railgun.evolution import evolution_corridor
+    from grteclyn_wrapper.optimisation.railgun.geometry import RingGeometry
+    from grteclyn_wrapper.optimisation.railgun.problem import RingProblem
+    jax = configure_jax(); xp = jax.numpy
+    problem = RingProblem(nx=8, ny=4)
+    geometry = evolution_corridor(RingGeometry(problem, np.zeros(problem.n_unknowns)),
+                                  radius=.4, degree=6)
+    points = xp.array([[0., 0., 0., 0.], [0., 0., 0., .15],
+                       [0., .2, .1, .15], [0., 3., 4., 20.]])
+    states, _ = state_evaluator(geometry.metric, lambda x: xp.zeros(2), jax)(points)
+    states = np.asarray(states)
+    assert np.isfinite(states).all()
+    np.testing.assert_allclose(states[:, [0, 1, 4, 6, 18]], 1, atol=1e-12)
+    np.testing.assert_allclose(states[:, 15:18], 0, atol=1e-10)
+    assert algebraic_checks(states)['accepted']

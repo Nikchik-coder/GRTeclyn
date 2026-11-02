@@ -9,7 +9,7 @@
   "mass": 1.0,
   "sign": 1,
   "normalization": "Phi=chi_complex/sqrt(4*pi), Pi=+n^a partial_a Phi",
-  "core": {"radius": 0.4, "degree": 6, "comparison_degree": 8, "tolerance": 1e-8},
+  "core": {"radius": 0.4, "degree": 6, "comparison_degree": 8, "join": "C6 Bernstein", "tolerance": 1e-8},
   "cartesian_N": [96, 128],
   "length": 32.0,
   "center": [16.0, 16.0, 16.0],

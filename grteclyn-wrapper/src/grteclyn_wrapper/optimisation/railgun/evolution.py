@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import subprocess
 import time
@@ -23,6 +24,51 @@ COMPONENTS = [
     'B1', 'B2', 'B3', 'phi', 'Pi', 'phi_lump0', 'Pi_lump0',
 ]
 SYMMETRIC = ((0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2))
+
+
+def smooth_join_weight(t, xp):
+    """C6 step in positive Bernstein form; no alternating-power cancellation."""
+    return sum(math.comb(13, j)*t**j*(1-t)**(13-j) for j in range(7, 14))
+
+
+def evolution_corridor(parent, *, radius, degree):
+    """Keep the certified core construction, with enough smoothness for FD4.
+
+    Transport needs C2 curvature. A fourth-order second-derivative stencil
+    needs six continuous derivatives, so the 3+1 handoff uses a C6 join.
+    The overridden metric AND scalar are included in the fresh certificate.
+    """
+    from .corridor import CartesianCorridor
+
+    class EvolutionCorridor(CartesianCorridor):
+        def _join(self, x, core, outer):
+            r2 = self.xp.sum(x[1:]**2)
+            inner2 = (.5*self.radius)**2
+
+            # vmap lowers cond to selects, evaluating inactive branches too.
+            # Keep outer spherical coordinates away from r=0, and never
+            # extrapolate the core polynomial to a far-away Cartesian cell.
+            def safe_core(point):
+                centre = self.xp.zeros(4).at[0].set(point[0])
+                bounded = self.xp.where(self.xp.sum(point[1:]**2) <= self.radius**2,
+                                        point, centre)
+                return core(bounded)
+
+            def safe_outer(point):
+                reference = self.xp.array([point[0], self.radius, 0., 0.])
+                bounded = self.xp.where(self.xp.sum(point[1:]**2) >= inner2,
+                                        point, reference)
+                return outer(bounded)
+
+            def overlap(point):
+                t = self.xp.clip((r2-inner2)/(self.radius**2-inner2), 0., 1.)
+                weight = smooth_join_weight(t, self.xp)
+                return (1-weight)*safe_core(point)+weight*safe_outer(point)
+
+            return self.jax.lax.cond(r2 <= inner2, safe_core,
+                lambda point: self.jax.lax.cond(r2 >= self.radius**2,
+                                               safe_outer, overlap, point), x)
+    return EvolutionCorridor(parent, radius=radius, degree=degree)
 
 
 def digest(path):
@@ -181,7 +227,6 @@ def export_grid(source, directory, *, n=96, length=32., ghosts=4, batch=256,
         raise ValueError('even N>=16, positive box length, >=4 ghost cells and positive batch required')
     from .workflow import load_state, write_json
     from .geometry import RingGeometry
-    from .corridor import CartesianCorridor
     problem, u, _ = load_state(source)
     jax = problem.jax
     if jax.devices()[0].platform != 'gpu':
@@ -189,8 +234,9 @@ def export_grid(source, directory, *, n=96, length=32., ghosts=4, batch=256,
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
-    geometry = CartesianCorridor(RingGeometry(problem, u), radius=core_radius, degree=core_degree)
+    geometry = evolution_corridor(RingGeometry(problem, u), radius=core_radius, degree=core_degree)
     certificate = geometry.certify(tolerance=1e-8)
+    certificate['join_continuity'] = 'C6; degree-13 Bernstein step'
     write_json(directory / 'corridor.json', certificate)
     if not certificate['accepted']:
         write_json(directory / 'outcome.json', dict(accepted=False, reason='core_certification'))

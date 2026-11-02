@@ -11,10 +11,12 @@ in their immutable archives.
 
 **New work:** the omega=0.70 single ring is being prepared for full Cartesian
 3+1 evolution. The exporter, canonical-scalar launcher and opt-in t=0/charge/
-matter-J/m=2 diagnostics are implemented. Twelve local analytic/preflight
+matter-J/m=2 diagnostics are implemented. Fourteen local analytic/preflight
 tests pass, and the separate CUDA evolution binary compiles successfully.
 GPU export, new-core certification and time evolution have not
-started; their bounded pilot awaits a run-specific go. See [EVOLUTION.md](EVOLUTION.md).
+started; their bounded pilot awaits a run-specific go. The export uses a C6
+centre join with finite inactive branches under JAX batching.
+See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 

@@ -17,6 +17,9 @@ def prepare(data_directory, template, *, checkpoints):
     core = json.loads((data_directory/'corridor.json').read_text())
     grid = data_directory/'initial.gridinit'
     if (not outcome.get('accepted') or not core.get('accepted')
+            or core.get('join_continuity') != 'C6; degree-13 Bernstein step'
+            or core.get('radius') != .4 or core.get('degree') != 6
+            or core.get('comparison_degree') != 8 or core.get('tolerance') != 1e-8
             or manifest.get('components') != COMPONENTS
             or manifest.get('matter_model') != 'grtresna_complex_scalar'
             or manifest.get('perturbation') != 'none'

@@ -65,8 +65,15 @@ measurement or a finite-difference evolution measurement.
 
 The exact centre uses a newly fitted Cartesian corridor: radius 0.4,
 degrees 6/8, independent Einstein/KG/curvature agreement at the existing
-1e-8 gate. Failure stops export; there is no fallback to an uncertified origin.
+1e-8 gate. Evolution replaces the transport core's C2 join with a C6
+degree-13 Bernstein step, preserving six continuous derivatives needed by
+fourth-order second-derivative stencils. The fresh certificate checks both
+the metric and scalar with this join. Failure stops export; there is no
+fallback to an uncertified origin.
 Partial exports keep a `.partial` suffix and cannot launch an evolution.
+Inactive branches are bounded before batched evaluation: the outer metric
+never sees r=0, and the core polynomial is never extrapolated to a distant
+grid cell. Flat-space batch tests cover the exact origin and far field.
 
 ## Diagnostics and first pilot
 
@@ -152,11 +159,12 @@ exposed by the ring wrapper.
 
 ## Local checks and remaining work
 
-Twelve local tests pass: eight ring-export/pilot tests and four shared
+Fourteen local tests pass: ten ring-export/pilot tests and four shared
 preflight tests. Analytic cases cover flat harmonic phase/normalization,
 spatially varying rotation and the sign of K_ij, J=-k Q, nonflat conformal
 connections, a time-dependent metric's K sign, exact cell/ghost alignment,
-and rejection of unarchived/uncertified or mismatched inputs. Shell syntax
+the C6 join and its batch derivatives, and rejection of unarchived/uncertified
+or mismatched inputs. Shell syntax
 checks pass. The stamped CUDA executable compiles successfully; the new GPU
 numerical tests, actual export and evolution are still required. No ring
 evolution has been run yet.
