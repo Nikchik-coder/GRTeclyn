@@ -15,10 +15,15 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** none during the required initial-image review. The inspectable
-192^3 t=0 preflight passed **10:14:34–10:14:59 MSK**, exit 0; all 16 frame
-fields rendered. Initial interior Ham/Mom L2=7.1962e-6 / 6.5839e-6.
-One approved full-launch preflight and the t<=2 evolution remain.
+**Live:** `railgun-ring070-evolve-n192-20261102`, second GPU node/card 0,
+source `9def79155`, started **10:17:54 MSK**. Full launch preflight then
+unperturbed evolution, **stop t=2**, max_steps=600. Initial t=0; speed not
+yet measured. ETA including frames **0.17 h, about 10:28 MSK**; hard cap
+**0.5 h, 10:47:54 MSK**. Checkpoints OFF, full frames and keep-last three.
+The inspectable t=0 preflight passed **10:14:34–10:14:59 MSK**; 16/16
+fields rendered and the ring/centre-hole image visually checked. Imported
+Q differs from the export by 1.27e-11; interior Ham/Mom L2=7.1962e-6 /
+6.5839e-6. The actual launch repeats every full check.
 
 **192^3 export complete:** **10:05:32–10:12:36 MSK**, exit 0, 8,000,000
 padded cells / 1,856,000,388 bytes. Fresh C6 core accepted; Einstein/KG
@@ -31,13 +36,12 @@ only in resolution, max_steps and run/data paths; frozen binary hash matches.
 **Regressions complete:** `railgun-richardson-regression-20261102`,
 **10:03:50–10:04:17 MSK**, exit 0, **31 passed in 24.63 s**.
 
-**Approved queue:** after the inspectable preflight passes, the full launch
-preflight and one t<=2 evolution remain. Stop on failed checks.
-The final 192^3 Richardson go was received November 2. Same frozen binary
-and physics, four threads, 160 GiB, 0.5 h per job; checkpoints OFF, full
-frames, keep-last three plotfiles. No other grids or longer runs.
+**Queue:** none. The final approved 192^3 evolution is now running.
+One regression job, one export and both zero-step startups are consumed;
+there is no further export, startup, evolution, grid or longer-run budget.
+The final Richardson go was received November 2. No automatic extension.
 
-Last scratch check, second GPU node, **2026-11-02 10:15 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 10:17 MSK**: `_cache/`
 **47 MB**, 96^3 pilot **709 MB**, 128^3 pilot **1.7 GB**, **545 GB free**.
 Exactly three plotfiles per pilot retained as approved. No checkpoints.
 All original frames and slice caches remain on NFS; first node not listed.
