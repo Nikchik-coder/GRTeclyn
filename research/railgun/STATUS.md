@@ -22,7 +22,11 @@ See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
-**Live:** none while the output-key correction is synced. No evolution yet.
+**Live:** `railgun-ring070-evolve-n96-20261102`, second GPU node/card 0,
+source `8f4c7a63b`, started **09:21 MSK**, full launch preflight then t<=2.
+Initial t=0; speed/ETA not measured yet; hard cap **0.5 h, 09:51 MSK**.
+Run name `ring070-n96-t2-r2-20261102`. The old/new template diff contains
+only removal of unread `hdf5_subpath`; physics and cadence are unchanged.
 96^3 export finished **09:12:07 MSK**, exit 0, **0.0942 h**; det(h) and trace-A
 defects 8.89e-16 / 4.05e-17, Q_box=1.306322367390 and J=-Q.
 New-core maximum Einstein/KG 1.70e-10 / 1.13e-10; degree-comparison
@@ -35,7 +39,8 @@ including CUDA/float64 assertion, geometry benchmarks and exporter tests.
 **Approved queue:** omega=0.70 certified exports on 96^3 and 128^3, box 32;
 inspectable t=0 checks and full launch preflights, then t<=2
 unperturbed evolutions. Maximum two exports, four zero-step preflights and
-two evolutions. One zero-step startup is spent; the saved 96^3 t=0 rows
+two evolutions. One zero-step startup is spent, the second is starting;
+the saved 96^3 t=0 rows
 have been inspected. The corrected launch uses a full preflight, followed
 by the 128^3 t=0-only and full-launch preflights: three startups remain.
 No check is skipped or relaxed. Sequential on card 0; stop on failure. Four threads,
@@ -50,7 +55,7 @@ Four CPU threads, 160 GiB cap. No CUDA context/GPU test was started.
 The omega=0.70 GPU export and 96^3/128^3, t<=2 evolution proposal is prepared
 in `studies/evolution_pilot_070.json`; its bounded GPU sequence is authorised.
 
-Last scratch check, second GPU node, **2026-11-02 09:14 MSK**: **47 MB** in `_cache/`
+Last scratch check, second GPU node, **2026-11-02 09:21 MSK**: **47 MB** in `_cache/`
 only, **560 GB free**. First node not listed. These stationary and transport
 jobs created no AMR plotfiles or checkpoints. No scratch or frame deletion.
 
