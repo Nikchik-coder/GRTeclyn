@@ -88,6 +88,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('archives', nargs=3, type=Path)
     parser.add_argument('--out', type=Path,
-                        default=Path('results/railgun/figures/ring070-evolution-convergence.png'))
+                        default=Path('results/railgun/figures/evolution/ring070-evolution-convergence.png'))
     args = parser.parse_args()
     plot(args.archives, args.out)

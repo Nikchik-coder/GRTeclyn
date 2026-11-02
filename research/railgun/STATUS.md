@@ -78,7 +78,7 @@ No NaN/Inf in its own evolution log; every matter diagnostic is finite.
 
 ## Spatial interpretation of the initial omega=0.70 ring
 
-The completed spatial guide is `results/railgun/figures/ring070-physics.png`
+The completed spatial guide is `results/railgun/figures/single-ring/ring070-physics.png`
 and `.svg`; profiles/extrema are in `reports/ring070-physics.json` and `.tsv`.
 NumPy/SciPy analysis of the existing accepted state, no new solve or GPU work.
 The origin lapse is **0.434391**, verified directly against every angular
@@ -119,7 +119,7 @@ remain in every archive and are not used for the interior convergence claim.
   pass. No missing data or unresolved order is filled with synthetic values.
 
 Archive: `results/railgun/studies/evolution-070-n192/`, alongside the original
-two immutable pilot archives. Three-grid figure: `figures/ring070-evolution-convergence.png`
+two immutable pilot archives. Three-grid figure: `figures/evolution/ring070-evolution-convergence.png`
 under results/railgun, rebuilt from the portable diagnostics. The completed
 budget is [evolution_richardson_070.json](studies/evolution_richardson_070.json).
 This establishes short-duration numerical convergence of the import/evolution;
@@ -163,7 +163,7 @@ The portable archives are `studies/evolution-070-n96/` and
 params, logs, t=0 preflight reports, source/core hashes, diagnostics and
 selected numeric slice inputs. The refused startup has a separate immutable
 archive. Summary: `reports/evolution-pilot-070.json`; comparison figure:
-`figures/ring070-evolution-pilot.png`. Large initial cubes and the approved
+`figures/evolution/ring070-evolution-pilot.png`. Large initial cubes and the approved
 last three plotfiles stay in the run/scratch tree; no frame was deleted.
 
 Frozen CUDA binary: `main3d_ring070r2_3e6466ed_2026-11-02.ex`, source
@@ -205,7 +205,7 @@ On the finest grid:
   Final observable drift 7.26e-10; charge/edge drifts 1.16e-13 / 1.04e-12.
 
 Archive: [annular-validated-k12](../../results/railgun/studies/annular-validated-k12/).
-Figure: [validated rings and gap](../../results/railgun/figures/annular-rings-validated.png).
+Figure: [validated rings and gap](../../results/railgun/figures/two-rings/annular-rings-validated.png).
 
 ## Particles between the two rings
 
@@ -231,7 +231,7 @@ This establishes finite passage through the matter gap. It does not establish
 asymptotic escape, long-term trapping, energy gain or dynamical stability.
 
 Archive: [annular-transit-k12](../../results/railgun/studies/annular-transit-k12/).
-Figure: [actual paths and matter exposure](../../results/railgun/figures/annular-transit-k12.png).
+Figure: [actual paths and matter exposure](../../results/railgun/figures/particles/annular-transit-k12.png).
 
 ## Stronger single-ring finite spin selection
 
@@ -257,7 +257,7 @@ The accepted result is finite target-versus-turnaround selection, not a
 spin-selective escape result.
 
 Archive: [strong-uphill-073-validated](../../results/railgun/studies/strong-uphill-073-validated/).
-Figure: [strong-ring finite selection](../../results/railgun/figures/strong-uphill-073.png).
+Figure: [strong-ring finite selection](../../results/railgun/figures/particles/strong-uphill-073.png).
 
 ## Numerical fixes and unchanged acceptance contract
 
@@ -332,7 +332,9 @@ Stability remains `not_assessed`.
 
 ## Saved evidence and packaging
 
-`results/railgun/figures/` contains images only; `reports/` contains standalone
+`results/railgun/figures/` groups images into `single-ring/`, `two-rings/`,
+`particles/` and `evolution/`, with a linked README index. Earlier overlapping
+and provisional results have separate subfolders. `reports/` contains standalone
 JSON/TSV and regression reports; `studies/` contains self-contained numerical
 archives, execution logs, configurations and SHA-256 manifests. The current
 summary is [completed-experiments.json](../../results/railgun/reports/completed-experiments.json).

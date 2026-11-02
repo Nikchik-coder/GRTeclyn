@@ -56,6 +56,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--coarse', type=Path, default=Path('results/railgun/studies/evolution-070-n96'))
     parser.add_argument('--fine', type=Path, default=Path('results/railgun/studies/evolution-070-n128'))
-    parser.add_argument('--out', type=Path, default=Path('results/railgun/figures/ring070-evolution-pilot.png'))
+    parser.add_argument('--out', type=Path, default=Path('results/railgun/figures/evolution/ring070-evolution-pilot.png'))
     args = parser.parse_args()
     plot(args.coarse, args.fine, args.out)

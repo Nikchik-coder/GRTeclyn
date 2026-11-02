@@ -49,5 +49,12 @@
   "clocks": "Held fixed: sqrt(-g_tt). Locally nonrotating: lapse exp(f/2). Both relative to asymptotic Killing time.",
   "map": "One equatorial spatial view. Leader lines attach each measurement to its own position.",
   "search": "Compactified radial scan and multistart location refinement. Coordinate, not proper, radii.",
+  "drawn_boundary": {
+    "relative_density": 0.5,
+    "inner_radius": 0.4837495276214301,
+    "outer_radius": 1.8992011048027202,
+    "meaning": "Half-peak equatorial energy-density contour; diffuse matter extends beyond it."
+  },
+  "label_audit": [],
   "no_ergoregion": true
 }

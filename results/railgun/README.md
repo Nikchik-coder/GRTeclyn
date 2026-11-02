@@ -1,12 +1,13 @@
 # Regular-centre scalar rings: validation data
 
-Package layout: `figures/` contains rendered images; `reports/` contains
+Package layout: [figures/](figures/README.md) groups images into single rings,
+two-ring setups, particles and evolution; `reports/` contains
 regression reports and figure companion JSON/TSV; `studies/` contains complete
 run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
-**Spatial guide to the omega=0.70 ring:** `figures/ring070-physics.png`
+**Spatial guide to the omega=0.70 ring:** `figures/single-ring/ring070-physics.png`
 (also vector SVG) is one equatorial spatial map with measurements attached
 directly to the centre, ring wall and surrounding space. The central clock ticks 26.06 minutes
 per distant hour; the slowest clock held at fixed coordinates ticks 22.18
@@ -14,10 +15,24 @@ minutes at equatorial radius 1.064. The lapse minimum is instead at radius
 0.819, not at the origin. Angular dragging peaks at the origin; the drag ratio
 peaks at radius 1.237. Both radii are coordinate measurements. No ergoregion
 is found. Dense-map/extremum measurements and observer definitions are in
-`reports/ring070-physics.json` and its profile TSV. Rebuild without a GPU:
+`reports/ring070-physics.json` and its profile TSV. Blue shows the matter;
+bold inner/outer outlines mark half-peak energy density, with diffuse tails
+extending beyond the outlines. Rebuild without a GPU:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_physics
+```
+
+**Separated-ring explanatory figures:**
+[the rings, clocks and gap](figures/two-rings/multiring-separated-space.png),
+and [the actual particle passage](figures/particles/multiring-particles-in-gap.png).
+Each uses one spatial view with plain descriptions attached to locations.
+Both have SVG versions beside the PNG. They use only the accepted separated
+rings and saved paths; the overlapping configuration is excluded. Numeric
+companions are in `reports/multiring-explanatory.json`. Rebuild with:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_multiring_experiments
 ```
 
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
@@ -34,7 +49,7 @@ The measured order table and continuum/error estimates are in
 one three-point asymptotic fit, not an independent error bound. Constraint
 orders use the fixed r<8 interior; whole-box boundary-contaminated norms
 remain in the archived diagnostics. Figure:
-`figures/ring070-evolution-convergence.png` (also PDF). Rebuild with:
+`figures/evolution/ring070-evolution-convergence.png` (also PDF). Rebuild with:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_convergence \
@@ -46,7 +61,7 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`,
 `studies/evolution-070-n192/`.
 Summary: `reports/evolution-pilot-070.json`. Initial grid figures:
-`figures/ring070-n96-initial.png`, `figures/ring070-n128-initial.png`.
+`figures/evolution/ring070-n96-initial.png`, `figures/evolution/ring070-n128-initial.png`.
 Rebuild the time comparison from portable numerical slice/diagnostic inputs:
 
 ```bash
@@ -71,8 +86,8 @@ The completed stationary/particle experiments pass every original acceptance gat
   RK and coarse-quadrature studies remain unchanged and rejected.
 
 Summary: `reports/completed-experiments.json`. Figures:
-`figures/annular-rings-validated.png`, `figures/annular-transit-k12.png`,
-`figures/strong-uphill-073.png`. These demonstrate stationary fields and finite
+`figures/two-rings/annular-rings-validated.png`, `figures/particles/annular-transit-k12.png`,
+`figures/particles/strong-uphill-073.png`. These demonstrate stationary fields and finite
 passages/first turnarounds; no asymptotic escape, energy gain or stability claim.
 
 Check the complete inventory and original study checksums:
@@ -81,21 +96,21 @@ Check the complete inventory and original study checksums:
 grteclyn-wrapper/.venv/bin/python research/railgun/verify_pack.py
 ```
 
-`figures/uphill-transit.png` shows the verified finite uphill selection and
+`figures/particles/uphill-transit.png` shows the verified finite uphill selection and
 its small stopping-height difference. Rebuild it with:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
-  results/railgun/studies/uphill-transit --out results/railgun/figures/uphill-transit.png
+  results/railgun/studies/uphill-transit --out results/railgun/figures/particles/uphill-transit.png
 ```
 
 The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 96x12. A pure k=1 rotating ring also passes on 72x10, 96x12 and 128x16, with observable drift 3.52e-10. The latest full suite passed 63 GPU tests. These are stationary numerical solutions; 32 finite-radius through-ring particle tracks pass conservation and tolerance checks; dynamical stability remains untested.
 
-- `figures/compactness-scan.png`: three independently accepted amplitude points; rejected points are excluded. Rebuild with `python -m grteclyn_wrapper.visualisation.optimisation.plot_compactness results/railgun/studies/compactness-scan --out results/railgun/figures/compactness-scan.png` using the wrapper environment.
-- `figures/frequency-scan.png`: accepted fixed-frequency points; the measured amplitude at radius 5 falls as lapse decreases and dragging strengthens. Rebuild with the same `plot_compactness` command, using `studies/frequency-scan` and `figures/frequency-scan.png`.
-- `figures/frequency-073-recovery.png`: independent constraints and off-grid Einstein/Klein–Gordon residuals across the original and three refined grids, with the unchanged acceptance limit.
-- `figures/strong-profile-073.png`: matter wall, lapse, dragging and signed magnetic tidal curvature on the certified omega=0.73 ring. `reports/strong-profile-comparison.json` compares the saved weak and strong profiles: peak instantaneous Eulerian linear force per unit spin rises by 78.30, which is not a moving-particle timing ratio.
-- `figures/single-ring-frequency-sequence.png`: six accepted frequencies through 0.70; |J| turns over while local shift/lapse grows. Rejected 0.67 is excluded; no sampled ergoregion.
+- `figures/single-ring/scans/compactness-scan.png`: three independently accepted amplitude points; rejected points are excluded. Rebuild with `python -m grteclyn_wrapper.visualisation.optimisation.plot_compactness results/railgun/studies/compactness-scan --out results/railgun/figures/single-ring/scans/compactness-scan.png` using the wrapper environment.
+- `figures/single-ring/scans/frequency-scan.png`: accepted fixed-frequency points; the measured amplitude at radius 5 falls as lapse decreases and dragging strengthens. Rebuild with the same `plot_compactness` command, using `studies/frequency-scan` and `figures/single-ring/scans/frequency-scan.png`.
+- `figures/single-ring/scans/frequency-073-recovery.png`: independent constraints and off-grid Einstein/Klein–Gordon residuals across the original and three refined grids, with the unchanged acceptance limit.
+- `figures/single-ring/strong-profile-073.png`: matter wall, lapse, dragging and signed magnetic tidal curvature on the certified omega=0.73 ring. `reports/strong-profile-comparison.json` compares the saved weak and strong profiles: peak instantaneous Eulerian linear force per unit spin rises by 78.30, which is not a moving-particle timing ratio.
+- `figures/single-ring/scans/single-ring-frequency-sequence.png`: six accepted frequencies through 0.70; |J| turns over while local shift/lapse grows. Rejected 0.67 is excluded; no sampled ergoregion.
 - `studies/strong-uphill-073-precision/`: two tighter controls at rtol=2e-13 pass conservation and preserve classification, but timing changes 1.88654e-7 / 2.03222e-7 still exceed 1e-7. Rejected, all 32 originals retained under original/; 34 cumulative tracks, no accepted strong-ring timing or selection claim.
 - `studies/strong-uphill-073-initial/`: all 32 tracks complete, conservation/classification/reversal checks pass; study rejected by two timing differences above the unchanged 1e-7 gate. Originals retained unchanged; the separate two-track audit also remains rejected.
 - `studies/annular-quintic-k12/`: first 192x16 solve converges and passes all original field/flux/gap/channel checks, but the added infinity angular equation fails (relative residual 80.58). Rejected; no later grids or off-axis particles.
@@ -121,15 +136,15 @@ The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 
 - `studies/ring-validated/`: accepted pure k=1 fields on three grids, full diagnostics/manifests, and the successful refined continuation. M_ADM=0.971450813143, J=-0.992014330336, scalar frequency 0.932692332164 in m=1 units. Density peaks near cylindrical radius 6.16 in the equatorial plane.
 - `studies/annular-correction-k12/`: the separately approved fourth solve, two further updates on the saved 256x20 state. The gap remains, but flux mismatch 1.36332e-8 still fails the unchanged 1e-8 gate. No accepted state is exported. The two reused passing-grid records refer to `studies/annular-recovery-k12/`.
 - `reports/gpu_annular_correction_regression.json`: 24 passing CUDA checks, including immutable prior-archive checksums and the cumulative four-solve cap.
-- `figures/annular-rings-provisional.png`: actual passing 224x18 candidate at its true coordinate scale, labelled provisional because the full study was rejected.
+- `figures/two-rings/provisional/annular-rings-provisional.png`: actual passing 224x18 candidate at its true coordinate scale, labelled provisional because the full study was rejected.
 - `studies/annular-recovery-k12/`: coupled k1=1/k2=-12, total-J=0 recovery on 192x16 / 224x18 / 256x20. All Newton solves converged and retained a 1e-6 gap of width 7.61068 with a sampled finite-height channel. **Study rejected:** finest-grid independent angular-momentum flux mismatch 1.33955e-8 exceeds 1e-8. No accepted background or particle passage; all fields and diagnostics retained.
 - `reports/gpu_annular_regression.json`: 22 passing GPU checks, including promotion from the linear seed to the total-J border and per-component cylindrical densities against independent Cartesian AD.
 - `studies/annular-gap-screen/`: eight GPU linear bound-mode tests on the fixed accepted inner ring. k2=-12 and -16 pass the 1e-6 matter-gap screen on both grids, with widths 7.8630 and 57.6105. These seeds are **not self-consistent two-field spacetimes**; nonlinear backreaction and particle passage remain to validate.
 - `studies/counter-rotation/`: accepted k1=+1/k2=-2, zero-total-J state on 72x10 / 96x12 / 128x16. M_ADM=1.132946199392, J1=-0.773443320071468, J2=+0.773443320071473. Nonzero interior dragging max |w|=0.00225517; coordinate octupole tail approaches r^-5. Twelve Newton solves, no splits; all independent gates unchanged. **The fields overlap and fail the separate annular-gap objective.**
-- `figures/two-rings.png` and `figures/two-rings-density.png`: actual overlapping baseline surfaces and equatorial energy densities; companion data in `reports/two-rings-density.json` and `.tsv`. The 1e-6 edge criterion fails: inner-component outer radius about 29.88 exceeds outer-component inner radius about 0.010. Peak separation alone is insufficient.
-- `figures/counter-dragging.png`: nonzero interior dragging and the measured exterior coordinate octupole tail.
+- `figures/two-rings/overlapping/two-rings.png` and `figures/two-rings/overlapping/two-rings-density.png`: actual overlapping baseline surfaces and equatorial energy densities; companion data in `reports/two-rings-density.json` and `.tsv`. The 1e-6 edge criterion fails: inner-component outer radius about 29.88 exceeds outer-component inner radius about 0.010. Peak separation alone is insufficient.
+- `figures/two-rings/overlapping/counter-dragging.png`: nonzero interior dragging and the measured exterior coordinate octupole tail.
 - `studies/ring-transit/`: 32 accepted TD-MPD through-centre tracks, matched energy, spin reversal, two RK tolerances and 1e-9 conservation gates. Worst relative drift 1.90e-13. Fast transit timing split -0.000581712663 for spin +z minus -z. All near-E=1 tracks transmitted; no valve or asymptotic escape result.
-- `studies/ring-profile/`: accepted Cartesian core certificate and signed z=-15..15 curvature/matter profiles. Equatorial density peak rho=6.25 on a 0.05-spaced sample; no sampled ergoregion. The scalar vanishes on the axis, while its transverse gradients carry finite energy. Eleven targeted GPU tests passed. `figures/ring-profile.png` plots the saved measurements.
+- `studies/ring-profile/`: accepted Cartesian core certificate and signed z=-15..15 curvature/matter profiles. Equatorial density peak rho=6.25 on a 0.05-spaced sample; no sampled ergoregion. The scalar vanishes on the axis, while its transverse gradients carry finite energy. Eleven targeted GPU tests passed. `figures/single-ring/ring-profile.png` plots the saved measurements.
 - `reports/gpu_regression.json`: portable GPU test report.
 - `reports/gpu_guards_regression.json`: 51-test extended GPU suite, including intrinsic KG, integer-winding seeding and flat through-origin MPD.
 - `reports/gpu_baseline_regression.json`: two GPU checks on the accepted spherical fixture; intrinsic KG, Cartesian core certification and a bound k=1 seed pass. No nonlinear homotopy or physical transport was run.
@@ -143,9 +158,9 @@ Rebuild the meridional scalar-amplitude/frame-dragging figure from this archive:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring \
-  results/railgun/studies/ring-validated/accepted.npz --out results/railgun/figures/ring-validated.png
+  results/railgun/studies/ring-validated/accepted.npz --out results/railgun/figures/single-ring/ring-validated.png
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring \
-  results/railgun/studies/ring-validated/accepted.npz --3d --out results/railgun/figures/ring-validated-3d.png
+  results/railgun/studies/ring-validated/accepted.npz --3d --out results/railgun/figures/single-ring/ring-validated-3d.png
 ```
 
 The 3D surface revolves the computed contour at 50% of the peak scalar
@@ -155,18 +170,18 @@ Rebuild the interior/axial profile figure:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_profile \
-  results/railgun/studies/ring-profile --out results/railgun/figures/ring-profile.png
+  results/railgun/studies/ring-profile --out results/railgun/figures/single-ring/ring-profile.png
 ```
 
 Rebuild the overlapping two-field baseline and its gap diagnostic:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_two_rings \
-  results/railgun/studies/counter-rotation/accepted.npz --out results/railgun/figures/two-rings.png \
-  --density-out results/railgun/figures/two-rings-density.png \
+  results/railgun/studies/counter-rotation/accepted.npz --out results/railgun/figures/two-rings/overlapping/two-rings.png \
+  --density-out results/railgun/figures/two-rings/overlapping/two-rings-density.png \
   --density-data-dir results/railgun/reports --extent 18
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_counter_dragging \
-  results/railgun/studies/counter-rotation --out results/railgun/figures/counter-dragging.png
+  results/railgun/studies/counter-rotation --out results/railgun/figures/two-rings/overlapping/counter-dragging.png
 ```
 
 The concentric **target** schematic `research/railgun/annular-gap-target.png`
@@ -180,17 +195,17 @@ Rebuild the fixed-frequency resolution diagnostic:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_recovery \
   results/railgun/studies/frequency-scan/frequency_05/grid_72x10.json \
   results/railgun/studies/frequency-073-refined \
-  --out results/railgun/figures/frequency-073-recovery.png
+  --out results/railgun/figures/single-ring/scans/frequency-073-recovery.png
 ```
 
 Rebuild the strong profile and accepted frequency sequence:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_profile \
-  results/railgun/studies/strong-profile-073 --out results/railgun/figures/strong-profile-073.png \
+  results/railgun/studies/strong-profile-073 --out results/railgun/figures/single-ring/strong-profile-073.png \
   --title 'ω=0.73 single ring: matter wall and certified axial profile'
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_frequency_sequence \
-  results/railgun --out results/railgun/figures/single-ring-frequency-sequence.png
+  results/railgun --out results/railgun/figures/single-ring/scans/single-ring-frequency-sequence.png
 ```
 
 
@@ -198,10 +213,10 @@ Rebuild the newly accepted figures with the wrapper environment:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_rings \
-  results/railgun/studies/annular-validated-k12 --out results/railgun/figures/annular-rings-validated.png
+  results/railgun/studies/annular-validated-k12 --out results/railgun/figures/two-rings/annular-rings-validated.png
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_transit \
-  results/railgun/studies/annular-transit-k12 --out results/railgun/figures/annular-transit-k12.png
+  results/railgun/studies/annular-transit-k12 --out results/railgun/figures/particles/annular-transit-k12.png
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
-  results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/strong-uphill-073.png \
+  results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/particles/strong-uphill-073.png \
   --title 'Stronger ring (ω=0.73): validated finite spin selection'
 ```

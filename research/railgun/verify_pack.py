@@ -13,9 +13,11 @@ def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def inventory(root):
     unexpected={p.name for p in root.iterdir()}-{'README.md','figures','reports','studies'}
     if unexpected:raise ValueError(f'unclassified package entries: {sorted(unexpected)}')
-    for path in (root/'figures').iterdir():
+    for path in (root/'figures').rglob('*'):
+        if path.is_dir() or path == root/'figures/README.md':
+            continue
         if path.suffix.lower() not in ('.png','.svg','.pdf','.jpg','.jpeg','.webp'):
-            raise ValueError(f'non-figure in figures/: {path.name}')
+            raise ValueError(f'non-figure in figures/: {path.relative_to(root)}')
     for checksum in (root/'studies').rglob('sha256sums.txt'):
         for line in checksum.read_text().splitlines():
             expected,name=line.split('  ',1)

@@ -2,108 +2,128 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "a05b56754de676cc4c72f3a2ed0ae7afd97c04b42864275044018a3e62063856",
-      "bytes": 19983
+      "sha256": "a0f19f2090a727be1c3b749e9f5777a3e16ef9ef06ad8aacd93888faaf184da8",
+      "bytes": 21292
     },
-    "figures/annular-rings-provisional.png": {
-      "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
-      "bytes": 390676
+    "figures/README.md": {
+      "sha256": "88ad7b53be5a179a633793ff03b4f45f4028a4ebf3e6ced90d42904370d9beab",
+      "bytes": 2917
     },
-    "figures/annular-rings-validated.png": {
-      "sha256": "39c2193196d1756e6c7c199e898c222aa522b616ec6d09cb17a7020b012903fa",
-      "bytes": 383320
-    },
-    "figures/annular-transit-k12.png": {
-      "sha256": "56a62416196e438759b4b9861b7458ba969f6cb395893625bfc415799501f350",
-      "bytes": 143523
-    },
-    "figures/compactness-scan.png": {
-      "sha256": "1ef286fd85707c08334a0e98f0c003f948762eea864f2fdf23674948ccca3ad9",
-      "bytes": 170828
-    },
-    "figures/counter-dragging.png": {
-      "sha256": "0834b69726a1058b017dff531af772a5b1d731009d66d88a4120c9e5be496df3",
-      "bytes": 126091
-    },
-    "figures/frequency-073-recovery.png": {
-      "sha256": "9a044c416a9fd8adc3d95fa0de5cb158a5fed1875828d35fb22e682381e141f0",
-      "bytes": 150577
-    },
-    "figures/frequency-scan.png": {
-      "sha256": "dd4a80a972b39a14f15f4ca6368e7d0c853882c9207df5cefe7adbf5abd44453",
-      "bytes": 179561
-    },
-    "figures/ring-profile.png": {
-      "sha256": "96ad47a6408f767587f2247aa435e79286cb013df6aad2efc22b356188720a6f",
-      "bytes": 235836
-    },
-    "figures/ring-transit.png": {
-      "sha256": "56b1467dd8382669be09561bbe3ee28b07889cf956bea96ff086c5e32fb9632d",
-      "bytes": 129806
-    },
-    "figures/ring-validated-3d.png": {
-      "sha256": "f472dea960bc7146c00dc9e577d2e017cbb2a0025bcae33e56574c6086e7abef",
-      "bytes": 409549
-    },
-    "figures/ring-validated.png": {
-      "sha256": "e53bdc6cb044f32f4b93093a7dc8f4db0aae1cba9ae59086c4a578d02060adf0",
-      "bytes": 147280
-    },
-    "figures/ring070-evolution-convergence.pdf": {
+    "figures/evolution/ring070-evolution-convergence.pdf": {
       "sha256": "b80196a32df1d2a1ec48c35d2c55c1e926e61425345bea3690c9ce058a4e0f18",
       "bytes": 29120
     },
-    "figures/ring070-evolution-convergence.png": {
+    "figures/evolution/ring070-evolution-convergence.png": {
       "sha256": "ff8545209aff58b6a2780fc7288ebd282f3af65c50a8cd07a73106ea3b9f1572",
       "bytes": 361688
     },
-    "figures/ring070-evolution-pilot.png": {
+    "figures/evolution/ring070-evolution-pilot.png": {
       "sha256": "59379d534e0a4b401ac6e47e9eaa00e58cdb6ae2aa5d2aa67f481c6e057551d5",
       "bytes": 178900
     },
-    "figures/ring070-n128-initial.png": {
+    "figures/evolution/ring070-n128-initial.png": {
       "sha256": "d12d7e101b9b2893bbc19836f548beb4dd680c5eee4b0d9a0547ab8ec175199f",
       "bytes": 40318
     },
-    "figures/ring070-n192-initial.png": {
+    "figures/evolution/ring070-n192-initial.png": {
       "sha256": "c876db701540a2fe40d941ccc0d8467fafb0d68a6b1e5ea3ee0522a1fd9790c1",
       "bytes": 44563
     },
-    "figures/ring070-n96-initial.png": {
+    "figures/evolution/ring070-n96-initial.png": {
       "sha256": "a7f0158f6d82dfea3ac522c30d5302dd5f3b9d4b5036be1ffd0384d541970503",
       "bytes": 37801
     },
-    "figures/ring070-physics.png": {
-      "sha256": "89c180dadbb697137dfa1c48f4649687e466a495973a12bd1d723a61e83af64d",
-      "bytes": 1061718
+    "figures/particles/annular-transit-k12.png": {
+      "sha256": "56a62416196e438759b4b9861b7458ba969f6cb395893625bfc415799501f350",
+      "bytes": 143523
     },
-    "figures/ring070-physics.svg": {
-      "sha256": "7ba680081b25b78e80d5a97fb88181f7c3fccb067d288acc0e6f1c53e5cd5ca0",
-      "bytes": 405135
+    "figures/particles/multiring-particles-in-gap.png": {
+      "sha256": "0abf450a0dfc92f1696eaeec89cbdde7ac6cc356ce12faba1d4c698565697836",
+      "bytes": 501316
     },
-    "figures/single-ring-frequency-sequence.png": {
-      "sha256": "c4b63c9ec71b639988429d4b419ba6a1326b5b0a2d170809420ba7b372181f47",
-      "bytes": 167791
+    "figures/particles/multiring-particles-in-gap.svg": {
+      "sha256": "3022ab8cff319f9ecb30dcc30ce8a6edf9aa0af4b14231325c692784df700909",
+      "bytes": 244158
     },
-    "figures/strong-profile-073.png": {
-      "sha256": "f5dfe066eff2d35ff4217f8b8a8bf73a8797ce1825d7a36519dc9ca9f1af3ab9",
-      "bytes": 215144
+    "figures/particles/ring-transit.png": {
+      "sha256": "56b1467dd8382669be09561bbe3ee28b07889cf956bea96ff086c5e32fb9632d",
+      "bytes": 129806
     },
-    "figures/strong-uphill-073.png": {
+    "figures/particles/strong-uphill-073.png": {
       "sha256": "4efb978e303aca2d390291c27a4ea549dd6926466d5055eef95a314853b67f19",
       "bytes": 156382
     },
-    "figures/two-rings-density.png": {
+    "figures/particles/uphill-transit.png": {
+      "sha256": "8376a33d328bd95521c3cb5a184bfd152c82559519505b4f952b9c13e6651dcc",
+      "bytes": 145419
+    },
+    "figures/single-ring/ring-profile.png": {
+      "sha256": "96ad47a6408f767587f2247aa435e79286cb013df6aad2efc22b356188720a6f",
+      "bytes": 235836
+    },
+    "figures/single-ring/ring-validated-3d.png": {
+      "sha256": "f472dea960bc7146c00dc9e577d2e017cbb2a0025bcae33e56574c6086e7abef",
+      "bytes": 409549
+    },
+    "figures/single-ring/ring-validated.png": {
+      "sha256": "e53bdc6cb044f32f4b93093a7dc8f4db0aae1cba9ae59086c4a578d02060adf0",
+      "bytes": 147280
+    },
+    "figures/single-ring/ring070-physics.png": {
+      "sha256": "c5a62b1ee933872fe6575c450b9595329ab6ee3f8428c2240f4c9bd6f9b9dc21",
+      "bytes": 1063493
+    },
+    "figures/single-ring/ring070-physics.svg": {
+      "sha256": "751510f1e63d573252b30068e5f269ec2bfe6d1fba49f258b4af19108d04268e",
+      "bytes": 336092
+    },
+    "figures/single-ring/scans/compactness-scan.png": {
+      "sha256": "1ef286fd85707c08334a0e98f0c003f948762eea864f2fdf23674948ccca3ad9",
+      "bytes": 170828
+    },
+    "figures/single-ring/scans/frequency-073-recovery.png": {
+      "sha256": "9a044c416a9fd8adc3d95fa0de5cb158a5fed1875828d35fb22e682381e141f0",
+      "bytes": 150577
+    },
+    "figures/single-ring/scans/frequency-scan.png": {
+      "sha256": "dd4a80a972b39a14f15f4ca6368e7d0c853882c9207df5cefe7adbf5abd44453",
+      "bytes": 179561
+    },
+    "figures/single-ring/scans/single-ring-frequency-sequence.png": {
+      "sha256": "c4b63c9ec71b639988429d4b419ba6a1326b5b0a2d170809420ba7b372181f47",
+      "bytes": 167791
+    },
+    "figures/single-ring/strong-profile-073.png": {
+      "sha256": "f5dfe066eff2d35ff4217f8b8a8bf73a8797ce1825d7a36519dc9ca9f1af3ab9",
+      "bytes": 215144
+    },
+    "figures/two-rings/annular-rings-validated.png": {
+      "sha256": "39c2193196d1756e6c7c199e898c222aa522b616ec6d09cb17a7020b012903fa",
+      "bytes": 383320
+    },
+    "figures/two-rings/multiring-separated-space.png": {
+      "sha256": "4861b4a950ec44eac066d137b66398c41247c286ee3fa00c66f38216f24b0df2",
+      "bytes": 1283310
+    },
+    "figures/two-rings/multiring-separated-space.svg": {
+      "sha256": "9a5715df8d215823fc44a181d20c3f9f15dc8faf96f30c0bd66e94d345e85099",
+      "bytes": 385877
+    },
+    "figures/two-rings/overlapping/counter-dragging.png": {
+      "sha256": "0834b69726a1058b017dff531af772a5b1d731009d66d88a4120c9e5be496df3",
+      "bytes": 126091
+    },
+    "figures/two-rings/overlapping/two-rings-density.png": {
       "sha256": "ca8106a6adceaa1143b1446bf22231f9817acd00e67b7245a9f85fe3b0e3687f",
       "bytes": 125918
     },
-    "figures/two-rings.png": {
+    "figures/two-rings/overlapping/two-rings.png": {
       "sha256": "443363e49ae30753d78c7ace5861fe8a524136456988363187486d48c64e1ac7",
       "bytes": 468702
     },
-    "figures/uphill-transit.png": {
-      "sha256": "8376a33d328bd95521c3cb5a184bfd152c82559519505b4f952b9c13e6651dcc",
-      "bytes": 145419
+    "figures/two-rings/provisional/annular-rings-provisional.png": {
+      "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
+      "bytes": 390676
     },
     "reports/annular-endpoint-diagnostic.json": {
       "sha256": "276a9d18f9335c3c767a9dc42e11d909ff483fdef008b98968e8fd5c5f0613d0",
@@ -245,9 +265,13 @@
       "sha256": "423e24f858881c19e6b795c162823ed346ac291412a60d94b286d7d4a33e6abd",
       "bytes": 8098
     },
+    "reports/multiring-explanatory.json": {
+      "sha256": "e598ed2a74a4aef29b622b23385b6c6d848a9d8014fda79bfff7dcd221d8fb24",
+      "bytes": 1432
+    },
     "reports/ring070-physics.json": {
-      "sha256": "a019b3e5e00cef1225c3871fd1601291e4911b35a29947aeda7475231881583e",
-      "bytes": 1642
+      "sha256": "25c77e7fd68aac871381ef2f7690b0bdc3278ac132a92b1f27a6d78e899929f8",
+      "bytes": 1895
     },
     "reports/ring070-physics.tsv": {
       "sha256": "b7ddeaaeb7802eb4231b5aa32a00d2a055c0716551cca4c547edfdb39527072d",

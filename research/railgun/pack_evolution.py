@@ -76,7 +76,9 @@ def pack(run, exported, name, *, job, trust=2.):
                     raise ValueError('slice exceeds the trust window')
             shutil.copyfile(source, out/'slices'/f'{field}_{step:04d}.npz')
     figure = run/'preflight_frames/scalar_activity_z/frames/frame_z_0000.png'
-    shutil.copyfile(figure, REPO/f'results/railgun/figures/ring070-n{n}-initial.png')
+    destination = REPO/f'results/railgun/figures/evolution/ring070-n{n}-initial.png'
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(figure, destination)
     series = table(run/'data/complex_scalar_diagnostics.dat')
     constraints = table(run/'data/constraint_norms.dat')
     mask = series['time'] <= trust + 1e-10
