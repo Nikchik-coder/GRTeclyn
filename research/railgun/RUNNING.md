@@ -1,12 +1,10 @@
 # Running ring studies
 
-**Completed November 2:** the omega=0.70 Cartesian 3+1 import and both
-short evolution pilots finished. All approved budgets are closed.
+**Completed November 2:** the omega=0.70 Cartesian 3+1 import and full
+96^3 / 128^3 / 192^3 Richardson study through t=2 finished. All approved
+budgets are closed; both GPUs idle. The finest pair's Ham/Mom orders at
+t=2 are 4.01 / 3.83; charge-change Richardson order is 4.677.
 See [EVOLUTION.md](EVOLUTION.md) and [STATUS.md](STATUS.md).
-
-**Approved November 2, regressions running:** the matching 192^3 run and a three-grid Richardson
-analyser, specified in [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
-The two completed pilots alone do not establish Richardson convergence.
 
 **Completed November 1:** both numerical blockers are resolved. Accepted
 archives: `studies/strong-uphill-073-validated/`, `studies/annular-validated-k12/`

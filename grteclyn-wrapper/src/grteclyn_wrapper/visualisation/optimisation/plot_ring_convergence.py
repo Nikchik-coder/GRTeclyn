@@ -63,7 +63,11 @@ def plot(folders, output):
         axes[5].plot(times, order, 'o-', color=colour, label=label)
     axes[5].axhline(4, color='.6', linewidth=.8)
     axes[5].set(title='Richardson orders from three grids', ylabel='Order p; unresolved points omitted')
-    axes[5].set_ylim(0, 12.5)
+    shown_orders = [4.] + [row['order']
+        for name in ('Q_box_minus_initial', 'Jz_matter_box')
+        for row in report['observables'][name] if row['order'] is not None]
+    axes[5].set_ylim(max(0, np.floor(min(shown_orders)*2)/2-.25),
+                     np.ceil(max(shown_orders)*2)/2+.25)
     for ax in axes:
         ax.set_xlim(0, 2); ax.set_xlabel('Coordinate time'); ax.grid(alpha=.2)
         title = ax.get_title()

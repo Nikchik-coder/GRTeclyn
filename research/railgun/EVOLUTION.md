@@ -5,15 +5,16 @@ pilot**, not a long-time stability test. Its exact bounded scope is in
 [studies/evolution_pilot_070.json](studies/evolution_pilot_070.json).
 The separate go for GPU tests, two production exports/core certificates,
 four zero-step preflights and two t<=2 evolutions was received November 2.
-All two exports, four zero-step startups and two evolutions are now spent.
-A separate November 2 go now authorises only the matching 192^3 completion
+Both exports, four zero-step startups and two evolutions are now spent.
+A separate November 2 go authorised the matching 192^3 completion
 described below. Perturbations and longer evolutions remain outside scope.
 
-The next prepared step completes a **96^3 / 128^3 / 192^3 Richardson study**;
-its separate proposal is [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
-The final 192^3 member received its run-specific go November 2. Two-grid
-error reductions are refinement
-evidence, not a measured three-grid Richardson result.
+The subsequent **96^3 / 128^3 / 192^3 Richardson study is complete**;
+its separate scope is [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
+The final member reached t=2 and finished processing at 10:24:52 MSK on
+November 2, exit 0. Every approved budget is now spent.
+Measured orders and extrapolations are in
+[the report](../../results/railgun/reports/evolution-richardson-070.json).
 
 ## Source and physical model
 
@@ -193,13 +194,13 @@ per run remain. Archives and portable slice inputs are in
 `results/railgun/studies/evolution-070-n96/` and `evolution-070-n128/`.
 Summary: `results/railgun/reports/evolution-pilot-070.json`.
 
-## Prepared three-resolution Richardson study
+## Completed three-resolution Richardson study
 
 The spinning paper's appendix uses N=96/128/192 and
 Q_p=(h96^p-h128^p)/(h128^p-h192^p); the Bondi appendix measures constraint
 orders in fixed physical interiors, avoiding the absorbing boundary layer.
-Follow those methods here with the existing 96^3 and 128^3 archives and one
-new **192^3** run. Retain box 32, t<=2, every physical/gauge setting, the
+This study follows those methods with the existing 96^3 and 128^3 archives
+and the new **192^3** run. It retains box 32, t<=2, every physical/gauge setting, the
 frozen binary and exact source. Only N, its corresponding max_steps=600,
 and run/data paths change. The template regression diffs against the actual
 archived 128^3 parameters and refuses any further changed key.
@@ -234,7 +235,7 @@ Nine manufactured-solution and identity regressions pass, covering fractional
 orders, either error sign, unequal spacing, exact shared times, noisy and
 oscillatory rejection, checksum/gauge/binary mismatches, and the 192^3
 template diff. The analysis and plot require all three finished members;
-no missing member is synthesized. Once the new run is accepted and packed:
+no missing member is synthesized. Rebuild the completed comparison:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m \
@@ -253,6 +254,17 @@ grteclyn-wrapper/.venv/bin/python -m \
 The JSON has a companion Markdown order table; figures go under figures/,
 reports under reports/. Three-grid estimates through t=2 validate the
 short-duration numerical handoff, not long-time dynamical stability.
+
+The finer pair's t=2 Ham/Mom orders are **4.01 / 3.83** (coarser pair
+3.80 / 3.62). Three-grid charge-change order is **4.677**, matter-J order
+**4.269**. Finest maximum charge drift is **0.0024917%**. The estimated
+fine-grid Q error is 3.529e-5; the three-point continuum charge-change
+estimate is +2.745e-6, rather than exact conservation. Estimates from a
+single triplet are not independent error bounds. The original two-grid
+comparison remains a historical pilot figure. All 31 targeted GPU tests
+passed; all three archives and their matching physics contracts verify.
+Both GPUs are idle, three plotfiles per run remain, and every original frame
+and slice cache is retained. Commands above do not authorise any repeat run.
 
 After this triplet, choose a sufficiently large domain and three resolutions,
 then compare an unperturbed control with explicit small nonaxisymmetric

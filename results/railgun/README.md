@@ -6,18 +6,31 @@ run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
-**November 2: first full 3+1 ring pilots complete.** The accepted omega=0.70
-single ring was exported to 96^3 / 128^3 Cartesian grids and evolved with
-RadialRecipe's canonical complex scalar through saved t=2. Both finished;
-all original frames are retained. Maximum charge drift is 0.068895% /
-0.017787%, decreasing 3.87-fold on refinement. Interior Hamiltonian errors
-are about three times smaller on the finer grid. This is a short unperturbed
-import test; long-term stability remains untested.
-These are two-grid improvements, not a Richardson convergence result.
-The matching 192^3 member is authorised and in progress; no third-grid
-result is present in this package yet.
+**November 2: three-grid full 3+1 convergence study complete.** The accepted
+omega=0.70 ring was exported to 96^3 / 128^3 / 192^3 Cartesian grids and
+evolved with RadialRecipe's canonical complex scalar through t=2. All finished;
+all original frames are retained. Maximum charge drift is **0.068895% /
+0.017787% / 0.0024917%**. At t=2 the finer pair's interior Ham/Mom orders
+are **4.01 / 3.83**; the three-grid charge-change Richardson order is
+**4.677** and matter-J order **4.269**, measured with unequal spacings.
+These are short unperturbed runs; long-term stability remains untested.
 
-Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`.
+The measured order table and continuum/error estimates are in
+`reports/evolution-richardson-070.md` and `.json`. The estimates come from
+one three-point asymptotic fit, not an independent error bound. Constraint
+orders use the fixed r<8 interior; whole-box boundary-contaminated norms
+remain in the archived diagnostics. Figure:
+`figures/ring070-evolution-convergence.png` (also PDF). Rebuild with:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_convergence \
+  results/railgun/studies/evolution-070-n96 \
+  results/railgun/studies/evolution-070-n128 \
+  results/railgun/studies/evolution-070-n192
+```
+
+Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`,
+`studies/evolution-070-n192/`.
 Summary: `reports/evolution-pilot-070.json`. Initial grid figures:
 `figures/ring070-n96-initial.png`, `figures/ring070-n128-initial.png`.
 Rebuild the time comparison from portable numerical slice/diagnostic inputs:

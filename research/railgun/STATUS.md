@@ -10,8 +10,8 @@ physical acceptance limit is unchanged. Earlier failed studies remain rejected
 in their immutable archives.
 
 **The omega=0.70 single ring has now been interpolated onto Cartesian
-GRTeclyn grids and evolved in full 3+1.** Both short, unperturbed pilots
-finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
+GRTeclyn grids and evolved in full 3+1.** The three-resolution Richardson
+study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
 ## Live and queue
 
@@ -20,7 +20,7 @@ finished; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 speed was approximately **30.4 code units/h**. All authorised budgets are
 spent; both GPUs idle. No remaining ETA and no automatic extension.
 
-Last scratch check, second GPU node, **2026-11-02 10:25 MSK**: `_cache/`
+Last scratch check, second GPU node, **2026-11-02 10:32 MSK**: `_cache/`
 **47 MB**, 96^3 **709 MB**, 128^3 **1.7 GB**, 192^3 **5.6 GB**;
 **539 GB free**. Exactly three plotfiles per run, zero checkpoints.
 All original frames and slice caches retained on NFS; first node not listed.

@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "e2584c1421184a007f79ff77930385faf36f112f0ae1eb62b436303cb6fd4fd7",
-      "bytes": 18575
+      "sha256": "20eea9e3934e6720e316bcd67622968416128745711023d2c536e5dc357a5590",
+      "bytes": 19174
     },
     "figures/annular-rings-provisional.png": {
       "sha256": "dda197e0723911cbdf15fba85010c741b818807035860656ca82c81f4025fd26",
@@ -48,6 +48,14 @@
     "figures/ring-validated.png": {
       "sha256": "e53bdc6cb044f32f4b93093a7dc8f4db0aae1cba9ae59086c4a578d02060adf0",
       "bytes": 147280
+    },
+    "figures/ring070-evolution-convergence.pdf": {
+      "sha256": "b80196a32df1d2a1ec48c35d2c55c1e926e61425345bea3690c9ce058a4e0f18",
+      "bytes": 29120
+    },
+    "figures/ring070-evolution-convergence.png": {
+      "sha256": "ff8545209aff58b6a2780fc7288ebd282f3af65c50a8cd07a73106ea3b9f1572",
+      "bytes": 361688
     },
     "figures/ring070-evolution-pilot.png": {
       "sha256": "59379d534e0a4b401ac6e47e9eaa00e58cdb6ae2aa5d2aa67f481c6e057551d5",
@@ -118,8 +126,8 @@
       "bytes": 303
     },
     "reports/evolution-richardson-preparation.json": {
-      "sha256": "c4214198b34c50bf82a169cea8230ebef617042a55f497afb8da96dd94dc9363",
-      "bytes": 839
+      "sha256": "6fb0456156342fbc57994af233b2dd216e47ed4ec42959572706447fbf6e7f75",
+      "bytes": 912
     },
     "reports/evolution_binaries.tsv": {
       "sha256": "9738111039e5c2d227df0abd9440783951b6d35a971de7771bcaa907b2932242",
