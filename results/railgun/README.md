@@ -32,6 +32,21 @@ run archives. A study's diagnostic JSON stays beside its fields and checksums
 so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
+**Earlier 3.72 search candidate, radial cross-section:**
+[PNG](figures/particles/ergoregion-372-cross-section.png),
+[PDF](figures/particles/ergoregion-372-cross-section.pdf) and
+[SVG](figures/particles/ergoregion-372-cross-section.svg) use the accepted field
+in `studies/ergoregion-max-validate271/finalists/01/`. The six-panel layout
+shows a zoomed linear-density map, lapse, clock rates and frame dragging.
+Inner/outer half-maximum density radii and the density-peak
+radius have matching circles and vertical lines across all panels.
+Source hashes and numeric profiles are in
+`reports/ergoregion-372-cross-section.json` and `.tsv`. Rebuild on CPU:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.railgun.plot_ring_cross_section
+```
+
 **Spatial guide to the omega=0.70 ring:** `figures/single-ring/ring070-physics.png`
 (also vector SVG) is one equatorial spatial map with measurements attached
 directly to the centre, ring wall and surrounding space. The central clock ticks 26.06 minutes
