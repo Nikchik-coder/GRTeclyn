@@ -1,5 +1,10 @@
 # Regular-centre scalar rings: validation data
 
+**Finer strongest-ring source check (November 3):** 224x28 passed, but
+256x32 failed the unchanged mixed Einstein constraint limit. The study
+stopped before 288x36, Cartesian certification or evolution.
+[Full fields, checks and logs](studies/ergoregion-source-refined-20261103/).
+
 **Strongest-ring evolution preparation (November 3):** the CUDA build and
 35 GPU regressions passed, but three Cartesian-origin checks failed the
 unchanged curvature-agreement limit. No strongest-ring evolution started.

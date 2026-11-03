@@ -1,0 +1,13 @@
+{
+  "original_files_sha256": {
+    "evolution_qualification.json": "f911a7ee6c77af01c1d91b38ffb75b27a830cafcd4da4f03d75ff833f78d7cd1",
+    "grid_224x28.json": "0907eb263b61e92bbf26ce81df3c5a7e7988504fef5be5727461507f8d69db5a",
+    "grid_224x28.npz": "da6f03194131e016196421274ee749f03b6f3c6ce32dcc9489d74615bab49d7c",
+    "grid_256x32.json": "2fb32d1acbbfed951c2b3ea292801020991373d09f393d378500ad4cb77984d0",
+    "grid_256x32.npz": "01fd884b20ba30c4f554d7a8f1e3c8e25e4cffe59fe39b7c866aaccb516d66bc",
+    "manifest.json": "545830bb7378b8cdcbae6e781c77ea7eb3518d14d421acb732f0c0b98bae3484",
+    "outcome.json": "1abe149eaaeb2e23ee9f20e82539c7ddb8eb8ad6274f81b3b6d9aefd978f9bf6"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/single-ring/refinement/ergo523-source-20261103"
+}

@@ -15,17 +15,38 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE stationary refinement on card 1**, source `87f30015f`, job
-`railgun-ergo523-source-refined-20261103`, started **17:49:49 MSK**.
-All **26 targeted GPU regressions passed** in 23.09 seconds; the first
-stationary solve is being prepared. At most three solves on 224x28 /
-256x32 / 288x36, then the degrees 12/14 origin certificate. Four threads,
-160 GiB, chunks 128, checkpoints OFF. Hard wall deadline **18:49:49 MSK**
-(1 h cap); completion ETA is not yet measured. Card 0 is idle, evolution
-time remains zero. Adopt the finer source only after every unchanged
-stationary, common-point and origin check passes. Scratch is clean:
-**4 KiB retained / 329 GB free**. Completed preparation evidence:
-[archive](../../results/railgun/studies/evolution-ergoregion-preparation-20261103/).
+**Preferred first evolution target: accepted shift/lapse 3.720789536602**,
+following the request to use a less compact ring. Source:
+`results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz`,
+SHA256 `dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd`.
+Its three stationary grids pass and g_tt is positive. Matter peaks at
+coordinate radius 0.234 instead of 0.165 for the 5.23 source; minimum
+lapse is 0.118 instead of 0.089. Easier evolution remains a hypothesis.
+A fresh Cartesian-origin check is required before export. The prepared
+substitution keeps L_full=64, max_level=6, N=96/128/192, card assignment
+0:(96,128), 1:(192), t=50 and checkpoints OFF. The centre check uses
+radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits. No GPU
+start yet for this substituted source; awaiting the run-specific go.
+The 5.23 origin-recovery implementation remains a draft, unlaunched.
+
+
+**No live GPU job. Finer stationary study COMPLETE, REJECTED**, source
+`87f30015f`, job `railgun-ergo523-source-refined-20261103`, card 1,
+**17:49:49-17:52:26 MSK**, exit 2. All 26 regressions passed.
+224x28 passed; 256x32 Newton converged but its unimposed mixed Einstein
+constraint is **1.44799e-8**, above the unchanged **1e-8** gate. The study
+stopped correctly before 288x36 or any origin certificate. No export or
+evolution started. Both GPUs are idle; no completion ETA while blocked.
+Scratch is clean: **4 KiB retained / 329 GB free**, cache only; no plotfiles
+or checkpoints. [Refinement archive](../../results/railgun/studies/ergoregion-source-refined-20261103/).
+
+The failed constraint peaks on the axis at **r=9.41262e-5**. Re-evaluation
+with long-double arithmetic and differentiation still gives **1.35e-8**;
+it is not merely float64 reporting noise. Numerical correction in progress:
+exclude the local homogeneous N~r mode and impose angularly constant
+metric values at the centre. Every original canonical equation and
+constraint remains an independent acceptance test. No renewed GPU run
+yet; original accepted stationary source retained unchanged.
 
 **CUDA rebuild COMPLETE**, source `86d1e98be`, job
 `railgun-ergo523-amr-build-r2-20261103`, **17:41:45–17:44:20 MSK**, exit 0.
@@ -68,7 +89,7 @@ refinement radii, phase-correct background Sommerfeld/damping and per-level
 constraint streams. Thirteen CPU layout/contract/transform checks pass.
 The C++ manufactured boundary test passes all 368640 assertions, including
 exact time-dependent backgrounds, static backgrounds and nonzero deviations.
-The production CUDA binary and GPU regressions are still pending; no
+The production CUDA binary and 35 GPU regressions passed; no
 Cartesian export, preflight or evolution has started. Both cards are idle.
 Scratch is clean: **4 KiB used / 329 GB free**.
 

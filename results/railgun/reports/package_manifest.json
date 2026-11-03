@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "658e57132667920d9bf68aaafcbbb191ab4ebde6927828fb5c5ac29ebe6a8946",
-      "bytes": 25210
+      "sha256": "4745d5692f76df2afb5aaaf9dcb4bffb85b323e9179d573333cd11560500c278",
+      "bytes": 25491
     },
     "figures/README.md": {
       "sha256": "b0cb4a64f7df40a444d2ab3438a3f63b68d2e591a88b2b4a34a81cd1b6d0be98",
@@ -2376,6 +2376,58 @@
     "studies/ergoregion-max-validate272/sha256sums.txt": {
       "sha256": "a8a6d26233e7998e59b5897a59262b6d8050068bf4bc7b8c21919c7babc9d3ea",
       "bytes": 1348
+    },
+    "studies/ergoregion-source-refined-20261103/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergoregion-source-refined-20261103/archive.json": {
+      "sha256": "cbfb1ebb8c6ce0be5088718b15c473d086a3d094211b340723b902d3fe34d273",
+      "bytes": 847
+    },
+    "studies/ergoregion-source-refined-20261103/evolution_qualification.json": {
+      "sha256": "f911a7ee6c77af01c1d91b38ffb75b27a830cafcd4da4f03d75ff833f78d7cd1",
+      "bytes": 178
+    },
+    "studies/ergoregion-source-refined-20261103/execution.log": {
+      "sha256": "8c46e10461a4e221505f89d114b14795c70894c52c176f6f5ad7658d2245e967",
+      "bytes": 2943
+    },
+    "studies/ergoregion-source-refined-20261103/exit_code.txt": {
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    "studies/ergoregion-source-refined-20261103/grid_224x28.json": {
+      "sha256": "0907eb263b61e92bbf26ce81df3c5a7e7988504fef5be5727461507f8d69db5a",
+      "bytes": 4139
+    },
+    "studies/ergoregion-source-refined-20261103/grid_224x28.npz": {
+      "sha256": "da6f03194131e016196421274ee749f03b6f3c6ce32dcc9489d74615bab49d7c",
+      "bytes": 230118
+    },
+    "studies/ergoregion-source-refined-20261103/grid_256x32.json": {
+      "sha256": "2fb32d1acbbfed951c2b3ea292801020991373d09f393d378500ad4cb77984d0",
+      "bytes": 4083
+    },
+    "studies/ergoregion-source-refined-20261103/grid_256x32.npz": {
+      "sha256": "01fd884b20ba30c4f554d7a8f1e3c8e25e4cffe59fe39b7c866aaccb516d66bc",
+      "bytes": 297504
+    },
+    "studies/ergoregion-source-refined-20261103/manifest.json": {
+      "sha256": "545830bb7378b8cdcbae6e781c77ea7eb3518d14d421acb732f0c0b98bae3484",
+      "bytes": 1184
+    },
+    "studies/ergoregion-source-refined-20261103/outcome.json": {
+      "sha256": "1abe149eaaeb2e23ee9f20e82539c7ddb8eb8ad6274f81b3b6d9aefd978f9bf6",
+      "bytes": 9923
+    },
+    "studies/ergoregion-source-refined-20261103/regressions.xml": {
+      "sha256": "8318b626b83ab967ba30874fe30571a853d6899f4b9357e22ad83dd4c9a3d916",
+      "bytes": 4153
+    },
+    "studies/ergoregion-source-refined-20261103/sha256sums.txt": {
+      "sha256": "ef53ee9f8baddea46ec0a6fcf26be4b985966142784b52f878cfcb1d65dcc66f",
+      "bytes": 981
     },
     "studies/evolution-070-n128/README.md": {
       "sha256": "7617af85064fc6e3f7caeb1cf251bd0c8dc6a000a97a02d5a1636fc696e9b083",
