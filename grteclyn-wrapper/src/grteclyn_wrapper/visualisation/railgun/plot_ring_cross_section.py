@@ -172,6 +172,9 @@ def create(source=SOURCE, output=OUTPUT, reports=REPORT):
         ax.set(xlim=(0, outer), xlabel=r'$m\rho$')
         ax.set_xticks([0, .1, .3, 1, 3], labels=['0', '0.1', '0.3', '1', '3'])
         ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+    for ax in (lapse_ax, clock_ax, angular_ax, ratio_ax):
+        ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(
+            lambda value, _: '' if value == 0 else f'{value:g}'))
     for suffix in ('.png', '.pdf', '.svg'):
         fig.savefig(output.with_suffix(suffix), dpi=300, bbox_inches='tight', pad_inches=.04)
     svg = output.with_suffix('.svg')
