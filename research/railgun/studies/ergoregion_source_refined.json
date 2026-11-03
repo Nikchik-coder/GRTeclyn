@@ -47,5 +47,5 @@
     "degree": 12,
     "tolerance": 1e-08
   },
-  "approval": "Prepared only; new stationary solves require a run-specific go."
+  "approval": "November 3: regressions, at most three stationary solves on GPU 1 of the two-GPU node, then degrees 12/14 origin certification; four threads, 160 GiB, one hour, chunks 128, checkpoints OFF. Refined source adopted only after all checks pass."
 }

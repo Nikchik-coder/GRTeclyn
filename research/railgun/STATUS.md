@@ -15,11 +15,17 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE CPU CUDA rebuild**, source `86d1e98be`, job
-`railgun-ergo523-amr-build-r2-20261103`, started **17:41:45 MSK** after
-correcting nvcc's public-method requirement. Four threads, 64 GiB and
-one-hour cap: **18:41:45 MSK** deadline; measured completion ETA pending.
-Both cards are idle; no GRTeclyn evolution has started.
+**Stationary source refinement APPROVED, ready to start on card 1**:
+GPU regressions, then at most three solves on 224x28 / 256x32 / 288x36
+and the degrees 12/14 centre certificate. Four threads, 160 GiB, one-hour
+cap, chunks 128, checkpoints OFF. No export or evolution until all checks
+pass. The same t=50 study remains authorised once a source qualifies.
+
+**CUDA rebuild COMPLETE**, source `86d1e98be`, job
+`railgun-ergo523-amr-build-r2-20261103`, **17:41:45–17:44:20 MSK**, exit 0.
+Binary `main3d_ergo523amr_86d1e98b_2026-11-03.ex`, SHA256
+`647a00124aa1eaa24a64e17a65c5ace1d754b15621c5f565b8d01a0e565502f7`.
+No GRTeclyn evolution has started. Scratch is clean, **4 KiB / 329 GB free**.
 
 **The corrected-fit origin check is COMPLETE, REJECTED**, source
 `437072396`, card 0, **17:35:51–17:41:13 MSK**, exit 2.
@@ -31,7 +37,7 @@ The companion card-1 GPU regressions finished **17:36:55 MSK**, exit 0:
 **35 passed** in 60.97 seconds. The CPU boundary test passed all 368640
 assertions. Checkpoints remain OFF. Scratch: **4 KiB / 329 GB free**, clean.
 
-**Prepared, awaiting separate go:** refine the SAME stationary ring on
+**Approved finer study:** refine the SAME stationary ring on
 224x28 / 256x32 / 288x36, at most three solves and 30 iterations each,
 with two fresh updates, Newton 1e-14, and all original physical gates.
 The central lapse, matter model and radial map remain fixed; frequency
