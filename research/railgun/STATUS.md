@@ -15,6 +15,13 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**LIVE: repeat origin certification on card 0**, job
+`railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, four threads,
+160 GiB and 0.5 h cap, checkpoints OFF. The two manufactured transform
+checks passed; the full Einstein/KG and absolute curvature checks are
+being repeated with no filtered modes or relaxed limits. No evolution
+has started. Card 1 is idle; scratch is clean, 4 KiB used / 329 GB free.
+
 **Origin certification finished REJECTED**, job
 `railgun-ergo523-core-20261103`, source `574f1a6ac`, card 0,
 **17:03:03–17:08:47 MSK on November 3**, exit 2. Independent Einstein
