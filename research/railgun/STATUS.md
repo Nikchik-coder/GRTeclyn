@@ -1,6 +1,6 @@
 # Ring spacetimes and spin transport — status
 
-Updated **2026-11-02 (MSK)**. Branch: `feature/optimisation`.
+Updated **2026-11-03 (MSK)**. Branch: `feature/optimisation`.
 
 The minimal-exotic-matter wormhole optimisation campaign remains paused.
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
@@ -15,39 +15,50 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: verified maximisation restart**, source `6a9da2844`:
-`railgun-ergoregion-max-r2-seed271-20261102`, two-GPU node/card 0, and
-`railgun-ergoregion-max-r2-seed272-20261102`, card 1. Both started
-**19:53:49 MSK**, after the explicit go for both renewed jobs and
-checkpoints **OFF**. All **55 GPU regressions pass on each card**, in
-**70.77 / 71.39 s**. Both accepted-source reproductions pass; CMA
-continuation is advancing on card 0. At **20:15:16 MSK**, it had recorded
-**21 proposals, 55 search solves and six verification solves**; accepted best
-**5.134883762021**. A stronger 5.4872 single-grid trial is undergoing
-three-grid verification and is not accepted yet. Search speed so far is about
-**2.6 search solves/minute** including startup and verification; there is no
-evolution time. Hard remaining wall limit **0.64 h**, until **20:53:49 MSK**;
-the solve/proposal budgets may finish it earlier.
+**Requested three-resolution ergoregion evolution: BLOCKED before startup.**
+The selected source is the strongest three-grid accepted ring, peak
+shift/lapse **5.231237832496**, from
+`results/railgun/studies/ergoregion-max-r2-seed272/finalists/04/accepted.npz`.
+SHA256 `918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f`;
+stationary grid 224x28, frequency **0.708142291115**, mass 1, winding +1.
+The November 3 request assigns the two lower evolution resolutions
+sequentially to card 0 and the highest to card 1 of the authorised two-GPU
+node. Checkpoints **OFF** was explicitly confirmed for these new runs.
+No GPU regression, export, preflight or evolution has started.
 
-**Card 1 COMPLETE**, exit 0 at **20:10:18 MSK**, after **0.275 h** including
-regressions. Its new best **5.231237832496** passed all three resolutions
-(160x20 / 192x24 / 224x28). Central lapse **0.099554349**. It used **18 search
-solves and ten verification solves**, four promotion attempts, and stopped
-normally because fewer than three verification calls remained for a new
-proposal. Nine completed proposals; a tenth evaluation was blocked before
-new work. Card 1 is idle. No automatic renewed search is approved. All fields,
-logs and tests are archived in `results/railgun/studies/ergoregion-max-r2-seed272/`;
-all archive checksums pass. No global maximum or dynamical stability claim.
-**Every potential new best immediately passes all three grids before receiving
-a successful score; otherwise it is rejected.** No deferred finalist phase.
-One-hour cap per job including tests; deadline **20:53:49 MSK**,
-maximum remaining duration at launch **1 h**; proposal speed not yet measured.
-Maximum 32 proposals, 80 search + 12 verification solves/four promotion
-attempts per job, grids 160x20 / 192x24 / 224x28. Four threads, 160 GiB,
-chunks 128, fresh Jacobians, max 30 iterations/minimum two updates, original
-1e-8/1e-6 acceptance limits unchanged. No evolution time applies. Both cards
-were idle before launch. Scratch: **14 GB retained, 544 GB free**, three
-plotfiles per old evolution, zero checkpoints; no scratch/frame removal.
+At **14:16:52 MSK on November 3**, `nvidia-smi` fails with
+`Failed to initialize NVML: Unknown Error`. Direct read/write opening of
+both exposed GPU devices, the NVIDIA control device and UVM all fail with
+errno 1, `Operation not permitted`, despite world-readable/writable device
+nodes. Driver information still lists both H100s. This establishes blocked
+container device access; its underlying platform cause is not established.
+No simulation or consumer process is running. Platform administration must
+restore GPU access before startup; no container restart or device change
+has been attempted. Scratch: **14 GB retained, 543 GB free**, unchanged four
+finished evolution folders plus cache; no files removed. ETA unavailable.
+
+The new ring's matter-density maximum is at coordinate radius about
+**0.166**. The previous uniform N=192, L=32 evolution grid has spacing
+**0.167**, so simply reusing it would not resolve this ring. Refinement of
+the initial data and evolution grid must be prepared and checked together;
+the new evolution resolutions, refinement layout and duration are not yet
+finalised. The old omega=0.70 launcher remains restricted to its original
+source and cannot launch this new field unchanged.
+
+**Both verified maximisation searches are COMPLETE**, source `6a9da2844`.
+Card 0 finished **20:23:38 MSK on November 2**, exit 0, after exhausting
+32 proposals: **74 search solves and five verification solves**, accepted
+best **5.134883762021**. Its outcome and finest accepted source were checked
+read-only on November 3; its completed archive is still to be packed.
+Card 1 finished **20:10:18 MSK on November 2**, exit 0: nine completed
+proposals, **18 search solves and ten verification solves**, four promotion
+attempts; accepted best **5.231237832496**. It stopped normally when fewer
+than three verification calls remained. All card-1 evidence is archived in
+`results/railgun/studies/ergoregion-max-r2-seed272/`.
+Both jobs passed all 55 GPU regressions and retained checkpoints OFF.
+Every promoted best passed 160x20 / 192x24 / 224x28 immediately, with the
+original acceptance limits unchanged. No renewed search is authorised.
+Neither a global maximum nor dynamical stability has been established.
 
 **Physical-interpretation audit:** the saved 3.72 ring does have an
 equatorial ergoregion at coordinate radii **0.0583–0.8525**, but shift/lapse
