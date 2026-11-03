@@ -32,7 +32,7 @@ def plan(config=DEFAULT_CONFIG):
         numerical_execution=False, checkpoints=False)
 
 
-def run(config, directory):
+def run(config, directory, *, problem_factory=None, grid_check=None):
     proposed = plan(config)
     cfg = proposed['config']
     from .ergoregion_scan import extra_checks
@@ -64,7 +64,8 @@ def run(config, directory):
                                     for value in changes.values()))
         return result
     result = run_study(numerical, directory, seed_path=cfg['source'],
-                       acceptance_check=acceptance)
+                       acceptance_check=acceptance,problem_factory=problem_factory,
+                       grid_check=grid_check)
     qualification = dict(stationary_accepted=result['accepted'], evolution_qualified=False,
                           source_sha256=proposed['source_sha256'], checkpoints=False)
     if result['accepted']:

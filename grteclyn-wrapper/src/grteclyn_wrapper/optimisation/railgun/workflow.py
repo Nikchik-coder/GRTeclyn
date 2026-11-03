@@ -26,6 +26,8 @@ def save_state(path, problem, u, *, validated=False):
                     stability='not_assessed')
     if getattr(problem, 'central_lapse', None) is not None:
         metadata['central_lapse'] = problem.central_lapse
+    if hasattr(problem, 'discretisation'):
+        metadata['solver_discretisation'] = problem.discretisation
     if any(t is not None for t in problem.frequency_targets) or getattr(problem, 'central_lapse', None) is not None:
         metadata['frequency_targets']=list(problem.frequency_targets)
         arrays,_=problem.unpack(np.asarray(u))
@@ -67,10 +69,12 @@ def branch_checks(record,problem,u,config):
     return record
 
 
-def run_study(config, directory, *, reference=None, seed_path=None, acceptance_check=None):
+def run_study(config, directory, *, reference=None, seed_path=None, acceptance_check=None,
+              problem_factory=None, grid_check=None):
     from .problem import RingProblem
     from .diagnostics import converged_records, validate
     from ..solver.newton import newton
+    factory = RingProblem if problem_factory is None else problem_factory
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     fields = [ScalarField(**f) for f in config['fields']]
@@ -101,12 +105,14 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
                     if isinstance(value,np.ndarray)})
     for index, (nx, ny) in enumerate(grids):
         started = time.monotonic()
-        p = RingProblem(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'),
+        p = factory(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'),
                         frequency_targets=config.get('frequency_targets'), central_lapse=config.get('central_lapse'))
         if index == 0:
             device = p.jax.devices()[0]
             manifest.update(jax=p.jax.__version__, platform=device.platform,
                             device_kind=device.device_kind, float64=bool(p.jax.config.jax_enable_x64))
+            if hasattr(p,'discretisation'):
+                manifest['solver_discretisation'] = p.discretisation
             if config.get('require_gpu', True) and device.platform != 'gpu':
                 raise RuntimeError('GPU execution required; CPU fallback is refused')
             write_json(directory/'manifest.json', manifest)
@@ -132,6 +138,8 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
         except (ValueError, FloatingPointError, np.linalg.LinAlgError) as error:
             record = dict(grid=[nx, ny], newton=info, verdict='REJECT', reasons=[str(error)], stability='not_assessed')
         branch_checks(record,p,u,config)
+        if grid_check is not None:
+            record = grid_check(p,u,info,record)
         record.update(solve_seconds=solve_elapsed, total_seconds=time.monotonic()-started)
         write_json(directory/f'grid_{nx}x{ny}.json', record)
         records.append(record)
