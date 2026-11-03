@@ -15,16 +15,32 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE origin-fit certificate on card 0**, source `437072396`, started
-**17:35:51 MSK**, job `railgun-ergo523-core-fit-20261103`, four threads,
-160 GiB and a 0.5 h cap (**18:05:51 MSK** deadline).
+**LIVE CPU CUDA rebuild**, source `86d1e98be`, job
+`railgun-ergo523-amr-build-r2-20261103`, started **17:41:45 MSK** after
+correcting nvcc's public-method requirement. Four threads, 64 GiB and
+one-hour cap: **18:41:45 MSK** deadline; measured completion ETA pending.
+Both cards are idle; no GRTeclyn evolution has started.
+
+**The corrected-fit origin check is COMPLETE, REJECTED**, source
+`437072396`, card 0, **17:35:51–17:41:13 MSK**, exit 2.
+Einstein/KG still pass (4.54e-10 / 2.81e-11); curvature agreement is
+1.76e-7 between degrees 8/10 and 2.88e-7 against the parent, above 1e-8.
+This blocks export. The original stationary ring's three-grid acceptance
+is unchanged, but its origin is not yet qualified for the 3+1 handoff.
 The companion card-1 GPU regressions finished **17:36:55 MSK**, exit 0:
-**all 35 tests passed** in 60.97 seconds. Card 1 is now idle.
-The CPU CUDA build hit nvcc's restriction on private enclosing methods
-for device lambdas; it was stopped, with its log retained. The method's
-access is being corrected before a clean-source rebuild. The CPU boundary
-test passed all 368640 assertions. No export, preflight or evolution has
-started. Checkpoints remain OFF. Scratch is clean: **4 KiB / 329 GB free**.
+**35 passed** in 60.97 seconds. The CPU boundary test passed all 368640
+assertions. Checkpoints remain OFF. Scratch: **4 KiB / 329 GB free**, clean.
+
+**Prepared, awaiting separate go:** refine the SAME stationary ring on
+224x28 / 256x32 / 288x36, at most three solves and 30 iterations each,
+with two fresh updates, Newton 1e-14, and all original physical gates.
+The central lapse, matter model and radial map remain fixed; frequency
+is solved. Compare against the original source as well as across the
+three new grids. Test the final Cartesian core with degrees 12/14 and
+unchanged 1e-8 equation/curvature limits before qualifying it for export.
+No new search or automatic evolution from a failed candidate. Seven
+CPU plan/layout checks pass. Definition:
+[studies/ergoregion_source_refined.json](studies/ergoregion_source_refined.json).
 
 **Repeat origin certification finished REJECTED**, job
 `railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, card 0,
