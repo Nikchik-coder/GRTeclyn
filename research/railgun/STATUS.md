@@ -25,8 +25,14 @@ lapse is 0.118 instead of 0.089. Easier evolution remains a hypothesis.
 A fresh Cartesian-origin check is required before export. The prepared
 substitution keeps L_full=64, max_level=6, N=96/128/192, card assignment
 0:(96,128), 1:(192), t=50 and checkpoints OFF. The centre check uses
-radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits. No GPU
-start yet for this substituted source; the run-specific go is now granted.
+radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits.
+**LIVE: `railgun-ergo372-core-20261103`, first two-GPU node/card 0**,
+started **22:57:17 MSK**, source `29d4201bf`. GPU regressions followed
+by the one approved centre certificate; no evolution time yet.
+Completion estimate not established; hard deadline **0.5 h / 23:27:17 MSK**.
+Scratch clean: **4 KiB retained / 329 GB free**, cache only.
+**Queued conditionally:** N96 then N128/card 0, N192/card 1, t=50;
+export and evolution require a passing centre certificate.
 GPU regressions and one centre certificate are approved on card 0,
 with a 0.5 h cap. If accepted, export and evolve all three members with
 the unchanged domain, refinement, card assignment and checkpoints OFF.
@@ -39,13 +45,13 @@ The candidate reuses the completed CUDA binary; no new stationary solve is
 needed for its first origin check. Only a passing certificate permits export.
 
 
-**No live GPU job. Finer stationary study COMPLETE, REJECTED**, source
+**Earlier finer stationary study COMPLETE, REJECTED**, source
 `87f30015f`, job `railgun-ergo523-source-refined-20261103`, card 1,
 **17:49:49-17:52:26 MSK**, exit 2. All 26 regressions passed.
 224x28 passed; 256x32 Newton converged but its unimposed mixed Einstein
 constraint is **1.44799e-8**, above the unchanged **1e-8** gate. The study
 stopped correctly before 288x36 or any origin certificate. No export or
-evolution started. Both GPUs are idle; no completion ETA while blocked.
+evolution started from that source. Its evolution remains blocked.
 Scratch is clean: **4 KiB retained / 329 GB free**, cache only; no plotfiles
 or checkpoints. [Refinement archive](../../results/railgun/studies/ergoregion-source-refined-20261103/).
 
