@@ -15,11 +15,17 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Stationary source refinement APPROVED, ready to start on card 1**:
-GPU regressions, then at most three solves on 224x28 / 256x32 / 288x36
-and the degrees 12/14 centre certificate. Four threads, 160 GiB, one-hour
-cap, chunks 128, checkpoints OFF. No export or evolution until all checks
-pass. The same t=50 study remains authorised once a source qualifies.
+**LIVE stationary refinement on card 1**, source `87f30015f`, job
+`railgun-ergo523-source-refined-20261103`, started **17:49:49 MSK**.
+All **26 targeted GPU regressions passed** in 23.09 seconds; the first
+stationary solve is being prepared. At most three solves on 224x28 /
+256x32 / 288x36, then the degrees 12/14 origin certificate. Four threads,
+160 GiB, chunks 128, checkpoints OFF. Hard wall deadline **18:49:49 MSK**
+(1 h cap); completion ETA is not yet measured. Card 0 is idle, evolution
+time remains zero. Adopt the finer source only after every unchanged
+stationary, common-point and origin check passes. Scratch is clean:
+**4 KiB retained / 329 GB free**. Completed preparation evidence:
+[archive](../../results/railgun/studies/evolution-ergoregion-preparation-20261103/).
 
 **CUDA rebuild COMPLETE**, source `86d1e98be`, job
 `railgun-ergo523-amr-build-r2-20261103`, **17:41:45–17:44:20 MSK**, exit 0.

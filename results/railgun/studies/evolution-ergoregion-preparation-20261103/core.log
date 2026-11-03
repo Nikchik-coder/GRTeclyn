@@ -1,0 +1,3 @@
+[capped_job] start 2026-11-03T14:03:03Z threads=4 mem=160G timeout=1800s
+False {'einstein_max': 4.544046073724693e-10, 'kg_max': 7.346978581068697e-11, 'kg_intrinsic_max': 1.4770229483929143e-10, 'kg_coordinate_difference': 1.6280509579358338e-10, 'order_metric_difference': 1.0018652574217413e-11, 'order_curvature_difference': 2.996923285536468e-06, 'parent_metric_difference': 7.950973213155521e-12, 'parent_curvature_difference': 6.083968066228351e-06}
+[capped_job] end 2026-11-03T14:08:47Z exit=2

@@ -1,5 +1,11 @@
 # Regular-centre scalar rings: validation data
 
+**Strongest-ring evolution preparation (November 3):** the CUDA build and
+35 GPU regressions passed, but three Cartesian-origin checks failed the
+unchanged curvature-agreement limit. No strongest-ring evolution started.
+The original stationary solution remains accepted. Closed preparation
+evidence: [archive](studies/evolution-ergoregion-preparation-20261103/).
+
 **Stationary single-ring ergoregion validated (November 2).** CMA-ES found
 it after five proposals on the unchanged canonical k=1, m=1 branch.
 All original checks pass at 128x16 / 160x20 / 192x24. On the finest grid,

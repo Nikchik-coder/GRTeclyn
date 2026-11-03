@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "79cb4964a1ffce95cf60fff15e1896b9ce70c7d54d3f19ab11ba962fd81b034d",
-      "bytes": 24846
+      "sha256": "658e57132667920d9bf68aaafcbbb191ab4ebde6927828fb5c5ac29ebe6a8946",
+      "bytes": 25210
     },
     "figures/README.md": {
       "sha256": "b0cb4a64f7df40a444d2ab3438a3f63b68d2e591a88b2b4a34a81cd1b6d0be98",
@@ -190,8 +190,8 @@
       "bytes": 912
     },
     "reports/evolution_binaries.tsv": {
-      "sha256": "9738111039e5c2d227df0abd9440783951b6d35a971de7771bcaa907b2932242",
-      "bytes": 357
+      "sha256": "8cec42b36aa8f881187ea2dc3dee7db6488298bc54cd94c052156d73f63bc8f4",
+      "bytes": 646
     },
     "reports/gpu_annular_correction_regression.json": {
       "sha256": "95d487753a38667a7a2e1d6744de9f5a0a965a03ea1b4c48a672c6da90a4cdbf",
@@ -2684,6 +2684,58 @@
     "studies/evolution-070-preflight-refused/sha256sums.txt": {
       "sha256": "b270864f68d6daba49895a68b4b328af47d80c79825f5fafa400249b3280c53d",
       "bytes": 314
+    },
+    "studies/evolution-ergoregion-preparation-20261103/README.md": {
+      "sha256": "aa667057401a7a531bb11608096c2335952025f3ae95bf5297cca43f81aa6802",
+      "bytes": 499
+    },
+    "studies/evolution-ergoregion-preparation-20261103/binary.json": {
+      "sha256": "6ecf8e6a9ed9c676c62e247fa19e555afea49f7a2258ccedec31f59dd2ff1e8f",
+      "bytes": 213
+    },
+    "studies/evolution-ergoregion-preparation-20261103/build.log": {
+      "sha256": "50f85e133e952f87bc19be877f95cb9a46c358ceccb300c614d63a081d31372e",
+      "bytes": 853
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core-dct.json": {
+      "sha256": "ea994b9d1b07f4a4c109287c4a41fae4178e144a51080189cc423bf6494bdbd4",
+      "bytes": 24461
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core-dct.log": {
+      "sha256": "529fecf1c672b6618b5581184e918787c404a2c6a2fe20fd8b7583a5b1e4af94",
+      "bytes": 499
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core-fit.json": {
+      "sha256": "a653006a1f62bcb1d0beb2f83f91810763bb523b63cfe67642c902363bc882af",
+      "bytes": 24468
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core-fit.log": {
+      "sha256": "0cd10ed12deb46d63821594897f91598ead33f07bb061da6739a397181a9008e",
+      "bytes": 501
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core.json": {
+      "sha256": "771afa210f13a248f0371e09aa598cb129487c3afbbe2b2c0fd6fe3749657357",
+      "bytes": 24491
+    },
+    "studies/evolution-ergoregion-preparation-20261103/core.log": {
+      "sha256": "4cc2791c3b79d3d0a8a42cdff43806118c717ea79ffee766a0155c265ccd0965",
+      "bytes": 502
+    },
+    "studies/evolution-ergoregion-preparation-20261103/evolution_plan.json": {
+      "sha256": "ae74bbbeae5a61bd55aa5097bf6ac8f5642a5a80eaae1afef45482f38bbca98b",
+      "bytes": 2032
+    },
+    "studies/evolution-ergoregion-preparation-20261103/outcome.json": {
+      "sha256": "6efa8c14411088fac2391083b9b760b4ec190966bda6eeefbef273eabedc44b7",
+      "bytes": 2019
+    },
+    "studies/evolution-ergoregion-preparation-20261103/regressions.xml": {
+      "sha256": "6c478d4ea2c89fbd9f06f19ef2ddf91998099387744e35734324c6c2cf814bc8",
+      "bytes": 5435
+    },
+    "studies/evolution-ergoregion-preparation-20261103/sha256sums.txt": {
+      "sha256": "3b99cbb8faaf094dd0f010a0454dd176115706ac68f480ec4420075b6b3549ff",
+      "bytes": 946
     },
     "studies/frequency-073-refined/README.md": {
       "sha256": "dff0af46931d6d4448f4e1f36cc89ed768e9a30be32a819123c99b7cf5e697d1",
