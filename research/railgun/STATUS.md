@@ -15,6 +15,20 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**LIVE preparation**, source `437072396`, started **17:35:51 MSK**:
+card 0 runs the extended-precision origin-fit certificate
+(`railgun-ergo523-core-fit-20261103`); card 1 runs targeted GPU evolution,
+geometry and transport regressions (`railgun-ergo523-amr-tests-20261103`).
+Each has four threads, 160 GiB and a 0.5 h hard cap, ending by
+**18:05:51 MSK**. The CPU-only CUDA build
+`railgun-ergo523-amr-build-20261103` has four threads, 64 GiB and a one-hour
+cap (**18:35:51 MSK**); these are deadlines, not measured ETAs.
+First startup check sees both CUDA contexts (595/1009 MiB), eleven tests
+already completed, no logged errors. No initial-data export or evolution
+has started. Scratch: **4 KiB retained / 329 GB free**, cache only.
+Checkpoints remain OFF.
+
+
 **Repeat origin certification finished REJECTED**, job
 `railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, card 0,
 **17:24:36–17:30:21 MSK**, exit 2. DCT-I improves parent curvature
