@@ -15,12 +15,23 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: repeat origin certification on card 0**, job
-`railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, four threads,
-160 GiB and 0.5 h cap, checkpoints OFF. The two manufactured transform
-checks passed; the full Einstein/KG and absolute curvature checks are
-being repeated with no filtered modes or relaxed limits. No evolution
-has started. Card 1 is idle; scratch is clean, 4 KiB used / 329 GB free.
+**Repeat origin certification finished REJECTED**, job
+`railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, card 0,
+**17:24:36–17:30:21 MSK**, exit 2. DCT-I improves parent curvature
+agreement to 2.88e-7 and order agreement to 5.75e-7; both still exceed
+1e-8. The equations pass (Einstein 4.78e-10, KG 2.71e-11).
+Next numerical correction: extended-precision evaluation and DCT-II of
+the local Cartesian fit, replacing float64 sampling and a Vandermonde
+solve. Neither spectral modes nor acceptance limits are changed.
+
+**Implementation prepared:** seven aligned import cubes, fixed physical
+refinement radii, phase-correct background Sommerfeld/damping and per-level
+constraint streams. Thirteen CPU layout/contract/transform checks pass.
+The C++ manufactured boundary test passes all 368640 assertions, including
+exact time-dependent backgrounds, static backgrounds and nonzero deviations.
+The production CUDA binary and GPU regressions are still pending; no
+Cartesian export, preflight or evolution has started. Both cards are idle.
+Scratch is clean: **4 KiB used / 329 GB free**.
 
 **Origin certification finished REJECTED**, job
 `railgun-ergo523-core-20261103`, source `574f1a6ac`, card 0,

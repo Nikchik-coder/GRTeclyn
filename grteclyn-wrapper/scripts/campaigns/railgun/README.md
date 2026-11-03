@@ -8,6 +8,9 @@ The current study definitions and run instructions are in
   stationary searches and validation after their separate launch approvals.
 - `build_binary.sh`, `launch.sh` and `launch_long.sh` build and launch
   GRTeclyn evolutions through the shared preflight and consumer.
+- `launch_ergoregion.sh` prepares the strongest-ring, L=64, six-level
+  evolution from independently sampled initial data at every AMR level.
+  It preserves the approved card assignment and requires checkpoints OFF.
 - `pack_stationary.py` and `pack_evolution.py` archive completed studies.
 - `verify_pack.py` checks the result inventory and immutable study checksums.
 - `organize_runs.py` previews raw-run folder moves; `--apply` performs them.
@@ -18,6 +21,7 @@ live in `grteclyn_wrapper.optimisation.railgun`. In particular:
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.certify_ergoregion_core --help
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.evolution_amr plan --n 96
 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/verify_pack.py
 ```
 

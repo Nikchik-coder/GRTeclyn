@@ -27,3 +27,22 @@ def test_tensor_modes_and_endpoints_round_trip_without_filtering():
     np.testing.assert_allclose(result, coefficients, atol=5e-15, rtol=0)
     np.testing.assert_allclose(np.polynomial.chebyshev.chebval2d(xx, yy, result),
                                values, atol=1e-14, rtol=0)
+
+
+def test_core_fit_keeps_a_large_constant_spatial_metric_constant():
+    from types import SimpleNamespace
+    from grteclyn_wrapper.optimisation.railgun.corridor import CartesianCorridor
+    coefficients = {}
+    for name, value in [('f',-4.6),('w',.5),('N',0.),('b',.3)]:
+        coefficients[name] = np.array([[value]])
+    core = CartesianCorridor.__new__(CartesianCorridor)
+    core.parent = SimpleNamespace(coefficients=coefficients)
+    core.length, core.radius, core.fields = 2.5, .04, ()
+    core.names, core.xp = ('f','C','w','H'), np
+    for degree in (8,10):
+        result = core._fit(degree)
+        np.testing.assert_allclose(result['C'][0,0], 1.3**2*np.exp(4.6), rtol=2e-16)
+        for name in core.names:
+            correction=result[name].copy();correction[0,0]=0
+            # Two physical derivatives amplify coefficients by ~degree^4/R^2.
+            assert abs(correction).max()*degree**4/core.radius**2 < 1e-8

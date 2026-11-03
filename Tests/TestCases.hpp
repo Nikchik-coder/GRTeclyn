@@ -14,6 +14,7 @@
 
 // Test cases
 #include "BSSNMatterTest.hpp"
+#include "BackgroundBoundaryTest.hpp"
 #include "CCZ4GeometryUnitTest.hpp"
 #include "CCZ4RHSTest.hpp"
 #include "ConstraintsTest.hpp"
@@ -40,6 +41,8 @@ TEST_CASE("BSSNMatter"
 }
 
 TEST_CASE("CCZ4 Geometry") { run_ccz4_geometry_unit_tests(); }
+
+TEST_CASE("BackgroundBoundary") { run_background_boundary_test(); }
 
 TEST_CASE("ParticleInterpolator") { run_particle_interpolator_test(); }
 

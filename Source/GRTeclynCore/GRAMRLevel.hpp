@@ -158,6 +158,12 @@ class GRAMRLevel : public amrex::AmrLevel
         return nullptr;
     }
 
+    //! Optional analytic time derivative of a time-dependent reference.
+    [[nodiscard]] virtual const amrex::MultiFab *sommerfeld_reference_dt() const
+    {
+        return nullptr;
+    }
+
     //! Problem specific post restart
     virtual void specific_post_restart() {}
 

@@ -216,7 +216,8 @@ bool BoundaryConditions::is_periodic(const int a_dir) const
 
 void BoundaryConditions::apply_sommerfeld_boundaries(
     amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln,
-    const amrex::MultiFab *a_reference) const
+    const amrex::MultiFab *a_reference,
+    const amrex::MultiFab *a_reference_dt) const
 {
     // First-order extrapolation and reflection are imposed by AMReX when it
     // fills physical ghost cells. Sommerfeld instead requires this additional
@@ -285,6 +286,8 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
     }
     auto *asymptotic_values = m_asymptotic_values.data();
     const bool relative     = (a_reference != nullptr);
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(a_reference_dt == nullptr || relative,
+        "A time-dependent Sommerfeld reference needs its background state");
 
 #if defined(AMREX_USE_OMP) && !defined(AMREX_USE_GPU)
 #pragma omp parallel
@@ -297,6 +300,9 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
         const amrex::Array4<amrex::Real const> ref =
             relative ? a_reference->const_array(mfi)
                      : amrex::Array4<amrex::Real const>{};
+        const bool time_dependent = a_reference_dt != nullptr;
+        const auto ref_dt = time_dependent ? a_reference_dt->const_array(mfi)
+                                          : amrex::Array4<amrex::Real const>{};
         for (const auto &sommbox : sommboxes)
         {
             amrex::Box valid_sommbox = sommbox & valid_box;
@@ -359,6 +365,8 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
                                       loc[2] * loc[2]);
                         rhs(i, j, k, n) =
                             (asymptote - f(iv) + tmp) * (1. / radius);
+                        if (time_dependent)
+                            rhs(i, j, k, n) += ref_dt(i, j, k, n);
                     });
             }
         }

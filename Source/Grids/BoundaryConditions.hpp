@@ -97,9 +97,12 @@ class BoundaryConditions
     /// ghosts filled) the condition acts on the deviation a_soln - a_reference
     /// with asymptotic value zero: exact for a stationary reference that is
     /// not flat at the boundary, outgoing for perturbations of it.
+    /// A time-dependent reference also supplies a_reference_dt: its analytic
+    /// time derivative is added after applying Sommerfeld to the deviation.
     void apply_sommerfeld_boundaries(
         amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln,
-        const amrex::MultiFab *a_reference = nullptr) const;
+        const amrex::MultiFab *a_reference = nullptr,
+        const amrex::MultiFab *a_reference_dt = nullptr) const;
 };
 
 #endif /* BOUNDARYCONDITIONS_HPP_ */

@@ -37,27 +37,36 @@ class CartesianCorridor(RingGeometry):
         self.certificate=None
 
     def _fit(self, degree):
-        xp=self.xp
-        nodes=np.cos(np.pi*(np.arange(degree+1)+.5)/(degree+1))
+        # Curvature differentiates these coefficients twice. Computing C at
+        # O(100) in float64 and solving a Vandermonde system left O(1e-7)
+        # artificial curvature in small, strongly redshifted cores. Evaluate
+        # the same parent polynomial and its Gauss transform in long double;
+        # no smoothing, regularity projection or mode removal is applied.
+        from scipy.fft import dct
+        pi=np.arccos(np.longdouble(-1))
+        nodes=np.cos(pi*(np.arange(degree+1,dtype=np.longdouble)+.5)/(degree+1))
         squared=(nodes+1)/2*self.radius**2
         rho,z=np.meshgrid(np.sqrt(squared),np.sqrt(squared),indexing='ij')
-        points=np.stack([np.zeros_like(rho),rho,np.zeros_like(rho),z],axis=-1).reshape(-1,4)
-        def components(x):
-            r2,r,s,y=self.parent._coordinates(x)
-            f,w,n,b=(self.parent.sample(key,s,y) for key in ('f','w','N','b'))
-            c=(1+b)**2*xp.exp(-f)
-            nu=n*x[1]**2/r2
-            h=c*n/r2*exprel(nu,xp)
-            values=[f,c,w,h]
-            for i,field in enumerate(self.fields):
-                values.append(self.parent.sample(f'q{i}',s,y)/r**field.degree)
-            return xp.stack(values)
-        samples=np.asarray(self.jax.jit(self.jax.vmap(components))(xp.asarray(points)))
-        vand=np.polynomial.chebyshev.chebvander(nodes,degree)
+        r2=rho*rho+z*z
+        r=np.sqrt(r2)
+        s=(r-self.length)/(r+self.length)
+        y=2*z*z/r2-1
+        def sample(name):
+            coefficients=np.asarray(self.parent.coefficients[name],dtype=np.longdouble)
+            return np.polynomial.chebyshev.chebval2d(s,y,coefficients)
+        f,w,n,b=(sample(name) for name in ('f','w','N','b'))
+        c=(1+b)**2*np.exp(-f)
+        nu=n*rho*rho/r2
+        samples=[f,c,w,c*n/r2*exprel(nu,np)]
+        samples.extend(sample(f'q{i}')/r**field.degree for i,field in enumerate(self.fields))
         result={}
         for i,name in enumerate(self.names):
-            data=samples[:,i].reshape(degree+1,degree+1)
-            result[name]=xp.asarray(np.linalg.solve(vand,np.linalg.solve(vand,data).T).T)
+            data=samples[i]
+            for axis in (0,1):
+                data=dct(data,type=2,axis=axis)/(degree+1)
+                first=[slice(None),slice(None)];first[axis]=0
+                data[tuple(first)] *= .5
+            result[name]=self.xp.asarray(np.asarray(data,dtype=float))
         return result
 
     def core_sample(self,name,x,*,finer=False):
