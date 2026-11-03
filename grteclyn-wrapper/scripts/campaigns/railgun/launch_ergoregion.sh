@@ -4,6 +4,7 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 DATA="" NAME="" GPU="" BINARY="" CHECKPOINTS="" N=""
+CONFIG="research/railgun/studies/evolution_ergoregion_best.json"
 EXTRA=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -11,6 +12,7 @@ while [[ $# -gt 0 ]]; do
     --name) NAME="$2"; shift 2 ;;
     --gpu) GPU="$2"; shift 2 ;;
     --n) N="$2"; shift 2 ;;
+    --config) CONFIG="$2"; shift 2 ;;
     --binary) BINARY="$2"; shift 2 ;;
     --checkpoints) CHECKPOINTS="$2"; shift 2 ;;
     --preflight-only) EXTRA+=(--preflight-only); shift ;;
@@ -33,7 +35,7 @@ mkdir -p -- "$(dirname -- "${TEMPLATE}")"
 cd "${REPO}"
 "${REPO}/grteclyn-wrapper/.venv/bin/python" -m \
   grteclyn_wrapper.optimisation.railgun.evolution_amr prepare \
-  --out "${DATA}" --n "${N}" --template "${TEMPLATE}" --checkpoints off \
+  --out "${DATA}" --n "${N}" --config "${CONFIG}" --template "${TEMPLATE}" --checkpoints off \
   > "${TEMPLATE}.contract.json.tmp"
 mv -- "${TEMPLATE}.contract.json.tmp" "${TEMPLATE}.contract.json"
 nvidia-smi
@@ -43,4 +45,4 @@ exec bash "${HERE}/../spinning_wormhole/launch.sh" \
   --profile smoke --subdir ergoregion --keep-last 3 --foreground \
   "${EXTRA[@]}" \
   --consume-args "--frames-fields ${FIELDS} --frames-axis z --frames-coord 32 --frames-zoom 2 --frames-center 32 32 32 --frames-cache-slices --frames-auto-zlim --frames-blank-edge 2 --no-psi4" \
-  --what 'Strongest accepted ergoregion ring; L64, six levels, Richardson study to t=50, checkpoints OFF'
+  --what 'Accepted ergoregion ring; L64, six levels, Richardson study to t=50, checkpoints OFF'

@@ -26,6 +26,15 @@ def load_plan(config, n):
     contract = source_contract(cfg['source'])
     if contract['source_sha256'] != cfg['source_sha256']:
         raise ValueError('selected source hash changed')
+    with np.load(cfg['source'],allow_pickle=False) as saved:
+        frequency = float(saved['u'][-1])
+    core = cfg['core']
+    if (contract['mass'] != 1.0 or contract['winding'] != 1
+            or not np.isfinite(cfg['frequency']) or abs(cfg['frequency']-frequency) > 1e-12
+            or not np.isfinite(core['radius']) or core['radius'] <= 0
+            or isinstance(core['degree'],bool) or int(core['degree']) != core['degree'] or core['degree'] < 3
+            or core['comparison_degree'] != core['degree']+2 or core['tolerance'] != 1e-8):
+        raise ValueError('source frequency, mass/winding and unchanged origin certificate limits required')
     if n not in cfg['base_N'] or cfg['checkpoints'] is not False:
         raise ValueError('approved base resolution and checkpoints OFF required')
     length, maximum = cfg['length'], cfg['max_level']

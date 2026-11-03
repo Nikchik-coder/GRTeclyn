@@ -28,6 +28,11 @@ substitution keeps L_full=64, max_level=6, N=96/128/192, card assignment
 radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits. No GPU
 start yet for this substituted source; awaiting the run-specific go.
 The 5.23 origin-recovery implementation remains a draft, unlaunched.
+The substituted source is defined in
+[evolution_ergoregion_372.json](studies/evolution_ergoregion_372.json).
+Nineteen CPU source-identity, phase, layout and unchanged-limit checks pass.
+The candidate reuses the completed CUDA binary; no new stationary solve is
+needed for its first origin check. Only a passing certificate permits export.
 
 
 **No live GPU job. Finer stationary study COMPLETE, REJECTED**, source

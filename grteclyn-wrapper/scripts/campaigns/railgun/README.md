@@ -21,6 +21,8 @@ live in `grteclyn_wrapper.optimisation.railgun`. In particular:
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.certify_ergoregion_core --help
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.certify_ergoregion_core \
+  --config research/railgun/studies/evolution_ergoregion_372.json --dry-run
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.evolution_amr plan --n 96
 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/verify_pack.py
 ```
