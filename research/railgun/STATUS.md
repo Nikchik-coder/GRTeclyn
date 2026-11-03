@@ -15,54 +15,52 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Code reorganisation complete; launch preparation resumed for t=50.** No GPU
-job, export, preflight or evolution was started. All executable files have
-moved out of this research directory: campaign runners and archive tools
-are under `grteclyn-wrapper/scripts/campaigns/railgun/`; the physical-claims
-audit and new origin-check command are modules in
-`grteclyn_wrapper.optimisation.railgun`. Study JSONs and documentation stay
-here. The November 3 request now specifies t=50, three resolutions, the
-two lower members on card 0, the finest on card 1, and checkpoints OFF.
-The numerical setup below remains a draft pending implementation and
-checks; the larger-domain choice is awaiting a reply.
-Both package-layout tests pass. All five moved shell runners pass syntax
-checks; all six Python files parse, the archive commands resolve the correct
-repository root, and command imports/help work from outside the checkout.
-The relocated CPU audit reproduces its saved report exactly. No GPU started.
+**LIVE preparation: origin certification on card 0**, job
+`railgun-ergo523-core-20261103`, source `574f1a6ac`, started
+**17:03:03 MSK on November 3**. Four CPU threads, 160 GiB and 0.5 h cap,
+checkpoints OFF; zero evolution time. First startup check sees its CUDA
+context (587 MiB), no error in its log; certificate compilation is underway.
+Hard certificate deadline **17:33:03 MSK**, at most 0.5 h from startup.
+Card 1 is idle. Scratch: **4 KiB retained, 329 GB free**; only the newly
+created cache directory. Saved fields, binaries and frame directories are
+on persistent storage; the old container scratch disappeared during the
+platform recovery, with no deletion performed here.
 
-**Ergoregion evolution preparation authorised; checkpoints OFF.**
-GPU access on the two-GPU node was restored at **16:44 MSK on November 3**.
-Both H100s are accessible and idle. The earlier container scratch directories
-are absent after the platform recovery; the persistent accepted fields,
-frozen binary and frame directories remain present. No data was deleted here.
-The scratch filesystem has **329 GB free**; no new scratch data yet.
+**Three evolutions authorised through t=50**, checkpoints **OFF**, on the
+two-GPU node only. The two lower members run sequentially on card 0; the
+finest on card 1. The clarified box is **L_full=64**, boundaries 32 units
+from the centre, and **max_level=6**. Use the spinning-wormhole paper's
+background-relative Sommerfeld condition and outer damping treatment,
+adapted to the ring's canonical complex scalar. Numerical implementation
+and regressions precede export, preflight and evolution; none of those
+three evolutions has started yet. The launch pause for script relocation
+was explicitly revoked by the new t=50 request.
 
 Select the strongest three-grid accepted ring, shift/lapse **5.231237832496**:
 `results/railgun/studies/ergoregion-max-r2-seed272/finalists/04/accepted.npz`,
 SHA256 `918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f`.
 Frequency **0.708142291115**, mass 1, winding +1, stationary grid 224x28.
-The renewed launch request authorises preparation and the three evolutions;
-the two lower members run sequentially on card 0 and the highest on card 1.
-Checkpoints OFF was explicitly confirmed earlier for these same runs.
+Base N=96/128/192, identical fixed physical refinement radii, finest dx
+**0.0104167 / 0.0078125 / 0.00520833**. The matter peak is at coordinate
+radius about **0.166**. Each level must import independently sampled,
+aligned Cartesian data from the same spectral field, preserving extrinsic
+curvature, scalar phase and normal momentum. No interpolation of a coarse
+cube is accepted as resolved fine initial data.
 
-The matter peak at coordinate radius **0.166** requires finer initial data
-and evolution cells together. Prepare base N=96/128/192 in the original
-32-wide box with four fixed nested refinement levels, finest spacings
-**0.0208333 / 0.015625 / 0.0104167**. Every level imports independently
-sampled, aligned Cartesian data from the same spectral field, with all
-extrinsic curvature, scalar phase and normal momentum retained. First check
-the origin patch at radius 0.04, degrees 8/10, C6 join and the unchanged
-1e-8 certificate. A rejection stops export and evolution.
-
-The first triplet stops at **t=2**, with no added perturbation. Retain every
+The origin check uses radius 0.04, degrees 8/10, a C6 join and unchanged
+1e-8 tolerances. Rejection blocks export and evolution. Retain every
 default frame and slice cache and the last three plotfiles per member.
-Four CPU threads, 160 GiB host address space per supervised job; at most
-three evolution jobs, each capped at 3 h. Source, binary, physics, physical
-refinement radii and matched comparison times are identical across grids.
-The old omega=0.70 launcher remains restricted to its original experiment.
-New preparation and launcher support are being implemented before startup.
-Definition: [studies/evolution_ergoregion_best.json](studies/evolution_ergoregion_best.json).
-No evolution is running yet, and no stability result is asserted.
+Each evolution is supervised with four CPU threads and a 160 GiB host cap;
+its wall budget will be recorded with the finished launcher. No added
+perturbation; no automatic renewed stationary search. Definition:
+[studies/evolution_ergoregion_best.json](studies/evolution_ergoregion_best.json).
+
+**Script relocation complete:** operational runners and archive tools are in
+`grteclyn-wrapper/scripts/campaigns/railgun/`; numerical commands and the
+claims audit are in `grteclyn_wrapper.optimisation.railgun`. No Python or
+shell script remains here. Both layout tests, moved-script syntax/import
+checks and exact CPU audit reproduction pass. All 1450 package files and
+immutable study checksums verify. The layout commit is `574f1a6ac`.
 
 **Both verified maximisation searches are COMPLETE**, source `6a9da2844`.
 Card 0 finished **20:23:38 MSK on November 2**, exit 0, after exhausting
