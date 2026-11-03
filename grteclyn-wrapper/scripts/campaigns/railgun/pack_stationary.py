@@ -10,7 +10,7 @@ import shutil
 
 from pack_evolution import portable
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[4]
 
 
 def portable_text(text):

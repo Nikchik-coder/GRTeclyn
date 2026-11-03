@@ -1,5 +1,12 @@
 # Running ring studies
 
+The research directory contains documentation and JSON study definitions.
+Executable campaign scripts are in
+[`grteclyn-wrapper/scripts/campaigns/railgun`](../../grteclyn-wrapper/scripts/campaigns/railgun/README.md);
+the numerical code and physical-claims audit are in
+`grteclyn_wrapper.optimisation.railgun` under the wrapper's `src/` tree.
+Run the commands below from the repository root.
+
 **Completed November 2:** N=192 reached t=50 at 12:56:40 MSK, exit 0.
 The 16 movies finished encoding at 14:02:43 MSK; contact sheets await visual
 review. Checkpoints OFF. No evolution remains live; the new stationary study
@@ -38,7 +45,7 @@ The root README indexes the groups. Evolution and movie paths stay fixed.
 Historical logs and saved JSONs retain their original paths; the layout JSON
 in `manifests/` maps each old path to its current location and records checksums.
 New output directories belong in the matching group. To preview a legacy
-folder reorganisation, run `python3 research/railgun/organize_runs.py`; use
+folder reorganisation, run `python3 grteclyn-wrapper/scripts/campaigns/railgun/organize_runs.py`; use
 `--apply` only after checking that no running job uses the folders being moved.
 The script verifies every moved file and leaves `evolution/` untouched.
 
@@ -77,10 +84,10 @@ eight threads/320 GiB. Checkpoints OFF confirmed; retain all fields/logs.
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-seed271-20261102 \
   --threads 4 --mem 160 --timeout 3600 --gpu -- \
-  bash research/railgun/run_ergoregion_maximise_r2.sh 0
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_maximise_r2.sh 0
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-seed272-20261102 \
   --threads 4 --mem 160 --timeout 3600 --gpu -- \
-  bash research/railgun/run_ergoregion_maximise_r2.sh 1
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_maximise_r2.sh 1
 ```
 
 Configs: `studies/ergoregion_max_r2_seed271.json` and `...seed272.json`.
@@ -118,10 +125,10 @@ choice; no GPU startup is authorised by preparation alone:
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-validate271-20261102 \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
-  bash research/railgun/run_max_candidate_validation.sh 0
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_max_candidate_validation.sh 0
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-validate272-20261102 \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
-  bash research/railgun/run_max_candidate_validation.sh 1
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_max_candidate_validation.sh 1
 ```
 
 The runner first checks the card and CPU-only source hashes, then runs GPU
@@ -161,10 +168,10 @@ source above. Prepared launch commands, after the campaign go:
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-seed271-20261102 \
   --threads 4 --mem 160 --timeout 3600 --gpu -- \
-  bash research/railgun/run_ergoregion_maximise.sh 0
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_maximise.sh 0
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-seed272-20261102 \
   --threads 4 --mem 160 --timeout 3600 --gpu -- \
-  bash research/railgun/run_ergoregion_maximise.sh 1
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_maximise.sh 1
 ```
 
 Each checks its own card, runs GPU regressions, then optimises. Per job:
@@ -222,7 +229,7 @@ four CPU threads, 160 GiB, one-hour cap for the whole sequence, chunks 128:
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-cma-20261102 \
   --threads 4 --mem 160 --timeout 3600 --gpu -- \
-  bash research/railgun/run_ergoregion_cma.sh
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_cma.sh
 ```
 
 Card 0 on the two-GPU node only. The script checks occupancy and source hash
@@ -285,7 +292,7 @@ Original sequential test/scan command, retained for reproduction:
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-20261102 \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
-  bash research/railgun/run_ergoregion_amplitude.sh
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_amplitude.sh
 ```
 
 The script checks card 0 is free again, writes the GPU regression report to
@@ -304,7 +311,7 @@ budget is closed, with four new/seven cumulative solves. No ergoregion:
 ```bash
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-amplitude-r2-20261102 \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
-  bash research/railgun/run_ergoregion_amplitude.sh --resume-bootstrap
+  bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_amplitude.sh --resume-bootstrap
 ```
 
 Before any GPU startup, preview it with the dry-run command above plus

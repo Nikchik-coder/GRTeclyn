@@ -21,6 +21,9 @@ Optimisation's Python code and command entry points live together in
 [`grteclyn_wrapper.optimisation`](grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md).
 Its README explains the search, validation and outputs. Plots remain in
 `visualisation/optimisation/`; tests remain in `grteclyn-wrapper/tests/optimisation/`.
+Scalar-ring launch, packing and run-organisation scripts are in
+[`grteclyn-wrapper/scripts/campaigns/railgun/`](grteclyn-wrapper/scripts/campaigns/railgun/README.md).
+`research/railgun/` contains documentation and JSON study definitions.
 
 ## The merger campaign: where to look
 

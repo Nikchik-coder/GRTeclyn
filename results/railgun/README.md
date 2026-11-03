@@ -89,7 +89,7 @@ It does not integrate photon paths or perform an energy-extraction experiment.
 Reproduce it on a CPU, without JAX or cluster access:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python research/railgun/audit_ring_claims.py
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims
 ```
 
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
@@ -150,7 +150,7 @@ passages/first turnarounds; no asymptotic escape, energy gain or stability claim
 Check the complete inventory and original study checksums:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python research/railgun/verify_pack.py
+grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/verify_pack.py
 ```
 
 `figures/particles/uphill-transit.png` shows the verified finite uphill selection and

@@ -15,35 +15,54 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Requested three-resolution ergoregion evolution: BLOCKED before startup.**
-The selected source is the strongest three-grid accepted ring, peak
-shift/lapse **5.231237832496**, from
-`results/railgun/studies/ergoregion-max-r2-seed272/finalists/04/accepted.npz`.
-SHA256 `918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f`;
-stationary grid 224x28, frequency **0.708142291115**, mass 1, winding +1.
-The November 3 request assigns the two lower evolution resolutions
-sequentially to card 0 and the highest to card 1 of the authorised two-GPU
-node. Checkpoints **OFF** was explicitly confirmed for these new runs.
-No GPU regression, export, preflight or evolution has started.
+**Code reorganisation complete; launch preparation resumed for t=50.** No GPU
+job, export, preflight or evolution was started. All executable files have
+moved out of this research directory: campaign runners and archive tools
+are under `grteclyn-wrapper/scripts/campaigns/railgun/`; the physical-claims
+audit and new origin-check command are modules in
+`grteclyn_wrapper.optimisation.railgun`. Study JSONs and documentation stay
+here. The November 3 request now specifies t=50, three resolutions, the
+two lower members on card 0, the finest on card 1, and checkpoints OFF.
+The numerical setup below remains a draft pending implementation and
+checks; the larger-domain choice is awaiting a reply.
+Both package-layout tests pass. All five moved shell runners pass syntax
+checks; all six Python files parse, the archive commands resolve the correct
+repository root, and command imports/help work from outside the checkout.
+The relocated CPU audit reproduces its saved report exactly. No GPU started.
 
-At **14:16:52 MSK on November 3**, `nvidia-smi` fails with
-`Failed to initialize NVML: Unknown Error`. Direct read/write opening of
-both exposed GPU devices, the NVIDIA control device and UVM all fail with
-errno 1, `Operation not permitted`, despite world-readable/writable device
-nodes. Driver information still lists both H100s. This establishes blocked
-container device access; its underlying platform cause is not established.
-No simulation or consumer process is running. Platform administration must
-restore GPU access before startup; no container restart or device change
-has been attempted. Scratch: **14 GB retained, 543 GB free**, unchanged four
-finished evolution folders plus cache; no files removed. ETA unavailable.
+**Ergoregion evolution preparation authorised; checkpoints OFF.**
+GPU access on the two-GPU node was restored at **16:44 MSK on November 3**.
+Both H100s are accessible and idle. The earlier container scratch directories
+are absent after the platform recovery; the persistent accepted fields,
+frozen binary and frame directories remain present. No data was deleted here.
+The scratch filesystem has **329 GB free**; no new scratch data yet.
 
-The new ring's matter-density maximum is at coordinate radius about
-**0.166**. The previous uniform N=192, L=32 evolution grid has spacing
-**0.167**, so simply reusing it would not resolve this ring. Refinement of
-the initial data and evolution grid must be prepared and checked together;
-the new evolution resolutions, refinement layout and duration are not yet
-finalised. The old omega=0.70 launcher remains restricted to its original
-source and cannot launch this new field unchanged.
+Select the strongest three-grid accepted ring, shift/lapse **5.231237832496**:
+`results/railgun/studies/ergoregion-max-r2-seed272/finalists/04/accepted.npz`,
+SHA256 `918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f`.
+Frequency **0.708142291115**, mass 1, winding +1, stationary grid 224x28.
+The renewed launch request authorises preparation and the three evolutions;
+the two lower members run sequentially on card 0 and the highest on card 1.
+Checkpoints OFF was explicitly confirmed earlier for these same runs.
+
+The matter peak at coordinate radius **0.166** requires finer initial data
+and evolution cells together. Prepare base N=96/128/192 in the original
+32-wide box with four fixed nested refinement levels, finest spacings
+**0.0208333 / 0.015625 / 0.0104167**. Every level imports independently
+sampled, aligned Cartesian data from the same spectral field, with all
+extrinsic curvature, scalar phase and normal momentum retained. First check
+the origin patch at radius 0.04, degrees 8/10, C6 join and the unchanged
+1e-8 certificate. A rejection stops export and evolution.
+
+The first triplet stops at **t=2**, with no added perturbation. Retain every
+default frame and slice cache and the last three plotfiles per member.
+Four CPU threads, 160 GiB host address space per supervised job; at most
+three evolution jobs, each capped at 3 h. Source, binary, physics, physical
+refinement radii and matched comparison times are identical across grids.
+The old omega=0.70 launcher remains restricted to its original experiment.
+New preparation and launcher support are being implemented before startup.
+Definition: [studies/evolution_ergoregion_best.json](studies/evolution_ergoregion_best.json).
+No evolution is running yet, and no stability result is asserted.
 
 **Both verified maximisation searches are COMPLETE**, source `6a9da2844`.
 Card 0 finished **20:23:38 MSK on November 2**, exit 0, after exhausting
@@ -76,7 +95,7 @@ a turn but do not locate it. Close three-grid agreement is not a twelve-digit
 bound on every physical quantity, and one stalled Newton correction does not
 establish a universal floating-point limit. The new accepted 5.13 result
 already exceeds the proposed 4.3–4.8 ceiling. Reproduce this CPU-only audit
-with `research/railgun/audit_ring_claims.py`; its hash-checked field results
+with `python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims`; its hash-checked field results
 are in `results/railgun/reports/ergoregion-comparison/claims-audit.json`.
 No new field solves or particle tracks were run for the audit.
 
@@ -664,5 +683,5 @@ The [package README](../../results/railgun/README.md) indexes accepted and
 rejected studies and supplies figure commands. Earlier cubic-tau, quintic and
 precision failures stay explicitly rejected; none is promoted retrospectively.
 
-Run `grteclyn-wrapper/.venv/bin/python research/railgun/verify_pack.py` to
+Run `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/verify_pack.py` to
 check the complete inventory and every immutable per-study checksum.

@@ -33,7 +33,7 @@ def inventory(root):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--write',action='store_true',help='refresh the package inventory after reviewed changes')
-    args=parser.parse_args();root=Path(__file__).resolve().parents[2]/'results/railgun'
+    args=parser.parse_args();root=Path(__file__).resolve().parents[4]/'results/railgun'
     actual=inventory(root);path=root/'reports/package_manifest.json'
     if args.write:path.write_text(json.dumps(dict(schema=1,files=actual),indent=2)+'\n')
     elif actual!=json.loads(path.read_text())['files']:
