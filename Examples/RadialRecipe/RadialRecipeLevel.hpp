@@ -47,8 +47,12 @@ class RadialRecipeLevel : public GRAMRLevel
     //! One-time setup of the recentring box, from the parameters and this
     //! level's grid.  Idempotent: safe to call from several entry points.
     void configure_recentring_box();
-    amrex::MultiFab m_background_initial, m_background, m_background_dt;
+  public:
+    // nvcc requires public enclosing methods for extended device lambdas.
     void update_boundary_background(amrex::Real time);
+
+  private:
+    amrex::MultiFab m_background_initial, m_background, m_background_dt;
     [[nodiscard]] const amrex::MultiFab *sommerfeld_reference() const override;
     [[nodiscard]] const amrex::MultiFab *sommerfeld_reference_dt() const override;
 };

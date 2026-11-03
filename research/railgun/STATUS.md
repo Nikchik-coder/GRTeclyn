@@ -15,19 +15,16 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE preparation**, source `437072396`, started **17:35:51 MSK**:
-card 0 runs the extended-precision origin-fit certificate
-(`railgun-ergo523-core-fit-20261103`); card 1 runs targeted GPU evolution,
-geometry and transport regressions (`railgun-ergo523-amr-tests-20261103`).
-Each has four threads, 160 GiB and a 0.5 h hard cap, ending by
-**18:05:51 MSK**. The CPU-only CUDA build
-`railgun-ergo523-amr-build-20261103` has four threads, 64 GiB and a one-hour
-cap (**18:35:51 MSK**); these are deadlines, not measured ETAs.
-First startup check sees both CUDA contexts (595/1009 MiB), eleven tests
-already completed, no logged errors. No initial-data export or evolution
-has started. Scratch: **4 KiB retained / 329 GB free**, cache only.
-Checkpoints remain OFF.
-
+**LIVE origin-fit certificate on card 0**, source `437072396`, started
+**17:35:51 MSK**, job `railgun-ergo523-core-fit-20261103`, four threads,
+160 GiB and a 0.5 h cap (**18:05:51 MSK** deadline).
+The companion card-1 GPU regressions finished **17:36:55 MSK**, exit 0:
+**all 35 tests passed** in 60.97 seconds. Card 1 is now idle.
+The CPU CUDA build hit nvcc's restriction on private enclosing methods
+for device lambdas; it was stopped, with its log retained. The method's
+access is being corrected before a clean-source rebuild. The CPU boundary
+test passed all 368640 assertions. No export, preflight or evolution has
+started. Checkpoints remain OFF. Scratch is clean: **4 KiB / 329 GB free**.
 
 **Repeat origin certification finished REJECTED**, job
 `railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, card 0,
