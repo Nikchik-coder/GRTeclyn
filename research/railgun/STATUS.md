@@ -15,16 +15,17 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE preparation: origin certification on card 0**, job
-`railgun-ergo523-core-20261103`, source `574f1a6ac`, started
-**17:03:03 MSK on November 3**. Four CPU threads, 160 GiB and 0.5 h cap,
-checkpoints OFF; zero evolution time. First startup check sees its CUDA
-context (587 MiB), no error in its log; certificate compilation is underway.
-Hard certificate deadline **17:33:03 MSK**, at most 0.5 h from startup.
-Card 1 is idle. Scratch: **4 KiB retained, 329 GB free**; only the newly
-created cache directory. Saved fields, binaries and frame directories are
-on persistent storage; the old container scratch disappeared during the
-platform recovery, with no deletion performed here.
+**Origin certification finished REJECTED**, job
+`railgun-ergo523-core-20261103`, source `574f1a6ac`, card 0,
+**17:03:03–17:08:47 MSK on November 3**, exit 2. Independent Einstein
+and scalar defects passed (4.55e-10 and 1.48e-10); absolute curvature
+agreement failed: 3.00e-6 between core orders and 6.09e-6 against the
+parent spectral metric. No export or evolution started. The next check
+replaces the cancellation-prone cosine matrix with an extended-precision
+DCT-I; no modes are filtered and no acceptance limits change. Both CPU
+manufactured-transform checks must pass before repeating certification.
+Both cards are idle. Scratch: **4 KiB retained, 329 GB free**; only the
+new cache directory. Persistent source fields and frames remain intact.
 
 **Three evolutions authorised through t=50**, checkpoints **OFF**, on the
 two-GPU node only. The two lower members run sequentially on card 0; the

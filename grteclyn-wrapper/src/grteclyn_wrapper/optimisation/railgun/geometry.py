@@ -12,7 +12,23 @@ import numpy as np
 
 from .model import exprel
 from ..solver.device import configure_jax
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_coeffs
+
+
+def interpolation_coefficients(values):
+    """DCT-I coefficients without high-mode cosine-matrix cancellation.
+
+    Extended precision keeps the transform error below the float64 input
+    noise. This matters for Cartesian curvature near a regular origin:
+    an artificial constant in N is divided by r squared twice by AD.
+    """
+    from scipy.fft import dct
+    coefficients = np.asarray(values, dtype=np.longdouble)
+    for axis in (0, 1):
+        coefficients = dct(coefficients, type=1, axis=axis)/(coefficients.shape[axis]-1)
+        end = [slice(None)]*coefficients.ndim
+        end[axis] = [0, -1]
+        coefficients[tuple(end)] *= .5
+    return np.asarray(coefficients, dtype=float)
 
 
 def chebyshev_basis(x, degree, xp):
@@ -56,7 +72,7 @@ class RingGeometry:
         self.length, self.fields = problem.length, problem.fields
         arrays, freq = problem.unpack(np.asarray(u))
         self.frequencies = np.asarray(freq)
-        self.coefficients = {key: self.xp.asarray(cheb_coeffs(cheb_coeffs(a, 0), 1))
+        self.coefficients = {key: self.xp.asarray(interpolation_coefficients(a))
                              for key, a in arrays.items()}
         self.nx, self.ny = problem.nx, problem.ny
         self.metric = self.jax.jit(self._metric)
