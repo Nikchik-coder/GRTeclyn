@@ -69,7 +69,7 @@
   "wall_seconds_per_evolution": 172800,
   "frames": "All default frames, both complex components and slice caches; retain originals.",
   "scope": "Unperturbed three-resolution t<=50 evolution, fixed refinement and background-relative outer boundary; stability assessed only within measured convergence.",
-  "approval": "Prepared substitution of the accepted 3.72 source; await run-specific go before GPU certification or evolution. L_full=64, max_level=6 and checkpoints OFF retained.",
+  "approval": "November 3: GPU regressions and one centre certificate on GPU 0, radius 0.08 and degrees 12/14, 0.5 h cap. If accepted, export and evolve N96 then N128 on GPU 0 and N192 on GPU 1 through t=50, L_full=64, max_level=6, four threads and 160 GiB per job, checkpoints OFF, full frames and last three plotfiles. No new stationary solves.",
   "boundary": {
     "type": "background-relative Sommerfeld plus quartic KO sponge and background damping",
     "inner_radius": 24.0,
