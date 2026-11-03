@@ -2,12 +2,12 @@
   "schema": 1,
   "files": {
     "README.md": {
-      "sha256": "4745d5692f76df2afb5aaaf9dcb4bffb85b323e9179d573333cd11560500c278",
-      "bytes": 25491
+      "sha256": "992a9f2abb494b708ddb7d113b306ffe685479cb328673fa0297c4104b2001cc",
+      "bytes": 26255
     },
     "figures/README.md": {
-      "sha256": "b0cb4a64f7df40a444d2ab3438a3f63b68d2e591a88b2b4a34a81cd1b6d0be98",
-      "bytes": 3140
+      "sha256": "ef9a00e624839d96ed3e0473e6c11d15f1c5f13dc3ce59e1725db0e33c651bd0",
+      "bytes": 3463
     },
     "figures/evolution/ring070-evolution-convergence.pdf": {
       "sha256": "b80196a32df1d2a1ec48c35d2c55c1e926e61425345bea3690c9ce058a4e0f18",
@@ -36,6 +36,18 @@
     "figures/particles/annular-transit-k12.png": {
       "sha256": "56a62416196e438759b4b9861b7458ba969f6cb395893625bfc415799501f350",
       "bytes": 143523
+    },
+    "figures/particles/ergoregion-372-cross-section.pdf": {
+      "sha256": "1c581096ecfa0100898879f9e6d0d5bbaeeec09b84e7224fe00b1903aa119e3a",
+      "bytes": 70002
+    },
+    "figures/particles/ergoregion-372-cross-section.png": {
+      "sha256": "9fa3bf73c5465c9faf137ab2ef7d124ea7019016c800f722ab4dd64b8553d1ae",
+      "bytes": 296915
+    },
+    "figures/particles/ergoregion-372-cross-section.svg": {
+      "sha256": "829ca2d3ba97c7d2908746ce676855ee9d3d0cbebf014e176e9fa415ee24cb1c",
+      "bytes": 169786
     },
     "figures/particles/multiring-particles-in-gap.png": {
       "sha256": "0abf450a0dfc92f1696eaeec89cbdde7ac6cc356ce12faba1d4c698565697836",
@@ -144,6 +156,14 @@
     "reports/completed-experiments.json": {
       "sha256": "ff90a42bcd7cfa7049f7f3823ee984728dccc7024dac217bef45964519c4578b",
       "bytes": 10151
+    },
+    "reports/ergoregion-372-cross-section.json": {
+      "sha256": "6ed12656dd1905012f0b8a8be886c77daea8c89d63bb8be8dfb6b469715f7199",
+      "bytes": 3192
+    },
+    "reports/ergoregion-372-cross-section.tsv": {
+      "sha256": "dc0d6c3d1683e8fc6d8c409df3210d70ab426fe791cd742bbe5ea59f8c44f2bb",
+      "bytes": 1037465
     },
     "reports/ergoregion-comparison/claims-audit.json": {
       "sha256": "5dcd4042179ca92219701fa629b923039617cfb9fc9510bcbfe8a2ec010b3d9d",
@@ -2736,6 +2756,30 @@
     "studies/evolution-070-preflight-refused/sha256sums.txt": {
       "sha256": "b270864f68d6daba49895a68b4b328af47d80c79825f5fafa400249b3280c53d",
       "bytes": 314
+    },
+    "studies/evolution-ergo372-core-paused-20261103/manifest.json": {
+      "sha256": "adf4269646a966f55f17571b3a51ca02a02c2827c8f4fbc13dd1463274758bb4",
+      "bytes": 491
+    },
+    "studies/evolution-ergo372-core-paused-20261103/outcome.json": {
+      "sha256": "0f1ed4c4ab624ceec425e0a5c735873703df1604ea2b9681f5d5cea08449ba17",
+      "bytes": 451
+    },
+    "studies/evolution-ergo372-core-paused-20261103/regressions.xml": {
+      "sha256": "2c44e2d4e9771b1b79bc79b6c2ab51a00810c64f24f631148521275d9f790c0e",
+      "bytes": 6385
+    },
+    "studies/evolution-ergo372-core-paused-20261103/run.log": {
+      "sha256": "3551a819fe2dfffbd2e11e3ab868782fef67d534372a3bfceee3f285b8cc24ad",
+      "bytes": 173
+    },
+    "studies/evolution-ergo372-core-paused-20261103/sha256sums.txt": {
+      "sha256": "4e411f0e04f67e20643e0518cc6449be0ea53906e7f68c4d58fb983f15614c2f",
+      "bytes": 392
+    },
+    "studies/evolution-ergo372-core-paused-20261103/study.json": {
+      "sha256": "a87d2218d3771abfa68c4a31e42c484245bc1c0e9453d261ed6fc53e6b76b969",
+      "bytes": 2229
     },
     "studies/evolution-ergoregion-preparation-20261103/README.md": {
       "sha256": "aa667057401a7a531bb11608096c2335952025f3ae95bf5297cca43f81aa6802",

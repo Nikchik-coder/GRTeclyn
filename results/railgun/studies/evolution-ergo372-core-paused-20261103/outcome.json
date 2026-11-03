@@ -1,0 +1,13 @@
+{
+  "stage": "paused",
+  "accepted": false,
+  "qualification_completed": false,
+  "reason": "requested_stop",
+  "started_msk": "2026-11-03T22:57:17+03:00",
+  "stopped_msk": "2026-11-03T23:01:09+03:00",
+  "regressions_passed": 41,
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "origin_certificate": "interrupted before result; neither passed nor rejected",
+  "evolutions_started": 0,
+  "checkpoints": false
+}
