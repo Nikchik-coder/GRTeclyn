@@ -10,13 +10,15 @@ absent / 709 GB free. No cleanup performed.
 The corrected preparation starts with an archived weak railgun ring and
 inserts a two-ended wormhole through a fully coupled solve; stronger dragging
 comes later and an ergoregion is optional. The replacement weak-ring/throat
-implementation has 77 passing CPU tests. With fresh explicit go,
-`railgun-throat-20261104T201026` launched on first-node/card 0 at
-**23:10:26 MSK**, source **1bb61204b**. All 73 CUDA startup tests pass;
-production confirms CUDA/float64 and is preparing/checking the reference.
-No first Newton result or stationary solve rate yet at 23:13 MSK. The **1 h** cap ends November 5
-**00:10:26 MSK**, at most 18 study solves; checkpoints OFF. Older queues remain paused. Details in
-[optimisation STATUS](../optimisation/STATUS.md).
+implementation has 77 passing CPU tests. The approved pilot
+`railgun-throat-20261104T201026` ran on first-node/card 0 from
+**23:10:26 to 23:14:26 MSK**, source **1bb61204b**, **0.0667 h**, exit 2.
+All 73 CUDA startup tests pass. Three Newton solves converged; 150x24
+failed the off-grid scalar gate, 180x30 failed far-tail monotonicity, and
+210x36 passed every gate. Three-grid acceptance therefore failed and no
+matched-spin control ran. No validated reduction claim or automatic retry.
+Both GPUs idle; scratch only 4 KB cache / 305 GB free. Checkpoints OFF.
+Details in [optimisation STATUS](../optimisation/STATUS.md).
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
 **The stronger-ring timing audit, concentric gapped field recovery and
 between-ring particle experiment are complete and accepted.** Every original
