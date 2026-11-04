@@ -82,15 +82,21 @@ float64 and Jacobian chunk 256. The old failed attempts remain untouched.
 
 | Capped job | Node/card | Stage | Start MSK | ETA / hard deadline |
 |---|---|---|---|---|
-| `wormhole-ring-ring-spin-20261104T194817` | first / 0 | starting reference validation, 0/48 | Nov 4 22:48:17 | rate not measured; <=4 h cap, Nov 5 02:48:17 |
-| `wormhole-ring-ring-fixed-20261104T194817` | first / 1 | starting reference validation, 0/48 | Nov 4 22:48:17 | rate not measured; <=4 h cap, Nov 5 02:48:17 |
-| `wormhole-ring-potential-20261104T194820` | second / 0 | starting reference validation, 0/48 | Nov 4 22:48:20 | rate not measured; <=4 h cap, Nov 5 02:48:20 |
+| `wormhole-ring-ring-spin-20261104T194817` | first / 0 | all reference grids PASS; nonzero ring seed PASS; entering search, 0/48 at check | Nov 4 22:48:17 | search rate not measured; <=4 h cap, Nov 5 02:48:17 |
+| `wormhole-ring-ring-fixed-20261104T194817` | first / 1 | all reference grids PASS; nonzero ring seed PASS; entering search, 0/48 at check | Nov 4 22:48:17 | search rate not measured; <=4 h cap, Nov 5 02:48:17 |
+| `wormhole-ring-potential-20261104T194820` | second / 0 | all reference grids PASS; entering potential search | Nov 4 22:48:21 | search rate not measured; <=4 h cap, Nov 5 02:48:21 |
 
 Outputs: `runs/optimisation/wormhole_ring_20261104_r2/` with one subdirectory
 per case. No evolution time, AMR checkpoints, consumer or follow-on queue.
 Pre-start storage clean: first-node scratch **8 KB cache / 305 GB free**;
 second-node scratch absent, **0 GB run scratch / 709 GB free**.
-Startup verification is in progress.
+Startup verified: all three physical GPU PIDs are present; each reference
+passes fresh 150x30, 180x36 and 210x42 solves and the independent checks.
+Reference-grid passes take **18–24 s** each, including diagnostics. Both
+ring cases have a nonzero re-solved seed passing the search-grid gates;
+this is not yet a refined finalist or a measured improvement. First-node
+GPU memory at the check: **13.0 / 19.1 GB**, with active computation.
+Storage remains as listed above. No instability or stability claim.
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).
