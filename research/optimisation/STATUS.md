@@ -10,7 +10,7 @@ the JAX/Newton infrastructure. Earlier run authorisations and pending tables
 below do not dispatch new work while this pause is in force. Existing results
 and the withdrawn-stability-screen warning remain the record of this campaign.
 
-## Prepared: rotating scalar ring around a wormhole — November 4
+## Rotating scalar ring around a wormhole — November 4
 
 Configuration: [`studies/wormhole_ring.toml`](studies/wormhole_ring.toml).
 Preview/one-case dispatcher: [`studies/run_wormhole_ring.sh`](studies/run_wormhole_ring.sh).
@@ -38,15 +38,37 @@ V(psi). Unused Einstein/KG checks, both-end mass gaps/tails,
 minimal-surface and quadrature gates remain unchanged, with fresh
 150x30 / 180x36 / 210x42 final solves. No stability claim or evolution.
 
-Proposed ceiling **per case: 4 h**, four threads, 160 GiB, 48 CMA proposals
-plus reference/seed/control solves within the same wall cap. No GPU has
-been selected; start and finish clock times await launch. No AMR checkpoints
+Ceiling **per case: 4 h**, four threads, 160 GiB, 48 CMA proposals
+plus reference/seed/control solves within the same wall cap. No AMR checkpoints
 or scratch plotfiles are produced. **75 targeted CPU tests pass**, covering
 coupled equations, signed winding, mixed free-spin parameter dispatch,
 control failures, potential-endpoint attribution, and refinement. Preview
 commands and shell syntax pass. A read-only transformation of the archived
 seed matches the reference area to roundoff; no nonlinear field solve was
-performed. Dispatch is pending code push/pull and cluster GPU regression checks.
+performed during setup. **All 75 CUDA regressions also pass** on the first
+node; the second node independently reports a CUDA device. Code was
+committed and pushed to `myfork`, verified, then pulled on the shared cluster
+checkout: **d89fac053**. No SCP transfer.
+
+### Startup aborted — November 4, 22:36 MSK
+
+| Capped job | Node/card | Stage | Start MSK | ETA / hard deadline |
+|---|---|---|---|---|
+| `wormhole-ring-ring-spin-20261104T193621` | first / 0 | exit 134 before solve; 0/48 | Nov 4 22:36:21 | ended 22:36:30; no ETA |
+| `wormhole-ring-ring-fixed-20261104T193621` | first / 1 | exit 134 before solve; 0/48 | Nov 4 22:36:21 | ended 22:36:30; no ETA |
+| `wormhole-ring-potential-20261104T193626` | second / 0 | exit 134 before solve; 0/48 | Nov 4 22:36:26 | ended 22:36:34; no ETA |
+
+Outputs: `runs/optimisation/wormhole_ring_20261104/{ring-spin,ring-fixed,potential}/`;
+logs: `runs/capped_jobs/<job>/log`. Stationary solves have no evolution time,
+consumer, AMR checkpoint or queued restart dependency. No follow-on queue.
+Pre-launch storage: first-node scratch **8 KB cache / 306 GB free**;
+second-node scratch directory absent, **0 GB run scratch / 710 GB free**.
+All three fail while creating the `cuda_async` default memory pool under
+the 160 GiB address-space cap, before a stationary solve. The CUDA regression
+suite used the default allocator and passed; it did not exercise this pool.
+A capped `platform` allocator check is in progress. Physical settings,
+acceptance gates and resource caps remain unchanged; original logs are retained.
+No exotic-matter reduction is measured yet.
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).
@@ -108,7 +130,7 @@ the ultrastatic Ellis profile, not generally by a redshifted drainhole.
 | D21 potential-only dynamical comparison | Evolve the saved V=0 reference at J=1.0138 with drive 0, same R_e, binary, grid and perturbation | One N128 evolution, roughly 6--9 GPU h to t100--150 at 18 units/h; deferred, no new launch authorized here; checkpoint choice needed |
 | Continuum growth rate and onset model | Fit each saved D21 resolution over matched linear intervals, test fit-window sensitivity and a common-tau logarithmic onset law | CPU post-processing of existing streams; no new evolution needed for the first check |
 
-## Live — none (2026-11-01, 08:23 MSK)
+## Previous campaign closure (2026-11-01, 08:23 MSK)
 
 **All three GPUs are free.** The two D90 extensions, positive-family geometry
 pilot and both signed-domain searches are finished; their automatic queue is
