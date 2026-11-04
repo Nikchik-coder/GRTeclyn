@@ -34,12 +34,17 @@ equatorial curvature mismatch at r=0.004 is **5.87e-11**, compared with
 Ham increases from **9.43e-6 (N96) to 3.22e-5 (N192)** and Mom from
 **1.84e-5 to 3.31e-5**. The two-resolution whole-interior comparison fails;
 N128 has not started. Do not infer dynamical stability from finite diagnostics.
-Initial equatorial slices isolate a mesh-transition problem: inside r<0.3,
+Initial equatorial slices show a different trend inside the ring: at r<0.3,
 Ham/Mom improve by about 16x (orders **3.967 / 3.968**), while the largest Ham
 errors lie at refinement boundaries. The finest cube ends at +/-0.5 in N96
 and +/-0.4167 in N192, so level domains are not identical. This suggests AMR
 interface/coverage errors; it does not yet establish their complete cause.
 [Pairwise orders and frozen diagnostic slices](../../results/railgun/reports/ergoregion372-startup/orders.md).
+[Initial ring and error maps](../../results/railgun/figures/evolution/ergoregion372-grid-and-constraints.png)
+show the moving refinement edges. With six refinement levels, the finest
+cells are 0.01042 / 0.005208 for N96/N192. The half-peak
+density band is about 0.295 wide, or 28 / 57 finest cells. The separate Newton
+solve uses a compactified infinite domain with map scale 2.5, not this box.
 The stationary source certificate remains accepted; the evolution needs its
 own convergence qualification. Live settings and the approved queue are unchanged.
 
@@ -53,8 +58,11 @@ Full frames and slice caches are retained; checkpoints **OFF**, keep-last **3**.
 
 | Member | Card | t | Target | Speed (units/h) | Remaining (h) | ETA (MSK) |
 |---|---|---|---|---|---|---|
-| N96 | 0 | 4.093 | 50 | 12.28 | 3.74 | Nov 04 15:39 |
-| N192 | 1 | 0.147 | 50 | 1.34 | 37.31 | Nov 06 01:13 |
+| N96 | 0 | 9.720 | 50 | 12.28 | 3.28 | Nov 04 15:39 |
+| N192 | 1 | 0.800 | 50 | 1.42 | 34.77 | Nov 05 23:08 |
+
+Last checked **12:22 MSK**. The N96 consumer has pruned its older plotfiles;
+the last three remain, with every rendered frame and slice cache retained.
 
 **Queued:** N128/card 0 follows N96 only after a normal t=50 finish with
 finite constraints. Same hash-matched source via

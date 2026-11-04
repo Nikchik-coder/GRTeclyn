@@ -6,8 +6,12 @@
       "bytes": 28736
     },
     "figures/README.md": {
-      "sha256": "112c486564cdfdd2ee5c0c64ddaafe283db3bb1ac0580c1e8b2e887bf853dc5a",
-      "bytes": 3748
+      "sha256": "c702a3fba4771439ed471fe68f1d9f9bdf858ea21607a421fa675d2abcfb43a9",
+      "bytes": 4171
+    },
+    "figures/evolution/ergoregion372-grid-and-constraints.png": {
+      "sha256": "0fe503ffb756400b1c9c95cd459c59fd55ea2325e6d88ab419f12a0e1fb94de5",
+      "bytes": 463390
     },
     "figures/evolution/ergoregion372-n192-initial.png": {
       "sha256": "7717bcded377f80778235b75d3989fed1c68f2d3ea736131175ecd22afe3b156",
@@ -16,6 +20,10 @@
     "figures/evolution/ergoregion372-n96-initial.png": {
       "sha256": "d63501c5316efff7bee9de26be6e22a5511da284d9a91068a7a00d6b35b0a196",
       "bytes": 91262
+    },
+    "figures/evolution/ring070-all-evolution-frames.png": {
+      "sha256": "f2847eeac4deefefd2212869b68a1bfe3f7475d683d086ebc4a34a70615ef2ef",
+      "bytes": 144254
     },
     "figures/evolution/ring070-evolution-convergence.pdf": {
       "sha256": "e3e5908290d17459d8dc69595cdf0f741eb687d4b415f402cc1029eba599aaa3",

@@ -2,6 +2,8 @@
 
 ## Latest explanatory figures
 
+- [Current ergoregion ring and initial Ham/Mom errors](evolution/ergoregion372-grid-and-constraints.png). Both live resolutions at t=0, with the finest-grid edges shown; N128 is queued.
+- [Every earlier ring evolution](evolution/ring070-all-evolution-frames.png). N96/N128/N192 at t=2, plus the separate N192 run at t=50. Rebuild both figures with `python -m grteclyn_wrapper.visualisation.railgun.plot_evolution_startup`.
 - [Accepted 3.72 ring: equatorial cross-section, lapse, clocks and dragging](particles/ergoregion-372-cross-section.png) ([PDF](particles/ergoregion-372-cross-section.pdf)). Earlier search candidate, with a zoomed matter map and matching radius markers across all panels.
 - [Accepted concentric rings: equatorial cross-section, lapse, clocks and signed dragging](two-rings/annular-cross-section.png) ([PDF](two-rings/annular-cross-section.pdf)). Matching component radius markers and matter-gap shading, with an inner-ring zoom.
 - [Stronger rings: size, clocks and regions of forced rotation](single-ring/ergoregion-comparison.png) ([SVG](single-ring/ergoregion-comparison.svg)). The 3.72 ring passes all three resolutions; the 5.21 trial is rejected.
