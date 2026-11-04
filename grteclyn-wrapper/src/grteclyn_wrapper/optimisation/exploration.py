@@ -80,12 +80,25 @@ def make_problem(state, config, nx, ny, pin, *, frequency=None, amplitude=None):
             extra = dict(chi=(pot, frequency), pin_chi=amplitude)
         elif kind == "winding":
             extra = dict(winding=(pot, frequency, config.get("winding_k", 1)),
-                         pin_zeta=amplitude)
+                         pin_zeta=amplitude,
+                         zeta_anchor_xi=config.get('zeta_anchor_xi', 0.) if amplitude is not None else 0.)
         else:
             raise ValueError(kind)
+    rotation = config.get('rotation_control', 'J')
+    if rotation not in ('J', 'nonrotating_ends'):
+        raise ValueError('unknown rotation_control')
     return MatterCollocationProblem(
         eta0=1.0, gamma=config["gamma"], radial_map=state["map"], nx=nx, ny=ny,
-        prescribe=("J", config["J"]), pin=pin, potential=potential, **extra)
+        prescribe=("J", config["J"]) if rotation == 'J' else ('omega_inf', 0.),
+        pin=pin, potential=potential, **extra)
+
+
+def matter_anchor(values, sx, config):
+    """Evaluate the same amplitude border during seeding and diagnostics."""
+    xi = config.get('zeta_anchor_xi', 0.) if config.get('matter') == 'winding' else 0.
+    if xi == 0.:
+        return float(values[len(sx)//2, -1])
+    return float(cheb_eval(sx, values[:, -1], [xi])[0])
 
 
 def pack_seed(p, state, cloud=None, frequency=None):
@@ -178,7 +191,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                 raise ValueError("matter trial needs a mode or finite-amplitude seed")
             frequency = state['frequency']
             cloud = interpolate(state,lobatto(nx)[0],lobatto(ny)[0],key)
-            anchor = cloud[nx//2,-1]
+            anchor = matter_anchor(cloud, lobatto(nx)[0], config)
             if abs(anchor)<1e-15:
                 raise ValueError('zero matter anchor')
             cloud = cloud*(config['amplitude']/anchor)
@@ -203,7 +216,9 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     e19 = float(np.max(np.abs(diag["E19"][mask])))/d2
     ec = float(np.max(np.abs(diag["E_c"][mask])))
     jtot = diag["j_of_x"] + diag.get("j_matter_tail", 0.)
-    jerr = float(np.max(np.abs(sigma**2*jtot[mask]-config["J"]))) / max(1., abs(config["J"]))
+    measured_j = float(sigma**2*jtot[p.mid-1])
+    target_j = measured_j if config.get('rotation_control') == 'nonrotating_ends' else config['J']
+    jerr = float(np.max(np.abs(sigma**2*jtot[mask]-target_j))) / max(1., abs(target_j))
     x = exotic_x(1., p.map, p.sx, p.sy, p.Dx, F, N, B, psi)
     th = p.throat(u)
     held = th["R_e"] if pin[0] == "R_e" else th["area"]
@@ -224,7 +239,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                jacobian_evals=info['jacobian_evals'],
                X=x["X"], X_A=x["X_A"], VIQ=sigma*x["VIQ"],
                R_e=sigma*x["R_e"], R_A=sigma*x["R_A"], R_pol=sigma*x["R_pol"],
-               sigma=sigma, E19=e19, E_c=ec, J_error=jerr, pin_error=pin_error,
+               sigma=sigma, E19=e19, E_c=ec, J_error=jerr, J_measured=measured_j, pin_error=pin_error,
                tails=float(tail), lapse_min=float(np.exp(F.min()/2)),
                stability="not_assessed", scalar_in_vacuum_interval=interval_ok)
     if kind:
@@ -232,7 +247,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
         k = config.get("winding_k", 1) if kind == "winding" else 0
         bound = (0 < frequency < config["matter_mass"] and
                  abs(frequency+k*omega/sigma)<config["matter_mass"]*np.exp(config["gamma"]/2))
-        amp = fields[5][p.mid, -1]
+        amp = matter_anchor(fields[5], p.sx, config)
         row.update(frequency=frequency, cloud_peak=float(np.max(np.abs(fields[5]))),
                    amplitude_error=float(abs(amp/config["amplitude"]-1)), bound=bool(bound))
         if kind == "winding":

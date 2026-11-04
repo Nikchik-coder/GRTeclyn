@@ -368,8 +368,9 @@ class MatterCollocationProblem:
     A = 2 pi h int dmu B^2 e^{-f + nu/2} and R_e = B e^{-f/2} sqrt(h) on
     its equator.  Values at xi_t come from the Chebyshev coefficients
     (T_k(xi) = cos(k arccos xi)), smooth in xi_t even on a node, as on the
-    symmetric family's xi = 0 throat.  The pins need prescribe = ("J",
-    value): with omega_inf held, the scale would move it.
+    symmetric family's xi = 0 throat. Pins allow prescribed J, or exactly
+    zero omega_inf (both ends nonrotating). A nonzero fixed grid omega_inf
+    is excluded because the unknown scale would change its physical value.
 
     ``chi = (cal U, omega_chi)`` adds the canonical layer field of
     campaign step 4: chi = X e^{i omega_chi t}, a canonical complex
@@ -409,7 +410,8 @@ class MatterCollocationProblem:
     fixed-frequency Newton, whose trivial zeta = 0 branch swallows seeds
     (2026-10-28: four gaussian-seeded fixed-omega_z rungs all fell to
     it).  The cloud's amplitude is the dial and the frequency is the
-    eigenvalue, as in the 1D star solvers.
+    eigenvalue, as in the 1D star solvers. ``zeta_anchor_xi`` optionally
+    moves this border away from the throat, to anchor an exterior ring.
     """
 
     def __init__(self, *, eta0: float, gamma: float, potential=None,
@@ -420,7 +422,8 @@ class MatterCollocationProblem:
                  chi: tuple | None = None,
                  winding: tuple | None = None,
                  pin_zeta: float | None = None,
-                 pin_chi: float | None = None):
+                 pin_chi: float | None = None,
+                 zeta_anchor_xi: float = 0.0):
         # thread cap, platform and float64 BEFORE the first jax import
         from .solver.device import configure_jax
         from .solver.jacobian import dense_jacobian
@@ -456,9 +459,10 @@ class MatterCollocationProblem:
         self.mode, self.value = mode, float(value)
         self.border_psi = psi_minus is None
         self.psi_minus_fixed = 0.0 if psi_minus is None else float(psi_minus)
-        if pin is not None and (pin[0] not in ("R_e", "area", "minimal_area") or mode != "J"):
+        if pin is not None and (pin[0] not in ("R_e", "area", "minimal_area")
+                                or (mode != "J" and value != 0.)):
             raise ValueError(f"pin {pin!r}: ('R_e', 'area' or 'minimal_area', value), with "
-                             "prescribe = ('J', value)")
+                             "prescribe = ('J', value) or ('omega_inf', 0)")
         self.pin = None if pin is None else (pin[0], float(pin[1]))
         self.surface_order = ny if pin is not None and pin[0] == 'minimal_area' else 0
         # the canonical layer field (campaign step 4): chi = (cal U,
@@ -484,6 +488,15 @@ class MatterCollocationProblem:
         if pin_zeta is not None and self.winding is None:
             raise ValueError("pin_zeta needs a winding field")
         self.pin_zeta = None if pin_zeta is None else float(pin_zeta)
+        if not np.isfinite(zeta_anchor_xi) or not -1 < zeta_anchor_xi < 1:
+            raise ValueError("zeta_anchor_xi must lie strictly between the infinities")
+        if zeta_anchor_xi != 0. and self.pin_zeta is None:
+            raise ValueError("zeta_anchor_xi needs pin_zeta")
+        self.zeta_anchor_xi = float(zeta_anchor_xi)
+        # Keep the legacy midpoint evaluation exact; use spectral evaluation
+        # at an off-node anchor so refinement does not move the border.
+        self.zeta_anchor = (np.eye(nx+1)[nx//2] if zeta_anchor_xi == 0. else
+                            cheb_eval(self.sx, np.eye(nx+1), [zeta_anchor_xi])[0])
         if pin_chi is not None and self.chi is None:
             raise ValueError("pin_chi needs a canonical cloud")
         self.pin_chi = None if pin_chi is None else float(pin_chi)
@@ -786,7 +799,7 @@ class MatterCollocationProblem:
                 [out, jnp.atleast_1d(d["chi"][self.mid, -1] - self.pin_chi)])
         if self.pin_zeta is not None:
             out = jnp.concatenate(
-                [out, jnp.atleast_1d(d["z"][self.mid, -1] - self.pin_zeta)])
+                [out, jnp.atleast_1d(self.zeta_anchor @ d["z"][:, -1] - self.pin_zeta)])
         if self.pin is not None:
             xi_t = u[-1]
             if self.surface_order:

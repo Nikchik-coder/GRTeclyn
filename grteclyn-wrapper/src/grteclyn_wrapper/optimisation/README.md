@@ -279,7 +279,67 @@ a fresh process for each one, and stops at the first successful handoff.
 `handoff` converts saved fields into the background-table format read by the
 spinning-wormhole evolution. These tools do not launch an evolution.
 
-## Wormhole with a rotating scalar ring (prepared November 4)
+## Railgun ring surrounding a throat (replacement prepared November 4)
+
+`research/optimisation/studies/railgun_throat.json` starts with the actual
+three-grid accepted weak railgun ring in `results/railgun/studies/ring-validated/`.
+Its source files and acceptance record are SHA-256 pinned. This replaces the
+older S0-seeded pilot below, which was stopped on request.
+
+The first model has matching toroidal scalar lobes at both mouths, gamma=0,
+and zero dragging at **both infinities**. There is no imposed throat spin:
+ordinary rotating matter sources W, and the total J+ is measured. Keep the
+source's free canonical scalar, mass 1 and integer winding +1 with phase
+exp(i omega t+i phi). Frequency is solved; both-end mass gaps and tails must
+pass. The phantom potential stays V=0. Fix the true minimal throat area to
+16 pi (R_A=2, hence m_b R_A=2); do not optimise the phantom potential in this
+first experiment. Symmetric matter-induced throat rotation has a direct
+precedent in [Hoffmann et al. (2018)](https://arxiv.org/abs/1803.11044).
+
+`railgun_wormhole.prepare_seed` evaluates the archived f,W,N,B and regular
+scalar amplitude at r=sigma sqrt(eta^2+1) on both ends, with an Ellis phantom
+kink. It adjusts sigma so the seed's central surface has the target area.
+This changes the metric and topology: it is an **unsolved initial guess**,
+not an exact coordinate transformation or an accepted superposition. Newton
+must re-solve every field. The scalar amplitude border sits at an exterior
+compactified coordinate mapped from the source's radius-5 anchor; its value
+is evaluated spectrally on every grid. The physical anchor radius may change
+as the solved scale changes; no density peak or ring radius is prescribed.
+
+Three fresh perturbed recoveries use 150x24 / 180x30 / 210x36. Existing
+independent Einstein/KG, minimum-surface, volume, bound-frequency and decay
+gates are retained. Additional checks require reflection symmetry, nonzero
+nodeless matter, J_b/2=J+, and an equatorial density peak outside the throat
+with throat density below half that peak. These are diffuse rings, without
+an exact vacuum gap. Energy E_b/R_A <= 1 and tides <= 4 times the same-area
+static Ellis value remain hard limits. The reported ergoregion screen is
+explicitly an equatorial sample; no ergoregion is required for acceptance.
+Ring energy, charge, J, radius and dragging must also converge at 1e-6.
+
+The phantom-only X_full is compared with the exact same-area static Ellis
+reference and a fresh **ring-free, same-J+, same-area, same-gamma, V=0**
+wormhole. That control uses up to 12 J steps of at most 0.1, then the same
+three-grid independent validation. It may have a different far-end rotating
+frame: its spin is carried by the wormhole rather than canonical matter.
+A failed or out-of-budget control produces no matched reduction claim.
+No equilibrium result certifies dynamical stability.
+
+Preview (no JAX startup, GPU query or output files):
+
+```bash
+bash research/optimisation/studies/run_railgun_throat.sh 0 \
+  runs/optimisation/railgun_throat_weak
+```
+
+Prepared proposal: first node/card 0 only, four CPU threads, 160 GiB address
+space, one-hour hard cap including CUDA regressions, at most 18 study solves
+and 24 Newton iterations per solve. Platform allocation, no preallocation, float64,
+Jacobian chunk 256. No AMR evolution/checkpoints/plotfiles; saved stationary
+fields and diagnostics persist on NFS. `--run` needs a fresh go for this
+replacement configuration. There are no retries, automatic stronger-ring
+steps, one-mouth continuations or resumed optimisation searches.
+
+## Older S0-seeded wormhole/ring pilot (stopped November 4)
 
 `research/optimisation/studies/wormhole_ring.toml` prepares a bounded pilot
 using the existing coupled metric, phantom scalar and canonical winding-field

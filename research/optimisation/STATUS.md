@@ -8,12 +8,41 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
+## Prepared replacement — weak railgun ring with a throat
+
+**Not launched; awaiting a run-specific go.** Source is the accepted weak
+k=+1, mass=1 railgun ring (`results/railgun/studies/ring-validated/`,
+omega=0.932692332164), with its actual metric/scalar arrays and source hashes.
+Recommended first geometry: matching rings at both mouths, gamma=0,
+nonrotating infinities, solved matter-induced dragging. True minimal area
+16 pi (R_A=2), V=0; no ergoregion requirement. Exterior scalar-amplitude pin;
+no prescribed density peak, clipped matter, or exact-vacuum claim.
+
+[Configuration](studies/railgun_throat.json),
+[preview/dispatcher](studies/run_railgun_throat.sh), and implementation
+`grteclyn_wrapper.optimisation.railgun_wormhole`. **77 targeted CPU tests
+pass** (including the new 15-test source/border/budget/control suite).
+No replacement CUDA test or nonlinear solve has run.
+
+Proposed first node/card 0, 1 h hard cap, four threads, 160 GiB; maximum
+18 study solves, 24 Newton iterations each, including three ring grids and up to
+12 matched-spin control steps plus three control grids. Grids
+150x24 / 180x30 / 210x36, float64, platform allocator, Jacobian chunk 256.
+CUDA regressions consume the same cap. AMR checkpoints OFF; stationary
+arrays/logs retained. No follow-on queue or automatic recovery.
+Compare phantom-only X_full at fixed area against static Ellis and a fresh
+same-J+ ring-free control; E_b/R_A<=1 and tides<=4 times static Ellis.
+Independent equations, reflection, exterior ring geometry, charge/flux,
+localisation and three-grid observables must pass. This is a branch pilot,
+not an established reduction or stability result. Stronger dragging and a
+one-mouth ring are later separately bounded continuations.
+
 ## Rotating scalar ring around a wormhole — November 4
 
 Configuration: [`studies/wormhole_ring.toml`](studies/wormhole_ring.toml).
 Preview/one-case dispatcher: [`studies/run_wormhole_ring.sh`](studies/run_wormhole_ring.sh).
 The default prints the capped command and accesses no GPU. The November 4
-cluster go authorises these cases; no earlier queue is reactivated.
+cluster go covered these now-stopped cases; it does not authorise a restart.
 
 Use the symmetric gamma=0 massless reference `fam_b_0000` (J+=0.05), its
 true minimal throat area held fixed, and an archived nonzero S0 winding

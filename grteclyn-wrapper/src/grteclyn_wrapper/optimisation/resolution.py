@@ -14,7 +14,7 @@ import time
 
 import numpy as np
 
-from .exploration import FIELDS, EXTRA_FIELDS, make_problem, pack_seed, solve_trial, save_trial
+from .exploration import FIELDS, EXTRA_FIELDS, make_problem, pack_seed, solve_trial, save_trial, matter_anchor
 from .exoticity import exotic_x
 from .potentials import PolynomialPotential
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
@@ -54,7 +54,9 @@ def screen_trial(state, config, nx, ny, pin, d2):
     e19 = float(np.max(abs(diag['E19'][mask])))/d2
     ec = float(np.max(abs(diag['E_c'][mask])))
     jtotal = diag['j_of_x']+diag.get('j_matter_tail',0.)
-    jerr = float(np.max(abs(sigma**2*jtotal[mask]-config['J'])))/max(1.,abs(config['J']))
+    measured_j = float(sigma**2*jtotal[p.mid-1])
+    target_j = measured_j if config.get('rotation_control') == 'nonrotating_ends' else config['J']
+    jerr = float(np.max(abs(sigma**2*jtotal[mask]-target_j)))/max(1.,abs(target_j))
     x = exotic_x(1., p.map, p.sx, p.sy, p.Dx, F, N, B, psi)
     held = sigma*x['R_e'] if pin[0] == 'R_e' else sigma**2*x['area_throat']
     if pin[0] == 'minimal_area':
@@ -70,7 +72,7 @@ def screen_trial(state, config, nx, ny, pin, d2):
           and np.isfinite(tail) and interval and np.isfinite(residual).all())
     row = dict(nx=nx, ny=ny, X=x['X'], X_A=x['X_A'],
                R_e=sigma*x['R_e'], R_A=sigma*x['R_A'], R_pol=sigma*x['R_pol'],
-               E19=e19, E_c=ec, J_error=jerr, pin_error=pinerr,
+               E19=e19, E_c=ec, J_error=jerr, J_measured=measured_j, pin_error=pinerr,
                imposed_core=imposed, imposed_all=far, boundary=boundary,
                border=border, tails=float(tail), scalar_in_vacuum_interval=interval,
                verdict='PASS' if ok else 'ABOVE_GATE', stability='not_assessed')
@@ -85,7 +87,7 @@ def screen_trial(state, config, nx, ny, pin, d2):
         k=config.get('winding_k',1) if key=='Z' else 0
         bound=(0<frequency<config['matter_mass'] and
                abs(frequency+k*omega/sigma)<config['matter_mass']*np.exp(config['gamma']/2))
-        amp_error=abs(arrays[5][p.mid,-1]/config['amplitude']-1)
+        amp_error=abs(matter_anchor(arrays[5],p.sx,config)/config['amplitude']-1)
         row.update(frequency=frequency,bound=bool(bound),amplitude_error=float(amp_error))
         if not bound or amp_error>1e-6:
             row['verdict']='ABOVE_GATE'
