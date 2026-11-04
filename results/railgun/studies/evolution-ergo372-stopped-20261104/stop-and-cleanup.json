@@ -1,0 +1,19 @@
+{
+  "stopped_msk": "2026-11-04 12:34:39",
+  "reason": "Requested stop after failed early evolution convergence; weaker ergoregion source requested.",
+  "queued_n128": "cancelled",
+  "checkpoints": false,
+  "deleted": [
+    {
+      "path": "<scratch>/railgun-ergo372-t50-full-spectral-20261104-n96",
+      "bytes": 5203360629
+    },
+    {
+      "path": "<scratch>/railgun-ergo372-t50-full-spectral-20261104-n192",
+      "bytes": 8864972972
+    }
+  ],
+  "retained": "All frames, slice caches, movies, authoritative stationary sources, logs, diagnostics and export certificates.",
+  "generated_grid_exports_deleted_GiB": 40.145596761256456,
+  "export_deletion_approval": "Explicit approval after automated review, 2026-11-04."
+}
