@@ -20,11 +20,19 @@ def plan(config=DEFAULT_CONFIG):
     contract = source_contract(source)
     original = json.loads((source.parent/'manifest.json').read_text())['config']
     invariant = set(original)-{'grids'}
+    expected_core = dict(radius=.04,degree=12,tolerance=1e-8)
+    if cfg.get('evolution_config'):
+        from .evolution_amr import load_plan
+        target = json.loads(Path(cfg['evolution_config']).read_text())
+        target, target_contract = load_plan(cfg['evolution_config'],target['base_N'][0])
+        if target_contract['source_sha256'] != contract['source_sha256']:
+            raise ValueError('recovery and evolution must select the same source')
+        expected_core = {key:target['core'][key] for key in ('radius','degree','tolerance')}
     if (contract['source_sha256'] != cfg['source_sha256']
             or any(cfg.get(key) != original[key] for key in invariant)
             or cfg['grids'] != [[224,28],[256,32],[288,36]]
             or cfg['max_solves'] != 3
-            or cfg['core'] != dict(radius=.04,degree=12,tolerance=1e-8)):
+            or cfg['core'] != expected_core):
         raise ValueError('same ring, three prepared refinement grids and unchanged gates required')
     return dict(config=cfg, source_sha256=contract['source_sha256'], max_solves=3,
         unknowns=[5*(nx+1)*(ny+1)+1 for nx,ny in cfg['grids']],
@@ -41,7 +49,7 @@ def run(config, directory, *, problem_factory=None, grid_check=None):
     from .evolution import evolution_corridor
     directory = Path(directory)
     numerical = {key:value for key,value in cfg.items()
-                 if key not in ('source','source_sha256','max_solves','core','approval')}
+                 if key not in ('source','source_sha256','max_solves','core','approval','evolution_config')}
     def acceptance(rows):
         # Resolve the same physical ring rather than accidentally adopting a
         # different root of the nonlinear equations at the same central lapse.

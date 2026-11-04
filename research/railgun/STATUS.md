@@ -46,6 +46,15 @@ Next numerical work: recover the same 3.72 source with explicit origin
 regularity, retain independent checks of the original equations, and
 repeat all three stationary resolutions and the unchanged centre check.
 No new stationary solves launched; the previous go excluded them.
+Prepared correction: [ergoregion_origin_recovery_372.json](studies/ergoregion_origin_recovery_372.json).
+At most three solves on 224x28 / 256x32 / 288x36, same central lapse
+and matter model, frequency free, 30 iterations and at least two updates,
+fresh Jacobians and Newton 1e-14. Original equations, origin regularity,
+1e-8 residual/curvature and 1e-6 convergence limits all remain required.
+Then repeat the radius-0.08, degrees-12/14 origin check. Thirteen CPU
+manufactured/plan checks pass. Proposed card 0 budget: 4 threads,
+160 GiB, 1 h including GPU tests, chunks 128, checkpoints OFF.
+Await the separate go before any new GPU startup.
 The November 3 interrupted check remains in the
 [paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.
