@@ -1,0 +1,119 @@
+{
+  "source": "results/railgun/studies/annular-validated-k12/accepted.npz",
+  "source_sha256": "3952db5925d4903217f75156e14ff3ba57c05379ae2b01b6bcfba01f97a3c1ee",
+  "archive_checksums": {
+    "accepted.npz": "3952db5925d4903217f75156e14ff3ba57c05379ae2b01b6bcfba01f97a3c1ee",
+    "outcome.json": "13a6340b918d979e942f6e447c9984274a08ea0d9e2eca9e6c13311f109ec990",
+    "grid_256x20.json": "645bbf0c11426609e3ae05ec976231fb03741cb8c47220a801df7e98fa4134f6",
+    "grid_256x20_density.tsv": "ceb213acb1445bc7dfd4a21be8bce18bc910f2b1e2ed870ce7e565c4841b3b4e"
+  },
+  "grid": [
+    256,
+    20
+  ],
+  "reference_radii": [
+    {
+      "winding": 1,
+      "inner": 3.0067403417767764,
+      "peak": 6.2208756,
+      "outer": 10.119342855634496
+    },
+    {
+      "winding": -12,
+      "inner": 118.44247377485183,
+      "peak": 150.8380858911014,
+      "outer": 187.83587586649912
+    }
+  ],
+  "annular_gap": {
+    "accepted": true,
+    "reasons": [],
+    "relative_density_cutoff": 1e-06,
+    "edges": [
+      {
+        "inner_radius": null,
+        "outer_radius": 33.297341138936936,
+        "peak_radius": 6.2208756,
+        "peak_density": 0.0002324873893634992,
+        "inner_edge_resolved": false,
+        "outer_edge_resolved": true
+      },
+      {
+        "inner_radius": 40.90802468805212,
+        "outer_radius": 362.7386133421856,
+        "peak_radius": 150.8380858911014,
+        "peak_density": 1.4542840682178225e-08,
+        "inner_edge_resolved": true,
+        "outer_edge_resolved": true
+      }
+    ],
+    "inner_ring_outer_radius": 33.297341138936936,
+    "outer_ring_inner_radius": 40.90802468805212,
+    "gap_width": 7.610683549115187,
+    "minimum_width": 0.0,
+    "corridor": {
+      "midpoint_radius": 37.10268291349453,
+      "sampled_relative_density_max": [
+        9.98047096021779e-07,
+        9.967333867589626e-07
+      ],
+      "interior_samples": 381
+    },
+    "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+    "exact_vacuum_claim": false
+  },
+  "finite_height_channel": {
+    "accepted": true,
+    "rho_min": 35.20001202621573,
+    "rho_max": 39.00535380077333,
+    "z_min": -10.0,
+    "z_max": 10.0,
+    "relative_density_max": [
+      2.8924423909050726e-07,
+      4.416704688500519e-07
+    ],
+    "samples": [
+      21,
+      81
+    ],
+    "normalisation": "Each component own equatorial peak; threshold 1e-6.",
+    "scope": "Sampled finite-height matter channel; no particle trajectory certified."
+  },
+  "M_ADM": 1.0538081108367106,
+  "J_volume": -4.440892098500626e-16,
+  "component_J": [
+    -0.9919609854800482,
+    0.9919609854800477
+  ],
+  "density_peak_values": [
+    0.0002324873893634992,
+    1.4542840682178225e-08
+  ],
+  "no_ergoregion": true,
+  "signed_dragging_reversals": [
+    150.218198253964
+  ],
+  "radius_limit": 399.01247467640417,
+  "radius_definition": "Equatorial cylindrical radius rho; m=1; not proper distance.",
+  "reference_definition": "Per-component half-maximum inner/outer radii and sampled density peak. Diffuse matter continues beyond the half-maximum contours.",
+  "gap_definition": "Each component is below 1e-6 of its own peak; not exact vacuum.",
+  "map_definition": "Maximum of the two separately peak-normalised component densities; true coordinate scale; inset zooms the inner ring.",
+  "observers": {
+    "zamo": "Omega=w=-beta^phi; d_tau/dt=alpha.",
+    "static": "Fixed coordinates: d_tau/dt=sqrt(-g_tt).",
+    "time": "Asymptotically normalised Killing time; 60 d_tau/dt in min per distant hour."
+  },
+  "scope": "Stationary equatorial profiles; no particle trajectory or evolution.",
+  "label_audit": [],
+  "profile_columns": [
+    "m_rho",
+    "relative_density_k1",
+    "relative_density_kminus12",
+    "lapse",
+    "zamo_min_per_distant_hour",
+    "static_min_per_distant_hour",
+    "signed_w_over_m",
+    "shift_over_lapse",
+    "g_tt"
+  ]
+}

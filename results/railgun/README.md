@@ -180,6 +180,27 @@ Summary: `reports/completed-experiments.json`. Figures:
 `figures/particles/strong-uphill-073.png`. These demonstrate stationary fields and finite
 passages/first turnarounds; no asymptotic escape, energy gain or stability claim.
 
+**Concentric-ring spacetime profiles:**
+[PNG](figures/two-rings/annular-cross-section.png) and
+[PDF](figures/two-rings/annular-cross-section.pdf) use the finest accepted
+`studies/annular-validated-k12/accepted.npz`. The six PRD panels show equatorial
+matter, component densities, lapse, ZAMO/static clock rates, signed angular
+dragging and shift relative to lapse. Black/blue radius markers identify the
+k=+1/k=-12 components; dashed/dotted/solid rules mark their inner half-maximum,
+peak and outer half-maximum radii. These are coordinate radii, not proper
+distances or material surfaces. The spatial map retains the true coordinate
+scale and zooms the inner ring in an inset; both components are normalised to
+their own peaks. Green marks the component-wise 1e-6 matter gap, not vacuum.
+The radius axes and signed dragging ordinate use symmetric logarithmic scales.
+This state has no ergoregion; signed dragging reverses near rho=150.2182.
+Clock rates are minutes of proper time per distant hour. The numerical profile,
+source checksums, marker radii and definitions are in
+`reports/annular-cross-section.json` and `.tsv`. Rebuild on CPU:
+
+```bash
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.railgun.plot_annular_cross_section
+```
+
 Check the complete inventory and original study checksums:
 
 ```bash
