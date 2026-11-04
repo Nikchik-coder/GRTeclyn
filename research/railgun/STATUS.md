@@ -30,29 +30,42 @@ equatorial curvature mismatch at r=0.004 is **5.87e-11**, compared with
 **1.237e-7** before the dragging-coefficient correction.
 [Independent confirmation](../../results/railgun/reports/ergo372-full-spectral-cartesian-audit.json).
 
-**N96 evolution LIVE on card 0; N192 export LIVE on card 1.**
-Both capped sequences started **11:21:37 MSK**, November 4, from
-`e5a6df77c`, on the first two-GPU node. Stem:
-`railgun-ergo372-t50-full-spectral-20261104`; job names append
-`-gpu0-20261104` / `-gpu1-20261104` to `railgun-ergo372-t50-full-spectral`.
-N128/card 0 is queued after N96 completes t=50 with finite constraints.
-Each export repeats the unchanged centre certificate before sampling.
-Use the hash-matched, qualified refined source via
+**Evolution convergence is NOT validated.** At matched t=0.16, fixed-r<0.5
+Ham increases from **9.43e-6 (N96) to 3.22e-5 (N192)** and Mom from
+**1.84e-5 to 3.31e-5**. The two-resolution whole-interior comparison fails;
+N128 has not started. Do not infer dynamical stability from finite diagnostics.
+Initial equatorial slices isolate a mesh-transition problem: inside r<0.3,
+Ham/Mom improve by about 16x (orders **3.967 / 3.968**), while the largest Ham
+errors lie at refinement boundaries. The finest cube ends at +/-0.5 in N96
+and +/-0.4167 in N192, so level domains are not identical. This suggests AMR
+interface/coverage errors; it does not yet establish their complete cause.
+[Pairwise orders and frozen diagnostic slices](../../results/railgun/reports/ergoregion372-startup/orders.md).
+The stationary source certificate remains accepted; the evolution needs its
+own convergence qualification. Live settings and the approved queue are unchanged.
+
+**N96/card 0 and N192/card 1 evolutions LIVE**, first two-GPU node.
+Stem: `railgun-ergo372-t50-full-spectral-20261104`.
+Both export sequences started **11:21:37 MSK**, November 4, from `e5a6df77c`.
+N96 evolution launched **11:34:42 MSK**; N192 **11:48:02 MSK**.
+Both preflights PASS, all 16 initial frames render on each, consumers have
+processed their first plotfiles, and constraints/scalar diagnostics are finite.
+Full frames and slice caches are retained; checkpoints **OFF**, keep-last **3**.
+
+| Member | Card | t | Target | Speed (units/h) | Remaining (h) | ETA (MSK) |
+|---|---|---|---|---|---|---|
+| N96 | 0 | 4.093 | 50 | 12.28 | 3.74 | Nov 04 15:39 |
+| N192 | 1 | 0.147 | 50 | 1.34 | 37.31 | Nov 06 01:13 |
+
+**Queued:** N128/card 0 follows N96 only after a normal t=50 finish with
+finite constraints. Same hash-matched source via
 [evolution configuration](studies/evolution_ergoregion_372_full_spectral.json).
-Only source/hash/frequency and descriptive metadata changed; L=64,
-max_level=6, boundaries, gauge, dt, t=50 and plot cadence are unchanged.
-N96 then N128/card 0; N192/card 1. Four threads and 160 GiB per job,
-checkpoints **OFF**, full frames, last three plotfiles. No queued restart
-needs a checkpoint. N96 launched **11:34:42 MSK**, preflight PASS,
-all **16 t=0 frames** rendered, initial consumer pass marked complete.
-Its constraints and scalar diagnostics are finite. N96 reached t=1.067
-at 12.26 units/h; remaining ETA **3.99 h**, about **%H:%M MSK** on November 4.
-N192 is still exporting, with no evolution t/speed/ETA yet.
-The ceiling is **48 h per member**,
-**96 h for the two-member card-0 sequence**, including export. These are
-limits, not measured ETAs. Both launch checks found the cards free.
-Scratch retention: **1.7 GB used / 328 GB free**, one N96 plotfile,
-no checkpoints. No frames or movies removed.
+L=64, max_level=6, boundaries, gauge, dt, t=50 and plot cadence are unchanged.
+Four threads/160 GiB per job; no queued restart needs a checkpoint.
+Ceilings: 48 h per member including export; 96 h for the two-member card-0
+sequence. These are limits, not ETAs. Initial-frame startup evidence is in
+`results/railgun/reports/ergoregion372-n96-startup.json` and `ergoregion372-n192-startup.json`.
+Scratch clean: **13.1 GiB retained / 316.5 GiB free**,
+no more than three plotfiles per run, no checkpoints. No frames or movies removed.
 
 **Debugging update: full dragging coefficients implemented.**
 The independent long-double Cartesian audit reproduces the failed

@@ -10,5 +10,8 @@
   "figure_sha256": "d63501c5316efff7bee9de26be6e22a5511da284d9a91068a7a00d6b35b0a196",
   "preflight_verdict": "pass",
   "frame0_count": 16,
-  "checkpoints": false
+  "checkpoints": false,
+  "visual_check": "Expected centred ring and central hole confirmed.",
+  "processed_plotfiles_at_check": 2,
+  "consumer_first_frame_wall_seconds": null
 }
