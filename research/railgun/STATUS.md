@@ -15,13 +15,18 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-origin-recovery-r2-20261104`**, first two-GPU
-node/card 0, started **08:38:51 MSK**, source `2c79ccec7`.
-GPU regressions, then at most three corrected solves and the unchanged
-centre certificate, with the renewed November 4 go; checkpoints OFF.
-No evolution time/speed yet. Completion ETA awaits measurement;
-hard limit **1 h / 09:38:51 MSK**. Card 1 idle.
-Scratch clean: **4 KiB retained / 329 GB free**.
+**No live runs. Corrected recovery interrupted by GPU memory allocation**,
+`railgun-ergo372-origin-recovery-r2-20261104`, card 0,
+**08:38:51–08:42:14 MSK**, source `2c79ccec7`, exit 1.
+All **69 GPU regressions passed**. Both 224x28 and 256x32 passed all
+physical checks; each converged in two updates (1.28e-15 / 2.55e-15).
+The rounding fix is GPU-confirmed. The first 288x36 LU factorisation
+failed to allocate another 21.31 GiB; **zero finest-grid updates** occurred.
+The two passing fields are preserved. Fixing matrix lifetime/donation and
+preparing continuation of only the unfinished third solve; no extra physical
+candidate or changed tolerance. The original one-hour deadline is
+**09:38:51 MSK**. Centre qualification and evolutions remain pending.
+Both cards idle. Scratch clean: **4 KiB / 329 GB free**.
 
 **Earlier recovery stopped rejected** on card 0,
 **08:21:47–08:25:17 MSK, November 4**. All **55 GPU regressions passed**.
@@ -54,7 +59,7 @@ at most three 224x28 / 256x32 / 288x36 solves and the radius-0.08,
 degrees-12/14 certificate. Same 30 iterations, minimum two updates, fresh
 Jacobians, 1e-14 Newton target and all physical gates; stop on rejection.
 Four threads, 160 GiB, one hour total, chunks 128, checkpoints OFF.
-Renewed run-specific go granted November 4; the corrected recovery is live above.
+Renewed run-specific go granted November 4; the corrected recovery was interrupted as above.
 
 **Preferred first evolution target: accepted shift/lapse 3.720789536602**,
 following the request to use a less compact ring. Source:
