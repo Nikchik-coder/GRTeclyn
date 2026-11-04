@@ -1505,6 +1505,74 @@
       "sha256": "b58dae1ee09f1a2d6d713ef2b50f9cab811fc49d53fe95658627d93b7495b63d",
       "bytes": 1305
     },
+    "studies/ergo372-smooth-spectral-20261104/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergo372-smooth-spectral-20261104/accepted.npz": {
+      "sha256": "1337efd3e29602e5dbc447355633073dd0f286a2f52737c3d3ae87bce9673807",
+      "bytes": 787519
+    },
+    "studies/ergo372-smooth-spectral-20261104/archive.json": {
+      "sha256": "f6a450f75c4edd41878d2ebf45e77e6620367f580d665690fe3b9c4f69bd8d4b",
+      "bytes": 1203
+    },
+    "studies/ergo372-smooth-spectral-20261104/corridor.json": {
+      "sha256": "014b612e389771dd423c1ec8835984e35e3f01904c13f2d2cfc0a9e3fa39abbb",
+      "bytes": 24060
+    },
+    "studies/ergo372-smooth-spectral-20261104/evolution_qualification.json": {
+      "sha256": "134b1ec3afa72ed20cff31cdf8fb895852407796dcc5ba47ab37d5fbb9f73bb5",
+      "bytes": 272
+    },
+    "studies/ergo372-smooth-spectral-20261104/execution.log": {
+      "sha256": "fd23e463a8a4bffd6e6cdeff5fd48746721e16d15333d8542e51ebbee36b15ae",
+      "bytes": 5433
+    },
+    "studies/ergo372-smooth-spectral-20261104/exit_code.txt": {
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_224x28.json": {
+      "sha256": "f854ff76c66f2c844a98248f9677b56c3533f9a7f2ca98f39a35d400c441c899",
+      "bytes": 5201
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_224x28.npz": {
+      "sha256": "1f9ed8aad43a673a0032ce12e8d1868493cffc6a500ebbe6697f34593ac6f963",
+      "bytes": 481511
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_256x32.json": {
+      "sha256": "c99c53f162e99b6d1123e56ce4d4a53e0534381aafe45f4ff190252a64c13e83",
+      "bytes": 5157
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_256x32.npz": {
+      "sha256": "8bb68dfdc0b31f471a877c2116e77c3b4456890e60d40be33ed3badeb44e29a7",
+      "bytes": 626765
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_288x36.json": {
+      "sha256": "61475442b6e069137b70674c1740dd876d0e4290040ac6e0bb4615508b25164d",
+      "bytes": 5142
+    },
+    "studies/ergo372-smooth-spectral-20261104/grid_288x36.npz": {
+      "sha256": "d821b40097dd2a55afbc82b30a3feedf9964b43e9dcedff82aa8bb456a7dd764",
+      "bytes": 787520
+    },
+    "studies/ergo372-smooth-spectral-20261104/manifest.json": {
+      "sha256": "9b0cb3c1fa248421626caff175edac569c22c79b2e3b7717bc2bec7ac459ccff",
+      "bytes": 1335
+    },
+    "studies/ergo372-smooth-spectral-20261104/outcome.json": {
+      "sha256": "ad1e45d51fb5030a9d1c198e406179cd0d98d8b033b391a0bdcfcc53ee9479d4",
+      "bytes": 19766
+    },
+    "studies/ergo372-smooth-spectral-20261104/regressions.xml": {
+      "sha256": "475b209175a58a70c83ce7db319d50f4c7026e076ada7336c36a9855d14f6778",
+      "bytes": 15211
+    },
+    "studies/ergo372-smooth-spectral-20261104/sha256sums.txt": {
+      "sha256": "d806f97e0b1e330580472fd1887f62a2d7ee221d4307916dd53acb18c9a46403",
+      "bytes": 1305
+    },
     "studies/ergoregion-amplitude-initial/README.md": {
       "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
       "bytes": 296

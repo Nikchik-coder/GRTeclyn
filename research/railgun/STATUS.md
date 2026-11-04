@@ -15,15 +15,22 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-smooth-spectral-20261104`**, first two-GPU
-node/card 0, source `7c6d595f6`, started **09:48:21 MSK**.
-GPU regressions are running, then at most three coefficient solves on
-224x28 / 256x32 / 288x36 and the unchanged radius-0.08, degrees-12/14
-centre certificate. One-hour total cap: **10:48:21 MSK deadline**.
-Four threads, 160 GiB, chunks 128, checkpoints OFF. Stop on rejection.
-Only a passing field and centre permit the approved N96 then N128/card 0
-and N192/card 1 evolutions. No evolution t/speed/ETA yet; card 1 idle.
-Scratch clean: **4 KiB used / 329 GB free**. No restart checkpoints needed.
+**Coefficient recovery COMPLETE; stationary field accepted, centre rejected.**
+`railgun-ergo372-smooth-spectral-20261104`, first two-GPU node/card 0,
+source `7c6d595f6`, **09:48:21–10:04:51 MSK**, exit 2.
+All **99 GPU regressions** and all three **224x28 / 256x32 / 288x36**
+stationary grids pass. Finest angular-momentum error **8.22e-14**;
+common-point observables agree and recover the original 3.72 ring.
+The centre passes independent Einstein/KG checks (maximum **9.32e-12**)
+and degree-12/14 curvature agreement (**7.09e-9**), but fails parent
+curvature agreement: **1.237e-7 near the equatorial plane at r=0.004**.
+The separate long-double axis audit improves to **3.52e-10**; the remaining
+failure must be diagnosed away from the axis. No acceptance limit changed.
+No export, preflight or evolution started; both GPUs idle, no evolution
+speed or ETA. Scratch clean: **4 KiB used / 329 GB free**.
+The three-solve budget is spent. Conditional N96 then N128/card 0 and
+N192/card 1 evolutions remain blocked by centre qualification.
+[Completed evidence](../../results/railgun/studies/ergo372-smooth-spectral-20261104/).
 
 **Previous cubic-tail recovery COMPLETE; stationary field accepted, centre rejected.**
 `railgun-ergo372-smooth-cubic-r2-20261104`, first two-GPU node/card 0,
@@ -40,7 +47,7 @@ stationary solve is queued. Diagnose the remaining near-axis interpolation
 comparison without changing the ring or acceptance limits.
 [Completed field and certificate](../../results/railgun/studies/ergo372-smooth-cubic-r2-20261104/).
 
-**Metric-coefficient recovery, now approved and running above.** An independent
+**Metric-coefficient recovery, completed above.** An independent
 long-double calculation of analytic Cartesian derivatives reproduces the
 axis mismatch (**7.10459e-8**, versus GPU **7.10470e-8**). It passes exact
 rotating-flat and isotropic-Schwarzschild curvature checks. The discrepancy
@@ -51,8 +58,7 @@ The prepared method solves directly for every radial/angular coefficient of
 f, N and b, keeping tiny angular variations separate from their large mean.
 It retains all coefficients, every interior equation, the regular origin and
 cubic dragging tail. Archive, geometry, refinement and common-point checks
-preserve these coefficients. **76 targeted local tests pass**; the GPU run
-is live above. Same ring, 224x28 / 256x32 / 288x36, at most three solves and the
+preserve these coefficients. **76 targeted local tests pass**; the completed GPU run passes 99 tests above. Same ring, 224x28 / 256x32 / 288x36, at most three solves and the
 unchanged centre certificate; original physical limits, four threads, 160 GiB,
 one hour, chunks 128. The November 4 explicit go authorizes this separate
 three-solve budget and conditional evolutions, with checkpoints OFF.

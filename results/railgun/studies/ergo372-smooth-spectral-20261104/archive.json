@@ -1,0 +1,17 @@
+{
+  "original_files_sha256": {
+    "accepted.npz": "1337efd3e29602e5dbc447355633073dd0f286a2f52737c3d3ae87bce9673807",
+    "corridor.json": "014b612e389771dd423c1ec8835984e35e3f01904c13f2d2cfc0a9e3fa39abbb",
+    "evolution_qualification.json": "134b1ec3afa72ed20cff31cdf8fb895852407796dcc5ba47ab37d5fbb9f73bb5",
+    "grid_224x28.json": "f854ff76c66f2c844a98248f9677b56c3533f9a7f2ca98f39a35d400c441c899",
+    "grid_224x28.npz": "1f9ed8aad43a673a0032ce12e8d1868493cffc6a500ebbe6697f34593ac6f963",
+    "grid_256x32.json": "c99c53f162e99b6d1123e56ce4d4a53e0534381aafe45f4ff190252a64c13e83",
+    "grid_256x32.npz": "8bb68dfdc0b31f471a877c2116e77c3b4456890e60d40be33ed3badeb44e29a7",
+    "grid_288x36.json": "61475442b6e069137b70674c1740dd876d0e4290040ac6e0bb4615508b25164d",
+    "grid_288x36.npz": "d821b40097dd2a55afbc82b30a3feedf9964b43e9dcedff82aa8bb456a7dd764",
+    "manifest.json": "9b0cb3c1fa248421626caff175edac569c22c79b2e3b7717bc2bec7ac459ccff",
+    "outcome.json": "ad1e45d51fb5030a9d1c198e406179cd0d98d8b033b391a0bdcfcc53ee9479d4"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/evolution/ergo372-smooth-spectral-20261104"
+}
