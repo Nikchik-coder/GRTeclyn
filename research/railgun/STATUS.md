@@ -4,14 +4,17 @@ Updated **2026-11-04 (MSK)**. Branch: `feature/optimisation`.
 
 The three older-seed wormhole/ring pilots were **STOPPED on request at
 22:54 MSK**, November 4; logs and partial results are preserved. They did
-not use the railgun source. Both nodes now have no GPU compute processes.
+not use the railgun source. Their stop was verified on both nodes.
 Scratch clean: first node 4 KB cache / 305 GB free; second node scratch
 absent / 709 GB free. No cleanup performed.
 The corrected preparation starts with an archived weak railgun ring and
 inserts a two-ended wormhole through a fully coupled solve; stronger dragging
 comes later and an ergoregion is optional. The replacement weak-ring/throat
-implementation has 77 passing CPU tests and a prepared 1 h / 18-solve first-node/card-0 proposal. No replacement
-GPU startup is authorised. Older queues remain paused. Details in
+implementation has 77 passing CPU tests. With fresh explicit go,
+`railgun-throat-20261104T201026` launched on first-node/card 0 at
+**23:10:26 MSK**, source **1bb61204b**. Startup regressions are running;
+stationary solve rate is not measured yet. The **1 h** cap ends November 5
+**00:10:26 MSK**, at most 18 study solves; checkpoints OFF. Older queues remain paused. Details in
 [optimisation STATUS](../optimisation/STATUS.md).
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
 **The stronger-ring timing audit, concentric gapped field recovery and

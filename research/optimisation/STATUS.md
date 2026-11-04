@@ -2,15 +2,15 @@
 
 **All three November 4 wormhole/ring pilots STOPPED on request at
 22:54 MSK.** Their older S0 seed does not test a railgun ring around a
-wormhole. Logs and partial results are preserved; no replacement GPU run
-is authorised. The corrected direction starts from an archived weak
+wormhole. Logs and partial results are preserved. The replacement weak-ring
+pilot below has a fresh explicit go; no old queue is resumed. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
-## Prepared replacement — weak railgun ring with a throat
+## Live replacement — weak railgun ring with a throat
 
-**Not launched; awaiting a run-specific go.** Source is the accepted weak
+**Launched with explicit go November 4, 23:10:26 MSK.** Source is the accepted weak
 k=+1, mass=1 railgun ring (`results/railgun/studies/ring-validated/`,
 omega=0.932692332164), with its actual metric/scalar arrays and source hashes.
 Recommended first geometry: matching rings at both mouths, gamma=0,
@@ -22,9 +22,9 @@ no prescribed density peak, clipped matter, or exact-vacuum claim.
 [preview/dispatcher](studies/run_railgun_throat.sh), and implementation
 `grteclyn_wrapper.optimisation.railgun_wormhole`. **77 targeted CPU tests
 pass** (including the new 15-test source/border/budget/control suite).
-No replacement CUDA test or nonlinear solve has run.
+CUDA regressions are part of the approved startup; no physical result yet.
 
-Proposed first node/card 0, 1 h hard cap, four threads, 160 GiB; maximum
+Approved first node/card 0, 1 h hard cap, four threads, 160 GiB; maximum
 18 study solves, 24 Newton iterations each, including three ring grids and up to
 12 matched-spin control steps plus three control grids. Grids
 150x24 / 180x30 / 210x36, float64, platform allocator, Jacobian chunk 256.
@@ -36,6 +36,16 @@ Independent equations, reflection, exterior ring geometry, charge/flux,
 localisation and three-grid observables must pass. This is a branch pilot,
 not an established reduction or stability result. Stronger dragging and a
 one-mouth ring are later separately bounded continuations.
+
+| Run | Node/card | Stage | Start MSK | ETA / hard deadline |
+|---|---|---|---|---|
+| `railgun-throat-20261104T201026` | first / 0 | startup regressions; stationary, no evolution t | Nov 4 23:10:26 | speed not yet measured; <=1 h cap, Nov 5 00:10:26 |
+
+Frozen source **1bb61204b**, pushed/pulled through `myfork` and verified.
+Output `runs/optimisation/railgun_throat_weak_20261104/`; capped-job log
+`runs/capped_jobs/railgun-throat-20261104T201026/log`. Supervisor PID 92683.
+Both cards were idle before dispatch. Scratch clean: only 4 KB `_cache`,
+305 GB free. No plotfiles, checkpoints, consumer or queued restart dependency.
 
 ## Rotating scalar ring around a wormhole — November 4
 
