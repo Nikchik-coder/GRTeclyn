@@ -15,6 +15,27 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**Preparing the approved cubic-tail correction**, following the November 4
+instruction to continue the far-distance correction and validation through
+the conditional evolutions. Same physical 3.72 ring, same central lapse,
+224x28 / 256x32 / 288x36, at most three solves, max 30 Newton iterations
+and minimum two updates, fresh Jacobians, tolerance 1e-14. Card 0,
+four threads, 160 GiB, chunks 128, one hour including GPU regressions,
+checkpoints OFF. Stop on physical rejection; unchanged centre certificate
+radius 0.08, degrees 12/14. Fifty targeted local tests pass.
+
+The corrected representation is w=(1-s)^3 H, using the established regular
+cubic operator with every interior equation retained. Infinity fixes the
+allowed angular dependence and radial condition, not total angular momentum.
+Volume charge, finite-sphere flux, independently differentiated Cartesian
+flux and infinity angular momentum must all agree at the original 1e-8 gate.
+Origin regularity and 1e-6 convergence/tail gates remain unchanged. The saved
+archive retains both physical fields and exact H coefficients; geometry,
+common-point comparisons and Cartesian export preserve the representation.
+No sponge or evolution boundary has been applied: the current discrepancy
+comes from the stationary solution before transfer to GRTeclyn.
+Configuration: [ergoregion_smooth_cubic_372.json](studies/ergoregion_smooth_cubic_372.json).
+
 **No live runs. Recovery COMPLETE, REJECTED**, continuation job
 `railgun-ergo372-origin-recovery-r2-resume-20261104`, card 0,
 **08:47:13–08:49:48 MSK**, source `86f491c52`, exit 2.
@@ -30,7 +51,7 @@ Scratch clean: **4 KiB retained / 330 GB free**. No evolution t/speed/ETA.
 The three-grid solve budget is complete. The next stationary method should
 resolve the cubic dragging falloff explicitly while retaining the corrected
 origin rows, all interior equations, independent Cartesian flux and every
-original acceptance limit. It needs a separately prepared, approved study.
+original acceptance limit. The follow-up correction is now prepared and approved above.
 [Completed recovery](../../results/railgun/studies/ergo372-origin-recovery-r2-complete-20261104/).
 [Preserved memory interruption](../../results/railgun/studies/ergo372-origin-recovery-r2-20261104/).
 

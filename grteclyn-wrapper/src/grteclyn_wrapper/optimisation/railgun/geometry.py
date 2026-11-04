@@ -74,6 +74,21 @@ class RingGeometry:
         self.frequencies = np.asarray(freq)
         self.coefficients = {key: self.xp.asarray(interpolation_coefficients(a))
                              for key, a in arrays.items()}
+        self.dragging_h = None
+        if getattr(problem,'canonical_archive',False):
+            # H is already spectral in radius; transform only its angular
+            # nodal axis. Retain the exact higher-degree physical polynomial
+            # for the long-double core fit, and evaluate the tail factored.
+            from scipy.fft import dct
+            h = dct(np.asarray(problem.raw_dragging(np.asarray(u)),dtype=np.longdouble),
+                    type=1,axis=1)/problem.ny
+            h[:,[0,-1]] *= .5
+            w = np.zeros((problem.nx+4,problem.ny+1),dtype=np.longdouble)
+            for j in range(problem.ny+1):
+                product = np.polynomial.chebyshev.chebmul([2.5,-3.75,1.5,-.25],h[:,j])
+                w[:len(product),j] = product
+            self.dragging_h = self.xp.asarray(np.asarray(h,dtype=float))
+            self.coefficients['w'] = self.xp.asarray(np.asarray(w,dtype=float))
         self.nx, self.ny = problem.nx, problem.ny
         self.metric = self.jax.jit(self._metric)
         self.tensors = self.jax.jit(curvature(self._metric, self.jax))
@@ -82,8 +97,13 @@ class RingGeometry:
 
     def sample(self, name, s, y):
         xp = self.xp
-        return xp.einsum('i,ij,j->', chebyshev_basis(s, self.nx, xp),
-                         self.coefficients[name], chebyshev_basis(y, self.ny, xp))
+        coefficients = self.coefficients[name]
+        factor = 1.
+        if name == 'w' and self.dragging_h is not None:
+            coefficients = self.dragging_h
+            factor = (1-s)**3
+        return factor*xp.einsum('i,ij,j->', chebyshev_basis(s, coefficients.shape[0]-1, xp),
+                         coefficients, chebyshev_basis(y, coefficients.shape[1]-1, xp))
 
     def _coordinates(self, x):
         xp = self.xp

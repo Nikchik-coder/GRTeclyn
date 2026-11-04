@@ -34,7 +34,13 @@ def save_state(path, problem, u, *, validated=False):
         arrays,_=problem.unpack(np.asarray(u))
         metadata['measured_amplitude_pins']=[float(problem.anchors[i]@arrays[f'q{i}'][:,-1])
                                              for i in range(len(problem.fields))]
-    np.savez_compressed(path, metadata=json.dumps(metadata), u=np.asarray(u))
+    extra = {}
+    if getattr(problem,'canonical_archive',False):
+        _,physical = problem.physical_vector(u)
+        extra['solver_u'] = np.asarray(u)
+        metadata['representation'] = problem.representation
+        u = physical
+    np.savez_compressed(path, metadata=json.dumps(metadata), u=np.asarray(u),**extra)
 
 
 def load_state(path):
@@ -44,11 +50,26 @@ def load_state(path):
         u = np.array(data['u'], dtype=float)
     if metadata.get('schema') != SCHEMA or metadata.get('model') != 'canonical_regular_centre':
         raise ValueError('unsupported ring solution schema/model')
-    p = RingProblem([ScalarField(**f) for f in metadata['fields']], nx=metadata['nx'],
+    cls = RingProblem
+    if metadata.get('representation') is not None:
+        from .smooth_cubic import SmoothCubicProblem,REPRESENTATION
+        if metadata['representation'] != REPRESENTATION:
+            raise ValueError('unsupported canonical archive representation')
+        cls = SmoothCubicProblem
+    p = cls([ScalarField(**f) for f in metadata['fields']], nx=metadata['nx'],
                     ny=metadata['ny'], length=metadata['length'], target_j=metadata['target_j'],
                     frequency_targets=metadata.get('frequency_targets'), central_lapse=metadata.get('central_lapse'))
     if u.shape != (p.n_unknowns,) or not np.isfinite(u).all():
         raise ValueError('saved vector is nonfinite or incompatible with its declared model')
+    if getattr(p,'canonical_archive',False):
+        with np.load(path,allow_pickle=False) as data:
+            raw = np.asarray(data['solver_u'])
+        if raw.shape != u.shape or not np.isfinite(raw).all():
+            raise ValueError('invalid factored solver coordinates')
+        _,physical = p.physical_vector(raw)
+        if not np.allclose(u,physical,rtol=0,atol=64*np.finfo(float).eps*max(1.,abs(u).max())):
+            raise ValueError('physical field and solver coordinates disagree')
+        u = raw
     return p, u, metadata
 
 
@@ -105,9 +126,11 @@ def interrupted_prefix(config, directory):
 
 
 def run_study(config, directory, *, reference=None, seed_path=None, acceptance_check=None,
-              problem_factory=None, grid_check=None, resume_from=None):
+              problem_factory=None, grid_check=None, resume_from=None, validator=None):
     from .problem import RingProblem
     from .diagnostics import converged_records, validate
+    if validator is not None:
+        validate = validator
     from ..solver.newton import newton
     factory = RingProblem if problem_factory is None else problem_factory
     directory = Path(directory)

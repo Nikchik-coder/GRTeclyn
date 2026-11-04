@@ -72,7 +72,7 @@ class RegularDraggingProblem(FactoredDraggingProblem):
         return RingProblem.transfer(self,old,u,perturb=perturb)
 
     def regular_rows(self,u,xp=np):
-        arrays,freq=self.unpack(u);jets=RingProblem.jets(self,arrays,xp)
+        arrays,freq=self.unpack(u);jets=self.jets(arrays,xp)
         c=self.raw_dragging(u);h=xp.asarray(self.h_basis)@c
         hx=xp.asarray(self.h_first)@c;hxx=xp.asarray(self.h_second)@c
         hy=h@xp.asarray(self.dy).T;hyy=h@xp.asarray(self.dyy).T

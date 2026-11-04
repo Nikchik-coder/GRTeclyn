@@ -120,6 +120,7 @@ def common_metric_samples(source):
     with np.load(source, allow_pickle=False) as data:
         meta = json.loads(str(data['metadata']))
         u = np.asarray(data['u'])
+        raw = np.asarray(data['solver_u']) if 'solver_u' in data else None
     nx, ny = meta['nx'], meta['ny']
     n = (nx+1)*(ny+1)
     if (meta.get('schema') != 1 or meta.get('model') != 'canonical_regular_centre'
@@ -134,6 +135,12 @@ def common_metric_samples(source):
     bx = cheb_eval(old_s, np.eye(nx+1), s)
     by = cheb_eval(old_y, np.eye(ny+1), 2*mu**2-1)
     f, w, b = [bx@arrays[i]@by.T for i in (0, 1, 3)]
+    if raw is not None:
+        from .smooth_cubic import REPRESENTATION
+        if meta.get('representation') != REPRESENTATION or raw.shape != u.shape:
+            raise ValueError('unknown factored common-point representation')
+        h = np.polynomial.chebyshev.chebvander(s,nx)@raw[n:2*n].reshape(nx+1,ny+1)@by.T
+        w = (1-s[:,None])**3*h
     r = 2.5*(1+s)/(1-s)
     rho = r[:, None]*np.sqrt(1-mu[None, :]**2)
     lapse = np.exp(f/2)
