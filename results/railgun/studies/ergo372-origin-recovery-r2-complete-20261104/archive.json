@@ -1,0 +1,15 @@
+{
+  "original_files_sha256": {
+    "evolution_qualification.json": "08af5f0dedec2b1660f4ba4cee433ecd5c5a7d250a303c832f526a1088cfb9ce",
+    "grid_224x28.json": "dc56a35f947ec622feb86f6ef1e0ba424b6e30b9cab46ffd94286093565a8b87",
+    "grid_224x28.npz": "64f19e5e9f27e1b5cb7b31d476bf7f8d5a43baf8924eb14cb2dde4007ab10e99",
+    "grid_256x32.json": "243aee85c1a838dfb66e4cada9cd502045ccbbed51278115112d41d6fc1c1735",
+    "grid_256x32.npz": "7d691da4a344c6f3eb3c54dffa0360d2f129164d624e98c8a01b73d8c9694291",
+    "grid_288x36.json": "a93e286aa16d0627a7849e5cb7e3be5a9d6677d63ba5f36bb956bf0ba6960a79",
+    "grid_288x36.npz": "ca600f7e510430e585dc7ec9ea06029b650e2433ca0e925437506bce0ebdb767",
+    "manifest.json": "f163df53ea57d3b259d1e1eaa993369e3e24a148b8fbcf2681d4c741b0ca67cf",
+    "outcome.json": "058aaccf15beb35dc12c981530949ee3b7bc69b7eb9708547696d5c8df163ea6"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/evolution/ergo372-origin-recovery-r2-complete-20261104"
+}

@@ -1,0 +1,67 @@
+{
+  "config": {
+    "fields": [
+      {
+        "winding": 1,
+        "mass": 1.0,
+        "amplitude": 0.32584258793528914,
+        "parity": "even",
+        "anchor_radius": 1.2028929844078005,
+        "quartic": 0.0,
+        "sextic": 0.0
+      }
+    ],
+    "length": 2.5,
+    "central_lapse": 0.12993066385192364,
+    "grids": [
+      [
+        224,
+        28
+      ],
+      [
+        256,
+        32
+      ],
+      [
+        288,
+        36
+      ]
+    ],
+    "require_gpu": true,
+    "max_iter": 30,
+    "min_updates": 2,
+    "newton_tol": 1e-14,
+    "chord_ratio": 0.0,
+    "perturbation": 1e-05,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "minimum_charges": [
+      0.0011265884759944886
+    ],
+    "require_nodeless": true,
+    "discretisation": "isotropic_metric_origin_neumann_N_v1"
+  },
+  "configuration_sha256": "677d5fe5abe4eb3b4c44b93057f37b37dc46fb2c45841b3465d79528e23aaaee",
+  "commit": "86f491c529c04b07f6306725011f2d821ce358f0",
+  "python": "3.12.14",
+  "schema": 1,
+  "stability": "not_assessed",
+  "seed_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "resumed_prefix": {
+    "source": "runs/railgun/evolution/ergo372-origin-recovery-r2-20261104",
+    "files_sha256": {
+      "grid_224x28.json": "dc56a35f947ec622feb86f6ef1e0ba424b6e30b9cab46ffd94286093565a8b87",
+      "grid_224x28.npz": "64f19e5e9f27e1b5cb7b31d476bf7f8d5a43baf8924eb14cb2dde4007ab10e99",
+      "grid_256x32.json": "243aee85c1a838dfb66e4cada9cd502045ccbbed51278115112d41d6fc1c1735",
+      "grid_256x32.npz": "7d691da4a344c6f3eb3c54dffa0360d2f129164d624e98c8a01b73d8c9694291"
+    },
+    "commit": "2c79ccec763bfb37c2158f7eca1dfdb5ac0c3165",
+    "new_solves_max": 1
+  },
+  "jax": "0.11.2",
+  "platform": "gpu",
+  "device_kind": "NVIDIA H100 80GB HBM3",
+  "float64": true,
+  "solver_discretisation": "isotropic_metric_origin_neumann_N_v1"
+}
