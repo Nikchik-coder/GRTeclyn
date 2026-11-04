@@ -279,6 +279,74 @@ a fresh process for each one, and stops at the first successful handoff.
 `handoff` converts saved fields into the background-table format read by the
 spinning-wormhole evolution. These tools do not launch an evolution.
 
+## Wormhole with a rotating scalar ring (prepared November 4)
+
+`research/optimisation/studies/wormhole_ring.toml` prepares a bounded pilot
+using the existing coupled metric, phantom scalar and canonical winding-field
+equations. The canonical amplitude is `sin(theta) zeta(eta,theta)` with phase
+`exp(i omega t - i phi)`. Its axial zero permits toroidal matter around the
+throat. The density profile is solved, not prescribed; a detached matter-free
+gap around the throat is not imposed. Both asymptotically flat ends remain
+part of the solve. The frequency is an eigenvalue and must lie in the mass
+gap of both ends, including the far end's dragging and redshift.
+
+The first reference is the symmetric rotating member
+`results/spinningwormhole/solutions/fam_b/fam_b_0000.json` (gamma=0, J+=0.05).
+The old S0 winding field provides a nonzero initial guess. Its old rejection
+is retained: `rescale_matter_seeds=true` reconstructs its minimal surface,
+rescales to the reference area, reflects the winding, and solves again with
+the reference spin. It does not inherit any acceptance verdict. The D21
+asymmetry is deliberately not attempted in this pilot: previous rotating
+continuations did not qualify a D21 branch.
+
+Three separate cases hold the same true minimal throat area and asymmetry:
+
+- `potential`: phantom-potential search without canonical matter, J+=0.05.
+- `ring-fixed`: coupled potential/ring search at the same J+=0.05.
+- `ring-spin`: the same coupled search, with J+ varied from 0 to 0.4.
+
+The spin interval is a finite pilot bound, not a stability threshold. Each
+case keeps the peak-tide ceiling at four times the original massless
+reference's value. Ring cases also require E_b/R_A <= 1. The objective is
+the phantom-only `X_full`; positive ordinary energy cannot cancel it.
+The parameter ordering is potential m,q1,q2,q3, optional J, then log(m_b R_A)
+and log(amplitude). The canonical frequency is never an independent knob.
+
+For a qualified variable-spin finalist, `matched_reference.npz` re-solves
+the massless, ring-free wormhole at the finalist's spin. For every qualified
+ring finalist, `ring_free_reference.npz` independently re-solves without the
+ring at the **same potential parameters m,q, spin, area and asymmetry**, with the original
+tidal ceiling. Thus `matched_spin_fractional_change` compares the joint
+potential/ring change against V=0; `ring_control_fractional_change` compares
+the ring with the recovered control branch. Its
+`validated_ring_control_improvement` stays null if the control fails or the
+decrease does not exceed numerical uncertainty. The kink's vacuum endpoint
+is also solved: identical m,q need not mean an identical function V(psi).
+Both endpoint values are retained, and `validated_ring_only_improvement`
+additionally requires matching endpoints (or V=0). This control is not a
+proof of the best possible ring-free solution across all branches.
+
+Every finalist/control uses the unchanged unused Einstein equations,
+independent off-grid Ricci/Klein–Gordon checks, both-end decay, volume
+quadrature, minimum-surface and tidal checks, followed by fresh
+150x30 / 180x36 / 210x42 solves. Stationary validation does not certify
+dynamical stability. No evolution export or launch is part of this pilot.
+
+Preview one job without accessing a GPU or writing output:
+
+```bash
+bash research/optimisation/studies/run_wormhole_ring.sh ring-spin 0 \
+  runs/optimisation/wormhole_ring_pilot
+```
+
+After a separate go for that case/card, adding `--run` checks the card and
+dispatches one capped job: four threads, 160 GiB address space, **4 h hard
+limit**, 48 CMA proposals, six continuation bisections per proposal, and
+24 Newton iterations per solve. Reference, seed and final-control solves
+also consume that same time limit. This is a resource ceiling, not a measured
+ETA. There is no automatic queue, evolution, plotfile or AMR checkpoint.
+Use a fresh output root for each attempt; capped-job logs retain failures.
+
 ## Where to look in the code
 
 - **`commands/`** parses command-line arguments and dispatches work. Start here

@@ -408,9 +408,9 @@ def test_free_spin_workflow_matches_final_reference(monkeypatch,tmp_path,domain,
 @pytest.mark.parametrize('extra,case', [
     ([], 'potential-t4'),
     (['--J-max','3','--J-step','0'], 'potential-t4'),
-    (['--J-max','3','--J-step','.5'], 'boson-k1-t4-e0.1'),
+    ([], 'boson-k1-t4-e0.1'),
 ])
-def test_free_spin_rejects_missing_bounds_and_bosons(tmp_path,extra,case):
+def test_free_spin_rejects_missing_or_invalid_bounds(tmp_path,extra,case):
     from grteclyn_wrapper.optimisation import study
     from grteclyn_wrapper.optimisation.commands.optimize_potential import build_parser
     config=tmp_path/'study.toml'; config.write_text('version=1\n')

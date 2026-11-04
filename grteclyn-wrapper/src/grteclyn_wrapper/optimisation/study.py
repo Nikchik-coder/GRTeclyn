@@ -16,6 +16,7 @@ from .resolution import check_candidate,refinement_grids,save_checked
 from .potential_domain import admissible, validate_start
 from .surfaces import find_surface
 from .study_validation import validate
+from . import study_parameters
 
 
 def release_solver():
@@ -35,15 +36,17 @@ def load_config(path):
         cfg=tomllib.load(f)
     allowed={'version','tidal_factors','energy_budgets','windings','mass_range',
              'amplitude_seeds','amplitude_max','mass_seeds','candidate_seeds',
-             'matter_candidate_seeds'}
+             'matter_candidate_seeds','rescale_matter_seeds'}
     if set(cfg)-allowed:
         raise ValueError(f'unknown study keys: {sorted(set(cfg)-allowed)}')
     defaults=dict(version=1,tidal_factors=[1.,2.,4.],energy_budgets=[.1,.3,1.],
                   windings=[-1,0,1],mass_range=[.5,8.],mass_seeds=[.5,1.,2.,4.,8.],
                   amplitude_seeds=[.01,.03,.1,.3],amplitude_max=.5,candidate_seeds=[],
-                  matter_candidate_seeds=[])
+                  matter_candidate_seeds=[],rescale_matter_seeds=False)
     defaults.update(cfg); cfg=defaults
     if cfg['version']!=1: raise ValueError('unsupported study version')
+    if not isinstance(cfg['rescale_matter_seeds'],bool):
+        raise ValueError('rescale_matter_seeds must be boolean')
     for key in ('tidal_factors','energy_budgets','mass_seeds','amplitude_seeds'):
         a=np.asarray(cfg[key],dtype=float)
         if a.ndim!=1 or not len(a) or not np.isfinite(a).all() or np.min(a)<=0:
@@ -173,7 +176,8 @@ def continue_to(state,start,target,grid,pin,d2,*,max_splits=6,max_iter=24):
     while pending:
         trial=pending[-1]
         try:
-            nxt,row=solve_trial(state,trial,*grid,pin,d2,max_iter=max_iter,newton_tol=1e-12)
+            nxt,row=solve_trial(state,trial,*grid,pin,d2,max_iter=max_iter,
+                                newton_tol=1e-14 if trial.get('matter') else 1e-12)
         except (RuntimeError,ValueError,FloatingPointError,np.linalg.LinAlgError):
             if splits>=max_splits: raise
             splits+=1; pending.append(blend(current,trial,.5)); continue
@@ -203,18 +207,29 @@ def seed_attempts(state,config,pin,grid,d2,record):
         release_solver()
 
 
-def check_matched_reference(base,config,J,grid,grids,pin,d2,out,validator,*,max_splits,max_iter):
-    """Compare the winner to V=0 at its own J, with the same true area."""
+def check_matched_reference(base,config,J,grid,grids,pin,d2,out,validator,*,max_splits,max_iter,
+                            potential=None):
+    """Re-solve a ring-free control at matched J, area and optional potential."""
     target=dict(config,J=float(J),m=0.,q=[0.,0.,0.])
-    path=out/'matched_reference.npz'
+    if potential is not None:
+        target.update(m=float(potential['m']),q=list(potential['q']))
+    # The starting configuration is the original matter-free reference.
+    if target.get('matter'):
+        raise ValueError('matched control must start from a matter-free reference')
+    name='matched_reference' if potential is None else 'ring_free_reference'
+    path=out/f'{name}.npz'
     if path.exists():
         _,meta=load_seed(path)
-        if meta['J']==J:
-            return dict(status='validated',J=J,diagnostics=meta['resolution']['records'][-1])
-    directory=out/'matched_reference'
+        saved=meta.get('config',meta)
+        if (all(saved.get(k)==v for k,v in target.items())
+                and not saved.get('matter') and meta.get('resolution',{}).get('passed')
+                and meta.get('pin')==list(pin)):
+            return dict(status='validated',J=J,phantom_endpoint=meta['psim'],
+                        diagnostics=meta['resolution']['records'][-1])
+    directory=out/name
     suffix=0
     while directory.exists():
-        suffix+=1; directory=out/f'matched_reference_{suffix}'
+        suffix+=1; directory=out/f'{name}_{suffix}'
     try:
         state,_=continue_to(base,config,target,grid,pin,d2,
                             max_splits=max_splits,max_iter=max_iter)
@@ -222,8 +237,9 @@ def check_matched_reference(base,config,J,grid,grids,pin,d2,out,validator,*,max_
                             score_key='X_full',validator=validator,perturb_seed=True)
         if not result['passed']:
             return dict(status='unresolved',J=J,checks=result)
-        save_checked(path,checked,target,dict(comparison='matched_spin'),result)
-        return dict(status='validated',J=J,diagnostics=result['records'][-1])
+        save_checked(path,checked,target,dict(comparison=name,pin=list(pin),config=target),result)
+        return dict(status='validated',J=J,phantom_endpoint=float(checked['psim']),
+                    diagnostics=result['records'][-1])
     except (RuntimeError,ValueError,FloatingPointError,np.linalg.LinAlgError) as err:
         return dict(status='unresolved',J=J,error=str(err))
     finally:
@@ -255,8 +271,6 @@ def run(args,*,error):
     if args.stability or args.J_pin is not None or args.no_save:
         error('study requires reference initial J and saved fields; stability is unavailable')
     if args.free_J:
-        if case['winding'] is not None:
-            error('free-J studies currently support potential-only cases')
         if (args.J_max is None or args.J_step is None or
                 not np.isfinite([args.J_min,args.J_max,args.J_step]).all() or
                 not 0<=args.J_min<args.J_max or args.J_step<=0):
@@ -345,10 +359,7 @@ def run(args,*,error):
             solved.append((np.asarray(r['parameters']),s,r['config']))
             if r['verdict']=='PASS': finalists.append((r['X_full'],r['artifact'],r['config']))
     def parameters(c):
-        x=[c['m'],*c['q']]
-        if args.free_J: x.append(c['J'])
-        if case['winding'] is not None: x += [np.log(c['matter_mass']*ra),np.log(c['amplitude'])]
-        return np.asarray(x)
+        return study_parameters.encode(c,free_spin=args.free_J,winding=case['winding'],radius=ra)
     # Saved potential candidates must be re-solved at the new geometric area.
     if not records:
         for path in cfg['candidate_seeds']:
@@ -375,8 +386,19 @@ def run(args,*,error):
     if case['winding'] is not None and not solved:
         for path in cfg.get('matter_candidate_seeds', []):
             seed, meta = load_seed(path)
-            c = meta['config']
+            c = dict(meta['config'],potential_domain=args.potential_domain)
             expected = 'cloud' if case['winding'] == 0 else 'winding'
+            if cfg['rescale_matter_seeds']:
+                from .boson_continuation import prepare_seed
+                if not np.isclose(c['gamma'],basecfg['gamma'],atol=1e-12,rtol=0):
+                    raise ValueError('rescaled matter seed must have the reference asymmetry')
+                seed['surface_coefficients']=find_surface(1.,seed['map'],seed['sx'],seed['sy'],
+                           seed['F'],seed['N'],seed['B'],seed['xi_t'])
+                seed['xi_t']=float(seed['surface_coefficients'][0])
+                seed,c,_=prepare_seed(seed,c,pin[1],case['winding'])
+                # Similarity/reflection prepares a guess; Newton imposes the target J.
+                c['J']=basecfg['J']
+                meta=dict(meta,pin=list(pin))
             if (c.get('matter') != expected or c.get('winding_k', 0) != case['winding']
                     or not np.isclose(c['gamma'], basecfg['gamma'], atol=1e-12, rtol=0)
                     or not np.isclose(c['J'], basecfg['J'], atol=1e-10, rtol=0)
@@ -410,16 +432,12 @@ def run(args,*,error):
             return 2
     x0=np.array([float(v) for v in args.x0.split(',')])
     if len(x0)!=4: error('study x0 requires m,q1,q2,q3')
-    lo=np.array([args.m_min,*([args.q_min]*3)] + ([np.log(cfg['mass_range'][0]),np.log(1e-5)] if case['winding'] is not None else []))
-    hi=np.array([args.m_max,*([args.q_max]*3)] + ([np.log(cfg['mass_range'][1]),np.log(cfg['amplitude_max'])] if case['winding'] is not None else []))
-    scales=np.array([args.m_step,.3,.3,.3]+([.3,.3] if case['winding'] is not None else []))
+    lo,hi,scales=study_parameters.bounds(args,cfg,winding=case['winding'])
     if args.free_J:
         x0=np.r_[x0,basecfg['J']]
-        lo=np.r_[lo,args.J_min]; hi=np.r_[hi,args.J_max]
-        scales=np.r_[scales,args.J_step]
     if case['winding'] is not None:
-        start=min(solved,key=lambda item:np.linalg.norm(item[0][:4]-x0))
-        x0=np.r_[x0,start[0][4:]]
+        start=min(solved,key=lambda item:np.linalg.norm(item[0][:4]-x0[:4]))
+        x0=np.r_[x0,start[0][4+int(args.free_J):]]
     if np.any(x0<lo) or np.any(x0>hi): error('study x0 outside bounds')
     if args.resume and finalists:
         best=min(finalists)
@@ -435,11 +453,8 @@ def run(args,*,error):
                 raise ValueError('parameter_bounds')
             if not admissible(x[1:4],args.potential_domain):
                 raise ValueError('potential_domain')
-            c=dict(basecfg,m=float(x[0]),q=list(map(float,x[1:4])))
-            if args.free_J: c['J']=float(x[4])
-            if case['winding'] is not None:
-                c.update(matter='cloud' if case['winding']==0 else 'winding',winding_k=case['winding'],
-                         matter_mass=float(np.exp(x[4])/ra),amplitude=float(np.exp(x[5])))
+            c=study_parameters.decode(x,basecfg,free_spin=args.free_J,
+                                      winding=case['winding'],radius=ra)
             if solved:
                 _,seed,previous=min(solved,key=lambda item:np.sum(abs((item[0]-x)/scales)))
             else: seed,previous=base,basecfg
@@ -485,7 +500,8 @@ def run(args,*,error):
             if old.get('passed') and (out/'best_clean.npz').exists():
                 _,saved=load_seed(out/'best_clean.npz')
                 if saved.get('candidate_artifact')==artifact:
-                    winner=saved['resolution']['records'][-1]; winner_config=c; break
+                    winner=saved['resolution']['records'][-1]; winner_config=c
+                    winner_endpoint=saved['psim']; break
             suffix=1
             while directory.with_name(directory.name+f'_{suffix}').exists(): suffix+=1
             directory=directory.with_name(directory.name+f'_{suffix}')
@@ -496,7 +512,8 @@ def run(args,*,error):
                          dict(X_reference=refrow['X_full'],reference_J=basecfg['J'],
                               comparison='initial_reference' if args.free_J else 'matched_spin',
                               candidate_artifact=artifact),result)
-            winner=result['records'][-1]; winner_config=c; break
+            winner=result['records'][-1]; winner_config=c
+            winner_endpoint=float(checked['psim']); break
     matched_reference=None
     if winner and args.free_J:
         matched_reference=check_matched_reference(
@@ -504,10 +521,30 @@ def run(args,*,error):
             reference_validator,max_splits=args.walk_max_splits,
             max_iter=args.walk_max_iter)
     comparison=compare_results(refrow,winner,matched_reference,free_J=args.free_J)
+    ring_free_reference=None
+    if winner and case['winding'] is not None:
+        ring_free_reference=check_matched_reference(
+            base,basecfg,winner_config['J'],grid,grids,pin,d2,out,validator,
+            max_splits=args.walk_max_splits,max_iter=args.walk_max_iter,
+            potential=winner_config)
+    ring_comparison=compare_results(refrow,winner,ring_free_reference,free_J=True)
+    # The kink's vacuum endpoint is solved too. Equal m,q need not define
+    # the identical function V(psi) when that endpoint changes.
+    same_potential=bool(winner and ring_free_reference and
+        ring_free_reference['status']=='validated' and
+        (winner_config['m']==0. or np.isclose(winner_endpoint,
+             ring_free_reference['phantom_endpoint'],rtol=1e-8,atol=1e-12)))
     outcome=dict(status='validated_candidate' if winner else 'no_validated_candidate',
                  reference=refrow,winner=winner,free_J=args.free_J,
                  reference_J=basecfg['J'],winner_J=winner_config['J'] if winner else None,
                  matched_reference=matched_reference,**comparison,
+                 ring_free_reference=ring_free_reference,
+                 winner_phantom_endpoint=winner_endpoint if winner else None,
+                 ring_control_same_potential=same_potential,
+                 ring_control_fractional_change=ring_comparison['matched_spin_fractional_change'],
+                 validated_ring_control_improvement=ring_comparison['validated_fractional_improvement'],
+                 validated_ring_only_improvement=(ring_comparison['validated_fractional_improvement']
+                                                   if same_potential else None),
                  elapsed_seconds=time.monotonic()-started,search_evaluations=count,
                  stability='not_assessed')
     write_json(out/'outcome.json',outcome)

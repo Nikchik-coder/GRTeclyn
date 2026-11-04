@@ -1,11 +1,52 @@
 # Campaign M — status
 
-**Paused — 2026-11-01 (MSK).** Further minimal-exotic-matter searches,
+**Coupled ring/wormhole pilot authorised 2026-11-04 (MSK).**
+The explicit cluster go covers the three prepared stationary comparisons
+below, each with its four-hour cap. No evolution is authorised.
+Other minimal-exotic-matter searches,
 stability-screen repairs and evolution proposals are on hold. The next research
 direction is the separate [ring-spacetime study](../railgun/STATUS.md), reusing
 the JAX/Newton infrastructure. Earlier run authorisations and pending tables
 below do not dispatch new work while this pause is in force. Existing results
 and the withdrawn-stability-screen warning remain the record of this campaign.
+
+## Prepared: rotating scalar ring around a wormhole — November 4
+
+Configuration: [`studies/wormhole_ring.toml`](studies/wormhole_ring.toml).
+Preview/one-case dispatcher: [`studies/run_wormhole_ring.sh`](studies/run_wormhole_ring.sh).
+The default prints the capped command and accesses no GPU. The November 4
+cluster go authorises these cases; no earlier queue is reactivated.
+
+Use the symmetric gamma=0 massless reference `fam_b_0000` (J+=0.05), its
+true minimal throat area held fixed, and an archived nonzero S0 winding
+guess. Reconstruct the seed's surface, rescale and reflect to k=-1, then
+re-solve at the reference spin; the archived ABOVE_GATE verdict is not
+inherited as acceptance. This avoids repeating the unresolved direct D21
+rotating seed search. The matter remains a solved toroidal scalar profile;
+a detached vacuum gap is not assumed.
+
+Three separately dispatched comparisons: potential-only at J+=0.05;
+ring plus potential at J+=0.05; ring plus potential with 0<=J+<=0.4.
+Keep the original reference's t4 tidal cap and E_b/R_A<=1 for ring cases.
+Measure phantom-only X_full, ordinary energy, charge and ring angular
+momentum separately. Every qualified ring finalist gets a fresh ring-free
+control at the same potential parameters m,q, J+, area and asymmetry; variable-spin cases
+also get a matched-spin V=0 control. An unresolved control gives no validated
+ring-improvement claim. The solved phantom vacuum endpoint is also compared:
+a change there prevents attributing a gain solely to the ring at identical
+V(psi). Unused Einstein/KG checks, both-end mass gaps/tails,
+minimal-surface and quadrature gates remain unchanged, with fresh
+150x30 / 180x36 / 210x42 final solves. No stability claim or evolution.
+
+Proposed ceiling **per case: 4 h**, four threads, 160 GiB, 48 CMA proposals
+plus reference/seed/control solves within the same wall cap. No GPU has
+been selected; start and finish clock times await launch. No AMR checkpoints
+or scratch plotfiles are produced. **75 targeted CPU tests pass**, covering
+coupled equations, signed winding, mixed free-spin parameter dispatch,
+control failures, potential-endpoint attribution, and refinement. Preview
+commands and shell syntax pass. A read-only transformation of the archived
+seed matches the reference area to roundoff; no nonlinear field solve was
+performed. Dispatch is pending code push/pull and cluster GPU regression checks.
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).

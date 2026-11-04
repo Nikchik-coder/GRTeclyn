@@ -2,7 +2,10 @@
 
 Updated **2026-11-04 (MSK)**. Branch: `feature/optimisation`.
 
-The minimal-exotic-matter wormhole optimisation campaign remains paused.
+The older minimal-exotic-matter searches remain paused.
+The November 4 cluster go authorises the separate coupled wormhole–scalar-ring
+study in [optimisation STATUS](../optimisation/STATUS.md#prepared-rotating-scalar-ring-around-a-wormhole--november-4).
+pilot's three capped stationary cases; it resumes no old queue or evolution.
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
 **The stronger-ring timing audit, concentric gapped field recovery and
 between-ring particle experiment are complete and accepted.** Every original
