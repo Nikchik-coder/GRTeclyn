@@ -17,8 +17,10 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 **LIVE: `railgun-ergo372-smooth-cubic-r2-20261104`**, first two-GPU
 node/card 0, started **09:12:01 MSK**, source `aef4592de`.
-GPU regressions, then at most three 224x28 / 256x32 / 288x36 solves
-and the unchanged centre certificate. No earlier cubic-tail solve started;
+All **91 GPU regressions pass**. All three **224x28 / 256x32 / 288x36**
+fields pass stationary validation and common-point convergence; their
+angular-momentum surface errors are **1.10e-13 / 3.62e-14 / 7.21e-14**.
+The unchanged centre certificate is running; no exports or evolutions yet. No earlier cubic-tail solve started;
 this preserves the same three-solve budget and **10:09:12 MSK deadline**
 (0.953 h remaining at launch). Four threads, 160 GiB, chunks 128,
 checkpoints OFF. No evolution t/speed/ETA yet; card 1 idle.
@@ -31,9 +33,8 @@ polynomial test used a second barycentric evaluation as its reference,
 which differed by two ulps on the cluster. It now uses the exact analytic
 polynomial with a coefficient-norm floating-point error bound. No physical
 acceptance limit changed. Seven local correction tests pass.
-No stationary solves have been attempted under this go. Preparing a fresh
-job/output name within the original **10:09:12 MSK deadline**, retaining
-all test evidence. Same three resolutions, GPU 0, four threads, 160 GiB,
+No stationary solve started in that first attempt. The fresh job above
+retains all test evidence and the original **10:09:12 MSK deadline**. Same three resolutions, GPU 0, four threads, 160 GiB,
 chunks 128, checkpoints OFF. Both cards idle; scratch clean:
 **4 KiB / 329 GB free**. No evolution t/speed/ETA yet.
 The November 4 instruction authorizes continuing the far-distance correction
@@ -51,7 +52,7 @@ No sponge or evolution boundary has been applied: the current discrepancy
 comes from the stationary solution before transfer to GRTeclyn.
 Configuration: [ergoregion_smooth_cubic_372.json](studies/ergoregion_smooth_cubic_372.json).
 
-**No live runs. Recovery COMPLETE, REJECTED**, continuation job
+**Previous origin recovery COMPLETE, REJECTED**, continuation job
 `railgun-ergo372-origin-recovery-r2-resume-20261104`, card 0,
 **08:47:13–08:49:48 MSK**, source `86f491c52`, exit 2.
 All **76 GPU regressions passed**. The memory fix allowed 288x36 to
