@@ -15,15 +15,18 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-smooth-cubic-20261104`**, first two-GPU node/card 0,
-started **09:09:12 MSK**, source `367d032fb`. GPU regressions are running
-(one test failure reported so far); no stationary solve has started.
-Three planned resolutions: 224x28 / 256x32 / 288x36, max 30 iterations,
-minimum two updates, fresh Jacobians, Newton 1e-14. Four threads, 160 GiB,
-chunks 128, checkpoints OFF; hard deadline **1 h / 10:09:12 MSK**.
-No evolution time/speed yet; ETA awaits tests and qualification.
-Card 1 idle. Scratch clean: **4 KiB / 329 GB free**.
-Fifty targeted local checks passed before launch; CUDA failure under review.
+**Cubic-tail startup stopped before solves**, first two-GPU node/card 0,
+job `railgun-ergo372-smooth-cubic-20261104`, **09:09:12–09:10:33 MSK**,
+source `367d032fb`, exit 1. Ninety GPU tests passed; one new manufactured
+polynomial test used a second barycentric evaluation as its reference,
+which differed by two ulps on the cluster. It now uses the exact analytic
+polynomial with a coefficient-norm floating-point error bound. No physical
+acceptance limit changed. Seven local correction tests pass.
+No stationary solves have been attempted under this go. Preparing a fresh
+job/output name within the original **10:09:12 MSK deadline**, retaining
+all test evidence. Same three resolutions, GPU 0, four threads, 160 GiB,
+chunks 128, checkpoints OFF. Both cards idle; scratch clean:
+**4 KiB / 329 GB free**. No evolution t/speed/ETA yet.
 The November 4 instruction authorizes continuing the far-distance correction
 and validation through the already-approved conditional evolutions.
 

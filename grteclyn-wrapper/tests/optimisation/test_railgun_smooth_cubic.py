@@ -66,10 +66,13 @@ def test_cartesian_geometry_and_core_polynomial_describe_the_same_field():
     from grteclyn_wrapper.optimisation.railgun.dragging_falloff import surface_flux
     p=problem();u=state(p);geometry=RingGeometry(p,u)
     for s in (-1.,-.8,.2,.99):
-        expected=p.dragging_sample(u,[s],[.3])[0,0]
+        expected=(1-s)**3*(.03-.01*s)
         assert float(geometry.sample('w',s,.3))==pytest.approx(expected,rel=1e-13)
         polynomial=np.polynomial.chebyshev.chebval2d(s,.3,np.asarray(geometry.coefficients['w']))
-        assert polynomial==pytest.approx(expected,abs=1e-16)
+        # Bound rounding in the expanded polynomial by its coefficient norm.
+        # The analytic reference avoids a second barycentric interpolation.
+        bound=8*np.finfo(float).eps*np.abs(np.asarray(geometry.coefficients['w'])).sum()
+        assert abs(polynomial-expected)<=bound
     assert geometry.coefficients['w'].shape[0]==p.nx+4
     # The cubic coefficient determines finite J, with no imposed target J.
     u[:p.n]=0.  # Flat lapse for the analytic far-field flux normalization.
