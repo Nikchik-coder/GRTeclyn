@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import time
 
@@ -69,14 +70,47 @@ def branch_checks(record,problem,u,config):
     return record
 
 
+def interrupted_prefix(config, directory):
+    """Reuse only two passing grids interrupted before the third's first update.
+
+    This is not a retry of rejected physics or a completed third solve. The
+    original files remain immutable, and their hashes enter the new manifest.
+    """
+    directory = Path(directory)
+    manifest = json.loads((directory/'manifest.json').read_text())
+    interruption = json.loads((directory/'interruption.json').read_text())
+    grids = config['grids']
+    if (manifest['config'] != config or interruption['completed_grids'] != grids[:2]
+            or interruption['unfinished_grid'] != grids[2]
+            or interruption['unfinished_grid_updates'] != 0
+            or list(directory.glob(f'grid_{grids[2][0]}x{grids[2][1]}.*'))):
+        raise ValueError('only the identical study with an unstarted final solve can resume')
+    records, hashes = [], {}
+    for nx,ny in grids[:2]:
+        record_path = directory/f'grid_{nx}x{ny}.json'
+        state_path = directory/f'grid_{nx}x{ny}.npz'
+        record = json.loads(record_path.read_text())
+        if (record['grid'] != [nx,ny] or record['verdict'] != 'PASS'
+                or record['reasons'] or not record['newton']['converged']):
+            raise ValueError('every reused grid must pass every original check')
+        with np.load(state_path,allow_pickle=False) as saved:
+            meta = json.loads(str(saved['metadata']))
+            if ([meta['nx'],meta['ny']] != [nx,ny] or not np.isfinite(saved['u']).all()
+                    or meta.get('solver_discretisation') != config.get('discretisation')):
+                raise ValueError('reused state metadata or values do not match')
+        records.append(record)
+        for path in (record_path,state_path):
+            hashes[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return records,hashes,manifest
+
+
 def run_study(config, directory, *, reference=None, seed_path=None, acceptance_check=None,
-              problem_factory=None, grid_check=None):
+              problem_factory=None, grid_check=None, resume_from=None):
     from .problem import RingProblem
     from .diagnostics import converged_records, validate
     from ..solver.newton import newton
     factory = RingProblem if problem_factory is None else problem_factory
     directory = Path(directory)
-    directory.mkdir(parents=True, exist_ok=False)
     fields = [ScalarField(**f) for f in config['fields']]
     grids = config.get('grids', [[24, 6], [32, 8], [40, 10]])
     if len(grids) != 3 or any(len(g) != 2 for g in grids) or any(
@@ -88,6 +122,12 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
                     commit=git.stdout.strip() if git.returncode == 0 else None,
                     python=platform.python_version(), schema=SCHEMA, stability='not_assessed')
     records = []
+    reuse = None
+    if resume_from is not None:
+        reuse = interrupted_prefix(config,resume_from)
+        if seed_path is None or reuse[2].get('seed_sha256') != hashlib.sha256(Path(seed_path).read_bytes()).hexdigest():
+            raise ValueError('resumed study must retain the original seed identity')
+    directory.mkdir(parents=True, exist_ok=False)
     previous = None
     if seed_path is not None:
         old, old_u, _ = load_state(seed_path)
@@ -97,6 +137,18 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
             raise ValueError('seed topology, radial scale and J condition must match')
         previous = old, old_u
         manifest['seed_sha256'] = hashlib.sha256(Path(seed_path).read_bytes()).hexdigest()
+    if reuse is not None:
+        records,hashes,parent_manifest = reuse
+        for name,expected in hashes.items():
+            source = Path(resume_from)/name
+            shutil.copy2(source,directory/name)
+            if hashlib.sha256((directory/name).read_bytes()).hexdigest() != expected:
+                raise ValueError('resumed evidence changed during copy')
+        nx,ny = grids[1]
+        old,old_u,_ = load_state(directory/f'grid_{nx}x{ny}.npz')
+        previous = old,old_u
+        manifest['resumed_prefix'] = dict(source=str(resume_from),files_sha256=hashes,
+                                        commit=parent_manifest.get('commit'),new_solves_max=1)
     write_json(directory/'manifest.json', manifest)
     if reference is not None:
         write_json(directory/'reference_ode.json', {key: value for key,value in reference.items()
@@ -104,10 +156,12 @@ def run_study(config, directory, *, reference=None, seed_path=None, acceptance_c
         np.savez_compressed(directory/'reference_ode.npz', **{key:value for key,value in reference.items()
                     if isinstance(value,np.ndarray)})
     for index, (nx, ny) in enumerate(grids):
+        if reuse is not None and index < 2:
+            continue
         started = time.monotonic()
         p = factory(fields, nx=nx, ny=ny, length=config.get('length', 6.), target_j=config.get('target_j'),
                         frequency_targets=config.get('frequency_targets'), central_lapse=config.get('central_lapse'))
-        if index == 0:
+        if index == (2 if reuse is not None else 0):
             device = p.jax.devices()[0]
             manifest.update(jax=p.jax.__version__, platform=device.platform,
                             device_kind=device.device_kind, float64=bool(p.jax.config.jax_enable_x64))

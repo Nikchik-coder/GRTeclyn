@@ -40,7 +40,8 @@ def _cuda_backend(jac):
         if any(getattr(d, "platform", "") == "gpu" for d in devs):
             import jax.numpy as jnp
             import jax.scipy.linalg as jsl
-            return jnp, jsl.lu_factor, jsl.lu_solve
+            import jax
+            return jnp, jax.jit(jsl.lu_factor, donate_argnums=(0,)), jsl.lu_solve
     except Exception:
         return None
     return None
@@ -82,6 +83,9 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
     for it in range(max_iter):
         fresh = need_jac
         if need_jac:
+            # A 288x36 ring matrix occupies 21.31 GiB. The old factors are
+            # obsolete before building the next Jacobian, not after its LU.
+            lu = piv = None
             jac = jacobian(u)
             jac_evals += 1
             if jac_evals == 1:
@@ -92,7 +96,12 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
             if not gpu:
                 jac = np.asarray(jac)
             scale = 1.0 / xp.maximum(xp.max(xp.abs(jac), axis=1), 1e-300)
-            lu, piv = factor(scale[:, None] * jac)
+            equilibrated = scale[:, None] * jac
+            if gpu:
+                equilibrated.block_until_ready()
+            del jac
+            lu, piv = factor(equilibrated)
+            del equilibrated
         history.append(scaled_inf(r))
         if history[-1] <= tol and len(steps) >= min_updates:
             if verbose:

@@ -50,6 +50,8 @@ def main():
     parser.add_argument('--dry-run',action='store_true')
     parser.add_argument('--gpu',type=int,choices=[0,1])
     parser.add_argument('--out',type=Path)
+    parser.add_argument('--resume-from',type=Path,
+                        help='two passing grids interrupted before the third first update')
     args = parser.parse_args()
     proposed = plan(args.config)
     if args.dry_run:
@@ -60,7 +62,7 @@ def main():
     from ..solver.device import select_device
     select_device(args.gpu,128)
     result = refinement_run(args.config,args.out,problem_factory=SmoothOriginProblem,
-                            grid_check=canonical_check)
+                            grid_check=canonical_check,resume_from=args.resume_from)
     print(json.dumps(result,indent=2))
     return 0 if result['evolution_qualified'] else 2
 

@@ -27,6 +27,15 @@ preparing continuation of only the unfinished third solve; no extra physical
 candidate or changed tolerance. The original one-hour deadline is
 **09:38:51 MSK**. Centre qualification and evolutions remain pending.
 Both cards idle. Scratch clean: **4 KiB / 329 GB free**.
+Memory repair: release the previous LU before the next Jacobian, release the
+unscaled Jacobian before factorisation, and donate the scaled matrix buffer
+to CUDA LU. No equation, matrix entry, precision or tolerance changes.
+Twenty-three targeted CPU checks pass. Resume support accepts only an
+identical configuration, two passing saved grids and zero updates on the
+unfinished third grid; it copies/hashes the retained evidence. It refuses
+rejected grids, changed tolerances and any saved third-grid state.
+Continue only 288x36 under the existing go, then the unchanged centre check;
+retain the original 09:38:51 MSK deadline and all original evidence.
 
 **Earlier recovery stopped rejected** on card 0,
 **08:21:47–08:25:17 MSK, November 4**. All **55 GPU regressions passed**.
