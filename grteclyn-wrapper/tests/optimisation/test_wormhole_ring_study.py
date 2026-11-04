@@ -148,5 +148,7 @@ def test_prepared_cases_preview_without_gpu_or_output(tmp_path):
                               case, '999999', str(tmp_path/'out')], cwd=root,
                              capture_output=True, text=True, check=True)
         assert '--mem 160 --timeout 14400' in run.stdout
+        assert 'XLA_PYTHON_CLIENT_ALLOCATOR=platform' in run.stdout
+        assert 'XLA_PYTHON_CLIENT_PREALLOCATE=false' in run.stdout
         assert ('--free-J' in run.stdout) == (case == 'ring-spin')
     assert not (tmp_path/'out').exists()

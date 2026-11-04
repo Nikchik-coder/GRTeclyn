@@ -66,7 +66,8 @@ second-node scratch directory absent, **0 GB run scratch / 710 GB free**.
 All three fail while creating the `cuda_async` default memory pool under
 the 160 GiB address-space cap, before a stationary solve. The CUDA regression
 suite used the default allocator and passed; it did not exercise this pool.
-A capped `platform` allocator check is in progress. Physical settings,
+A capped `platform` allocator matrix check passed at **22:37:58 MSK**.
+The dispatcher now explicitly selects it without preallocation. Physical settings,
 acceptance gates and resource caps remain unchanged; original logs are retained.
 No exotic-matter reduction is measured yet.
 

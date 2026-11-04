@@ -346,6 +346,9 @@ limit**, 48 CMA proposals, six continuation bisections per proposal, and
 also consume that same time limit. This is a resource ceiling, not a measured
 ETA. There is no automatic queue, evolution, plotfile or AMR checkpoint.
 Use a fresh output root for each attempt; capped-job logs retain failures.
+The dispatcher explicitly selects the CUDA `platform` allocator without
+preallocation: creating the async pool failed under the 160 GiB address-space
+cap before any solve, while a capped platform-allocator matrix test passed.
 
 ## Where to look in the code
 

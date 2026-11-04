@@ -26,6 +26,8 @@ esac
 command=(bash grteclyn-wrapper/scripts/ops/capped_job.sh start
          "wormhole-ring-$case_name-$(date -u +%Y%m%dT%H%M%S)"
          --gpu --threads 4 --mem 160 --timeout 14400 --
+         env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
+         PYTHONUNBUFFERED=1
          grteclyn-wrapper/.venv/bin/python -m
          grteclyn_wrapper.optimisation.commands.optimize_potential "${args[@]}")
 printf '%q ' "${command[@]}"
@@ -39,4 +41,7 @@ used="${used//[[:space:]]/}"
 }
 apps="$(nvidia-smi -i "$card" --query-compute-apps=pid --format=csv,noheader,nounits)"
 [[ -z "${apps//[[:space:]]/}" ]] || { echo "GPU $card has compute jobs" >&2; exit 3; }
+# CUDA async pool creation exceeds the address-space cap before any solve.
+# Platform allocation passed the same cap; preserve traceback logs on abort.
+ulimit -c 0
 exec "${command[@]}"
