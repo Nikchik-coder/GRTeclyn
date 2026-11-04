@@ -51,7 +51,7 @@ own convergence qualification. The runs were stopped on request; their N128 queu
 **The 3.72 evolutions are STOPPED**, November 4 **12:34 MSK**,
 first two-GPU node: N96/card 0 at approximately **t=12.213** and
 N192/card 1 at **t=1.093**. N128/card 0 was cancelled before startup.
-Both GPUs are idle after verification. The stopped runs were finite;
+Both old jobs and their consumers are gone. The stopped runs were finite;
 the failed early constraint comparison prevents an evolution-convergence
 or stability claim. All diagnostic streams, parameters and final log excerpts
 are [archived](../../results/railgun/studies/evolution-ergo372-stopped-20261104/).
@@ -61,7 +61,14 @@ and **40.1 GiB** of generated Cartesian grid exports; retained all export
 certificates. No checkpoints or queued restart dependencies.
 Scratch clean: **4 KiB used / 330 GB free**; only `_cache` remains.
 
-**Weaker-ring pilots APPROVED; not yet started.** The saved ring has
+**Weaker-ring sequences LAUNCHED at 12:46:35 MSK**, November 4,
+from `62aca163d`, first two-GPU node/cards 0 and 1.
+Jobs `railgun-ergo108-pilot-gpu0-20261104` and
+`railgun-ergo108-pilot-gpu1-20261104` begin with targeted GPU tests;
+centre certification and export follow only on success. No evolution t,
+speed or ETA yet. N128 is queued behind N96.
+
+The weaker saved ring: The saved ring has
 common-point peak shift/lapse **1.080970704**, with a resolved ergoregion
 and three passing stationary grids (128x16 / 160x20 / 192x24).
 No accepted saved source near 2 was found. The November 4 explicit go
