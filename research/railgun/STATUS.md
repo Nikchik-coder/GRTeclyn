@@ -26,14 +26,23 @@ parent/core curvature **8.44e-11**, degree-12/14 curvature **2.07e-10**,
 independent equations at most **3.68e-12**. All three solves are complete.
 [Full evidence](../../results/railgun/studies/ergo372-full-spectral-20261104/).
 
-**Approved evolution queue: preparing Cartesian exports.**
+**Evolution sequences LIVE: N96/card 0 and N192/card 1 exports.**
+Both capped sequences started **11:21:37 MSK**, November 4, from
+`e5a6df77c`, on the first two-GPU node. Stem:
+`railgun-ergo372-t50-full-spectral-20261104`; job names append
+`-gpu0-20261104` / `-gpu1-20261104` to `railgun-ergo372-t50-full-spectral`.
+N128/card 0 is queued after N96 completes t=50 with finite constraints.
+Each export repeats the unchanged centre certificate before sampling.
 Use the hash-matched, qualified refined source via
 [evolution configuration](studies/evolution_ergoregion_372_full_spectral.json).
 Only source/hash/frequency and descriptive metadata changed; L=64,
 max_level=6, boundaries, gauge, dt, t=50 and plot cadence are unchanged.
 N96 then N128/card 0; N192/card 1. Four threads and 160 GiB per job,
 checkpoints **OFF**, full frames, last three plotfiles. No queued restart
-needs a checkpoint. Evolutions not yet started, no evolution t/speed/ETA.
+needs a checkpoint. Evolutions not yet started, no evolution t/speed/ETA;
+the live stage is export/certification. The ceiling is **48 h per member**,
+**96 h for the two-member card-0 sequence**, including export. These are
+limits, not measured ETAs. Both launch checks found the cards free.
 Scratch clean: **4 KiB used / 330 GB free**. No frames or movies removed.
 
 **Debugging update: full dragging coefficients implemented.**
