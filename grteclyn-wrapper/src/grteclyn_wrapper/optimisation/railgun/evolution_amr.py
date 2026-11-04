@@ -39,11 +39,11 @@ def load_plan(config, n):
         raise ValueError('approved base resolution and checkpoints OFF required')
     length, maximum = cfg['length'], cfg['max_level']
     radii, lengths = cfg['refinement_radii'], cfg['initial_cube_lengths']
-    if (length != 64 or maximum != 6 or cfg['stop_time'] != 50
+    if (length != 64 or maximum != 6 or cfg['stop_time'] not in (2, 50)
             or len(radii) != maximum or len(lengths) != maximum+1
             or lengths[0] != length or not 0 < radii[-1]
             or any(a <= b for a,b in zip([length/2]+radii, radii))):
-        raise ValueError('L=64, six decreasing refinement radii and t=50 required')
+        raise ValueError('L=64, six decreasing refinement radii and t=2 or t=50 required')
     levels = []
     for level, side in enumerate(lengths):
         dx = length/(n*2**level)
@@ -56,7 +56,7 @@ def load_plan(config, n):
                            bytes=(cells+8)**3*len(COMPONENTS)*8))
     return cfg, dict(**contract, base_n=n, world_length=length, max_level=maximum,
                      levels=levels, total_bytes=sum(p['bytes'] for p in levels),
-                     finest_dx=levels[-1]['dx'], stop_time=50., checkpoints=False)
+                     finest_dx=levels[-1]['dx'], stop_time=float(cfg['stop_time']), checkpoints=False)
 
 
 def export(config, out, n, *, batch=2048):
@@ -185,10 +185,11 @@ def prepare(config, exported, template, n, *, checkpoints):
         'L_full':str(int(cfg['length'])), 'N_full':str(n),
         'center':'32 32 32','max_level':'6',
         'regrid_interval':'16 16 16 16 16 16',
-        'stop_time':'50','max_steps':str(round(50/(.02*64/n))),
+        'stop_time':f'{cfg["stop_time"]:g}',
+        'max_steps':str(round(cfg['stop_time']/(.02*64/n))),
         'plot_interval':str(round(2/(.02*64/n))),
         'sigma':'0.4','constraint_norms_interior_radius':str(cfg['constraint_interior_radius'])})
-    lines = ['# Strongest accepted ergoregion ring, aligned AMR, t<=50.']
+    lines = [f'# Accepted ergoregion ring, aligned AMR, t<={cfg["stop_time"]:g}.']
     for line in reference.read_text().splitlines():
         if line.startswith('#'): continue
         key = line.split('=',1)[0].strip()

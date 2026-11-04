@@ -46,34 +46,38 @@ cells are 0.01042 / 0.005208 for N96/N192. The half-peak
 density band is about 0.295 wide, or 28 / 57 finest cells. The separate Newton
 solve uses a compactified infinite domain with map scale 2.5, not this box.
 The stationary source certificate remains accepted; the evolution needs its
-own convergence qualification. Live settings and the approved queue are unchanged.
+own convergence qualification. The runs were stopped on request; their N128 queue is cancelled.
 
-**N96/card 0 and N192/card 1 evolutions LIVE**, first two-GPU node.
-Stem: `railgun-ergo372-t50-full-spectral-20261104`.
-Both export sequences started **11:21:37 MSK**, November 4, from `e5a6df77c`.
-N96 evolution launched **11:34:42 MSK**; N192 **11:48:02 MSK**.
-Both preflights PASS, all 16 initial frames render on each, consumers have
-processed their first plotfiles, and constraints/scalar diagnostics are finite.
-Full frames and slice caches are retained; checkpoints **OFF**, keep-last **3**.
+**The 3.72 evolutions are STOPPED**, November 4 **12:34 MSK**,
+first two-GPU node: N96/card 0 at approximately **t=12.213** and
+N192/card 1 at **t=1.093**. N128/card 0 was cancelled before startup.
+Both GPUs are idle after verification. The stopped runs were finite;
+the failed early constraint comparison prevents an evolution-convergence
+or stability claim. All diagnostic streams, parameters and final log excerpts
+are [archived](../../results/railgun/studies/evolution-ergo372-stopped-20261104/).
+All frames, slice caches, logs and stationary sources remain intact.
+On explicit cleanup approval, removed **13.1 GiB** of scratch plotfiles
+and **40.1 GiB** of generated Cartesian grid exports; retained all export
+certificates. No checkpoints or queued restart dependencies.
+Scratch clean: **4 KiB used / 330 GB free**; only `_cache` remains.
 
-| Member | Card | t | Target | Speed (units/h) | Remaining (h) | ETA (MSK) |
-|---|---|---|---|---|---|---|
-| N96 | 0 | 9.720 | 50 | 12.28 | 3.28 | Nov 04 15:39 |
-| N192 | 1 | 0.800 | 50 | 1.42 | 34.77 | Nov 05 23:08 |
-
-Last checked **12:22 MSK**. The N96 consumer has pruned its older plotfiles;
-the last three remain, with every rendered frame and slice cache retained.
-
-**Queued:** N128/card 0 follows N96 only after a normal t=50 finish with
-finite constraints. Same hash-matched source via
-[evolution configuration](studies/evolution_ergoregion_372_full_spectral.json).
-L=64, max_level=6, boundaries, gauge, dt, t=50 and plot cadence are unchanged.
-Four threads/160 GiB per job; no queued restart needs a checkpoint.
-Ceilings: 48 h per member including export; 96 h for the two-member card-0
-sequence. These are limits, not ETAs. Initial-frame startup evidence is in
-`results/railgun/reports/ergoregion372-n96-startup.json` and `ergoregion372-n192-startup.json`.
-Scratch clean: **13.1 GiB retained / 316.5 GiB free**,
-no more than three plotfiles per run, no checkpoints. No frames or movies removed.
+**Weaker-ring pilots APPROVED; not yet started.** The saved ring has
+common-point peak shift/lapse **1.080970704**, with a resolved ergoregion
+and three passing stationary grids (128x16 / 160x20 / 192x24).
+No accepted saved source near 2 was found. The November 4 explicit go
+selects this weaker ring, checkpoints **OFF**, for **t=2** pilots:
+N96 then N128 on card 0, N192 on card 1, only on the first two-GPU node.
+[Configuration](studies/evolution_ergoregion_108_pilot.json),
+`run_weak_ergoregion_pilot.sh`: GPU regressions first; every export must
+pass the unchanged radius-0.08, degrees-12/14 centre certificate and
+preflight before evolution. No new stationary solves. Preserve L=64,
+six levels, timestep, gauge, boundaries and full default frames;
+keep the last three plotfiles. Four threads/160 GiB per job, three hours
+per member including export plus 0.5 h/card for tests. No automatic t=50
+extension. The existing AMR coverage mismatch is not repaired by lowering
+dragging; this is a source-change comparison requiring its own convergence
+assessment. **32 targeted local tests pass**, including unchanged long-run
+templates and the short duration/step-count contract.
 
 **Debugging update: full dragging coefficients implemented.**
 The independent long-double Cartesian audit reproduces the failed

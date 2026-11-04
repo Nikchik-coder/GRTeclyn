@@ -89,6 +89,33 @@ def test_three_templates_share_physics_boundaries_and_refinement(tmp_path, monke
                            'max_steps','plot_interval'}
 
 
+def test_short_pilot_changes_only_duration_and_step_count(tmp_path, monkeypatch):
+    out = export_fixture(tmp_path, monkeypatch, 96)
+    long_template = tmp_path/'long.txt'
+    amr.prepare(amr.DEFAULT_CONFIG, out, long_template, 96, checkpoints='off')
+    cfg = json.loads(amr.DEFAULT_CONFIG.read_text())
+    cfg['stop_time'] = 2.
+    short_config = tmp_path/'short.json'
+    short_config.write_text(json.dumps(cfg))
+    short_template = tmp_path/'short.txt'
+    amr.prepare(short_config, out, short_template, 96, checkpoints='off')
+    before, after = parameters(long_template), parameters(short_template)
+    assert {key for key in before if before[key] != after[key]} == {'stop_time', 'max_steps'}
+    assert float(after['stop_time']) == 2.
+    assert int(after['max_steps'])*float(after['dt_multiplier'])*64/96 == pytest.approx(2.)
+    assert amr.load_plan(short_config, 96)[1]['stop_time'] == 2.
+
+
+@pytest.mark.parametrize('stop', [0, -2, 1, 51, float('nan')])
+def test_refuses_unreviewed_duration(tmp_path, stop):
+    cfg = json.loads(amr.DEFAULT_CONFIG.read_text())
+    cfg['stop_time'] = stop
+    config = tmp_path/'changed.json'
+    config.write_text(json.dumps(cfg))
+    with pytest.raises(ValueError, match='t=2 or t=50'):
+        amr.load_plan(config, 96)
+
+
 @pytest.mark.parametrize('damage', ['certificate', 'source', 'grid', 'checkpoints'])
 def test_rejects_changed_certificate_source_grid_or_checkpoint_policy(tmp_path, monkeypatch, damage):
     out = export_fixture(tmp_path, monkeypatch, 96)

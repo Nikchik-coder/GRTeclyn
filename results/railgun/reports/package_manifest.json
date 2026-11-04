@@ -3173,6 +3173,106 @@
       "sha256": "a87d2218d3771abfa68c4a31e42c484245bc1c0e9453d261ed6fc53e6b76b969",
       "bytes": 2229
     },
+    "studies/evolution-ergo372-stopped-20261104/README.md": {
+      "sha256": "0b945de6827697d4762f05d673dad060488a9235e9c8d8dbec878434f8198990",
+      "bytes": 699
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/data/collapse_diagnostics.dat": {
+      "sha256": "971fb2c4c53f931390426e052bd25ce8e9d953b19887d3ff4610436b10e1516d",
+      "bytes": 48638
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/data/complex_scalar_diagnostics.dat": {
+      "sha256": "43b4be0a2ddff03417907c10f7ce9a9b39ea93eb85b5f8cecd3c7529c3d982fe",
+      "bytes": 22078
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/data/constraint_norms.dat": {
+      "sha256": "fde96a208982523eefb535c528950ea177c280097871c492c67b27da177ad79b",
+      "bytes": 61918
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/data/constraint_norms_levels.dat": {
+      "sha256": "037f2c0179709d053929b7b0b6b7a1de11c0bcd3dc1f460bf083dd728737430c",
+      "bytes": 48638
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/data/constraint_shells.dat": {
+      "sha256": "a520afd57090922c859709ee82fed0578d44a7c8002cf79c29ec7bd8ff575687",
+      "bytes": 5979
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/params.txt": {
+      "sha256": "88c761c86db0e60fd1961afc38779aeffcddcb681da9ed6e273951c8ddf4b475",
+      "bytes": 2950
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/preflight.json": {
+      "sha256": "299585bafba81a61f9aa5347300c76e1dd110e03af61889e8fcdd06a35462eaf",
+      "bytes": 9787
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/run-tail.log": {
+      "sha256": "a38f213ac63f5cd5b3f50114fac30abe87c2a0d574bcbdb65a5ee20ef2c55325",
+      "bytes": 20000
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/run_manifest.json": {
+      "sha256": "e0556bfb35f926afee1c4efeac2b81d238d2ead2d178c4d4ddc4d4f2ca0e6078",
+      "bytes": 18574
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/small_data/boundary_flux.dat": {
+      "sha256": "9c7e94cac8fabbd13c1a91f662bee70ead58f5b1f47db470785b7912a93a0b50",
+      "bytes": 114
+    },
+    "studies/evolution-ergo372-stopped-20261104/n192/small_data/consume_state.json": {
+      "sha256": "7ff6dc86a1b0516d3cf18476d2af9859e41b9f05828a2fae23a2fcecb3ee188b",
+      "bytes": 38
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/data/collapse_diagnostics.dat": {
+      "sha256": "275d2bb4b00869eaa141175e7daa5aa2c6c803992c7351788abf534de8ad0f9d",
+      "bytes": 268681
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/data/complex_scalar_diagnostics.dat": {
+      "sha256": "a5bb5231ca5529d2456120ce6e272c6aeb8a267c66538fbcf493de79adf08b24",
+      "bytes": 122094
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/data/constraint_norms.dat": {
+      "sha256": "f1ad2d42498fc1c23816d76ed973edc92a0d2e4b150e190b16c613068bc7c7a4",
+      "bytes": 342414
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/data/constraint_norms_levels.dat": {
+      "sha256": "5ad55efddaaaf58292cfa4489690922bf652a7bb6f510403115edf7575f2b520",
+      "bytes": 268974
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/data/constraint_shells.dat": {
+      "sha256": "4cc4db5c096d0739dd284d07a76080e2ee41fb2ba0f3e053919ab53dda8780d8",
+      "bytes": 17937
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/params.txt": {
+      "sha256": "954012cf593b2f848e878625ae0dfbf4862a1beda6f4790fbf0112aea0af129f",
+      "bytes": 2938
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/preflight.json": {
+      "sha256": "da2d05ef6aadd2b9ec323ab7c9aa259e7943446dcfe97688fc734944ae98614b",
+      "bytes": 9765
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/run-tail.log": {
+      "sha256": "780482907c2f755c9f3c3840e99f637986d312bf9000ba8b70a1cd7dd017d19c",
+      "bytes": 20000
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/run_manifest.json": {
+      "sha256": "3e3fc6941d50858e921e40276819c98c40e27dde6797c670a885a245879c247e",
+      "bytes": 18535
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/small_data/boundary_flux.dat": {
+      "sha256": "5695259557c8868edbeeb81f9d2b6aafbe920302d20319121ebd660fd0e8cc16",
+      "bytes": 541
+    },
+    "studies/evolution-ergo372-stopped-20261104/n96/small_data/consume_state.json": {
+      "sha256": "d12d7d971ff2e7708c92b41a8bae5c3ddc0349d19b603f9ed38199acc7c1cc79",
+      "bytes": 254
+    },
+    "studies/evolution-ergo372-stopped-20261104/sha256sums.txt": {
+      "sha256": "fd6c90bfcae95ea0e6ceabc37681ac1250cd0b13bbf94c3dcbc92c6b01e46e32",
+      "bytes": 2251
+    },
+    "studies/evolution-ergo372-stopped-20261104/stop-and-cleanup.json": {
+      "sha256": "e5871f54c21078511a6c84ac8750e7fe2522dd590efc7d8d040486ec5d562fae",
+      "bytes": 726
+    },
     "studies/evolution-ergoregion-preparation-20261103/README.md": {
       "sha256": "aa667057401a7a531bb11608096c2335952025f3ae95bf5297cca43f81aa6802",
       "bytes": 499

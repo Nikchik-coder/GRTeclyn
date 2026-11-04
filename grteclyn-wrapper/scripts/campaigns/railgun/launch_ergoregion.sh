@@ -46,9 +46,11 @@ cd "${REPO}"
 mv -- "${TEMPLATE}.contract.json.tmp" "${TEMPLATE}.contract.json"
 nvidia-smi
 FIELDS="$(sed 's/#.*//' "${HERE}/frames_default.txt" | tr '\n' ' ')"
+STOP_TIME=$("${REPO}/grteclyn-wrapper/.venv/bin/python" -c \
+  'import json,sys; print(format(json.load(open(sys.argv[1]))["stop_time"], "g"))' "${CONFIG}")
 exec bash "${HERE}/../spinning_wormhole/launch.sh" \
   --template "${TEMPLATE}" --name "${NAME}" --gpu "${GPU}" --binary "${BINARY}" \
   --profile smoke --subdir ergoregion --keep-last 3 --foreground \
   "${EXTRA[@]}" \
   --consume-args "--frames-fields ${FIELDS} --frames-axis z --frames-coord 32 --frames-zoom 2 --frames-center 32 32 32 --frames-cache-slices --frames-auto-zlim --frames-blank-edge 2 --no-psi4" \
-  --what 'Accepted ergoregion ring; L64, six levels, Richardson study to t=50, checkpoints OFF'
+  --what "Accepted ergoregion ring; L64, six levels, Richardson study to t=${STOP_TIME}, checkpoints OFF"

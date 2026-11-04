@@ -43,3 +43,9 @@ grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/ver
 
 The audit uses archived data on a CPU. The origin check starts GPU work and
 requires the run-specific go. No command in this README grants that go.
+
+- `run_weak_ergoregion_pilot.sh CARD STEM BINARY off`, after its separate
+  go, runs targeted GPU tests and the accepted 1.081-dragging source through
+  three independently certified exports and t=2 evolutions. N96 then N128
+  use card 0; N192 uses card 1. It preserves the L64/AMR6 comparison and
+  never automatically extends to t=50.

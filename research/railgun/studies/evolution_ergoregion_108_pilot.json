@@ -1,0 +1,81 @@
+{
+  "stage": "approved",
+  "source": "results/railgun/studies/ergoregion-cma/finalists/01/accepted.npz",
+  "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+  "selection": "Accepted weaker ergoregion ring, common-point peak shift/lapse 1.080970704; no accepted source near 2. Short source-change comparison, not an AMR repair.",
+  "frequency": 0.6550650865941262,
+  "base_N": [
+    96,
+    128,
+    192
+  ],
+  "length": 64.0,
+  "max_level": 6,
+  "refinement_radii": [
+    12.0,
+    6.0,
+    3.0,
+    1.5,
+    0.75,
+    0.375
+  ],
+  "initial_cube_lengths": [
+    64.0,
+    48.0,
+    24.0,
+    12.0,
+    6.0,
+    3.0,
+    1.5
+  ],
+  "finest_dx": [
+    0.010416666666666666,
+    0.0078125,
+    0.005208333333333333
+  ],
+  "core": {
+    "radius": 0.08,
+    "degree": 12,
+    "comparison_degree": 14,
+    "tolerance": 1e-08,
+    "join": "C6 Bernstein"
+  },
+  "stop_time": 2.0,
+  "dt_multiplier": 0.02,
+  "comparison_times": [
+    0.0,
+    0.16,
+    0.5,
+    1.0,
+    1.5,
+    2.0
+  ],
+  "constraint_interior_radius": 0.5,
+  "perturbation": "none",
+  "gpus": {
+    "0": [
+      96,
+      128
+    ],
+    "1": [
+      192
+    ]
+  },
+  "checkpoints": false,
+  "keep_last_plotfiles": 3,
+  "threads_per_job": 4,
+  "host_GiB_per_job": 160,
+  "wall_seconds_per_evolution": 10800,
+  "frames": "All default frames, both complex components and slice caches; retain originals.",
+  "scope": "Short three-resolution comparison of a weaker ergoregion ring; preserve L64, AMR, gauge, boundaries and timestep. No automatic extension to t=50. Evolution convergence remains to be checked.",
+  "approval": "November 4 explicit go: weaker-ring pilots, checkpoints OFF. GPU regressions then three independently centre-certified exports and N96 followed by N128 on card 0, N192 on card 1 through t=2; only the first two-GPU node. No new stationary solves or automatic extension to t=50. L64, six levels, all original centre/physical gates, four threads and 160 GiB per job, three hours per member including export plus 0.5 h for regressions per card; full frames and last three plotfiles.",
+  "boundary": {
+    "type": "background-relative Sommerfeld plus quartic KO sponge and background damping",
+    "inner_radius": 24.0,
+    "outer_radius": 32.0,
+    "strength": 4.0,
+    "ramp_power": 4,
+    "drive_strength": 1.0,
+    "scalar_reference": "rotate both scalar and normal momentum with the saved positive-frequency phase"
+  }
+}
