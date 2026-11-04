@@ -3121,6 +3121,50 @@
       "sha256": "b270864f68d6daba49895a68b4b328af47d80c79825f5fafa400249b3280c53d",
       "bytes": 314
     },
+    "studies/evolution-ergo108-core-rejected-20261104/README.md": {
+      "sha256": "5674f0050d6b16ce3cb2e9a34ae872abc943d8e2cf5405eee287a79ada7cd6ff",
+      "bytes": 818
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n192/corridor.json": {
+      "sha256": "b07576466a15e3b4ac66d41d5856d159a63f2ed43cac501d0106ea192aa3406c",
+      "bytes": 24552
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n192/execution.log": {
+      "sha256": "b8a6c1260f76ed1d0afc210642418f614cc5cfc0cfd838a778c84f8da224d8ee",
+      "bytes": 4301
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n192/outcome.json": {
+      "sha256": "f64c01dd835195335a3dc1b89fb08b15b55f319dac5228ca8c79530d6b8c94f0",
+      "bytes": 58
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n192/regressions.xml": {
+      "sha256": "1681f2df3a5c1c36d7ab886c1030e3ad506d298487a098540ad6cfb6efc0bd90",
+      "bytes": 6938
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n96/corridor.json": {
+      "sha256": "da9838d5c450b7ddcd307db22e93e55e8dbf0c976478cd591d61fea127a58825",
+      "bytes": 24548
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n96/execution.log": {
+      "sha256": "4ae00282d20153b6883e4e1858ed7790343cd8d413b5a84136c561b41b2aa643",
+      "bytes": 4301
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n96/outcome.json": {
+      "sha256": "f64c01dd835195335a3dc1b89fb08b15b55f319dac5228ca8c79530d6b8c94f0",
+      "bytes": 58
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/n96/regressions.xml": {
+      "sha256": "62901067667c34237a8819799e2a4b060c2ee9487d0c5508d523582656edf2a6",
+      "bytes": 6938
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/outcome.json": {
+      "sha256": "00d4eae3be808d4a3b913980e5fa199323f829a42457be753350fecdac177b25",
+      "bytes": 1576
+    },
+    "studies/evolution-ergo108-core-rejected-20261104/sha256sums.txt": {
+      "sha256": "e01462e08215f055a171f083df130ebc4117ea97f1b563a1db06a3938ed47512",
+      "bytes": 833
+    },
     "studies/evolution-ergo372-core-20261104/corridor.json": {
       "sha256": "509847de66c6a46675bee4774d0995638d6c2b95b6a649eb397d27dbd4dcf3f2",
       "bytes": 24499

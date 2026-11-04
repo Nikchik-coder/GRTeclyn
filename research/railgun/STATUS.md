@@ -61,15 +61,23 @@ and **40.1 GiB** of generated Cartesian grid exports; retained all export
 certificates. No checkpoints or queued restart dependencies.
 Scratch clean: **4 KiB used / 330 GB free**; only `_cache` remains.
 
-**Weaker-ring sequences LAUNCHED at 12:46:35 MSK**, November 4,
-from `62aca163d`, first two-GPU node/cards 0 and 1.
-Jobs `railgun-ergo108-pilot-gpu0-20261104` and
-`railgun-ergo108-pilot-gpu1-20261104` begin with targeted GPU tests;
-centre certification and export follow only on success. No evolution t,
-speed or ETA yet. N128 is queued behind N96.
-
-**GPU regressions PASS on both cards: 45 tests each.** Origin certification
-is in progress; no evolution has started yet.
+**Weaker-ring sequences STOPPED before export or evolution.**
+Launched November 4 at **12:46:35 MSK**, source `62aca163d`,
+first two-GPU node/cards 0 and 1. Both pass **45 GPU regressions**.
+The same 1.081 stationary source fails the unchanged Cartesian centre
+certificate: parent/core curvature disagreement **1.6803447633e-8**
+versus **1e-8**, at equatorial radius **0.004**. Every other certificate
+maximum passes; degree-12/14 curvature disagreement is **1.33e-9**.
+Card 1 stops **12:52:14 MSK**, card 0 **12:52:18 MSK**, both exit 1.
+No Cartesian cube, preflight or evolution started; N128 never started
+and its queue is stopped. **No evolution constraint order or frame exists
+at any of the three resolutions.** Both GPUs idle; no evolution speed/ETA.
+Scratch clean: **4 KiB used / 330 GB free**, only `_cache`; no checkpoints.
+[Complete rejected certificate and GPU test evidence](../../results/railgun/studies/evolution-ergo108-core-rejected-20261104/).
+The stationary field remains accepted at three resolutions, but is not
+qualified for Cartesian evolution. The lower dragging does not remove
+the near-origin interpolation discrepancy. No automatic retry or new
+stationary solve is authorised by the pilot go.
 
 The weaker saved ring has
 common-point peak shift/lapse **1.080970704**, with a resolved ergoregion
