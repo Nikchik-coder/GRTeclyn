@@ -15,14 +15,17 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Preparing the approved cubic-tail correction**, following the November 4
-instruction to continue the far-distance correction and validation through
-the conditional evolutions. Same physical 3.72 ring, same central lapse,
-224x28 / 256x32 / 288x36, at most three solves, max 30 Newton iterations
-and minimum two updates, fresh Jacobians, tolerance 1e-14. Card 0,
-four threads, 160 GiB, chunks 128, one hour including GPU regressions,
-checkpoints OFF. Stop on physical rejection; unchanged centre certificate
-radius 0.08, degrees 12/14. Fifty targeted local tests pass.
+**LIVE: `railgun-ergo372-smooth-cubic-20261104`**, first two-GPU node/card 0,
+started **09:09:12 MSK**, source `367d032fb`. GPU regressions are running
+(one test failure reported so far); no stationary solve has started.
+Three planned resolutions: 224x28 / 256x32 / 288x36, max 30 iterations,
+minimum two updates, fresh Jacobians, Newton 1e-14. Four threads, 160 GiB,
+chunks 128, checkpoints OFF; hard deadline **1 h / 10:09:12 MSK**.
+No evolution time/speed yet; ETA awaits tests and qualification.
+Card 1 idle. Scratch clean: **4 KiB / 329 GB free**.
+Fifty targeted local checks passed before launch; CUDA failure under review.
+The November 4 instruction authorizes continuing the far-distance correction
+and validation through the already-approved conditional evolutions.
 
 The corrected representation is w=(1-s)^3 H, using the established regular
 cubic operator with every interior equation retained. Infinity fixes the
