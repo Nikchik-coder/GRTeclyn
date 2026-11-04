@@ -22,7 +22,9 @@ no prescribed density peak, clipped matter, or exact-vacuum claim.
 [preview/dispatcher](studies/run_railgun_throat.sh), and implementation
 `grteclyn_wrapper.optimisation.railgun_wormhole`. **77 targeted CPU tests
 pass** (including the new 15-test source/border/budget/control suite).
-CUDA regressions are part of the approved startup; no physical result yet.
+**73 CUDA startup tests pass** in 30.89 s under the production cap and
+allocator. Production confirms CUDA/float64; reference preparation/checks
+are active, with no first Newton result yet at 23:13 MSK.
 
 Approved first node/card 0, 1 h hard cap, four threads, 160 GiB; maximum
 18 study solves, 24 Newton iterations each, including three ring grids and up to
@@ -39,13 +41,15 @@ one-mouth ring are later separately bounded continuations.
 
 | Run | Node/card | Stage | Start MSK | ETA / hard deadline |
 |---|---|---|---|---|
-| `railgun-throat-20261104T201026` | first / 0 | startup regressions; stationary, no evolution t | Nov 4 23:10:26 | speed not yet measured; <=1 h cap, Nov 5 00:10:26 |
+| `railgun-throat-20261104T201026` | first / 0 | CUDA tests PASS; reference setup/checks; no evolution t | Nov 4 23:10:26 | speed not yet measured; <=1 h cap, Nov 5 00:10:26 |
 
 Frozen source **1bb61204b**, pushed/pulled through `myfork` and verified.
 Output `runs/optimisation/railgun_throat_weak_20261104/`; capped-job log
 `runs/capped_jobs/railgun-throat-20261104T201026/log`. Supervisor PID 92683.
 Both cards were idle before dispatch. Scratch clean: only 4 KB `_cache`,
 305 GB free. No plotfiles, checkpoints, consumer or queued restart dependency.
+Production PID 92686 is on the approved GPU 0 UUID; CPU time advances
+and host RSS is 1.85 GB (160 GiB address-space cap unchanged).
 
 ## Rotating scalar ring around a wormhole — November 4
 
