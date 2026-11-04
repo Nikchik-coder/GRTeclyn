@@ -15,16 +15,20 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-smooth-cubic-r2-20261104`**, first two-GPU
-node/card 0, started **09:12:01 MSK**, source `aef4592de`.
+**No live runs. Cubic-tail recovery COMPLETE; stationary field accepted, centre rejected.**
+`railgun-ergo372-smooth-cubic-r2-20261104`, first two-GPU node/card 0,
+**09:12:01–09:27:42 MSK**, source `aef4592de`, exit 2.
 All **91 GPU regressions pass**. All three **224x28 / 256x32 / 288x36**
-fields pass stationary validation and common-point convergence; their
-angular-momentum surface errors are **1.10e-13 / 3.62e-14 / 7.21e-14**.
-The unchanged centre certificate is running; no exports or evolutions yet. No earlier cubic-tail solve started;
-this preserves the same three-solve budget and **10:09:12 MSK deadline**
-(0.953 h remaining at launch). Four threads, 160 GiB, chunks 128,
-checkpoints OFF. No evolution t/speed/ETA yet; card 1 idle.
-Scratch clean: **4 KiB / 329 GB free**.
+fields pass stationary validation and common-point convergence. Angular-momentum
+surface errors: **1.10e-13 / 3.62e-14 / 7.21e-14**, below the unchanged 1e-8 gate.
+The centre certificate passes independent Einstein/KG checks (maximum 1.00e-11)
+and degree-12/14 curvature agreement (6.64e-9), but fails parent curvature
+agreement: **7.10e-8 on the axis at r=0.004**, above 1e-8.
+No export, preflight or evolution started. Both GPUs idle; no evolution t/speed/ETA.
+Scratch clean: **4 KiB / 329 GB free**. All three solves are spent; no new
+stationary solve is queued. Diagnose the remaining near-axis interpolation
+comparison without changing the ring or acceptance limits.
+[Completed field and certificate](../../results/railgun/studies/ergo372-smooth-cubic-r2-20261104/).
 
 **Cubic-tail startup stopped before solves**, first two-GPU node/card 0,
 job `railgun-ergo372-smooth-cubic-20261104`, **09:09:12–09:10:33 MSK**,

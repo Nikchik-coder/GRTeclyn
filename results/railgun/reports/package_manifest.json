@@ -1433,6 +1433,74 @@
       "sha256": "c0bd28d10991c27676de7b801ffcd30887bd18b26e5c25c4005a14424edf29ad",
       "bytes": 1146
     },
+    "studies/ergo372-smooth-cubic-r2-20261104/README.md": {
+      "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
+      "bytes": 296
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/accepted.npz": {
+      "sha256": "1140a0d9c2f08d00de3feedf8d399aab5e9589bed637d502b60c2f081d833357",
+      "bytes": 757633
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/archive.json": {
+      "sha256": "ce53fc31e87d372efa039a8fbf3cde05fa0ad12aeabb5010184d1a22a06d602d",
+      "bytes": 1203
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/corridor.json": {
+      "sha256": "75ae88f325666bd405819879945c47cf2d132a86fa947beed7cb499a4307db3b",
+      "bytes": 24330
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/evolution_qualification.json": {
+      "sha256": "1a855d3b7c9e87a15be8b176154daf9a5eaf362c6e5c03e35f5632853bd55bfa",
+      "bytes": 272
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/execution.log": {
+      "sha256": "a16fbaa01cb61465d8497c41b1236d60ca79a7ba6f9201bb30e9f4a015905126",
+      "bytes": 5623
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/exit_code.txt": {
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_224x28.json": {
+      "sha256": "f6c6778d42a1f5b2630e3609f9e92e2eaeb4e8e6485c76460e1af1e0da610eb8",
+      "bytes": 5170
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_224x28.npz": {
+      "sha256": "92ba779441589bc8e51de9fefc0cacc2eb78b21b618c7846a07f9049b63387e0",
+      "bytes": 466615
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_256x32.json": {
+      "sha256": "7c85cb97b4b098b1716af2816c2f47a84928e5ce23ffac52b973a3c2b3743744",
+      "bytes": 5134
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_256x32.npz": {
+      "sha256": "98412892633d73f8c81abdf045bdc8c6df3e5ad5c80f2467b046cbf228ead38f",
+      "bytes": 603693
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_288x36.json": {
+      "sha256": "a467c21704ab0c8b51c44d7f579ef9dcdf108983f459f3091620e90fd6c97117",
+      "bytes": 5154
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/grid_288x36.npz": {
+      "sha256": "1040704b0fcd1c405528df92015faf48ef0815a3cf2af29a30cf67ba611ae9b0",
+      "bytes": 757633
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/manifest.json": {
+      "sha256": "4f1626de124656b7deaed0f9decbc8452a8efdcc10b75b46aeeb322871ddca28",
+      "bytes": 1303
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/outcome.json": {
+      "sha256": "c0e4eb1fa1f2bfc3d12338012d197a714fba3c5f8afe537c00f6fdb40b1a53fe",
+      "bytes": 19726
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/regressions.xml": {
+      "sha256": "ab9a13f9cf00ab1aef92a07b8fba0af52b68219496a13c425fe4af44c6b8a8d1",
+      "bytes": 14034
+    },
+    "studies/ergo372-smooth-cubic-r2-20261104/sha256sums.txt": {
+      "sha256": "b58dae1ee09f1a2d6d713ef2b50f9cab811fc49d53fe95658627d93b7495b63d",
+      "bytes": 1305
+    },
     "studies/ergoregion-amplitude-initial/README.md": {
       "sha256": "4ac5061fc4a6ca026df2ad9f2159deb8850c4a50cd566d9fbfb3a9b6baffc1bc",
       "bytes": 296
