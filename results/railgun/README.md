@@ -33,9 +33,8 @@ so its acceptance evidence remains self-contained. Rejected studies remain
 explicitly rejected. No archived numerical content was changed by packaging.
 
 **Earlier 3.72 search candidate, radial cross-section:**
-[PNG](figures/particles/ergoregion-372-cross-section.png),
-[PDF](figures/particles/ergoregion-372-cross-section.pdf) and
-[SVG](figures/particles/ergoregion-372-cross-section.svg) use the accepted field
+[PNG](figures/particles/ergoregion-372-cross-section.png) and
+[PDF](figures/particles/ergoregion-372-cross-section.pdf) use the accepted field
 in `studies/ergoregion-max-validate271/finalists/01/`. The six-panel layout
 shows a zoomed linear-density map, lapse, clock rates and frame dragging.
 Inner/outer half-maximum density radii and the density-peak
@@ -141,6 +140,14 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
   results/railgun/studies/evolution-070-n192
 ```
 
+The figure uses a shared resolution/rescaling key, PRD frames and compact
+mathematical axis labels. In the charge-difference panel,
+`D_ab = Delta Q_a - Delta Q_b`, with `Delta Q_N = Q_N(t) - Q_N(0)`;
+the factor 2.692 is the fourth-order unequal-spacing factor (full precision
+is used for the curves). Panels (d,e) display charge differences multiplied
+by 1000. The pair-order key applies to panel (c); Hamiltonian and momentum
+use black and blue respectively. The L0 constraint norms cover r<8.
+
 Archives: `studies/evolution-070-n96/`, `studies/evolution-070-n128/`,
 `studies/evolution-070-n192/`.
 Summary: `reports/evolution-pilot-070.json`. Initial grid figures:
@@ -180,7 +187,12 @@ grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/ver
 ```
 
 `figures/particles/uphill-transit.png` shows the verified finite uphill selection and
-its small stopping-height difference. Rebuild it with:
+its small stopping-height difference. It and `strong-uphill-073.png` have
+matching vector PDFs, compact PRD panels, and one shared spin/endpoint key.
+The target is z_f=-10; positive/negative z spin is against/with the negative-J
+ring. Circles mark target arrivals and squares the first turnaround.
+Model parameters and interpretation belong in the paper caption.
+All three updated figures export PNG and PDF only. Rebuild it with:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
@@ -300,6 +312,5 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_transit \
   results/railgun/studies/annular-transit-k12 --out results/railgun/figures/particles/annular-transit-k12.png
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
-  results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/particles/strong-uphill-073.png \
-  --title 'Stronger ring (ω=0.73): validated finite spin selection'
+  results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/particles/strong-uphill-073.png
 ```

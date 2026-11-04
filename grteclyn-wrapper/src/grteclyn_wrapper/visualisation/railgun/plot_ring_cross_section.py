@@ -175,10 +175,8 @@ def create(source=SOURCE, output=OUTPUT, reports=REPORT):
     for ax in (lapse_ax, clock_ax, angular_ax, ratio_ax):
         ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(
             lambda value, _: '' if value == 0 else f'{value:g}'))
-    for suffix in ('.png', '.pdf', '.svg'):
+    for suffix in ('.png', '.pdf'):
         fig.savefig(output.with_suffix(suffix), dpi=300, bbox_inches='tight', pad_inches=.04)
-    svg = output.with_suffix('.svg')
-    svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
     audit = label_audit(fig)
     data['label_audit'] = audit
     data['figure_scope'] = 'Stationary equatorial cross-section; no particle trajectory or evolution.'

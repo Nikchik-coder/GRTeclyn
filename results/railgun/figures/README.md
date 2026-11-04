@@ -2,7 +2,7 @@
 
 ## Latest explanatory figures
 
-- [Accepted 3.72 ring: equatorial cross-section, lapse, clocks and dragging](particles/ergoregion-372-cross-section.png) ([PDF](particles/ergoregion-372-cross-section.pdf), [SVG](particles/ergoregion-372-cross-section.svg)). Earlier search candidate, with a zoomed matter map and matching radius markers across all panels.
+- [Accepted 3.72 ring: equatorial cross-section, lapse, clocks and dragging](particles/ergoregion-372-cross-section.png) ([PDF](particles/ergoregion-372-cross-section.pdf)). Earlier search candidate, with a zoomed matter map and matching radius markers across all panels.
 - [Stronger rings: size, clocks and regions of forced rotation](single-ring/ergoregion-comparison.png) ([SVG](single-ring/ergoregion-comparison.svg)). The 3.72 ring passes all three resolutions; the 5.21 trial is rejected.
 - [Single ring: clocks and dragging at each location](single-ring/ring070-physics.png) ([SVG](single-ring/ring070-physics.svg)).
 - [Separated rings: opposite rotation, clocks and the gap](two-rings/multiring-separated-space.png) ([SVG](two-rings/multiring-separated-space.svg)).
@@ -43,8 +43,8 @@ is retained separately from the accepted result.
 - [Passage between the separated rings, explained spatially](particles/multiring-particles-in-gap.png).
 - [Between-ring paths and matter exposure](particles/annular-transit-k12.png).
 - [Initial passage through a single ring](particles/ring-transit.png).
-- [Uphill launch through a single ring](particles/uphill-transit.png).
-- [Stronger single-ring experiment](particles/strong-uphill-073.png).
+- [Uphill launch through a single ring](particles/uphill-transit.png) ([PDF](particles/uphill-transit.pdf)).
+- [Stronger single-ring experiment](particles/strong-uphill-073.png) ([PDF](particles/strong-uphill-073.pdf)).
 
 ## Full spacetime evolution
 
