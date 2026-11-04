@@ -15,7 +15,15 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**No live runs. Corrected recovery interrupted by GPU memory allocation**,
+**LIVE: `railgun-ergo372-origin-recovery-r2-resume-20261104`**, card 0,
+started **08:47:13 MSK**, source `86f491c52`. GPU regressions, then only
+the unfinished 288x36 solve, reusing the two passing grids byte for byte,
+then the unchanged centre certificate. Same three-grid budget and original
+**09:38:51 MSK deadline** (remaining cap 0.861 h at launch); checkpoints OFF.
+No evolution time/speed yet; ETA awaits the finest solve and certificate.
+Card 1 idle. Scratch clean: **4 KiB / 329 GB free**.
+
+**Earlier process interrupted by GPU memory allocation**,
 `railgun-ergo372-origin-recovery-r2-20261104`, card 0,
 **08:38:51–08:42:14 MSK**, source `2c79ccec7`, exit 1.
 All **69 GPU regressions passed**. Both 224x28 and 256x32 passed all
