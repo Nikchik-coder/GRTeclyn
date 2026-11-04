@@ -162,6 +162,7 @@ def create(source=SOURCE, output=OUTPUT, reports=REPORT):
     ratio_ax.plot(rr, interp('drag_ratio'), color=BLUE, lw=1.35, label=r'$|\beta|/\alpha$')
     ratio_ax.axhline(1, color=INK, lw=.8, ls='--', label=r'$g_{tt}=0$')
     ratio_ax.set(ylabel=r'$|\beta|/\alpha$', ylim=(0, 1.1*data['drag_max']['value']))
+    ratio_ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator([0, 1, 2, 4]))
     key(ratio_ax, ncol=2)
 
     for ax in (density_ax, lapse_ax, clock_ax, angular_ax, ratio_ax):
