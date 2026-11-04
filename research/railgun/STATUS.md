@@ -30,7 +30,7 @@ equatorial curvature mismatch at r=0.004 is **5.87e-11**, compared with
 **1.237e-7** before the dragging-coefficient correction.
 [Independent confirmation](../../results/railgun/reports/ergo372-full-spectral-cartesian-audit.json).
 
-**Evolution sequences LIVE: N96/card 0 and N192/card 1 exports.**
+**N96 evolution LIVE on card 0; N192 export LIVE on card 1.**
 Both capped sequences started **11:21:37 MSK**, November 4, from
 `e5a6df77c`, on the first two-GPU node. Stem:
 `railgun-ergo372-t50-full-spectral-20261104`; job names append
@@ -43,11 +43,16 @@ Only source/hash/frequency and descriptive metadata changed; L=64,
 max_level=6, boundaries, gauge, dt, t=50 and plot cadence are unchanged.
 N96 then N128/card 0; N192/card 1. Four threads and 160 GiB per job,
 checkpoints **OFF**, full frames, last three plotfiles. No queued restart
-needs a checkpoint. Evolutions not yet started, no evolution t/speed/ETA;
-the live stage is export/certification. The ceiling is **48 h per member**,
+needs a checkpoint. N96 launched **11:34:42 MSK**, preflight PASS,
+all **16 t=0 frames** rendered, initial consumer pass marked complete.
+Its constraints and scalar diagnostics are finite. N96 reached t=1.067
+at 12.26 units/h; remaining ETA **3.99 h**, about **%H:%M MSK** on November 4.
+N192 is still exporting, with no evolution t/speed/ETA yet.
+The ceiling is **48 h per member**,
 **96 h for the two-member card-0 sequence**, including export. These are
 limits, not measured ETAs. Both launch checks found the cards free.
-Scratch clean: **4 KiB used / 330 GB free**. No frames or movies removed.
+Scratch retention: **1.7 GB used / 328 GB free**, one N96 plotfile,
+no checkpoints. No frames or movies removed.
 
 **Debugging update: full dragging coefficients implemented.**
 The independent long-double Cartesian audit reproduces the failed

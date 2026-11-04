@@ -9,6 +9,10 @@
       "sha256": "112c486564cdfdd2ee5c0c64ddaafe283db3bb1ac0580c1e8b2e887bf853dc5a",
       "bytes": 3748
     },
+    "figures/evolution/ergoregion372-n96-initial.png": {
+      "sha256": "d63501c5316efff7bee9de26be6e22a5511da284d9a91068a7a00d6b35b0a196",
+      "bytes": 91262
+    },
     "figures/evolution/ring070-evolution-convergence.pdf": {
       "sha256": "e3e5908290d17459d8dc69595cdf0f741eb687d4b415f402cc1029eba599aaa3",
       "bytes": 25432
@@ -220,6 +224,10 @@
     "reports/ergoregion-comparison/validated-comparison.json": {
       "sha256": "ed559cc696a02632c518933c2b013fdacda7ff42055851ed044a68f3fb8eb9b3",
       "bytes": 3388211
+    },
+    "reports/ergoregion372-n96-startup.json": {
+      "sha256": "8c772fb1251d3c47869bec539f24efb2856dd7a5ead933afd8be3446fcb17055",
+      "bytes": 764
     },
     "reports/evolution-070-n192-preflight.json": {
       "sha256": "7a08127f8c11a42dd0e268565d01c764a43bd9e13ed268494282e25da78632c6",

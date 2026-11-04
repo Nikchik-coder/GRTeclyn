@@ -1,0 +1,14 @@
+{
+  "run": "runs/railgun/evolution/ergoregion/railgun-ergo372-t50-full-spectral-20261104-n96",
+  "purpose": "Immutable initial-frame visual startup check",
+  "time": 0,
+  "field": "scalar_activity",
+  "source": "results/railgun/studies/ergo372-full-spectral-20261104/accepted.npz",
+  "source_sha256": "7adc3bceec7c342775abd7cbe0bffafaec19bfd248196d96e50d79a6998538b5",
+  "frame_source": "runs/railgun/evolution/ergoregion/railgun-ergo372-t50-full-spectral-20261104-n96/frames/scalar_activity_z/frames/frame_z_0000.png",
+  "figure": "results/railgun/figures/evolution/ergoregion372-n96-initial.png",
+  "figure_sha256": "d63501c5316efff7bee9de26be6e22a5511da284d9a91068a7a00d6b35b0a196",
+  "preflight_verdict": "pass",
+  "frame0_count": 16,
+  "checkpoints": false
+}
