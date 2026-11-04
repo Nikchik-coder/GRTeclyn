@@ -9,6 +9,10 @@ pilot's three capped stationary cases; it resumes no old queue or evolution.
 Their November 4 **22:36 MSK** starts aborted before solving because the
 CUDA async allocator could not create its pool under the process memory cap.
 The allocator is being checked with unchanged physics and resource limits.
+After 75 passing CUDA tests with platform allocation, fresh approval restarted
+the three stationary cases at **22:48 MSK**, first-node cards 0/1 and
+second-node card 0, source **fe3a220e3**. Each has a **4 h** cap, ending no
+later than November 5 **02:48 MSK**; startup checks are in progress.
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
 **The stronger-ring timing audit, concentric gapped field recovery and
 between-ring particle experiment are complete and accepted.** Every original
