@@ -38,16 +38,16 @@
       "bytes": 143523
     },
     "figures/particles/ergoregion-372-cross-section.pdf": {
-      "sha256": "1c581096ecfa0100898879f9e6d0d5bbaeeec09b84e7224fe00b1903aa119e3a",
-      "bytes": 70002
+      "sha256": "71741acd82b6340da0d3a2f0c774d1beebf86571f83025102b8f8c5414237d71",
+      "bytes": 69960
     },
     "figures/particles/ergoregion-372-cross-section.png": {
-      "sha256": "9fa3bf73c5465c9faf137ab2ef7d124ea7019016c800f722ab4dd64b8553d1ae",
-      "bytes": 296915
+      "sha256": "37b5e58a0f887bf84bfda81ea86c8b75819a77932d9bae2d53973d282df68a96",
+      "bytes": 293098
     },
     "figures/particles/ergoregion-372-cross-section.svg": {
-      "sha256": "829ca2d3ba97c7d2908746ce676855ee9d3d0cbebf014e176e9fa415ee24cb1c",
-      "bytes": 169786
+      "sha256": "a116a090648b1a41319ae99678ff23c42ec2b596a49965f9efc29d76485563c3",
+      "bytes": 168842
     },
     "figures/particles/multiring-particles-in-gap.png": {
       "sha256": "0abf450a0dfc92f1696eaeec89cbdde7ac6cc356ce12faba1d4c698565697836",
@@ -2756,6 +2756,34 @@
     "studies/evolution-070-preflight-refused/sha256sums.txt": {
       "sha256": "b270864f68d6daba49895a68b4b328af47d80c79825f5fafa400249b3280c53d",
       "bytes": 314
+    },
+    "studies/evolution-ergo372-core-20261104/corridor.json": {
+      "sha256": "509847de66c6a46675bee4774d0995638d6c2b95b6a649eb397d27dbd4dcf3f2",
+      "bytes": 24499
+    },
+    "studies/evolution-ergo372-core-20261104/manifest.json": {
+      "sha256": "0e50c6518e93c54767643f855e51ceeb3b0721e62788306b62145efe6aac4787",
+      "bytes": 491
+    },
+    "studies/evolution-ergo372-core-20261104/outcome.json": {
+      "sha256": "83c37401a286a7459f73ad922fa16f1baefccb742dfa89b4b734f6ebb60b755e",
+      "bytes": 690
+    },
+    "studies/evolution-ergo372-core-20261104/regressions.xml": {
+      "sha256": "cdf42db41b61f57c7830c04b61ce794bb0bd273d7b9a358b5fc8e8b5806a0324",
+      "bytes": 6385
+    },
+    "studies/evolution-ergo372-core-20261104/run.log": {
+      "sha256": "43bea2727e33ac76fe2494e62993d754f2c7341a40c6b4b32c3d5318a9a7b98f",
+      "bytes": 604
+    },
+    "studies/evolution-ergo372-core-20261104/sha256sums.txt": {
+      "sha256": "b403983109e9fba5eef91a812db6f1223ca6f4b3bd3abb21741fe7e982574e4e",
+      "bytes": 472
+    },
+    "studies/evolution-ergo372-core-20261104/study.json": {
+      "sha256": "a87d2218d3771abfa68c4a31e42c484245bc1c0e9453d261ed6fc53e6b76b969",
+      "bytes": 2229
     },
     "studies/evolution-ergo372-core-paused-20261103/manifest.json": {
       "sha256": "adf4269646a966f55f17571b3a51ca02a02c2827c8f4fbc13dd1463274758bb4",

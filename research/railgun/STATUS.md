@@ -26,18 +26,27 @@ A fresh Cartesian-origin check is required before export. The prepared
 substitution keeps L_full=64, max_level=6, N=96/128/192, card assignment
 0:(96,128), 1:(192), t=50 and checkpoints OFF. The centre check uses
 radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits.
-**LIVE: resumed centre qualification, November 4**, job
+**Centre qualification COMPLETE, REJECTED**, job
 `railgun-ergo372-core-20261104`, first two-GPU node/card 0,
-started **08:09:37 MSK**, source `e3ddfc860`. Four CPU threads, 160 GiB, 0.5 h cap including
-GPU regressions; checkpoints OFF. No evolution time or speed yet;
-completion ETA awaits measurement; hard deadline **08:39:37 MSK**. Scratch clean: **4 KiB / 329 GB free**.
+**08:09:37-08:16:01 MSK, November 4**, source `e3ddfc860`, exit 2.
+All **41 GPU regressions passed**. Einstein/scalar checks passed
+(3.81e-10 / 8.30e-13), but curvature agreement failed the unchanged
+1e-8 gate: **5.03e-8** between degrees 12/14 at equatorial r=0.0792,
+and **7.92e-8** against the parent on the axis at r=0.004.
+The stationary three-grid acceptance of the 3.72 ring remains intact;
+its Cartesian origin is not qualified for evolution.
+**No exports, preflights or evolutions started. Both GPUs are idle.**
+Scratch clean: **4 KiB retained / 329 GB free**, cache only.
+[Complete evidence](../../results/railgun/studies/evolution-ergo372-core-20261104/).
 
-**Approved conditional queue:** after this same source passes its centre
-check, export all three members and evolve N96 then N128/card 0,
-N192/card 1 through t=50, L_full=64, max_level=6, checkpoints OFF,
-full frames and last three plotfiles. No new stationary solves.
-The November 3 interrupted check produced no certificate; its 41 passing
-regressions and logs remain in the
+**Conditional evolution queue remains blocked:** N96 then N128/card 0,
+N192/card 1, t=50, L_full=64, max_level=6, checkpoints OFF, full frames
+and last three plotfiles. A passing origin certificate is required.
+Next numerical work: recover the same 3.72 source with explicit origin
+regularity, retain independent checks of the original equations, and
+repeat all three stationary resolutions and the unchanged centre check.
+No new stationary solves launched; the previous go excluded them.
+The November 3 interrupted check remains in the
 [paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.
 Its four CPU manufactured checks passed earlier; no GPU validation or

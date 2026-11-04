@@ -1,0 +1,20 @@
+{
+  "stage": "complete",
+  "accepted": false,
+  "reason": "origin_curvature_agreement",
+  "started_msk": "2026-11-04T08:09:37+03:00",
+  "finished_msk": "2026-11-04T08:16:01+03:00",
+  "regressions_passed": 41,
+  "maxima": {
+    "einstein_max": 3.8057842310245745e-10,
+    "kg_max": 8.298917109073045e-13,
+    "kg_intrinsic_max": 6.693312570860144e-12,
+    "kg_coordinate_difference": 6.8354384652469236e-12,
+    "order_metric_difference": 1.7976731214730535e-12,
+    "order_curvature_difference": 5.0346137925316725e-08,
+    "parent_metric_difference": 2.3305801732931286e-12,
+    "parent_curvature_difference": 7.920006517281308e-08
+  },
+  "evolutions_started": 0,
+  "checkpoints": false
+}
