@@ -22,8 +22,16 @@ def pack(run, name, job, report):
     job = REPO/'runs/capped_jobs'/job
     if not re.fullmatch(r'[a-z0-9-]+', name):
         raise ValueError('archive name must be a simple study name')
-    if not (job/'exit_code').exists() or int((job/'exit_code').read_text()) not in (0, 2):
-        raise ValueError('only completed jobs with exit 0 or 2 can be archived')
+    if not (job/'exit_code').exists():
+        raise ValueError('a completed job exit code is required')
+    code = int((job/'exit_code').read_text())
+    interrupted = run/'interruption.json'
+    if code == 1 and interrupted.is_file():
+        evidence = json.loads(interrupted.read_text())
+        if evidence.get('job_exit') != code or evidence.get('unfinished_grid_updates') != 0:
+            raise ValueError('interruption evidence must identify the unstarted solve and exit')
+    elif code not in (0,2):
+        raise ValueError('only completed or explicitly recorded interrupted jobs can be archived')
     if not (run/'outcome.json').is_file():
         raise ValueError('completed outcome required')
     files = sorted(p for p in run.rglob('*') if p.is_file())

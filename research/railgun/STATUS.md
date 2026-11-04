@@ -15,13 +15,24 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-origin-recovery-r2-resume-20261104`**, card 0,
-started **08:47:13 MSK**, source `86f491c52`. GPU regressions, then only
-the unfinished 288x36 solve, reusing the two passing grids byte for byte,
-then the unchanged centre certificate. Same three-grid budget and original
-**09:38:51 MSK deadline** (remaining cap 0.861 h at launch); checkpoints OFF.
-No evolution time/speed yet; ETA awaits the finest solve and certificate.
-Card 1 idle. Scratch clean: **4 KiB / 329 GB free**.
+**No live runs. Recovery COMPLETE, REJECTED**, continuation job
+`railgun-ergo372-origin-recovery-r2-resume-20261104`, card 0,
+**08:47:13–08:49:48 MSK**, source `86f491c52`, exit 2.
+All **76 GPU regressions passed**. The memory fix allowed 288x36 to
+converge in two updates at **1.91e-15**, below the unchanged 1e-14 target.
+The two retained lower grids pass. The finest grid passes the Einstein,
+scalar and origin checks, but fails angular-momentum balance:
+**1.217626e-8 at R=150**, above the unchanged **1e-8** limit.
+Independent long-double DCT differentiation of the same saved field gives
+**1.217627e-8**: this is not a float64 reporting error. No centre certificate,
+exports, preflights or evolutions were started. Both cards are idle.
+Scratch clean: **4 KiB retained / 330 GB free**. No evolution t/speed/ETA.
+The three-grid solve budget is complete. The next stationary method should
+resolve the cubic dragging falloff explicitly while retaining the corrected
+origin rows, all interior equations, independent Cartesian flux and every
+original acceptance limit. It needs a separately prepared, approved study.
+[Completed recovery](../../results/railgun/studies/ergo372-origin-recovery-r2-complete-20261104/).
+[Preserved memory interruption](../../results/railgun/studies/ergo372-origin-recovery-r2-20261104/).
 
 **Earlier process interrupted by GPU memory allocation**,
 `railgun-ergo372-origin-recovery-r2-20261104`, card 0,
@@ -53,12 +64,12 @@ The run stopped before 288x36 and the centre certificate, as required.
 No exports, preflights or evolutions started. Both cards are idle.
 Scratch clean: **4 KiB retained / 329 GB free** (08:31 MSK).
 [Recovery evidence](../../results/railgun/studies/ergo372-origin-recovery-20261104/).
-**Numerical fix prepared, GPU qualification pending.** Subtract the fixed
+**Arithmetic fix GPU-tested; source qualification remains rejected.** Subtract the fixed
 lapse target before averaging, and subtract a reference angular value before
 forming the origin isotropy rows. Both equations and their Jacobians are
 unchanged mathematically. Compiled arithmetic on CPU reproduced a nonzero
 old border for equal values; the new form returns exact zero and resolves
-one-ulp offsets. CUDA reproduction/recovery remains to be checked.
+one-ulp offsets. The corrected CUDA solves now all converge below 1e-14.
 Newton now records its worst equation, raw residual and row scale.
 All **45 targeted local checks passed**, including source/export contracts,
 small-device boundary/Jacobian tests and refusal to launch on a busy card.
