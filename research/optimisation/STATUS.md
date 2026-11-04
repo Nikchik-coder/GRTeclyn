@@ -1,14 +1,12 @@
 # Campaign M — status
 
-**Coupled ring/wormhole pilot authorised 2026-11-04 (MSK).**
-The explicit cluster go covers the three prepared stationary comparisons
-below, each with its four-hour cap. No evolution is authorised.
-Other minimal-exotic-matter searches,
-stability-screen repairs and evolution proposals are on hold. The next research
-direction is the separate [ring-spacetime study](../railgun/STATUS.md), reusing
-the JAX/Newton infrastructure. Earlier run authorisations and pending tables
-below do not dispatch new work while this pause is in force. Existing results
-and the withdrawn-stability-screen warning remain the record of this campaign.
+**All three November 4 wormhole/ring pilots STOPPED on request at
+22:54 MSK.** Their older S0 seed does not test a railgun ring around a
+wormhole. Logs and partial results are preserved; no replacement GPU run
+is authorised. The corrected direction starts from an archived weak
+regular-centre railgun ring, solves the two-ended throat geometry with its
+canonical scalar, and increases dragging only after that branch is validated.
+An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
 ## Rotating scalar ring around a wormhole — November 4
 
@@ -71,7 +69,7 @@ The dispatcher now explicitly selects it without preallocation. Physical setting
 acceptance gates and resource caps remain unchanged; original logs are retained.
 No exotic-matter reduction is measured yet.
 
-### Live — explicitly approved restart, November 4, 22:48 MSK
+### Stopped — superseded seed study, November 4, 22:54 MSK
 
 Fresh go confirms first-node cards 0/1 for the ring cases and second-node
 card 0 for the control, unchanged physics, grids and four-hour/160 GiB caps.
@@ -82,21 +80,23 @@ float64 and Jacobian chunk 256. The old failed attempts remain untouched.
 
 | Capped job | Node/card | Stage | Start MSK | ETA / hard deadline |
 |---|---|---|---|---|
-| `wormhole-ring-ring-spin-20261104T194817` | first / 0 | all reference grids PASS; nonzero ring seed PASS; entering search, 0/48 at check | Nov 4 22:48:17 | search rate not measured; <=4 h cap, Nov 5 02:48:17 |
-| `wormhole-ring-ring-fixed-20261104T194817` | first / 1 | all reference grids PASS; nonzero ring seed PASS; entering search, 0/48 at check | Nov 4 22:48:17 | search rate not measured; <=4 h cap, Nov 5 02:48:17 |
-| `wormhole-ring-potential-20261104T194820` | second / 0 | all reference grids PASS; entering potential search | Nov 4 22:48:21 | search rate not measured; <=4 h cap, Nov 5 02:48:21 |
+| `wormhole-ring-ring-spin-20261104T194817` | first / 0 | STOPPED on request; reference grids and search seed had passed | Nov 4 22:48:17 | stopped 22:54 MSK; no ETA |
+| `wormhole-ring-ring-fixed-20261104T194817` | first / 1 | STOPPED on request; reference grids and search seed had passed | Nov 4 22:48:17 | stopped 22:54 MSK; no ETA |
+| `wormhole-ring-potential-20261104T194820` | second / 0 | STOPPED on request; reference grids had passed | Nov 4 22:48:21 | stopped 22:54 MSK; no ETA |
 
 Outputs: `runs/optimisation/wormhole_ring_20261104_r2/` with one subdirectory
 per case. No evolution time, AMR checkpoints, consumer or follow-on queue.
 Pre-start storage clean: first-node scratch **8 KB cache / 305 GB free**;
 second-node scratch absent, **0 GB run scratch / 709 GB free**.
-Startup verified: all three physical GPU PIDs are present; each reference
+At startup all three physical GPU PIDs were present; each reference
 passes fresh 150x30, 180x36 and 210x42 solves and the independent checks.
 Reference-grid passes take **18–24 s** each, including diagnostics. Both
 ring cases have a nonzero re-solved seed passing the search-grid gates;
 this is not yet a refined finalist or a measured improvement. First-node
 GPU memory at the check: **13.0 / 19.1 GB**, with active computation.
-Storage remains as listed above. No instability or stability claim.
+Stop verified: no compute processes on either node. Scratch clean: first
+node only 4 KB cache / 305 GB free; second node scratch absent / 709 GB
+free. No data deleted. No reduction or stability claim from these pilots.
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).

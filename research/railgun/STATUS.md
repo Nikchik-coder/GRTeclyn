@@ -2,18 +2,16 @@
 
 Updated **2026-11-04 (MSK)**. Branch: `feature/optimisation`.
 
-The older minimal-exotic-matter searches remain paused.
-The November 4 cluster go authorises the separate coupled wormhole–scalar-ring
-study in [optimisation STATUS](../optimisation/STATUS.md#rotating-scalar-ring-around-a-wormhole--november-4).
-pilot's three capped stationary cases; it resumes no old queue or evolution.
-Their November 4 **22:36 MSK** starts aborted before solving because the
-CUDA async allocator could not create its pool under the process memory cap.
-The allocator is being checked with unchanged physics and resource limits.
-After 75 passing CUDA tests with platform allocation, fresh approval restarted
-the three stationary cases at **22:48 MSK**, first-node cards 0/1 and
-second-node card 0, source **fe3a220e3**. Each has a **4 h** cap, ending no
-later than November 5 **02:48 MSK**. All three reference grids pass, and
-both ring cases have passing nonzero search-grid seeds; optimization is starting.
+The three older-seed wormhole/ring pilots were **STOPPED on request at
+22:54 MSK**, November 4; logs and partial results are preserved. They did
+not use the railgun source. Both nodes now have no GPU compute processes.
+Scratch clean: first node 4 KB cache / 305 GB free; second node scratch
+absent / 709 GB free. No cleanup performed.
+The corrected preparation starts with an archived weak railgun ring and
+inserts a two-ended wormhole through a fully coupled solve; stronger dragging
+comes later and an ergoregion is optional. No replacement GPU startup is
+authorised. Older queues remain paused. Details in
+[optimisation STATUS](../optimisation/STATUS.md).
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
 **The stronger-ring timing audit, concentric gapped field recovery and
 between-ring particle experiment are complete and accepted.** Every original
