@@ -15,7 +15,23 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**Debugging update: full dragging coefficients prepared; not launched.**
+**Full-coefficient recovery LIVE**, first two-GPU node/card 0.
+`railgun-ergo372-full-spectral-20261104`, source `178c15ba8`,
+started **11:01:42 MSK** on November 4. GPU regressions are running;
+at most three stationary solves follow on **224x28 / 256x32 / 288x36**,
+then the unchanged radius-0.08, degree-12/14 centre certificate.
+Same 3.72 ring, every original acceptance limit, max 30 iterations/minimum
+two updates, fresh Jacobians, Newton 1e-14, four threads, 160 GiB, chunks 128.
+The explicit November 4 go grants this fresh three-solve budget;
+checkpoints **OFF**. Stop on rejection. Runtime ceiling **1 h**, hard stop
+**12:01:42 MSK**; completion ETA and stationary solve speed not yet measured.
+No evolution t/speed yet. Conditional t=50 evolutions remain N96 then
+N128/card 0, N192/card 1, only after full qualification.
+Scratch clean at launch: **4 KiB used / 330 GB free**. No queued restart
+needs a checkpoint. Logs: `runs/capped_jobs/railgun-ergo372-full-spectral-20261104/`;
+fields: `runs/railgun/stationary/railgun-ergo372-full-spectral-20261104/`.
+
+**Debugging update: full dragging coefficients implemented.**
 The independent long-double Cartesian audit reproduces the failed
 equatorial curvature comparison (**1.236982e-7** at r=0.004). In a diagnostic
 comparison, substituting only the core's dragging field and its derivatives
@@ -30,14 +46,12 @@ The v2 repair retains every angular as well as radial coefficient of
 H in w=(1-s)^3 H, extending the existing coefficient method to dragging.
 It preserves all interior equations, origin conditions, infinity checks,
 archives, refinement and common-point measurements. **108 targeted local
-tests pass**; no new physical ring has been solved or certified.
+tests pass**; GPU validation is live above.
 [Prepared configuration](studies/ergoregion_full_spectral_372.json) and
 `run_full_spectral_recovery.sh` retain the same ring, three grids,
 centre certificate, resource caps and physical acceptance limits.
-The previous three-solve budget is spent; this prepared recovery needs a
-fresh run-specific go. Conditional evolutions remain blocked.
-Latest read-only check: both cards idle, no evolution t/speed/ETA;
-scratch clean, **4 KiB used / 330 GB free**. Checkpoints OFF.
+The previous three-solve budget is spent; the fresh go and launch are
+recorded above. Conditional evolutions remain blocked until qualification.
 
 **Coefficient recovery COMPLETE; stationary field accepted, centre rejected.**
 `railgun-ergo372-smooth-spectral-20261104`, first two-GPU node/card 0,
