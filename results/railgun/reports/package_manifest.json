@@ -181,6 +181,10 @@
       "sha256": "ff90a42bcd7cfa7049f7f3823ee984728dccc7024dac217bef45964519c4578b",
       "bytes": 10151
     },
+    "reports/ergo372-axis-curvature-audit.json": {
+      "sha256": "043a250447fe7dd954a79ea02ddc5cc58a15609ad6dfec0d7e5c65a77df8d92a",
+      "bytes": 1713
+    },
     "reports/ergo372-origin-roundoff.json": {
       "sha256": "48b6f2da633c030679ee78666fda213d378c3ee1ca471fc5fdc16fa0f5c21746",
       "bytes": 3558
