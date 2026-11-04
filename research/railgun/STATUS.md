@@ -15,6 +15,16 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**LIVE: `railgun-ergo372-origin-recovery-20261104`**, first two-GPU
+node/card 0, started **08:21:47 MSK**, source `522386298`.
+GPU regressions, then at most three corrected-origin stationary solves
+on 224x28 / 256x32 / 288x36, then the existing radius-0.08,
+degrees-12/14 certificate. Stop on rejection; all acceptance limits
+unchanged. Four threads, 160 GiB, chunks 128, checkpoints OFF.
+No evolution time/speed yet; completion ETA awaits measurement;
+hard limit **1 h / 09:21:47 MSK**. Scratch clean: **4 KiB / 329 GB free**.
+Card 1 is free. The conditional t=50 evolution queue is unchanged.
+
 **Preferred first evolution target: accepted shift/lapse 3.720789536602**,
 following the request to use a less compact ring. Source:
 `results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz`,
