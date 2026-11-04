@@ -68,7 +68,10 @@ Jobs `railgun-ergo108-pilot-gpu0-20261104` and
 centre certification and export follow only on success. No evolution t,
 speed or ETA yet. N128 is queued behind N96.
 
-The weaker saved ring: The saved ring has
+**GPU regressions PASS on both cards: 45 tests each.** Origin certification
+is in progress; no evolution has started yet.
+
+The weaker saved ring has
 common-point peak shift/lapse **1.080970704**, with a resolved ergoregion
 and three passing stationary grids (128x16 / 160x20 / 192x24).
 No accepted saved source near 2 was found. The November 4 explicit go
