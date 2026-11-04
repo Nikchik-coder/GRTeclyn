@@ -1,6 +1,6 @@
 # Ring spacetimes and spin transport — status
 
-Updated **2026-11-03 (MSK)**. Branch: `feature/optimisation`.
+Updated **2026-11-04 (MSK)**. Branch: `feature/optimisation`.
 
 The minimal-exotic-matter wormhole optimisation campaign remains paused.
 This separate regular-centre scalar-ring study reuses its JAX/Newton core.
@@ -26,23 +26,19 @@ A fresh Cartesian-origin check is required before export. The prepared
 substitution keeps L_full=64, max_level=6, N=96/128/192, card assignment
 0:(96,128), 1:(192), t=50 and checkpoints OFF. The centre check uses
 radius 0.08 and degrees 12/14, with the unchanged 1e-8 limits.
-**PAUSED at the requested stop, 23:01:09 MSK, November 3.**
-`railgun-ergo372-core-20261103` ran on the first two-GPU node/card 0
-from **22:57:17 to 23:01:09 MSK**, source `29d4201bf`.
-**All 41 GPU regression tests passed.** The centre certificate was
-interrupted before producing a result: it has neither passed nor failed.
-No Cartesian export, preflight or evolution started; no checkpoints.
-Both GPUs are now free, with no campaign processes remaining.
-Scratch clean: **4 KiB retained / 329 GB free**, cache only.
-Evidence: [paused qualification](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
+**LIVE: resumed centre qualification, November 4**, job
+`railgun-ergo372-core-20261104`, first two-GPU node/card 0,
+started **08:09:37 MSK**, source `e3ddfc860`. Four CPU threads, 160 GiB, 0.5 h cap including
+GPU regressions; checkpoints OFF. No evolution time or speed yet;
+completion ETA awaits measurement; hard deadline **08:39:37 MSK**. Scratch clean: **4 KiB / 329 GB free**.
 
-**Next session:** resume the centre qualification of this same hash-checked
-3.72 source (radius 0.08, degrees 12/14, unchanged 1e-8 limits).
-Only after it passes, export and launch N96 then N128/card 0 and
+**Approved conditional queue:** after this same source passes its centre
+check, export all three members and evolve N96 then N128/card 0,
 N192/card 1 through t=50, L_full=64, max_level=6, checkpoints OFF,
-four threads and 160 GiB per job, full frames and last three plotfiles.
-All queued launches are paused; nothing restarts automatically.
-No new stationary solves for the 3.72 target.
+full frames and last three plotfiles. No new stationary solves.
+The November 3 interrupted check produced no certificate; its 41 passing
+regressions and logs remain in the
+[paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.
 Its four CPU manufactured checks passed earlier; no GPU validation or
 stationary recovery was run. Defaults of the established solver are unchanged.
