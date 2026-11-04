@@ -49,5 +49,5 @@
   },
   "evolution_config": "research/railgun/studies/evolution_ergoregion_372.json",
   "discretisation": "spectral_metric_cubic_dragging_smooth_origin_v1",
-  "approval": "Prepared, awaiting a run-specific go: GPU regressions, then at most three coefficient solves of the same ring on GPU 0, 224x28 / 256x32 / 288x36, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14, followed by radius-0.08 degrees-12/14 centre certificate. Original physical limits unchanged. Four threads, 160 GiB, one hour total, chunks 128, checkpoints OFF if confirmed. Stop on rejection; conditional evolutions retain the approved configuration."
+  "approval": "November 4 explicit go: GPU regressions, then at most three coefficient solves of the same ring on GPU 0, 224x28 / 256x32 / 288x36, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14, followed by radius-0.08 degrees-12/14 centre certificate. Original physical limits unchanged. Four threads, 160 GiB, one hour total, chunks 128, checkpoints OFF. Stop on rejection; conditional evolutions retain the approved configuration."
 }
