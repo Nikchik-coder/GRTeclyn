@@ -85,6 +85,8 @@ class RingGeometry:
             h = dct(np.asarray(problem.raw_dragging(np.asarray(u)),dtype=np.longdouble),
                     type=1,axis=1)/problem.ny
             h[:,[0,-1]] *= .5
+            if hasattr(problem,'dragging_coefficients'):
+                h = np.asarray(problem.dragging_coefficients(np.asarray(u)),dtype=np.longdouble)
             w = np.zeros((problem.nx+4,problem.ny+1),dtype=np.longdouble)
             for j in range(problem.ny+1):
                 product = np.polynomial.chebyshev.chebmul([2.5,-3.75,1.5,-.25],h[:,j])

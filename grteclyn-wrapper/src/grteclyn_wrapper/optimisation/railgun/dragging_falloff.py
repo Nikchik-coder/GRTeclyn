@@ -125,6 +125,8 @@ class FactoredDraggingGeometry(RingGeometry):
         super().__init__(problem,u)
         self.h_coefficients=self.xp.asarray(cheb_coeffs(
             np.asarray(problem.raw_dragging(np.asarray(u))[:problem.h_count]),1))
+        if hasattr(problem,'dragging_coefficients'):
+            self.h_coefficients=self.xp.asarray(problem.dragging_coefficients(np.asarray(u)))
 
     def sample(self,name,s,y):
         if name!='w':return super().sample(name,s,y)

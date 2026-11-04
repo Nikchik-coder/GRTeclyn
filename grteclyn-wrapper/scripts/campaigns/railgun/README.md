@@ -16,6 +16,15 @@ The current study definitions and run instructions are in
   Card 0 runs N96 then N128; card 1 runs N192. Each member has a 48-hour
   ceiling including export, and the queue stops if the preceding member
   fails or ends before t=50. Checkpoints remain OFF.
+- `run_full_spectral_recovery.sh CARD OUT`, after a separate bounded go,
+  runs regressions and three stationary solves retaining all metric and
+  dragging coefficients, then the unchanged centre certificate. It does
+  not launch evolutions itself. The v2 archive preserves every coefficient
+  through refinement, geometry and common-point comparisons.
+- `audit_cartesian_curvature.py SOURCE` independently evaluates saved
+  curvature away from the axis using extended precision. Its single-field
+  replacement comparisons diagnose an error; they do not alter or qualify
+  the saved solution. Exact rotating-flat and Schwarzschild tests check it.
 - `pack_stationary.py` and `pack_evolution.py` archive completed studies.
 - `verify_pack.py` checks the result inventory and immutable study checksums.
 - `organize_runs.py` previews raw-run folder moves; `--apply` performs them.

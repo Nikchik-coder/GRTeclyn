@@ -15,6 +15,30 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**Debugging update: full dragging coefficients prepared; not launched.**
+The independent long-double Cartesian audit reproduces the failed
+equatorial curvature comparison (**1.236982e-7** at r=0.004). In a diagnostic
+comparison, substituting only the core's dragging field and its derivatives
+reduces the disagreement to **1.27e-11**; replacing the other individual
+metric fields leaves it above 1e-8. Exact rotating-flat and off-axis
+Schwarzschild checks pass. This isolates the remaining discrepancy to the
+dragging interpolation; the archived field remains unchanged and rejected
+for evolution. No sponge or GRTeclyn boundary has been applied.
+[Independent audit](../../results/railgun/reports/ergo372-cartesian-curvature-audit.json).
+
+The v2 repair retains every angular as well as radial coefficient of
+H in w=(1-s)^3 H, extending the existing coefficient method to dragging.
+It preserves all interior equations, origin conditions, infinity checks,
+archives, refinement and common-point measurements. **108 targeted local
+tests pass**; no new physical ring has been solved or certified.
+[Prepared configuration](studies/ergoregion_full_spectral_372.json) and
+`run_full_spectral_recovery.sh` retain the same ring, three grids,
+centre certificate, resource caps and physical acceptance limits.
+The previous three-solve budget is spent; this prepared recovery needs a
+fresh run-specific go. Conditional evolutions remain blocked.
+Latest read-only check: both cards idle, no evolution t/speed/ETA;
+scratch clean, **4 KiB used / 330 GB free**. Checkpoints OFF.
+
 **Coefficient recovery COMPLETE; stationary field accepted, centre rejected.**
 `railgun-ergo372-smooth-spectral-20261104`, first two-GPU node/card 0,
 source `7c6d595f6`, **09:48:21–10:04:51 MSK**, exit 2.
@@ -25,7 +49,7 @@ The centre passes independent Einstein/KG checks (maximum **9.32e-12**)
 and degree-12/14 curvature agreement (**7.09e-9**), but fails parent
 curvature agreement: **1.237e-7 near the equatorial plane at r=0.004**.
 The separate long-double axis audit improves to **3.52e-10**; the remaining
-failure must be diagnosed away from the axis. No acceptance limit changed.
+equatorial failure is diagnosed above. No acceptance limit changed.
 No export, preflight or evolution started; both GPUs idle, no evolution
 speed or ETA. Scratch clean: **4 KiB used / 329 GB free**.
 The three-solve budget is spent. Conditional N96 then N128/card 0 and

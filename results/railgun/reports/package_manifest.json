@@ -185,6 +185,10 @@
       "sha256": "043a250447fe7dd954a79ea02ddc5cc58a15609ad6dfec0d7e5c65a77df8d92a",
       "bytes": 1713
     },
+    "reports/ergo372-cartesian-curvature-audit.json": {
+      "sha256": "2d734c977b85b7902a1a901fdc15c3e27bf621adc0ead929c2082640683b8ba3",
+      "bytes": 1583
+    },
     "reports/ergo372-origin-roundoff.json": {
       "sha256": "48b6f2da633c030679ee78666fda213d378c3ee1ca471fc5fdc16fa0f5c21746",
       "bytes": 3558

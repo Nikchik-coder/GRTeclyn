@@ -1,0 +1,55 @@
+{
+  "equatorial_points": [
+    {
+      "radius": 0.004,
+      "maximum": 1.2369821188185082e-07,
+      "component": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "parent": -7.992972810102045,
+      "core": -7.9929729338002575
+    },
+    {
+      "radius": 0.016,
+      "maximum": 1.2127150981339208e-08,
+      "component": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "parent": -32.02745878801712,
+      "core": -32.027458800144274
+    },
+    {
+      "radius": 0.0392,
+      "maximum": 5.907838981911162e-09,
+      "component": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "parent": -79.15473564881488,
+      "core": -79.15473565472271
+    }
+  ],
+  "diagnostic_replacement_remaining": {
+    "f": 1.2369821414956808e-07,
+    "C": 1.2369821146378246e-07,
+    "w": 1.2736208788999281e-11,
+    "H": 1.236982122088462e-07
+  },
+  "source_sha256": "1337efd3e29602e5dbc447355633073dd0f286a2f52737c3d3ae87bce9673807",
+  "method": "Analytic second-order Cartesian jets in numpy long double; no field changes.",
+  "source": "results/railgun/studies/ergo372-smooth-spectral-20261104/accepted.npz",
+  "scope": "Read-only diagnosis. Single-field replacements are diagnostic substitutions only; the saved field is unchanged and remains unqualified for evolution.",
+  "exact_checks": [
+    "Rotating flat spacetime off the axis: zero curvature with non-diagonal inverse metric.",
+    "Isotropic Schwarzschild off the axis: zero Ricci and exact Kretschmann invariant."
+  ],
+  "tests": "grteclyn-wrapper/tests/optimisation/test_railgun_cartesian_audit.py"
+}
