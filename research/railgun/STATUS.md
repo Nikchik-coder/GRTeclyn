@@ -15,7 +15,17 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**No live runs. Cubic-tail recovery COMPLETE; stationary field accepted, centre rejected.**
+**LIVE: `railgun-ergo372-smooth-spectral-20261104`**, first two-GPU
+node/card 0, source `7c6d595f6`, started **09:48:21 MSK**.
+GPU regressions are running, then at most three coefficient solves on
+224x28 / 256x32 / 288x36 and the unchanged radius-0.08, degrees-12/14
+centre certificate. One-hour total cap: **10:48:21 MSK deadline**.
+Four threads, 160 GiB, chunks 128, checkpoints OFF. Stop on rejection.
+Only a passing field and centre permit the approved N96 then N128/card 0
+and N192/card 1 evolutions. No evolution t/speed/ETA yet; card 1 idle.
+Scratch clean: **4 KiB used / 329 GB free**. No restart checkpoints needed.
+
+**Previous cubic-tail recovery COMPLETE; stationary field accepted, centre rejected.**
 `railgun-ergo372-smooth-cubic-r2-20261104`, first two-GPU node/card 0,
 **09:12:01–09:27:42 MSK**, source `aef4592de`, exit 2.
 All **91 GPU regressions pass**. All three **224x28 / 256x32 / 288x36**
@@ -30,7 +40,7 @@ stationary solve is queued. Diagnose the remaining near-axis interpolation
 comparison without changing the ring or acceptance limits.
 [Completed field and certificate](../../results/railgun/studies/ergo372-smooth-cubic-r2-20261104/).
 
-**Prepared, not launched: metric-coefficient recovery.** An independent
+**Metric-coefficient recovery, now approved and running above.** An independent
 long-double calculation of analytic Cartesian derivatives reproduces the
 axis mismatch (**7.10459e-8**, versus GPU **7.10470e-8**). It passes exact
 rotating-flat and isotropic-Schwarzschild curvature checks. The discrepancy
@@ -41,11 +51,11 @@ The prepared method solves directly for every radial/angular coefficient of
 f, N and b, keeping tiny angular variations separate from their large mean.
 It retains all coefficients, every interior equation, the regular origin and
 cubic dragging tail. Archive, geometry, refinement and common-point checks
-preserve these coefficients. **76 targeted local tests pass**; GPU execution
-is pending. Same ring, 224x28 / 256x32 / 288x36, at most three solves and the
+preserve these coefficients. **76 targeted local tests pass**; the GPU run
+is live above. Same ring, 224x28 / 256x32 / 288x36, at most three solves and the
 unchanged centre certificate; original physical limits, four threads, 160 GiB,
-one hour, chunks 128. The earlier three-solve budget is spent, so this
-additional bounded recovery requires a fresh go and checkpoint confirmation.
+one hour, chunks 128. The November 4 explicit go authorizes this separate
+three-solve budget and conditional evolutions, with checkpoints OFF.
 [Prepared configuration](studies/ergoregion_smooth_spectral_372.json).
 The evolution sequence is also prepared: it refuses a missing or mismatched
 centre certificate, preserves N96 then N128 on card 0 and N192 on card 1,
