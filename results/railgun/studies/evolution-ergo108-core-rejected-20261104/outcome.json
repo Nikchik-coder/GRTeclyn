@@ -1,0 +1,45 @@
+{
+  "evolution_started": false,
+  "evolution_convergence_available": false,
+  "frames_available": false,
+  "n128": "not_started_queue_stopped",
+  "checkpoints": false,
+  "reason": "Origin parent/core curvature agreement exceeds unchanged 1e-8 limit.",
+  "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+  "members": [
+    {
+      "base_N": 96,
+      "card": 0,
+      "exit_code": 1,
+      "gpu_tests_passed": 45,
+      "certificate_accepted": false,
+      "maxima": {
+        "einstein_max": 3.016396774179357e-10,
+        "kg_max": 1.7400247909193922e-12,
+        "kg_intrinsic_max": 1.780975367182691e-11,
+        "kg_coordinate_difference": 1.9522185951137416e-11,
+        "order_metric_difference": 1.2434497875801753e-13,
+        "order_curvature_difference": 1.3277275945355882e-09,
+        "parent_metric_difference": 1.8118839761882555e-13,
+        "parent_curvature_difference": 1.6803447633328972e-08
+      }
+    },
+    {
+      "base_N": 192,
+      "card": 1,
+      "exit_code": 1,
+      "gpu_tests_passed": 45,
+      "certificate_accepted": false,
+      "maxima": {
+        "einstein_max": 3.016396774179357e-10,
+        "kg_max": 1.7400247909193922e-12,
+        "kg_intrinsic_max": 1.780975367182691e-11,
+        "kg_coordinate_difference": 1.9522185951137416e-11,
+        "order_metric_difference": 1.2434497875801753e-13,
+        "order_curvature_difference": 1.3277275945355882e-09,
+        "parent_metric_difference": 1.8118839761882555e-13,
+        "parent_curvature_difference": 1.6803447633328972e-08
+      }
+    }
+  ]
+}
