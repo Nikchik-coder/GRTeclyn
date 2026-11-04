@@ -74,6 +74,8 @@ class RingGeometry:
         self.frequencies = np.asarray(freq)
         self.coefficients = {key: self.xp.asarray(interpolation_coefficients(a))
                              for key, a in arrays.items()}
+        for key in getattr(problem,'spectral_metric_tags',()):
+            self.coefficients[key] = self.xp.asarray(problem.raw_metric(np.asarray(u),key))
         self.dragging_h = None
         if getattr(problem,'canonical_archive',False):
             # H is already spectral in radius; transform only its angular

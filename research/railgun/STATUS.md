@@ -30,6 +30,27 @@ stationary solve is queued. Diagnose the remaining near-axis interpolation
 comparison without changing the ring or acceptance limits.
 [Completed field and certificate](../../results/railgun/studies/ergo372-smooth-cubic-r2-20261104/).
 
+**Prepared, not launched: metric-coefficient recovery.** An independent
+long-double calculation of analytic Cartesian derivatives reproduces the
+axis mismatch (**7.10459e-8**, versus GPU **7.10470e-8**). It passes exact
+rotating-flat and isotropic-Schwarzschild curvature checks. The discrepancy
+belongs to the saved interpolating polynomial; changing evaluation precision
+alone does not remove it. [Audit](../../results/railgun/reports/ergo372-axis-curvature-audit.json).
+
+The prepared method solves directly for every radial/angular coefficient of
+f, N and b, keeping tiny angular variations separate from their large mean.
+It retains all coefficients, every interior equation, the regular origin and
+cubic dragging tail. Archive, geometry, refinement and common-point checks
+preserve these coefficients. **76 targeted local tests pass**; GPU execution
+is pending. Same ring, 224x28 / 256x32 / 288x36, at most three solves and the
+unchanged centre certificate; original physical limits, four threads, 160 GiB,
+one hour, chunks 128. The earlier three-solve budget is spent, so this
+additional bounded recovery requires a fresh go and checkpoint confirmation.
+[Prepared configuration](studies/ergoregion_smooth_spectral_372.json).
+The evolution sequence is also prepared: it refuses a missing or mismatched
+centre certificate, preserves N96 then N128 on card 0 and N192 on card 1,
+and stops the queue if its predecessor fails or ends before t=50.
+
 **Cubic-tail startup stopped before solves**, first two-GPU node/card 0,
 job `railgun-ergo372-smooth-cubic-20261104`, **09:09:12–09:10:33 MSK**,
 source `367d032fb`, exit 1. Ninety GPU tests passed; one new manufactured

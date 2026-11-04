@@ -30,10 +30,16 @@ class SmoothCubicProblem(RegularDraggingProblem):
 
     def rows(self,u,xp=np):
         arrays,frequencies = self.unpack(u)
-        jets = self.jets(arrays,xp)
+        jets = self.state_jets(u,xp)
         jets.update({key:value[1:-1] for key,value in self.dragging_jets(u,xp).items()})
         return canonical_rows(jets,self.fields,frequencies,r=self.ri,dr=self.dr,
                               ddr=self.ddr,y=self.y[None,:],xp=xp)
+
+    def origin_block(self,u,arrays,name,xp):
+        values = arrays[name]
+        derivative = (self.dragging_jets(u,xp)['w_x'] if name=='w'
+                      else self.dx@(values-values[-1:]))
+        return origin_rows(values,derivative,anisotropy=name!='N',xp=xp)
 
     def _residual(self,u):
         xp = self.xp
@@ -42,10 +48,7 @@ class SmoothCubicProblem(RegularDraggingProblem):
         for index,name in enumerate(self.tags):
             if name.startswith('q'):
                 continue
-            values = arrays[name]
-            derivative = (self.dragging_jets(u,xp)['w_x'] if name=='w'
-                          else self.dx@(values-values[-1:]))
-            rows = origin_rows(values,derivative,anisotropy=name!='N',xp=xp)
+            rows = self.origin_block(u,arrays,name,xp)
             start = (index+1)*self.n-self.ny-1
             result = result.at[start:start+self.ny+1].set(rows.ravel())
         return result

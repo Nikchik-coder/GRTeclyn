@@ -11,6 +11,11 @@ The current study definitions and run instructions are in
 - `launch_ergoregion.sh` prepares the strongest-ring, L=64, six-level
   evolution from independently sampled initial data at every AMR level.
   It preserves the approved card assignment and requires checkpoints OFF.
+- `run_ergoregion_sequence.sh CONFIG CARD STEM BINARY`, inside a capped job,
+  requires a completed, hash-matched centre qualification before export.
+  Card 0 runs N96 then N128; card 1 runs N192. Each member has a 48-hour
+  ceiling including export, and the queue stops if the preceding member
+  fails or ends before t=50. Checkpoints remain OFF.
 - `pack_stationary.py` and `pack_evolution.py` archive completed studies.
 - `verify_pack.py` checks the result inventory and immutable study checksums.
 - `organize_runs.py` previews raw-run folder moves; `--apply` performs them.

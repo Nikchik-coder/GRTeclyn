@@ -71,8 +71,12 @@ class RegularDraggingProblem(FactoredDraggingProblem):
             return value
         return RingProblem.transfer(self,old,u,perturb=perturb)
 
+    def state_jets(self,u,xp=np):
+        arrays,_=self.unpack(u)
+        return self.jets(arrays,xp)
+
     def regular_rows(self,u,xp=np):
-        arrays,freq=self.unpack(u);jets=self.jets(arrays,xp)
+        arrays,freq=self.unpack(u);jets=self.state_jets(u,xp)
         c=self.raw_dragging(u);h=xp.asarray(self.h_basis)@c
         hx=xp.asarray(self.h_first)@c;hxx=xp.asarray(self.h_second)@c
         hy=h@xp.asarray(self.dy).T;hyy=h@xp.asarray(self.dyy).T
@@ -87,11 +91,13 @@ class RegularDraggingProblem(FactoredDraggingProblem):
             h[1:-1],hx[1:-1],hxx[1:-1],hy[1:-1],hyy[1:-1],
             jets['f_x'],jets['f_y'],jets['B'],jets['B_x'],jets['B_y'],source,power=self.power,xp=xp)
 
+    def infinity_metric_derivatives(self,u,arrays,xp=np):
+        return (xp.asarray(self.dx)@arrays['f'])[0],(xp.asarray(self.dx)@arrays['b'])[0]
+
     def infinity_boundary(self,u,xp=np):
         arrays,_=self.unpack(u);c=self.raw_dragging(u)
         h=xp.sum(c,axis=0);hs=xp.asarray(self.h_first[0])@c
-        fx=(xp.asarray(self.dx)@arrays['f'])[0]
-        bx=(xp.asarray(self.dx)@arrays['b'])[0]
+        fx,bx=self.infinity_metric_derivatives(u,arrays,xp)
         drift=-2*fx+3*bx/(1+arrays['b'][0])
         hy=xp.asarray(self.dy)@h;drifty=xp.asarray(self.dy)@drift
         angular=xp.asarray(self.angular)@h

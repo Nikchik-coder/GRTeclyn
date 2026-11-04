@@ -53,9 +53,10 @@ def load_state(path):
     cls = RingProblem
     if metadata.get('representation') is not None:
         from .smooth_cubic import SmoothCubicProblem,REPRESENTATION
-        if metadata['representation'] != REPRESENTATION:
+        from .smooth_spectral import SmoothSpectralProblem,REPRESENTATION as SPECTRAL
+        if metadata['representation'] not in (REPRESENTATION,SPECTRAL):
             raise ValueError('unsupported canonical archive representation')
-        cls = SmoothCubicProblem
+        cls = SmoothSpectralProblem if metadata['representation']==SPECTRAL else SmoothCubicProblem
     p = cls([ScalarField(**f) for f in metadata['fields']], nx=metadata['nx'],
                     ny=metadata['ny'], length=metadata['length'], target_j=metadata['target_j'],
                     frequency_targets=metadata.get('frequency_targets'), central_lapse=metadata.get('central_lapse'))

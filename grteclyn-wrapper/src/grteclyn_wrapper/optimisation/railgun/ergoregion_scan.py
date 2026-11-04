@@ -137,8 +137,13 @@ def common_metric_samples(source):
     f, w, b = [bx@arrays[i]@by.T for i in (0, 1, 3)]
     if raw is not None:
         from .smooth_cubic import REPRESENTATION
-        if meta.get('representation') != REPRESENTATION or raw.shape != u.shape:
+        from .smooth_spectral import REPRESENTATION as SPECTRAL
+        if meta.get('representation') not in (REPRESENTATION,SPECTRAL) or raw.shape != u.shape:
             raise ValueError('unknown factored common-point representation')
+        if meta['representation']==SPECTRAL:
+            radial = np.polynomial.chebyshev.chebvander(s,nx)
+            angular = np.polynomial.chebyshev.chebvander(2*mu**2-1,ny)
+            f,b = [radial@raw[i*n:(i+1)*n].reshape(nx+1,ny+1)@angular.T for i in (0,3)]
         h = np.polynomial.chebyshev.chebvander(s,nx)@raw[n:2*n].reshape(nx+1,ny+1)@by.T
         w = (1-s[:,None])**3*h
     r = 2.5*(1+s)/(1-s)
