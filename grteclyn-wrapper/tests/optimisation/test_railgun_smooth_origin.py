@@ -54,6 +54,14 @@ def test_constant_fields_have_exactly_zero_jets_despite_large_offsets():
             assert np.count_nonzero(value) == 0,key
 
 
+def test_equal_origin_values_leave_no_artificial_angular_residual():
+    target = -4.081508651592244
+    values = np.full((2,33),target)
+    derivative = np.zeros_like(values)
+    # Equal angular values must satisfy isotropy exactly on every backend.
+    assert np.count_nonzero(origin_rows(values,derivative,anisotropy=True)) == 0
+
+
 def test_mixed_jet_matches_polynomial_with_a_large_constant_offset():
     s,dx = lobatto(24)
     y,dy = lobatto(10)

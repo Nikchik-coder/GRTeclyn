@@ -59,3 +59,14 @@ def test_newton_converges_on_the_host():
     assert info["converged"], info
     assert isinstance(u, np.ndarray)
     assert float(np.max(np.abs(np.asarray(_residual(u, 0.3))))) < 1e-12
+
+
+def test_stalled_newton_records_the_equation_and_its_scaling():
+    residual = lambda u: np.array([0., 8.881784197001252e-16])
+    jacobian = lambda u: np.diag([1., 1/33])
+    _, info = newton(residual, jacobian, np.zeros(2), tol=1e-14)
+    assert not info['converged']
+    assert info['res_scaled_max_row'] == 1
+    assert info['res_raw_at_max'] == residual(None)[1]
+    assert info['res_row_scale'] == 33
+    assert info['res_scaled_inf'] == 2.930988785010413e-14

@@ -1,7 +1,7 @@
 """Regular-centre boundary rows with independent canonical validation.
 
-Draft numerical recovery: CPU manufactured checks only; not GPU-qualified.
-No production field has been generated with this method.
+GPU-tested boundary correction. Three-grid source and Cartesian centre
+qualification are required separately before a field can be evolved.
 
 The N equation admits a local homogeneous N~r mode. N(0)=0 alone does
 not exclude it, although Cartesian regularity requires N=O(r^2). Use
@@ -43,7 +43,8 @@ def origin_rows(values, derivative, *, anisotropy=False, xp=np):
     is discarded or added. N instead uses the full Neumann vector.
     """
     if anisotropy:
-        return values[-1:]-xp.mean(values[-1:])+xp.mean(derivative[-1:])
+        offset = values[-1:]-values[-1:, -1:]
+        return offset-xp.mean(offset)+xp.mean(derivative[-1:])
     return derivative[-1:]
 
 

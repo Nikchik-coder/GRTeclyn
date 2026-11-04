@@ -136,7 +136,9 @@ class RingProblem:
             blocks.append(xp.concatenate((a[:1], rows[key], origin)).ravel())
         for i, field in enumerate(self.fields):
             if self.central_lapse is not None:
-                blocks.append(xp.atleast_1d(xp.mean(arrays['f'][-1, :])-2*xp.log(self.central_lapse)))
+                # Subtract first: averaging 33 equal nonzero values can lose
+                # one ulp, amplified by 33 during Jacobian row equilibration.
+                blocks.append(xp.atleast_1d(xp.mean(arrays['f'][-1, :]-2*xp.log(self.central_lapse))))
                 continue
             if self.frequency_targets[i] is not None:
                 blocks.append(xp.atleast_1d(frequencies[i]-self.frequency_targets[i]))

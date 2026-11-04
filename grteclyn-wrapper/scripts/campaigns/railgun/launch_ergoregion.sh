@@ -27,6 +27,12 @@ case "${N}:${GPU}" in
   96:0|128:0|192:1) ;;
   *) echo "approved assignment: N96/N128 on card 0; N192 on card 1" >&2; exit 2 ;;
 esac
+UUID=$(nvidia-smi --id="${GPU}" --query-gpu=uuid --format=csv,noheader)
+[[ -n "${UUID}" ]] || { echo 'No selected GPU is visible.' >&2; exit 2; }
+PROCESSES=$(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader)
+[[ "${PROCESSES}" != *"${UUID}"* ]] || {
+  echo "GPU ${GPU} is occupied; nothing started." >&2; exit 2;
+}
 export SWH_CAMPAIGN_DIR="${REPO}/runs/railgun/evolution"
 export SWH_PREFLIGHT_CONFIG="${HERE}/preflight_campaign.json"
 export SWH_REGISTRY="${SWH_CAMPAIGN_DIR}/runs_registry.tsv"

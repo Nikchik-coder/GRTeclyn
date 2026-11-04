@@ -1,0 +1,96 @@
+{
+  "method": "DCT-I in long double, float64 coefficients as in RingGeometry; long-double endpoint evaluation without filtering",
+  "curvature_certified": false,
+  "records": [
+    {
+      "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+      "sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+      "grid": [
+        224,
+        28
+      ],
+      "fields": {
+        "f": {
+          "nodal_angular_spread": 9.414691248821327e-14,
+          "origin_nonconstant_coefficient_max": 4.570641282987398e-14,
+          "origin_radial_slope_coefficient_max": 7.972509805109773e-12
+        },
+        "w": {
+          "nodal_angular_spread": 7.105427357601002e-15,
+          "origin_nonconstant_coefficient_max": 3.522275126324444e-15,
+          "origin_radial_slope_coefficient_max": 6.11566960267984e-13
+        },
+        "N": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 2.693564772268675e-19,
+          "origin_radial_slope_coefficient_max": 1.1445585925643626e-09
+        },
+        "b": {
+          "nodal_angular_spread": 4.829470157119431e-15,
+          "origin_nonconstant_coefficient_max": 2.2948223182828187e-15,
+          "origin_radial_slope_coefficient_max": 5.092086041019739e-13
+        }
+      }
+    },
+    {
+      "source": "results/railgun/studies/ergo372-origin-recovery-20261104/grid_224x28.npz",
+      "sha256": "e5386e95d37becef9dd9af7f3cb3f83617c1deaaf60eaaa1d52386ef6da13201",
+      "grid": [
+        224,
+        28
+      ],
+      "fields": {
+        "f": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 5.55653613398821e-18,
+          "origin_radial_slope_coefficient_max": 2.6094565245463343e-12
+        },
+        "w": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 2.456395547037471e-19,
+          "origin_radial_slope_coefficient_max": 3.201928305829327e-13
+        },
+        "N": {
+          "nodal_angular_spread": 1.4867442875201426e-17,
+          "origin_nonconstant_coefficient_max": 9.712291531454621e-19,
+          "origin_radial_slope_coefficient_max": 4.446096268928557e-16
+        },
+        "b": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 2.2404021454876244e-19,
+          "origin_radial_slope_coefficient_max": 2.106476451602113e-13
+        }
+      }
+    },
+    {
+      "source": "results/railgun/studies/ergo372-origin-recovery-20261104/grid_256x32.npz",
+      "sha256": "eedee05fae136ef83ffb01e01c07737340d601892d4162e0fa9470c4c544bde2",
+      "grid": [
+        256,
+        32
+      ],
+      "fields": {
+        "f": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 4.743384504624082e-18,
+          "origin_radial_slope_coefficient_max": 2.9024487031448406e-12
+        },
+        "w": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 1.0122043719688889e-19,
+          "origin_radial_slope_coefficient_max": 2.414925624581694e-13
+        },
+        "N": {
+          "nodal_angular_spread": 2.3419267955483112e-18,
+          "origin_nonconstant_coefficient_max": 1.277325684459485e-18,
+          "origin_radial_slope_coefficient_max": 1.2052858711086855e-15
+        },
+        "b": {
+          "nodal_angular_spread": 0.0,
+          "origin_nonconstant_coefficient_max": 1.6940658945086007e-18,
+          "origin_radial_slope_coefficient_max": 1.5176451688515149e-13
+        }
+      }
+    }
+  ]
+}

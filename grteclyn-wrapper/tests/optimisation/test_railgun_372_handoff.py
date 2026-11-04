@@ -53,3 +53,21 @@ def test_dry_run_never_initializes_a_jax_backend():
         '--config',str(CONFIG),'--dry-run'],env=env,text=True,capture_output=True)
     assert result.returncode == 0,result.stderr
     assert json.loads(result.stdout)['numerical_execution'] is False
+
+
+@pytest.mark.parametrize('query_failure',[False,True])
+def test_launch_refuses_busy_or_unreadable_card_before_preparing_data(tmp_path,query_failure):
+    fake = tmp_path/'nvidia-smi'
+    fake.write_text('#!/bin/sh\n'+('exit 1\n' if query_failure else
+        'case "$*" in\n*query-gpu=uuid*) echo GPU-test;;\n*) echo "GPU-test, 123";;\nesac\n'))
+    fake.chmod(0o755)
+    result = subprocess.run(['bash',
+        'grteclyn-wrapper/scripts/campaigns/railgun/launch_ergoregion.sh',
+        '--data-dir',str(tmp_path/'missing'), '--name','must-not-start',
+        '--n','96','--gpu','0','--binary','missing','--checkpoints','off'],
+        env=dict(os.environ,PATH=str(tmp_path)+os.pathsep+os.environ['PATH']),
+        text=True,capture_output=True)
+    assert result.returncode != 0
+    assert 'Traceback' not in result.stderr
+    if not query_failure:
+        assert 'occupied; nothing started' in result.stderr

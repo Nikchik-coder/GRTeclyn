@@ -23,8 +23,30 @@ The run stopped before 288x36 and the centre certificate, as required.
 No exports, preflights or evolutions started. Both cards are idle.
 Scratch clean: **4 KiB retained / 329 GB free** (08:31 MSK).
 [Recovery evidence](../../results/railgun/studies/ergo372-origin-recovery-20261104/).
-The fixed central-lapse border and angular origin averages are being
-investigated for floating-point cancellation; no acceptance limit changes.
+**Numerical fix prepared, GPU qualification pending.** Subtract the fixed
+lapse target before averaging, and subtract a reference angular value before
+forming the origin isotropy rows. Both equations and their Jacobians are
+unchanged mathematically. Compiled arithmetic on CPU reproduced a nonzero
+old border for equal values; the new form returns exact zero and resolves
+one-ulp offsets. CUDA reproduction/recovery remains to be checked.
+Newton now records its worst equation, raw residual and row scale.
+All **45 targeted local checks passed**, including source/export contracts,
+small-device boundary/Jacobian tests and refusal to launch on a busy card.
+The evolution launcher now checks card occupancy before preparing data.
+
+[Read-only interpolation audit](../../results/railgun/reports/ergo372-origin-roundoff.json)
+shows the corrected 256x32 state reduces the origin f angular spread from
+9.41e-14 to exact zero and the interpolated N radial slope coefficient from
+1.14e-9 to 1.21e-15. These are diagnostic improvements, not a curvature pass.
+The saved 256x32 state remains rejected. Rebuild this audit with
+`grteclyn-wrapper/scripts/campaigns/railgun/audit_origin_interpolation.py`.
+Prepared rerun: `grteclyn-wrapper/scripts/campaigns/railgun/run_origin_recovery.sh`,
+card 0, fresh directory `ergo372-origin-recovery-r2-20261104`; regressions,
+at most three 224x28 / 256x32 / 288x36 solves and the radius-0.08,
+degrees-12/14 certificate. Same 30 iterations, minimum two updates, fresh
+Jacobians, 1e-14 Newton target and all physical gates; stop on rejection.
+Four threads, 160 GiB, one hour total, chunks 128, checkpoints OFF.
+Renewed run-specific go is pending because the preceding job stopped rejected.
 
 **Preferred first evolution target: accepted shift/lapse 3.720789536602**,
 following the request to use a less compact ring. Source:

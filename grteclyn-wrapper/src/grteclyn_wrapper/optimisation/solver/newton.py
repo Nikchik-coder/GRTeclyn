@@ -71,6 +71,12 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
         return float(xp.max(xp.abs(res * scale))) if scale is not None else np.inf
 
     def done(u, info):
+        # Record the offending equation, not just a norm: a rounded border
+        # and an unresolved PDE require different corrections.
+        weighted = xp.abs(r * scale)
+        row = int(xp.argmax(weighted))
+        info.update(res_scaled_max_row=row, res_raw_at_max=float(r[row]),
+                    res_row_scale=float(scale[row]))
         return (np.asarray(u) if gpu else u), info
 
     for it in range(max_iter):

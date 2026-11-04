@@ -1,7 +1,7 @@
 """Recover the same ergoregion ring with explicitly regular origin rows.
 
-Draft numerical recovery: CPU manufactured checks only; not GPU-qualified.
-No production field has been generated with this method.
+Independent original equations and a Cartesian centre certificate remain
+mandatory after the three stationary resolutions pass.
 """
 from __future__ import annotations
 
