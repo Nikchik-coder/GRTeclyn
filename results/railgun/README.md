@@ -1,5 +1,12 @@
 # Regular-centre scalar rings: validation data
 
+**3.72 ergoregion ring qualified for 3+1 evolution (November 4).**
+All 108 GPU tests and the 224x28 / 256x32 / 288x36 stationary checks pass.
+Keeping the dragging field's angular coefficients resolves the remaining
+centre comparison: curvature mismatch 8.44e-11, degree-12/14 difference
+2.07e-10, both below the original 1e-8 gate. The physical ring is unchanged;
+its dynamical stability is still untested. [Fields, certificate and logs](studies/ergo372-full-spectral-20261104/).
+
 **Finer strongest-ring source check (November 3):** 224x28 passed, but
 256x32 failed the unchanged mixed Einstein constraint limit. The study
 stopped before 288x36, Cartesian certification or evolution.

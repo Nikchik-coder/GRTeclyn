@@ -1,0 +1,37 @@
+{
+  "approval": "Go: full-coefficient recovery; checkpoints off",
+  "date": "2026-11-04",
+  "gpu": 0,
+  "max_solves": 3,
+  "grids": [
+    [
+      224,
+      28
+    ],
+    [
+      256,
+      32
+    ],
+    [
+      288,
+      36
+    ]
+  ],
+  "max_iter": 30,
+  "min_updates": 2,
+  "newton_tol": 1e-14,
+  "equation_tol": 1e-08,
+  "curvature_tol": 1e-08,
+  "convergence_tol": 1e-06,
+  "core_radius": 0.08,
+  "core_degrees": [
+    12,
+    14
+  ],
+  "threads": 4,
+  "host_GiB": 160,
+  "wall_seconds": 3600,
+  "jacobian_chunk": 128,
+  "checkpoints": false,
+  "conditional_evolutions": "Only after qualification: N96 then N128 on card 0, N192 on card 1; t=50, L=64, max_level=6; checkpoints OFF."
+}
