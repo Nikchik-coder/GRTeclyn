@@ -54,7 +54,8 @@ fresh Jacobians and Newton 1e-14. Original equations, origin regularity,
 Then repeat the radius-0.08, degrees-12/14 origin check. Thirteen CPU
 manufactured/plan checks pass. Proposed card 0 budget: 4 threads,
 160 GiB, 1 h including GPU tests, chunks 128, checkpoints OFF.
-Await the separate go before any new GPU startup.
+**Run-specific go granted November 4** for the correction and conditional
+evolutions, checkpoints OFF; preparing startup on card 0.
 The November 3 interrupted check remains in the
 [paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.

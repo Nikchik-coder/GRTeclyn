@@ -49,5 +49,5 @@
   },
   "evolution_config": "research/railgun/studies/evolution_ergoregion_372.json",
   "discretisation": "isotropic_metric_origin_neumann_N_v1",
-  "approval": "Prepared after the November 4 origin rejection. No new run authorised. Same 3.72 source, three stationary resolutions, original canonical and physical-origin checks, then degrees 12/14 at radius 0.08 with unchanged limits. Requires a run-specific go; checkpoints OFF."
+  "approval": "November 4: GPU regressions and at most three origin-correction solves on GPU 0, 224x28 / 256x32 / 288x36, max 30 iterations and minimum two updates, fresh Jacobians, Newton 1e-14, then radius 0.08 and degrees 12/14 certification. Same ring and original equation/curvature/convergence limits; stop on rejection. Four threads, 160 GiB, one hour including tests, chunks 128, checkpoints OFF. Only if all checks pass, adopt the corrected source for the already-approved t=50 evolutions."
 }
