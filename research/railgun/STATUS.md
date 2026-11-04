@@ -15,15 +15,16 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
-**LIVE: `railgun-ergo372-origin-recovery-20261104`**, first two-GPU
-node/card 0, started **08:21:47 MSK**, source `522386298`.
-GPU regressions, then at most three corrected-origin stationary solves
-on 224x28 / 256x32 / 288x36, then the existing radius-0.08,
-degrees-12/14 certificate. Stop on rejection; all acceptance limits
-unchanged. Four threads, 160 GiB, chunks 128, checkpoints OFF.
-No evolution time/speed yet; completion ETA awaits measurement;
-hard limit **1 h / 09:21:47 MSK**. Scratch clean: **4 KiB / 329 GB free**.
-Card 1 is free. The conditional t=50 evolution queue is unchanged.
+**No live runs.** The approved origin recovery stopped rejected on card 0,
+**08:21:47–08:25:17 MSK, November 4**. All **55 GPU regressions passed**.
+224x28 passed; 256x32 passed the physical equation and origin checks but
+Newton stalled at **2.93e-14**, above its unchanged **1e-14** target.
+The run stopped before 288x36 and the centre certificate, as required.
+No exports, preflights or evolutions started. Both cards are idle.
+Scratch clean: **4 KiB retained / 329 GB free** (08:31 MSK).
+[Recovery evidence](../../results/railgun/studies/ergo372-origin-recovery-20261104/).
+The fixed central-lapse border and angular origin averages are being
+investigated for floating-point cancellation; no acceptance limit changes.
 
 **Preferred first evolution target: accepted shift/lapse 3.720789536602**,
 following the request to use a less compact ring. Source:
@@ -52,20 +53,13 @@ Scratch clean: **4 KiB retained / 329 GB free**, cache only.
 **Conditional evolution queue remains blocked:** N96 then N128/card 0,
 N192/card 1, t=50, L_full=64, max_level=6, checkpoints OFF, full frames
 and last three plotfiles. A passing origin certificate is required.
-Next numerical work: recover the same 3.72 source with explicit origin
-regularity, retain independent checks of the original equations, and
-repeat all three stationary resolutions and the unchanged centre check.
-No new stationary solves launched; the previous go excluded them.
-Prepared correction: [ergoregion_origin_recovery_372.json](studies/ergoregion_origin_recovery_372.json).
-At most three solves on 224x28 / 256x32 / 288x36, same central lapse
-and matter model, frequency free, 30 iterations and at least two updates,
-fresh Jacobians and Newton 1e-14. Original equations, origin regularity,
-1e-8 residual/curvature and 1e-6 convergence limits all remain required.
-Then repeat the radius-0.08, degrees-12/14 origin check. Thirteen CPU
-manufactured/plan checks pass. Proposed card 0 budget: 4 threads,
-160 GiB, 1 h including GPU tests, chunks 128, checkpoints OFF.
-**Run-specific go granted November 4** for the correction and conditional
-evolutions, checkpoints OFF; preparing startup on card 0.
+The original origin correction is implemented and tested; its first approved
+recovery budget is closed on rejection. The 256x32 independent mixed Einstein
+constraint is 6.43e-10 and physical origin error is 9.53e-12, both passing.
+Next: diagnose the Newton rounding floor and the centre interpolation, then
+re-run only after the numerical correction is tested. The conditional
+three-resolution evolution configuration and checkpoint choice remain intact.
+Recovery configuration: [ergoregion_origin_recovery_372.json](studies/ergoregion_origin_recovery_372.json).
 The November 3 interrupted check remains in the
 [paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.

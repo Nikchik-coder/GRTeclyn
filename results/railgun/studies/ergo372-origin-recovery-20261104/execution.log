@@ -1,0 +1,30 @@
+[capped_job] start 2026-11-04T05:21:47Z threads=4 mem=160G timeout=3600s
+.......................................................                  [100%]
+55 passed in 58.54s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.618e-06 -> 1.814e-10 (t = 1)
+[newton] iter 1: |R| 1.814e-10 -> 2.025e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.676e-15
+{"event": "grid", "grid": [224, 28], "verdict": "PASS", "reasons": [], "seconds": 49.31064669997431}
+[newton] iter 0: |R| 3.169e-06 -> 1.588e-10 (t = 1)
+[newton] iter 1: |R| 1.588e-10 -> 3.985e-14 (t = 1)
+[newton] iter 2: |R| 3.985e-14 -> 3.897e-14 (t = 1)
+[newton] iter 3: |R| 3.897e-14 -> 3.869e-14 (t = 1)
+[newton] iter 4: |R| 3.869e-14 -> 3.813e-14 (t = 0.25)
+[newton] iter 5: |R| 3.813e-14 -> 3.783e-14 (t = 0.25)
+[newton] iter 6: |R| 3.783e-14 -> 3.753e-14 (t = 0.25)
+[newton] iter 7: |R| 3.753e-14 -> 3.746e-14 (t = 0.25)
+[newton] iter 8: |R| 3.746e-14 -> 3.725e-14 (t = 0.25)
+[newton] iter 9: |R| 3.725e-14 -> 3.725e-14 (t = 0.0625)
+[newton] iter 10: |R| 3.725e-14 -> 3.722e-14 (t = 0.25)
+[newton] iter 11: |R| 3.722e-14 -> 3.695e-14 (t = 0.25)
+[newton] iter 12: |R| 3.695e-14 -> 3.686e-14 (t = 0.125)
+[newton] iter 13: |R| 3.686e-14 -> 3.680e-14 (t = 0.0625)
+{"event": "grid", "grid": [256, 32], "verdict": "REJECT", "reasons": ["newton", "canonical_newton"], "seconds": 96.83500060398364}
+{
+  "stationary_accepted": false,
+  "evolution_qualified": false,
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "checkpoints": false
+}
+[capped_job] end 2026-11-04T05:25:17Z exit=2
