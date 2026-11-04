@@ -15,6 +15,15 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Live and queue
 
+**LIVE: `railgun-ergo372-smooth-cubic-r2-20261104`**, first two-GPU
+node/card 0, started **09:12:01 MSK**, source `aef4592de`.
+GPU regressions, then at most three 224x28 / 256x32 / 288x36 solves
+and the unchanged centre certificate. No earlier cubic-tail solve started;
+this preserves the same three-solve budget and **10:09:12 MSK deadline**
+(0.953 h remaining at launch). Four threads, 160 GiB, chunks 128,
+checkpoints OFF. No evolution t/speed/ETA yet; card 1 idle.
+Scratch clean: **4 KiB / 329 GB free**.
+
 **Cubic-tail startup stopped before solves**, first two-GPU node/card 0,
 job `railgun-ergo372-smooth-cubic-20261104`, **09:09:12–09:10:33 MSK**,
 source `367d032fb`, exit 1. Ninety GPU tests passed; one new manufactured
