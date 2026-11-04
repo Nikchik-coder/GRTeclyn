@@ -1,0 +1,50 @@
+{
+  "equatorial_points": [
+    {
+      "radius": 0.004,
+      "maximum": 5.868231031311288e-11,
+      "component": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "parent": -7.992972933750711,
+      "core": -7.9929729336920285
+    },
+    {
+      "radius": 0.016,
+      "maximum": 7.71832597834532e-12,
+      "component": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "parent": -32.02745879975344,
+      "core": -32.027458799761156
+    },
+    {
+      "radius": 0.0392,
+      "maximum": 1.0208851125570462e-11,
+      "component": [
+        1,
+        3,
+        1,
+        3
+      ],
+      "parent": 11.731678210467912,
+      "core": 11.731678210457703
+    }
+  ],
+  "diagnostic_replacement_remaining": {
+    "f": 5.868244388682053e-11,
+    "C": 5.868218584670348e-11,
+    "w": 2.4454143571217557e-11,
+    "H": 5.868250850527001e-11
+  },
+  "source_sha256": "7adc3bceec7c342775abd7cbe0bffafaec19bfd248196d96e50d79a6998538b5",
+  "method": "Analytic second-order Cartesian jets in numpy long double; no field changes.",
+  "source": "results/railgun/studies/ergo372-full-spectral-20261104/accepted.npz",
+  "scope": "Independent read-only confirmation at three equatorial points. The full GPU centre certificate covers additional radii and angles; neither this audit nor its diagnostic replacements modifies the accepted source."
+}

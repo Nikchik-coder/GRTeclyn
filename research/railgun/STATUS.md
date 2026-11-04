@@ -25,6 +25,10 @@ Centre certification now **PASSES** at every unchanged 1e-8 gate:
 parent/core curvature **8.44e-11**, degree-12/14 curvature **2.07e-10**,
 independent equations at most **3.68e-12**. All three solves are complete.
 [Full evidence](../../results/railgun/studies/ergo372-full-spectral-20261104/).
+The separate extended-precision Cartesian audit also confirms the repair:
+equatorial curvature mismatch at r=0.004 is **5.87e-11**, compared with
+**1.237e-7** before the dragging-coefficient correction.
+[Independent confirmation](../../results/railgun/reports/ergo372-full-spectral-cartesian-audit.json).
 
 **Evolution sequences LIVE: N96/card 0 and N192/card 1 exports.**
 Both capped sequences started **11:21:37 MSK**, November 4, from

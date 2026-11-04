@@ -189,6 +189,10 @@
       "sha256": "2d734c977b85b7902a1a901fdc15c3e27bf621adc0ead929c2082640683b8ba3",
       "bytes": 1583
     },
+    "reports/ergo372-full-spectral-cartesian-audit.json": {
+      "sha256": "c59e267ea2429ff97fff47d7f11fdbb2fc051749dadd8a07e430e9f21a5b46fc",
+      "bytes": 1350
+    },
     "reports/ergo372-origin-roundoff.json": {
       "sha256": "48b6f2da633c030679ee78666fda213d378c3ee1ca471fc5fdc16fa0f5c21746",
       "bytes": 3558
