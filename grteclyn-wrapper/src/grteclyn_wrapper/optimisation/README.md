@@ -355,6 +355,11 @@ Three fresh perturbed recoveries on the ring's grids then use the unchanged
 angular-momentum and tidal gates. A failed walk or refinement gives no matched
 reduction. A successful comparison records a signed fractional reduction;
 negative values mean the ring uses more phantom support than the control.
+The November 5 control passed all three grids: X_full=1.73450420390979,
+versus the ring's 3.106532919972195 at the same area and J. Thus this weak
+ring needs 79.1021% more phantom support than the ring-free rotating control;
+its 1.116% improvement against static Ellis does not imply an improvement
+against the rotating comparison.
 
 ```bash
 bash research/optimisation/studies/run_railgun_matched_control.sh 0 \

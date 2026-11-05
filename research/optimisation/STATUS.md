@@ -1,51 +1,72 @@
 # Campaign M — status
 
-**Weak railgun ring around the wormhole: all three grids PASS.**
-The corrected November 5 validation finished at **09:40:51 MSK**, exit 0.
-The approved same-spin, ring-free control is now live on first-node GPU 0.
-The older S0 pilots remain stopped;
-this result uses the archived weak railgun ring with a two-ended throat.
-Matching ring lobes surround both mouths, with nonrotating infinities and
-matter-induced dragging. Stronger rings and evolution remain separate
-follow-up work; no automatic follow-on is authorised.
+**Both the weak ring and its ring-free same-spin control pass all three grids.**
+The matched control finished November 5 at **10:01:55 MSK**, exit 0.
+At fixed R_A=2 and J+=-0.9477747390613108, X_ring=3.106532919972195
+and X_control=1.73450420390979: **this ring requires 79.1021% more phantom
+support than the ring-free rotating control**. The ring's 1.11599% improvement
+over static Ellis remains verified; it does not beat the same-spin control.
+No optimisation job is live or queued. The older S0 pilots remain stopped.
+Stronger rings and evolution require separate scopes; no follow-on is live.
 
-## Live ring-free matched-spin control — November 5
+## Completed ring-free matched-spin control — November 5
 
 [Configuration](studies/railgun_matched_control.json),
-[preview/dispatcher](studies/run_railgun_matched_control.sh),
+[dispatcher](studies/run_railgun_matched_control.sh),
 implementation `grteclyn_wrapper.optimisation.railgun_control`.
-**Started 09:58:54 MSK**, source **bb0b68851** verified by `myfork`
-push/pull. Job `railgun-matched-control-20261105T065853`, supervisor PID
-113194. **70 CUDA startup tests PASS in 23.54 s**; production confirms
-CUDA/float64 and the spin continuation is running. Approved checkpoints OFF;
-stationary fields/logs retained. Preview and shell syntax checks pass;
-**70 targeted CPU tests pass** for this control and solver/area regressions.
+**09:58:54–10:01:55 MSK, exit 0**, 181 s (**0.0503 h**), first node/card 0.
+Job `railgun-matched-control-20261105T065853`, frozen source **bb0b68851**
+verified by `myfork` push/pull. Output:
+`runs/optimisation/railgun_matched_control_20261105/`.
+**70 CUDA tests PASS in 23.54 s**; production CUDA/float64 confirmed.
 
-Read-only reference: the accepted November 5 ring, SHA256
-`4c3a266ba19be7af214ef41c612644113053bfeb20d2b6887fb105d6f8bf8c3b`,
-and its hash-pinned static reference. Both are on the first node's NFS.
-No ring re-solve or change to its amplitude. Fresh V=0, gamma=0 ring-free
-control starts from static Ellis and walks ten fixed J steps of at most 0.1
-to **J+=-0.9477747390613108**, holding true minimal area **16 pi (R_A=2)**.
-The control can have a different far-end rotating frame because its spin
-is carried by the wormhole rather than canonical matter.
+All ten fixed continuation steps passed, then all three fresh perturbed
+re-solves passed. Total **13 solves**, within the approved cap, no retry.
+Every final grid needed two Newton corrections after a 1e-6 seed perturbation,
+target 1e-14, at most 24 updates. Independent sampling remained 49x21;
+minimum-surface, volume, phantom interval, angular momentum and tidal gates
+unchanged. True minimal area remained **16 pi (R_A=2)**, with V=0, gamma=0.
+The control carries the matched spin in the wormhole rather than canonical
+matter and may have a different far-end rotating frame.
 
-Then 210x36 / 224x38 / 240x40: fresh 1e-6 seed perturbations and at least
-one Newton correction, target 1e-14, unchanged independent equations on
-49x21 points, minimum-surface, volume, interval, spin-match and tidal gates.
-No matched reduction is recorded if a continuation or final check fails.
-A signed comparison can show the ring improves on or loses to the control.
+| Grid | Verdict | Solve + checks (s) | Independent Einstein | Independent scalar | X_full |
+|---|---|---:|---:|---:|---:|
+| 210x36 | PASS | 13.58 | 4.9940e-12 | 1.7933e-12 | 1.734504203909981 |
+| 224x38 | PASS | 17.79 | 8.0496e-12 | 1.5565e-12 | 1.734504203909955 |
+| 240x40 | PASS | 18.89 | 5.5339e-12 | 3.5822e-12 | 1.734504203909790 |
 
-Approved first node/card 0; **13 solves maximum**, 24 Newton iterations per
-solve, 1 h hard cap including CUDA tests, four threads, 160 GiB host address
-space, float64/platform allocator, no preallocation, chunk 256. Expected
-0.05–0.25 h total, **10:02–10:14 MSK**; hard stop **10:58:54 MSK**.
-No evolution t or u/h applies. One-second GPU memory samples are retained.
-Fresh output:
-`runs/optimisation/railgun_matched_control_20261105/`. Stop after this
-comparison; stronger-dragging continuation and evolution get separate scopes.
-Last read-only check: both cards idle, scratch 4 KB cache / 303 GB free;
-second node not listed. No scratch plotfiles/checkpoints or restart dependency.
+Finest-pair X_full relative drift **9.5146e-14**. Finest measured
+J+=-0.9477747390613184 matches the ring's target; R_A=1.999999999999997.
+Control peak tide **0.191319946024** passes the same **0.333333333334**
+ceiling; the ring peak tide is lower (**0.084227981592**).
+
+The verified static comparison is:
+
+- static Ellis: X_full=3.14159265358975;
+- ring configuration: X_full=3.106532919972195 (**1.11598598% below static**);
+- ring-free matched spin: X_full=1.73450420390979 (**44.78901643% below static**).
+
+`matched_control_accepted=true`, reason `matched_control_complete`.
+The signed ring improvement against this control is **-0.791020692236**:
+this weak ring needs **79.10206922% more** phantom support at matched area
+and J. No extra ring benefit beyond this rotating control is established.
+Both are stationary results; stability remains unassessed. The original ring
+reference was read only and retains its three-grid qualification.
+
+All ten continuation arrays, three final diagnostic arrays, accepted control,
+source hashes, plan and checks retained on NFS: **2.4 MB** output plus
+**48 KB** job logs/samples. `matched_spin.npz` SHA256:
+`0abdefaafae2c178eb239f45d41bfb31f224bee0ae1d2240b54714610031a157`.
+No NaN or allocation errors in the run log. One-second GPU samples peaked
+at **38375 MiB (37.48 GiB)** at **10:01:42 MSK**; this is a sampled peak.
+The monitor is stopped, both cards are back at 0 MiB, scratch clean:
+**4 KB cache / 303 GB free**. Second node not listed. No plotfiles, AMR
+checkpoints, consumers or queued restart dependencies. No data deleted.
+No remaining ETA or evolution t/u/h applies.
+
+Approved caps: first node/card 0, one hour including tests, four threads,
+160 GiB host address space, platform allocator/no preallocation, chunk 256,
+checkpoints OFF. Stronger-dragging continuation and evolution did not run.
 
 ## Completed three-grid verification — November 5
 
@@ -68,9 +89,9 @@ gates unchanged. Static-reference checks also PASS.
 X_full relative drift **4.8850e-14**; other checked ring observables drift
 **1.8645e-12** (gate 1e-6). Same-area static Ellis X_full=3.14159265358975;
 ring X_full=3.106532919972195, a **1.11598598% reduction relative to static
-Ellis**. This is the stationary comparison at R_A=2; stability is not assessed
-and the same-angular-momentum ring-free control has not run. It does not
-isolate a rotation-only benefit. No sampled equatorial ergoregion.
+Ellis**. This is the stationary comparison at R_A=2; stability is not assessed.
+The same-angular-momentum ring-free control is now verified above and has
+lower X_full than the ring. No sampled equatorial ergoregion in this ring.
 
 Accepted fields saved as `accepted_ring.npz`, SHA256
 `4c3a266ba19be7af214ef41c612644113053bfeb20d2b6887fb105d6f8bf8c3b`.
