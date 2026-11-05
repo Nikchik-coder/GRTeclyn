@@ -8,19 +8,31 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-No live or queued runs. The original paired spin+ring experiment is complete:
+**Corrected direct-flux pilot authorized; preparing, not started.** Fix the
+geometric Killing flux through the specified xi=0 cut at
+-0.02/-0.04/-0.06/-0.08, retaining the accepted overlapping-matter seed's
+amplitude and true R_A=2. Check alignment and all independent physical gates
+at each rung before three-grid validation. Same 210x36 / 224x38 / 240x40,
+first node GPU 0, at most 14 solves / 24 Newton updates each / one hour /
+four threads / 160 GiB, checkpoints OFF; fields and logs retained. The
+ring-free control starts from the latest accepted control and targets the
+coupled solution's measured total J, only within the remaining solve budget.
+No automatic retry. Config: [spin_ring_flux.json](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_flux.json).
+
+The original paired spin+ring experiment is complete:
 **14 solves total**, seven for the coupled arm and seven for its unchanged
 ring-free control. Last job finished **Nov 5 12:24:38 MSK**, before the original
 13:07:01 deadline. Both GPUs on the first node are idle; checkpoints OFF;
 fields/logs retained on NFS. Scratch clean: **4 KB cache / 302 GB free**.
-Second node not listed. No remaining ETA or automatic follow-on.
+Second node not listed. The corrected pilot has no launch time or ETA yet.
 
 ## Planned (nothing launches without the go)
 
-- Obtain co-rotation at the specified mouth by controlling the measured
+- Authorized above: obtain co-rotation at the specified mouth by controlling the measured
   geometric flux, rather than assuming that more negative total J+ selects
   that orientation. The completed pilot reached the opposite orientation;
-  a different control choice needs a new bounded go.
+  the corrected condition replaces the total-J assumption without changing
+  the independent physical gates.
 - Try slightly less throat matter to retain g_tt > 0 while bringing peak tide
   below 0.333333. The present ergoregion solution exceeds that ceiling by 6.22%.
 - Compare a qualified new point with a ring-free control at its own area and J.

@@ -14,7 +14,8 @@ import time
 
 import numpy as np
 
-from .exploration import FIELDS, EXTRA_FIELDS, make_problem, pack_seed, solve_trial, save_trial, matter_anchor
+from .exploration import (FIELDS, EXTRA_FIELDS, make_problem, pack_seed, solve_trial,
+                          save_trial, matter_anchor, angular_momentum_diagnostics)
 from .exoticity import exotic_x
 from .potentials import PolynomialPotential
 from grteclyn_wrapper.analysis.spinning_wormhole.spectral import tail_ratio
@@ -53,10 +54,8 @@ def screen_trial(state, config, nx, ny, pin, d2):
     far = {tag: float(np.max(abs(v[1:-1]))) for tag, v in zip(p.tags, blocks)}
     e19 = float(np.max(abs(diag['E19'][mask])))/d2
     ec = float(np.max(abs(diag['E_c'][mask])))
-    jtotal = diag['j_of_x']+diag.get('j_matter_tail',0.)
-    measured_j = float(sigma**2*jtotal[p.mid-1])
-    target_j = measured_j if config.get('rotation_control') == 'nonrotating_ends' else config['J']
-    jerr = float(np.max(abs(sigma**2*jtotal[mask]-target_j)))/max(1.,abs(target_j))
+    angular = angular_momentum_diagnostics(p, diag, sigma, config)
+    measured_j, jerr = angular['J_measured'], angular['J_error']
     x = exotic_x(1., p.map, p.sx, p.sy, p.Dx, F, N, B, psi)
     held = sigma*x['R_e'] if pin[0] == 'R_e' else sigma**2*x['area_throat']
     if pin[0] == 'minimal_area':
@@ -76,6 +75,7 @@ def screen_trial(state, config, nx, ny, pin, d2):
                imposed_core=imposed, imposed_all=far, boundary=boundary,
                border=border, tails=float(tail), scalar_in_vacuum_interval=interval,
                verdict='PASS' if ok else 'ABOVE_GATE', stability='not_assessed')
+    row.update(angular)
     result = dict(zip(FIELDS, arrays))
     result.update(sx=p.sx, sy=p.sy, sigma=sigma, xi_t=xi_t, omega=omega,
                   psim=psim, gamma=config['gamma'], map=p.map)

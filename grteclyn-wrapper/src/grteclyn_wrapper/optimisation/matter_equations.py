@@ -336,7 +336,10 @@ class MatterCollocationProblem:
     ``prescribe`` picks the rotation parameter exactly as in
     spinning_wormhole.equations.CollocationProblem: ("omega_inf", value)
     or ("J", value), the latter bordering the system with the flux row (the
-    conserved flux of the twist equation now carries B^3).
+    conserved flux of the twist equation now carries B^3). ``("J_xi0", value)``
+    instead fixes the geometric Killing flux through the specified xi=0 cut,
+    excluding the matter outside that cut. Total plus-end J remains measured;
+    this is not a unique global decomposition into two object spins.
 
     The elliptic system leaves exactly one global constant undetermined
     (the D^2 mismatch of the V = 0 solver), so the scalar boundary value
@@ -454,15 +457,16 @@ class MatterCollocationProblem:
         self.sy, self.Dy = lobatto(ny)
         self.Dxx, self.Dyy = self.Dx @ self.Dx, self.Dy @ self.Dy
         mode, value = prescribe
-        if mode not in ("omega_inf", "J"):
+        if mode not in ("omega_inf", "J", "J_xi0"):
             raise ValueError(f"prescribe: {mode!r}")
         self.mode, self.value = mode, float(value)
+        self.border_rotation = mode in ("J", "J_xi0")
         self.border_psi = psi_minus is None
         self.psi_minus_fixed = 0.0 if psi_minus is None else float(psi_minus)
         if pin is not None and (pin[0] not in ("R_e", "area", "minimal_area")
-                                or (mode != "J" and value != 0.)):
+                                or (not self.border_rotation and value != 0.)):
             raise ValueError(f"pin {pin!r}: ('R_e', 'area' or 'minimal_area', value), with "
-                             "prescribe = ('J', value) or ('omega_inf', 0)")
+                             "prescribe = ('J' or 'J_xi0', value) or ('omega_inf', 0)")
         self.pin = None if pin is None else (pin[0], float(pin[1]))
         self.surface_order = ny if pin is not None and pin[0] == 'minimal_area' else 0
         # the canonical layer field (campaign step 4): chi = (cal U,
@@ -505,7 +509,7 @@ class MatterCollocationProblem:
                      + (("z",) if self.winding is not None else ()))
         self.nf = len(self.tags)
         self.n = (nx + 1) * (ny + 1)
-        self.n_unknowns = (self.nf * self.n + (1 if mode == "J" else 0)
+        self.n_unknowns = (self.nf * self.n + int(self.border_rotation)
                            + (1 if self.border_psi else 0)
                            + (1 if self.pin_zeta is not None else 0)
                            + (1 if self.pin_chi is not None else 0)
@@ -601,7 +605,7 @@ class MatterCollocationProblem:
                 raise ValueError("winding problem: dzeta (the zeta seed) "
                                  "is an unknown")
             parts.append(np.ravel(dzeta))
-        if self.mode == "J":
+        if self.border_rotation:
             if omega_inf is None:
                 raise ValueError("bordered problem: omega_inf is an unknown")
             parts.append(np.atleast_1d(float(omega_inf)))
@@ -638,7 +642,7 @@ class MatterCollocationProblem:
         grids = [u[k * self.n: (k + 1) * self.n].reshape(shape)
                  for k in range(self.nf)]
         tail = self.nf * self.n
-        if self.mode == "J":
+        if self.border_rotation:
             omega_inf = float(u[tail])
             tail += 1
         else:
@@ -666,7 +670,7 @@ class MatterCollocationProblem:
             raise ValueError("no winding field")
         if self.pin_zeta is None:
             return self.winding[1]
-        i = (self.nf * self.n + (1 if self.mode == "J" else 0)
+        i = (self.nf * self.n + int(self.border_rotation)
              + (1 if self.border_psi else 0))
         i += int(self.pin_chi is not None)
         return float(u[i])
@@ -677,7 +681,7 @@ class MatterCollocationProblem:
             raise ValueError("no canonical cloud")
         if self.pin_chi is None:
             return self.chi[1]
-        i = self.nf * self.n + int(self.mode == "J") + int(self.border_psi)
+        i = self.nf * self.n + int(self.border_rotation) + int(self.border_psi)
         return float(u[i])
 
     def potential_at(self, psi_minus):
@@ -724,7 +728,7 @@ class MatterCollocationProblem:
         d = {tag: u[k * self.n: (k + 1) * self.n].reshape(shape)
              for k, tag in enumerate(self.tags)}
         tail = self.nf * self.n
-        if self.mode == "J":
+        if self.border_rotation:
             omega_inf = u[tail]
             tail += 1
         else:
@@ -785,9 +789,9 @@ class MatterCollocationProblem:
             blocks.append(jnp.concatenate([
                 d[tag][:1], E[keys[tag]], d[tag][-1:]]).ravel())
         out = jnp.concatenate(blocks)
-        if self.mode == "J":
+        if self.border_rotation:
             jtot = sigma**2 * self.j_flux(F, B, self.Dx @ W)
-            if self.winding is not None:
+            if self.mode == "J" and self.winding is not None:
                 jtot = jtot + sigma**2 * self.j_matter(
                     F, Nf, B, W, d["z"], sigma * omega_z_run)
             out = jnp.concatenate([out, jnp.atleast_1d(jtot - value)])

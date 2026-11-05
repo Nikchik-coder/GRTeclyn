@@ -85,12 +85,30 @@ def make_problem(state, config, nx, ny, pin, *, frequency=None, amplitude=None):
         else:
             raise ValueError(kind)
     rotation = config.get('rotation_control', 'J')
-    if rotation not in ('J', 'nonrotating_ends'):
+    if rotation not in ('J', 'J_xi0', 'nonrotating_ends'):
         raise ValueError('unknown rotation_control')
+    prescribed = (('J_xi0', config['J_xi0']) if rotation == 'J_xi0' else
+                  ('J', config['J']) if rotation == 'J' else ('omega_inf', 0.))
     return MatterCollocationProblem(
         eta0=1.0, gamma=config["gamma"], radial_map=state["map"], nx=nx, ny=ny,
-        prescribe=("J", config["J"]) if rotation == 'J' else ('omega_inf', 0.),
+        prescribe=prescribed,
         pin=pin, potential=potential, **extra)
+
+
+def angular_momentum_diagnostics(p, diag, sigma, config):
+    """Check total-flux conservation separately from the chosen rotation pin."""
+    profile = sigma**2*(diag['j_of_x']+diag.get('j_matter_tail', 0.))
+    measured = float(profile[p.mid-1])
+    rotation = config.get('rotation_control', 'J')
+    target = config['J'] if rotation == 'J' else measured
+    mask = diag['C2_i'] >= .05**2
+    error = float(np.max(abs(profile[mask]-target)))/max(1., abs(target))
+    geometric = float(sigma**2*diag['j_of_x'][p.mid-1])
+    flux_error = (abs(geometric-config['J_xi0'])/max(1., abs(config['J_xi0']))
+                  if rotation == 'J_xi0' else 0.)
+    return dict(J_measured=measured, J_error=max(error, flux_error),
+                J_conservation_error=error, J_flux_error=flux_error,
+                J_geometric_flux_xi0=geometric)
 
 
 def matter_anchor(values, sx, config):
@@ -222,10 +240,8 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
     mask = diag["C2_i"] >= .05**2
     e19 = float(np.max(np.abs(diag["E19"][mask])))/d2
     ec = float(np.max(np.abs(diag["E_c"][mask])))
-    jtot = diag["j_of_x"] + diag.get("j_matter_tail", 0.)
-    measured_j = float(sigma**2*jtot[p.mid-1])
-    target_j = measured_j if config.get('rotation_control') == 'nonrotating_ends' else config['J']
-    jerr = float(np.max(np.abs(sigma**2*jtot[mask]-target_j))) / max(1., abs(target_j))
+    angular = angular_momentum_diagnostics(p, diag, sigma, config)
+    measured_j, jerr = angular['J_measured'], angular['J_error']
     x = exotic_x(1., p.map, p.sx, p.sy, p.Dx, F, N, B, psi)
     th = p.throat(u)
     held = th["R_e"] if pin[0] == "R_e" else th["area"]
@@ -249,6 +265,7 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                sigma=sigma, E19=e19, E_c=ec, J_error=jerr, J_measured=measured_j, pin_error=pin_error,
                tails=float(tail), lapse_min=float(np.exp(F.min()/2)),
                stability="not_assessed", scalar_in_vacuum_interval=interval_ok)
+    row.update(angular)
     if kind:
         frequency = p.omega_chi_of(u) if kind == "cloud" else p.omega_z_of(u)
         k = config.get("winding_k", 1) if kind == "winding" else 0
