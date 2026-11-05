@@ -5,44 +5,49 @@
 wormhole. Logs and partial results are preserved. The replacement weak-ring
 pilot below finished with failed three-grid acceptance. November 5 validation
 finished: two grids passed; the third exhausted GPU memory during scaling.
-The memory-corrected retry below is authorised and running.
+The memory-corrected retry also finished with two PASS and a GPU allocation
+failure at 240x40. No job is live and no further retry is authorised.
 No old queue is authorised. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
-## Live memory-corrected retry — November 5
+## Finished memory-corrected retry — November 5
 
-**Started 09:11:12 MSK**, first node/card 0, source **696f6d3a8** verified
-through `myfork` push/pull. Job `railgun-throat-validation-20261105T061112`,
-supervisor PID 101161; startup tests are advancing. Stationary solve: no
-evolution time or u/h speed. GPU memory is sampled every two seconds in the
-job's NFS `gpu-memory.csv` until exit.
+**Started 09:11:12 MSK; finished 09:15:38 MSK**, exit 2, 0.0739 h.
+First node/card 0, frozen source **696f6d3a8**, verified through `myfork`.
+Job `railgun-throat-validation-20261105T061112`; output
+`runs/optimisation/railgun_throat_validation_20261105_r2/`.
+All **97 CUDA tests passed in 38.14 s**; production CUDA/float64 confirmed.
 
-| Run | Node/card | Stage | Start MSK | ETA / hard deadline |
+| Run | Node/card | Stage | Start MSK | ETA / completion |
 |---|---|---|---|---|
-| `railgun-throat-validation-20261105T061112` | first / 0 | live startup tests; 0/3 solves | Nov 5 09:11:12 | 0.1–0.25 h total; 09:17–09:26 MSK; hard stop 10:11:12 |
+| `railgun-throat-validation-20261105T061112` | first / 0 | finished exit 2; 2 PASS, 1 GPU OOM | Nov 5 09:11:12 | 0.0739 h total; ended 09:15:38 MSK; no ETA |
 
-The CUDA Newton path now fuses row-norm reduction with row scaling and
-donates the consumed Jacobian buffer, followed by donation to LU. Equations,
-scaling formula, Newton stopping rules and all acceptance gates are unchanged.
-The actual compiled scaling executable must report at least one matrix of
-input/output aliasing and less than one matrix of temporary storage before
-execution; otherwise the solve fails closed. Matrix, alias and temporary
-sizes are logged for each grid. This avoids assuming that a small test's
-memory layout also applies to the production matrix.
+210x36: PASS, two updates, 18.29 s; independent Einstein/scalar defects
+2.3087e-12 / 1.6514e-9; X_full=3.1065329199719924.
+224x38: PASS, two updates, 19.01 s; defects 4.5585e-12 / 4.4738e-10;
+X_full=3.106532919972047. All gates and 49x21 independent checks unchanged.
+240x40: FAILED after 5.75 s; `jit_equilibrate` requested **52.51 GiB**.
+The compiled scaling report showed a 26.2264 GiB matrix, equal aliasing,
+and only 0.0751 GiB temporary storage, yet the actual call exhausted VRAM.
+Compiler alias/scratch checks alone therefore do not qualify the full call.
+Compilation also emitted allocation failures and a 78.73 GiB rematerialization
+estimate; the extra allocation path still needs investigation.
 
-**97 targeted CPU tests pass**, including reference scaling values, the padded
-column-Jacobian producer, compiler alias/scratch sizes and accelerated Newton
-recovery. The same tests are included in the capped CUDA worker. This is
-CPU qualification only; production GPU memory use remains to be checked.
-Approved separate retry: the same pinned initial fields, 210x36 / 224x38 /
-240x40, three solves, 24 updates maximum per solve, first node/card 0,
-1 h / four threads / 160 GiB, checkpoints OFF, fields/logs retained.
-Fresh output `runs/optimisation/railgun_throat_validation_20261105_r2/`.
-No matched-spin control or automatic follow-on. Both cards were idle before
-launch. Scratch clean: only 4 KB cache / 303 GB free. No plotfiles, AMR
-checkpoints, consumers or queued restart dependencies. Second node not listed.
+Two-second GPU sampling recorded a peak **64533 MiB** at 09:15:20 MSK;
+this is a sampled peak, not the exact maximum allocation. The node survived,
+both cards returned to 0 MiB, and fields/logs remain on NFS. Overall
+`ring_accepted=false`; no accepted ring, matched-spin control or automatic
+retry. Three passing grids are still required. No evolution time or u/h
+speed applies. Scratch clean: 4 KB cache / 303 GB free; no AMR checkpoints,
+plotfiles, consumers or queued restart dependencies. Second node not listed.
+
+Approved scope was unchanged: pinned initial fields, three solves on
+210x36 / 224x38 / 240x40, maximum 24 updates, 1 h / four threads / 160 GiB,
+checkpoints OFF. The donation correction passed small CUDA tests but did
+not resolve the full-size allocation failure. Investigate actual call layouts
+and allocation lifetimes before proposing another bounded GPU diagnostic.
 
 ## Finished validation attempt — November 5
 
