@@ -6,34 +6,29 @@ Current findings only; detailed run records and numerical checks are in
 
 ## Live
 
-No live run. Outer-amplitude continuation `ringwormhole-cont108-20261105T074046`
-ended **Nov 5 11:05:05 MSK**, exit 2, after **0.405 h** on first node/card 0
-(source `e9b8aa2d1`). 31 continuation attempts, then three final solves;
-109 CUDA tests passed. All final physical checks passed; the original
-exterior-ring preference alone rejected every grid. The subsequent clarification
-allows matter overlapping the throat; assess saved rows separately without
-changing their original verdicts. Both GPUs idle. Scratch clean:
-**4 KB cache / 302 GB free**; second node not listed. No remaining run ETA.
-
-Prepared numerical reconfiguration within the authorized retry: control scalar
-amplitude on the throat, where it remains increasing, rather than at the outer
-anchor that stalled near 0.1913. Start from the refined 240x40 field, target the
-same mapped CMA seed's throat amplitude **0.3884042904**. Up to eight attempts
-and three final validation solves; at most **0.333 h**, bounded by the original
-**11:40:46 MSK** deadline, GPU 0 / four threads / 160 GiB / checkpoints OFF.
-[Configuration](ergoregion108_throat.json), [dispatcher](run_ergoregion108_throat.sh).
+**Running: `ringwormhole-throat108-20261105T080832`**, first node/card 0.
+Frozen source `a8c33d5b8`; started **Nov 5 11:08:32 MSK**. Control scalar
+amplitude on the throat from **0.3257669825** to the same mapped CMA seed's
+**0.3884042904**; at most eight continuation attempts, then three validation
+solves. No evolution time; solve speed not yet measured. At most 24 Newton
+updates per solve / four threads / 160 GiB / checkpoints OFF.
+Estimated duration **0.1–0.2 h (11:15–11:21 MSK)**; hard stop
+**11:28:32 MSK**, within the original 11:40:46 retry-window deadline.
+Both cards were idle before startup. Scratch clean, **4 KB cache / 302 GB free**;
+second node not listed. Output `runs/ringwormhole/ergoregion108_throat_20261105/`;
+log under the job name in `runs/capped_jobs/`. No follow-on queued.
 
 ## Planned (nothing launches without the go)
 
-November 5 clarification: **matter may overlap the throat**. The running
+November 5 clarification: **matter may overlap the throat**. The outer-amplitude
 job retains its original exterior-ring rejection record. A separate
 [CPU assessment](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/ringwormhole_overlap.py)
-will remove only that preference from saved three-grid checks; all equation,
+removes only that preference from saved three-grid checks; all equation,
 energy, minimal-surface, symmetry, volume and tidal gates remain. Six policy
 tests pass. No ergoregion is inherited from the CMA source or assumed.
 
 
-**Retry running: continuation toward the CMA-derived amplitude border.**
+**Completed outer-amplitude stage:** continuation toward the CMA-derived border.
 [Retry configuration](ergoregion108_continuation.json),
 [dispatcher](run_ergoregion108_continuation.sh). Start at the accepted weak-ring
 fields, reanchor the same solution at xi=0.4877785081 (amplitude 0.0284222725),
@@ -87,7 +82,9 @@ no sampled throat ergoregion. E_b/R_A **0.8883857544**, peak tide
 **6.16e-12 / 1.40e-11** on 49x21 points; each final solve recovered a 1e-6
 perturbation in two Newton updates. Finest-pair X_full drift **6.16e-11**.
 Matter density peaks on the throat. Original diagnostics reject only the
-exterior-ring preference; overlapping matter is now allowed. No new same-spin
+exterior-ring preference; the separate overlap assessment **passes** all three
+grids, with finest-pair observable drift **8.33e-10**. Accepted fields:
+`accepted_overlap.npz`; original rows remain unchanged. No new same-spin
 control or stability result. Fields/logs remain in
 `runs/ringwormhole/ergoregion108_continuation_20261105/` (11 MB);
 one-second sampled GPU peak **54665 MiB**. No NaN/OOM/traceback in its own log.
@@ -124,6 +121,13 @@ failures were fixed before these successful runs; operational notes are in
 the local `CLUSTER_GPU.local.md` runbook.
 
 ## Saved evidence
+
+Outer-amplitude continuation `ringwormhole-cont108-20261105T074046`
+(source `e9b8aa2d1`) ran Nov 5 **10:40:46–11:05:05 MSK**, 0.405 h,
+31 continuation attempts and three final solves. Exit 2 records the original
+exterior-ring preference; subsequent CPU overlap assessment passes.
+109 CUDA regressions passed. Sampled GPU peak **54665 MiB**.
+
 
 Previous direct CMA-seed insertion `ringwormhole-ergo108-20261105T072903`
 ended **Nov 5 10:33:09 MSK**, exit 2, after 0.068 h on first node/card 0.
