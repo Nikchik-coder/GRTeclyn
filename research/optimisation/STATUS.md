@@ -5,13 +5,23 @@
 wormhole. Logs and partial results are preserved. The replacement weak-ring
 pilot below finished with failed three-grid acceptance. November 5 validation
 finished: two grids passed; the third exhausted GPU memory during scaling.
-No retry is authorised; a memory correction is being prepared.
+The memory-corrected retry below is authorised and running.
 No old queue is authorised. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
-## Prepared memory correction — awaiting retry go
+## Live memory-corrected retry — November 5
+
+**Started 09:11:12 MSK**, first node/card 0, source **696f6d3a8** verified
+through `myfork` push/pull. Job `railgun-throat-validation-20261105T061112`,
+supervisor PID 101161; startup tests are advancing. Stationary solve: no
+evolution time or u/h speed. GPU memory is sampled every two seconds in the
+job's NFS `gpu-memory.csv` until exit.
+
+| Run | Node/card | Stage | Start MSK | ETA / hard deadline |
+|---|---|---|---|---|
+| `railgun-throat-validation-20261105T061112` | first / 0 | live startup tests; 0/3 solves | Nov 5 09:11:12 | 0.1–0.25 h total; 09:17–09:26 MSK; hard stop 10:11:12 |
 
 The CUDA Newton path now fuses row-norm reduction with row scaling and
 donates the consumed Jacobian buffer, followed by donation to LU. Equations,
@@ -26,11 +36,13 @@ memory layout also applies to the production matrix.
 column-Jacobian producer, compiler alias/scratch sizes and accelerated Newton
 recovery. The same tests are included in the capped CUDA worker. This is
 CPU qualification only; production GPU memory use remains to be checked.
-Proposed separate retry: the same pinned initial fields, 210x36 / 224x38 /
+Approved separate retry: the same pinned initial fields, 210x36 / 224x38 /
 240x40, three solves, 24 updates maximum per solve, first node/card 0,
 1 h / four threads / 160 GiB, checkpoints OFF, fields/logs retained.
 Fresh output `runs/optimisation/railgun_throat_validation_20261105_r2/`.
-No matched-spin control or automatic follow-on. No retry has started.
+No matched-spin control or automatic follow-on. Both cards were idle before
+launch. Scratch clean: only 4 KB cache / 303 GB free. No plotfiles, AMR
+checkpoints, consumers or queued restart dependencies. Second node not listed.
 
 ## Finished validation attempt — November 5
 
