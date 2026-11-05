@@ -35,6 +35,18 @@ def assess(records):
     result=dict(passed=passed,model='matter may overlap the throat',method='refine',
         relative_bill_drift=xdrift,ring_observable_relative_drift=drift,records=rows,
         throat_ergoregion_resolved=False,stability='not_assessed')
+    # A design ceiling on tides or matter energy does not change the sign of
+    # g_tt on an independently checked metric. Keep this diagnostic separate
+    # from full acceptance; no accepted archive is written when a ceiling fails.
+    equation_rows=[dict(r,verdict='PASS') for r in rows]
+    equation_ok,equation_drift=consistent(equation_rows,'X_full')
+    equation_ok=bool(equation_ok and drift<=1e-6 and all(
+        r.get('newton',np.inf)<=1e-9 and not set(r['rejection_reasons'])-
+        {'ordinary_energy_budget','tidal_limit'} for r in rows))
+    result.update(equations_three_grids_passed=equation_ok,
+        equation_checked_bill_drift=equation_drift,
+        equation_checked_throat_ergoregion_resolved=bool(equation_ok and
+            throat_ergoregion_convergence(equation_rows)['throat_ergoregion_resolved']))
     if passed:result.update(throat_ergoregion_convergence(rows))
     return result
 
@@ -45,13 +57,15 @@ def main():
     from .resolution import save_checked
     from .study import write_json
     raw=json.loads((a.run/'ring/result.json').read_text());result=assess(raw['records'])
+    if result.get('equations_three_grids_passed'):
+        row=result['records'][-1]
+        _,base=load_seed(a.run/'static_reference.npz')
+        result.update(X_full=row['X_full'],X_static=base['diagnostics']['X_full'],
+            static_fractional_reduction=1-row['X_full']/base['diagnostics']['X_full'])
     if result['passed']:
         row=result['records'][-1]
         state,meta=load_seed(a.run/'ring/diagnostic_240x40.npz')
-        baseline,base=load_seed(a.run/'static_reference.npz')
         config=dict(meta['config'],J=row['J_measured'])
-        result.update(X_full=row['X_full'],X_static=base['diagnostics']['X_full'],
-            static_fractional_reduction=1-row['X_full']/base['diagnostics']['X_full'])
         save_checked(a.run/'accepted_overlap.npz',state,config,
             dict(pin=meta['pin'],matter_may_overlap_throat=True),result)
     write_json(a.run/'overlap_assessment.json',result)

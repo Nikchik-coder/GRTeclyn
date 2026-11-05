@@ -25,6 +25,24 @@ session start goes stale within hours.
   the order between the members, N₁→N₂ / N₂→N₃ (from `constraint_norms_levels.dat`, p = ln(e₁/e₂) / ln(N₂/N₁)),
   then two lines on what it shows. Not the norms' magnitudes, not prose.
 
+## Research layout
+
+- Every research study has `research/<study>/STATUS.md`, following the existing
+  status layout: live and queued work, next steps, verified findings and saved evidence.
+  Update it after each launch, stop and completed result.
+- `research/<study>/` holds STATUS, research notes and article sources. Keep
+  operational code and run configuration out of this directory.
+- Campaign launchers, workers, queues, packing helpers and run JSON/YAML files
+  belong in `grteclyn-wrapper/scripts/campaigns/<study>/`; use its `configs/`
+  subdirectory for run configurations. Link to those canonical paths from STATUS;
+  do not leave copies or compatibility launchers under `research/`.
+- Reusable physics and analysis code belongs in the wrapper package, with its
+  tests under the wrapper tests. Live outputs and logs stay in untracked `runs/`;
+  curated reproducible evidence belongs in tracked `results/`.
+- Reorganize an active campaign on the cluster only after its worker exits.
+  Update imports, script paths, tests and documentation together, using Git
+  push/pull to transport the change.
+
 ## Environment
 
 - **LaTeX: the workstation only.** It has TeX Live (`latexmk`, `lualatex`, `pdflatex`);

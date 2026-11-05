@@ -6,7 +6,7 @@ import pytest
 from grteclyn_wrapper.optimisation import ringwormhole_continuation as m
 
 ROOT=Path(__file__).resolve().parents[3]
-def plan():return json.loads((ROOT/'research/ringwormhole/ergoregion108_continuation.json').read_text())
+def plan():return json.loads((ROOT/'grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108_continuation.json').read_text())
 
 @pytest.mark.parametrize('key,value',[('max_attempts',33),('min_damping',0.),('amplitude_growth',2.),('restart_sha256','short')])
 def test_budget_is_closed(key,value):

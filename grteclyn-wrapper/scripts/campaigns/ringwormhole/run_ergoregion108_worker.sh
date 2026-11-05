@@ -12,5 +12,5 @@ PY=grteclyn-wrapper/.venv/bin/python
     grteclyn-wrapper/tests/optimisation/test_solver_core.py \
     grteclyn-wrapper/tests/optimisation/test_fixed_area_study.py
 exec "$PY" -u -m grteclyn_wrapper.optimisation.railgun_wormhole \
-    --config research/ringwormhole/ergoregion108.json --out "$out" --gpu "$card" --run
+    --config grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108.json --out "$out" --gpu "$card" --run
 }

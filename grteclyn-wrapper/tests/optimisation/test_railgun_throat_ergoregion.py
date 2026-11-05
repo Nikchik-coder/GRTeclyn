@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[3]
 
 
 def plan():
-    return json.loads((ROOT/'research/ringwormhole/ergoregion108.json').read_text())
+    return json.loads((ROOT/'grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108.json').read_text())
 
 
 @pytest.mark.parametrize('change',[
@@ -105,10 +105,10 @@ def test_single_case_never_dispatches_control_or_promotes_an_unqualified_throat(
 def test_preview_initializes_no_jax_and_writes_nothing(tmp_path):
     out=tmp_path/'out'
     code="from grteclyn_wrapper.optimisation import railgun_wormhole as m; m.main(); import sys; assert 'jax' not in sys.modules"
-    result=subprocess.run([sys.executable,'-c',code,'--config','research/ringwormhole/ergoregion108.json',
+    result=subprocess.run([sys.executable,'-c',code,'--config','grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108.json',
         '--out',str(out)],cwd=ROOT,capture_output=True,text=True,check=True)
     assert 'PREPARED_ONLY' in result.stdout
-    result=subprocess.run(['bash','research/ringwormhole/run_ergoregion108.sh','99999',str(out)],
+    result=subprocess.run(['bash','grteclyn-wrapper/scripts/campaigns/ringwormhole/run_ergoregion108.sh','99999',str(out)],
         cwd=ROOT,capture_output=True,text=True,check=True)
     assert '--mem 160 --timeout 3600' in result.stdout
     assert not out.exists()

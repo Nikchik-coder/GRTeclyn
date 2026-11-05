@@ -15,6 +15,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
 | optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | `runs/optimisation/` (`evolution/` for GRTeclyn runs) | paused: [`STATUS.md`](research/optimisation/STATUS.md) |
+| ring–wormhole coupling | [`research/ringwormhole/`](research/ringwormhole/) | — | `runs/ringwormhole/` | [`STATUS.md`](research/ringwormhole/STATUS.md) |
 | ring spacetimes and spin transport | [`research/railgun/`](research/railgun/) | [`results/railgun/`](results/railgun/README.md) | `runs/railgun/` | spherical, rotating and counter-rotating states validated: [`STATUS.md`](research/railgun/STATUS.md) |
 
 Optimisation's Python code and command entry points live together in
@@ -24,6 +25,9 @@ Its README explains the search, validation and outputs. Plots remain in
 Scalar-ring launch, packing and run-organisation scripts are in
 [`grteclyn-wrapper/scripts/campaigns/railgun/`](grteclyn-wrapper/scripts/campaigns/railgun/README.md).
 `research/railgun/` contains documentation and JSON study definitions.
+Ring–wormhole launchers, workers and run configurations live in
+[`grteclyn-wrapper/scripts/campaigns/ringwormhole/`](grteclyn-wrapper/scripts/campaigns/ringwormhole/README.md).
+`research/ringwormhole/` holds STATUS and research writing.
 
 ## The merger campaign: where to look
 
