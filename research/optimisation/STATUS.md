@@ -13,6 +13,19 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
+## Live corrected three-grid verification — November 5
+
+**Started 09:36:14 MSK**, first node/card 0, source **f9f29a566** verified by
+`myfork` push/pull. Job `railgun-throat-validation-20261105T063614`, supervisor
+PID 108139; fresh output `runs/optimisation/railgun_throat_validation_20261105_r3/`.
+Startup CUDA tests followed by exactly three re-solves on 210x36 / 224x38 /
+240x40, 24 updates maximum, all gates unchanged. Cap one hour, four threads,
+160 GiB, checkpoints OFF. No matched-spin control or evolution. Expected
+0.1–0.25 h total, 09:42–09:51 MSK; hard deadline 10:36:14 MSK. No evolution
+t or u/h applies. One-second GPU samples retained in the capped-job directory.
+Both cards idle at launch; scratch clean, 4 KB cache / 303 GB free; second
+node not listed. No plots, checkpoints, consumers or restart dependencies.
+
 ## Full-size matrix path verified — November 5
 
 `railgun-memory-lu-20261105T063420`, source **3978e1a64**, first node/card 0,
