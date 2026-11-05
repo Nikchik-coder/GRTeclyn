@@ -32,7 +32,7 @@
   "checkpoints": false,
   "geometry": "matching rings at both mouths; nonrotating infinities",
   "phantom_potential": "V=0 throughout",
-  "status": "November 5 retry finished: two PASS, 240x40 GPU OOM; no further retry authorised",
+  "status": "assembly and LU fixes verified at full size; same three-grid verification authorised by go fix it and continue",
   "stage": "ring_validation",
   "independent_points": [
     49,

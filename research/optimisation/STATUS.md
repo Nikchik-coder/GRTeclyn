@@ -13,6 +13,32 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
+## Full-size matrix path verified — November 5
+
+`railgun-memory-lu-20261105T063420`, source **3978e1a64**, first node/card 0,
+**09:34:20–09:34:34 MSK, exit 0** (0.0039 h). The actual 240x40 Jacobian,
+row scaling, donated cuSOLVER LU and triangular solve all completed. Finite
+correction max=2.52894e-12. Assembly temporary allocation is 1.2298 GiB;
+LU reports 26.2264 GiB aliased input/output plus 26.2264 GiB temporary
+storage. Device snapshots after assembly/scaling/LU/solve:
+27487 / 27489 / 27781 / 27789 MiB (not peak measurements).
+The LU compiler's conservative rematerialization warning remained, but the
+synchronized executable completed; the runtime check is authoritative here.
+
+Correction: fill one matrix directly, synchronize assembly errors, and disable
+compile-time autotuning locally in the factor/solve wrappers. Equations,
+float64, scalar border, grid sizes and acceptance gates are unchanged.
+99 CPU tests passed after assembly changes; all 13 solver/memory tests
+passed again after the LU wrapper change. The continuing “go fix it” and
+“continue” cover the same three-grid verification after this isolated check:
+210x36 / 224x38 / 240x40, three solves, 24 updates each, one hour,
+four threads, 160 GiB, first node/card 0, checkpoints OFF. Fresh output
+`runs/optimisation/railgun_throat_validation_20261105_r3/`; no matched-spin
+control or evolution. Logs/compiler reports from the diagnostic remain in
+`runs/optimisation/railgun-memory-lu-20261105T063420/`.
+Both cards released memory; scratch clean, 4 KB cache / 303 GB free.
+Second node not listed. No plots, checkpoints or queued restart dependencies.
+
 ## Assembly correction checked on the full matrix — November 5
 
 `railgun-memory-fixed-20261105T063142`, first node/card 0, source **8dc043d43**,
