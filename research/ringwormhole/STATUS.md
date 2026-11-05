@@ -8,20 +8,24 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-**Coupled arm finished; the already approved control arm remains queued.**
-`ringwormhole-spin-ring-20261105T090701` (source `985121bb7`) ran
-**Nov 5 12:07:01–12:12:33 MSK**, exit 2. Four continuation solves and three
-final re-solves converged; all physical checks pass, but the measured
-geometric and matter fluxes oppose. This is a **counter-rotating diagnostic**,
-not the intended co-rotating configuration. 125 CUDA regressions passed.
+**Running original control remainder:** `ringwormhole-spin-ring-20261105T092225`,
+first node/card 0, frozen source `1f693f484`, started **Nov 5 12:22:25 MSK**.
+Exactly the previously approved four control continuation steps and three
+210x36 / 224x38 / 240x40 re-solves, at J+ **-0.7963901140** and R_A=2.
+The coupled arm used seven solves; this control uses at most seven more,
+**14 total**. Stationary (no evolution time), 24 Newton updates per solve,
+four threads / 160 GiB / checkpoints OFF; original deadline **13:07 MSK**.
+Estimated remaining duration **0.05–0.1 h (12:25–12:29 MSK)**; speed not yet
+measured. No coupled retry, changed target or additional case.
+Scratch clean, **4 KB cache / 302 GB free**; second node not listed.
+Output `runs/ringwormhole/spin_ring_control_20261105/`; job log in `runs/capped_jobs/`.
 
-Complete only the original ring-free control: same pinned seed, target
-J+ = -0.7963901140, four steps and 210x36 / 224x38 / 240x40 checks.
-**Seven solves remain; total stays at 14.** No coupled solve is retried.
-The original one-hour deadline **13:07:01 MSK**, four threads / 160 GiB /
-checkpoints OFF remain. Remaining-arm dispatch being prepared; both GPUs
-idle. Scratch clean, **4 KB cache / 302 GB free**; second node not listed.
-Original coupled output `runs/ringwormhole/spin_ring_co_rotating_20261105/`.
+The coupled job `ringwormhole-spin-ring-20261105T090701` (source `985121bb7`)
+ended **12:12:33 MSK**, exit 2, after 0.092 h: seven converged solves, all
+physical checks pass, orientation target alone fails. It is a counter-rotating
+diagnostic; the original failed co-rotation classification remains unchanged.
+125 CUDA tests passed; sampled GPU peak **54663 MiB**. 140 CPU regressions
+pass for the guarded control remainder, which refuses repeats or extra scope.
 
 ## Planned (nothing launches without the go)
 
