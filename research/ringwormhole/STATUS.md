@@ -8,14 +8,21 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-No live or queued runs. The throat-amplitude job finished **Nov 5 11:13:41 MSK**;
-both GPUs on the first node are idle. Checkpoints OFF; fields and logs retained
-on persistent storage. Scratch clean: **4 KB cache / 302 GB free**.
-Second node not listed. No remaining ETA.
+**Running: `ringwormhole-spin-ring-20261105T090701`**, first node/card 0.
+Frozen source `985121bb7`; started **Nov 5 12:07:01 MSK**. Independent
+wormhole spin + rotating matter, then the ring-free control at identical
+R_A=2 and total J+ = -0.7963901140. Four continuation steps and three final
+grids per arm, **14 solves maximum**, 24 Newton updates each. Stationary
+(no evolution time); solve speed not yet measured. One hour / four threads /
+160 GiB, CUDA float64/platform allocator/chunk 256, checkpoints OFF.
+Estimated duration **0.15–0.25 h (12:16–12:22 MSK)**; hard stop **13:07:01 MSK**.
+Startup storage: scratch clean, **4 KB cache / 302 GB free**; second node
+not listed. Output `runs/ringwormhole/spin_ring_co_rotating_20261105/`;
+log under the job name in `runs/capped_jobs/`. No follow-on queued.
 
 ## Planned (nothing launches without the go)
 
-**Prepared: independently spinning wormhole plus co-rotating canonical matter.**
+**Approved and running: independently spinning wormhole plus co-rotating matter.**
 [Configuration](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_co_rotating.json),
 [launcher](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/run_spin_ring.sh).
 Start from the accepted overlapping-matter point (20.678708% static reduction),
@@ -35,11 +42,11 @@ and J_b/2=J+) are inapplicable here; full angular-momentum conservation and
 localization at both ends remain required. A failed arm or mismatched J gives
 no matched-spin reduction claim.
 
-Prepared first node/card 0, **14 solves maximum**, 24 Newton updates each,
+Approved first node/card 0, **14 solves maximum**, 24 Newton updates each,
 1 h / four threads / 160 GiB, CUDA float64/platform allocator/chunk 256;
-checkpoints proposed OFF, fields/logs retained. **132 CPU tests pass**; shell
-syntax checks pass. **No GPU startup; run-specific
-go and checkpoint decision pending.** No follow-on or counter-rotating case.
+checkpoints OFF, fields/logs retained. **132 CPU tests pass**; shell
+syntax checks pass. **Run-specific go received November 5.** No follow-on or
+counter-rotating case.
 
 - Try slightly less throat matter to retain g_tt > 0 while bringing peak tide
   below 0.333333. The present ergoregion solution exceeds that ceiling by 6.22%.
