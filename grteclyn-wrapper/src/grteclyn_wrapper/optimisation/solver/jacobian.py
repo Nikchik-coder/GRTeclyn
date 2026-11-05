@@ -20,7 +20,7 @@ def chunked_jacfwd(residual, n, chunk):
 
     jax.jacfwd pushes all n tangents through the residual graph at once,
     and those intermediates are what overflow the large grids (40 GB at
-    108x28, 2026-10-27); lax.map over column blocks keeps only ``chunk``
+    108x28, 2026-10-27); a loop over column blocks keeps only ``chunk``
     of them live.  Same values (one jvp per basis vector), one jit, no
     per-block retrace.  Extra positional arguments pass through to
     ``residual``, traced, like the jacfwd path.
@@ -28,20 +28,28 @@ def chunked_jacfwd(residual, n, chunk):
     import jax
     import jax.numpy as jnp
 
+    if n <= 0 or chunk <= 0:
+        raise ValueError('Jacobian size and column chunk must be positive')
+    chunk = min(chunk, n)
     n_blocks = -(-n // chunk)
-    cols = jnp.arange(n_blocks * chunk).reshape(n_blocks, chunk)
 
     @jax.jit
     def jac(u, *args):
-        def block(c):
-            keep = (c < n).astype(u.dtype)
+        def write_block(i, matrix):
+            # Overlap the last block instead of padding a full n-by-n array.
+            # Each repeated column is the same exact JVP. A loop-carried
+            # update lets XLA reuse one output buffer; lax.map + slice +
+            # transpose previously needed three at 59,330 unknowns.
+            start = jnp.minimum(i * chunk, n - chunk)
+            c = start + jnp.arange(chunk)
             basis = jnp.zeros((chunk, n), u.dtype).at[
-                jnp.arange(chunk), jnp.minimum(c, n - 1)].set(keep)
-            return jax.vmap(
+                jnp.arange(chunk), c].set(1)
+            columns = jax.vmap(
                 lambda v: jax.jvp(lambda uu: residual(uu, *args),
                                   (u,), (v,))[1])(basis)
-        rows = jax.lax.map(block, cols)      # (n_blocks, chunk, n): J^T rows
-        return rows.reshape(n_blocks * chunk, n)[:n].T
+            return jax.lax.dynamic_update_slice(matrix, columns.T, (0, start))
+        return jax.lax.fori_loop(0, n_blocks, write_block,
+                                 jnp.zeros((n, n), dtype=u.dtype))
 
     return jac
 

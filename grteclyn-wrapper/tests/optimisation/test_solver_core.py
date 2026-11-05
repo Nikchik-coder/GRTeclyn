@@ -1,5 +1,5 @@
 """The solver core on a small nonlinear system, CPU only: column-block
-Jacobians equal jax.jacfwd (a padded last block included), WH_JAC_CHUNK
+Jacobians equal jax.jacfwd (an overlapping final block included), WH_JAC_CHUNK
 changes no value, and Newton converges on the host path."""
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def _reference(u, a):
     return np.asarray(jax.jacfwd(_residual)(u, a))
 
 
-@pytest.mark.parametrize("chunk", [1, 3, N])
+@pytest.mark.parametrize("chunk", [1, 3, N, N+4])
 def test_chunked_jacfwd_equals_jacfwd(chunk):
     u = jnp.linspace(-0.4, 0.7, N)
     got = np.asarray(chunked_jacfwd(_residual, N, chunk)(u, 0.3))

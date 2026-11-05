@@ -29,8 +29,8 @@ def test_scaling_matches_reference_and_aliases_matrix(transposed):
     np.testing.assert_allclose(scaled,matrix*expected_scale[:,None],rtol=3e-15,atol=1e-15)
 
 
-def test_padded_column_jacobian_scaling_has_no_matrix_sized_temporary():
-    # Match the production producer: padded column blocks followed by transpose.
+def test_column_jacobian_scaling_has_no_matrix_sized_temporary():
+    # Include the overlapping final column block of the production producer.
     n=193
     vector=jnp.linspace(-1,1,n)
     jacobian=chunked_jacfwd(lambda x:3*x+jnp.sin(x)+jnp.mean(x),n,32)(vector)
@@ -43,6 +43,21 @@ def test_padded_column_jacobian_scaling_has_no_matrix_sized_temporary():
     actual,actual_scale=operation(jacobian)
     np.testing.assert_allclose(actual,expected*scale[:,None],rtol=3e-15,atol=1e-15)
     np.testing.assert_allclose(actual_scale,scale,rtol=3e-15)
+
+
+def test_jacobian_assembly_does_not_materialise_full_matrix_temporaries():
+    n=1025
+    vector=jnp.linspace(-1,1,n)
+    def residual(x):
+        return 3*x+jnp.sin(x)+jnp.mean(x)+.2*jnp.roll(x,1)
+    operation=chunked_jacfwd(residual,n,32).lower(vector).compile()
+    allocation=operation.memory_analysis()
+    # The old map/slice/transpose path needs extra full-matrix buffers.
+    assert allocation.temp_size_in_bytes < n*n*8
+    actual=np.asarray(operation(vector))
+    expected=np.diag(3+np.cos(np.asarray(vector)))+np.ones((n,n))/n
+    expected[np.arange(n),(np.arange(n)-1)%n]+=.2
+    np.testing.assert_allclose(actual,expected,rtol=3e-15,atol=1e-15)
 
 
 def test_donated_scaling_preserves_accelerated_newton_solution(monkeypatch):

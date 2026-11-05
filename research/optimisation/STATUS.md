@@ -6,11 +6,36 @@ wormhole. Logs and partial results are preserved. The replacement weak-ring
 pilot below finished with failed three-grid acceptance. November 5 validation
 finished: two grids passed; the third exhausted GPU memory during scaling.
 The memory-corrected retry also finished with two PASS and a GPU allocation
-failure at 240x40. No job is live and no further retry is authorised.
+failure at 240x40. The November 5 “go fix it” authorises the memory
+investigation below; physical settings and acceptance gates remain fixed.
 No old queue is authorised. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
+
+## Full-size memory diagnostic — November 5
+
+Job `railgun-memory-20261105T062442`, first node/card 0, source **778315725**,
+started **09:24:42 MSK**, ended **09:24:50 MSK**, exit 1 (0.0022 h).
+Supervisor PID 105747. One actual 240x40 Jacobian,
+row scaling and LU, without a stationary search or independent physics checks.
+Logs/layouts/compiler reports: `runs/optimisation/railgun-memory-20261105T062442/`.
+Cap 0.25 h (hard stop 09:39:42 MSK), four threads, 160 GiB, float64/platform
+allocator, chunk 256, checkpoints OFF. Finished; no ETA. No evolution t or u/h applies. Both cards idle before start;
+scratch clean, 4 KB cache / 303 GB free. Second node not listed. No plotfiles
+or queued restart dependencies. This isolates the full-size allocation path
+before another three-grid validation; no physics gates are relaxed.
+
+**Cause isolated:** synchronizing immediately after Jacobian assembly fails
+in `jit_jac`, before scaling is called. Earlier asynchronous dispatch propagated
+that error into `jit_equilibrate`/`jit_multiply`, misidentifying its source.
+`lax.map` materialises padded column blocks, then slices and transposes the
+whole matrix; the compiler reports 78.73 GiB and requests 52.51 GiB temporary
+space beside the 26.23 GiB output. The correction fills a single loop-carried
+matrix in column blocks; the last block overlaps instead of padding. Every
+entry remains the same exact directional derivative. Small regression and
+full-size allocation checks precede another three-grid solve. Both cards
+returned to 0 MiB; scratch remains 4 KB / 303 GB free.
 
 ## Finished memory-corrected retry — November 5
 

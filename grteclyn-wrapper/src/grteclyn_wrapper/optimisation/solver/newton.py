@@ -34,8 +34,7 @@ def _donating_equilibrator():
     """Scale rows while reusing the consumed Jacobian's device buffer.
 
     A separate broadcast multiply can allocate layout-conversion temporaries
-    as well as its output: the 240x40 throat run requested 52.51 GiB here on
-    top of its 26.23 GiB Jacobian. Fusing the reduction and scaling permits
+    as well as its output. Fusing the reduction and scaling permits
     input/output aliasing; the returned matrix is then donated to LU too.
     """
     import jax
@@ -106,6 +105,10 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
             # obsolete before building the next Jacobian, not after its LU.
             lu = piv = None
             jac = jacobian(u)
+            # JAX dispatch is asynchronous: report assembly failures here,
+            # before a later scaling call can inherit and mislabel the error.
+            if hasattr(jac, 'block_until_ready'):
+                jac.block_until_ready()
             jac_evals += 1
             if jac_evals == 1:
                 cuda = _cuda_backend(jac)

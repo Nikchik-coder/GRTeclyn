@@ -7,7 +7,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
+import subprocess
 import time
 
 
@@ -34,8 +36,13 @@ def main():
     device = jax.devices()[0]
 
     def mark(stage, **extra):
+        gpu = subprocess.run(
+            ['nvidia-smi', '-i', os.environ.get('CUDA_VISIBLE_DEVICES', '0'),
+             '--query-gpu=memory.used,memory.total', '--format=csv,noheader,nounits'],
+            capture_output=True, text=True, timeout=10)
         print(json.dumps(dict(stage=stage, monotonic=time.monotonic(),
-                              device_memory=device.memory_stats(), **extra), default=str), flush=True)
+                              device_memory=device.memory_stats(),
+                              used_total_MiB=gpu.stdout.strip(), **extra), default=str), flush=True)
 
     def report(name, compiled):
         (args.out/f'{name}.hlo').write_text(compiled.as_text())
@@ -48,6 +55,13 @@ def main():
     operation = _donating_equilibrator()
     compiled = operation.lower(jax.ShapeDtypeStruct((len(seed), len(seed)), np.float64)).compile()
     report('scaling_abstract', compiled)
+    # Preserve the producer's actual executable allocation, not just the
+    # downstream scaling report. The wrapper supplies its scalar border.
+    producer = problem._jit_jacobian.lower(seed, problem.value).compile()
+    report('jacobian', producer)
+    allocation = producer.memory_analysis()
+    if allocation is None or allocation.temp_size_in_bytes >= len(seed)**2*8:
+        raise RuntimeError('Jacobian assembly still requires a full-matrix temporary')
     jac = problem.jacobian(seed)
     jac.block_until_ready()
     mark('jacobian_ready', format=str(jac.format), committed=jac.committed,
