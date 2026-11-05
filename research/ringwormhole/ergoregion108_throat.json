@@ -1,0 +1,53 @@
+{
+  "target": {
+    "source_directory": "results/railgun/studies/ergoregion-cma/finalists/01",
+    "source_sha256": {
+      "grid_192x24.npz": "b388c497340b8f1dcaf4e5fe6ead0cad734f21cb815131c7972f01dcbe264bfb",
+      "grid_192x24.json": "eb66aefaab6398af40b0e27be84b1dade0b7e920b99d924bc2397661605d6a5b",
+      "outcome.json": "2af9ae89b801e82c0581ee3f8aac56e0e23916b0d82a519c1b8d6ca6d6cd6f16"
+    },
+    "throat_radius": 2.0,
+    "grids": [
+      [
+        210,
+        36
+      ],
+      [
+        224,
+        38
+      ],
+      [
+        240,
+        40
+      ]
+    ],
+    "tidal_factor": 4.0,
+    "energy_budget": 1.0,
+    "control_J_step": 0.1,
+    "max_control_steps": 0,
+    "max_solves": 3,
+    "max_newton_iterations": 24,
+    "wall_seconds": 3600,
+    "threads": 4,
+    "memory_gib": 160,
+    "checkpoints": false,
+    "geometry": "matching rings at both mouths; nonrotating infinities",
+    "phantom_potential": "V=0 throughout",
+    "stage": "ring_ergoregion",
+    "independent_points": [
+      49,
+      21
+    ],
+    "source_grid": [
+      192,
+      24
+    ]
+  },
+  "restart_source": "runs/ringwormhole/ergoregion108_continuation_20261105/ring/diagnostic_240x40.npz",
+  "restart_sha256": "2251de6ec0efe948552ddd94ff649296f4093e834a8543d837bd8bc41e7eac06",
+  "max_attempts": 8,
+  "amplitude_growth": 1.2,
+  "min_amplitude_step": 1e-05,
+  "min_damping": 0.000244140625,
+  "continuation_anchor": "throat"
+}

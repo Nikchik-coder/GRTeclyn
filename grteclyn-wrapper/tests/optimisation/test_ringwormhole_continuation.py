@@ -58,3 +58,23 @@ def test_failed_solve_retains_raw_iterate_and_history(tmp_path,monkeypatch):
         assert z['u'][0]==.5
         meta=json.loads(str(z['metadata']))
     assert meta['accepted'] is False and meta['newton']['res_history']==[1.,.5]
+
+
+def test_throat_reanchor_preserves_the_seed_and_uses_cma_throat_target(tmp_path,monkeypatch):
+    import hashlib
+    from grteclyn_wrapper.optimisation import exploration as e
+    p=plan();p.update(continuation_anchor='throat',max_attempts=8)
+    s=m.bridge.ellis(2.,6,3);s['Z']=np.full_like(s['F'],.3);s['frequency']=.8
+    c=dict(m=0.,q=[0.,0.,0.],gamma=0.,rotation_control='nonrotating_ends',
+           matter='winding',winding_k=1,matter_mass=1.,amplitude=.1,zeta_anchor_xi=.48)
+    mapped=dict(s,Z=np.full_like(s['Z'],.39))
+    path=tmp_path/'restart.npz';path.write_bytes(b'pinned restart')
+    p.update(restart_source=str(path),restart_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+    monkeypatch.setattr(e,'load_seed',lambda path:(s,dict(config=c,pin=['minimal_area',16*np.pi])))
+    monkeypatch.setattr(m.bridge,'prepare_seed',lambda p:(mapped,c.copy()))
+    state,config,target=m.initial_state(p)
+    assert state is s and target==pytest.approx(.39)
+    assert config['zeta_anchor_xi']==0 and config['amplitude']==pytest.approx(.3)
+    assert c['zeta_anchor_xi']==.48
+    p['max_attempts']=32
+    with pytest.raises(ValueError):m.validate_plan(p)

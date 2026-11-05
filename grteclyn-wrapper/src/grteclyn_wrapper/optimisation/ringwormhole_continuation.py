@@ -15,7 +15,10 @@ from . import railgun_wormhole as bridge
 
 def validate_plan(plan):
     bridge.validate_plan(plan['target'])
-    if (plan['max_attempts'] != 32 or plan['amplitude_growth'] != 1.2
+    anchor=plan.get('continuation_anchor','outer')
+    if anchor not in ('outer','throat'):
+        raise ValueError('unknown amplitude continuation anchor')
+    if (plan['max_attempts'] != (8 if anchor=='throat' else 32) or plan['amplitude_growth'] != 1.2
             or plan['min_amplitude_step'] != 1e-5 or plan['min_damping'] != 1/4096
             or len(plan['restart_sha256']) != 64):
         raise ValueError('undeclared continuation budget')
@@ -35,8 +38,11 @@ def initial_state(plan):
         raise ValueError('restart model mismatch')
     if meta.get('pin')!=['minimal_area',16*np.pi]:
         raise ValueError('restart area mismatch')
-    _,config=bridge.prepare_seed(plan['target'])
+    mapped,config=bridge.prepare_seed(plan['target'])
     target=config['amplitude']
+    if plan.get('continuation_anchor')=='throat':
+        config['zeta_anchor_xi']=0.
+        target=matter_anchor(mapped['Z'],mapped['sx'],config)
     config['amplitude']=matter_anchor(state['Z'],state['sx'],config)
     if not 0<config['amplitude']<target:
         raise ValueError('continuation must increase a positive amplitude')
@@ -147,7 +153,8 @@ def main():
     plan=json.loads(Path(a.config).read_text());s,c,target=initial_state(plan)
     if not a.run:
         print(json.dumps(dict(status='PREPARED_ONLY',start_amplitude=c['amplitude'],
-             target_amplitude=target,max_attempts=32,validation_grids=plan['target']['grids'])));return 0
+             target_amplitude=target,max_attempts=plan['max_attempts'],
+             validation_grids=plan['target']['grids'])));return 0
     if a.gpu is None:p.error('explicit GPU required')
     from .solver.device import select_device,configure_jax
     select_device(a.gpu,256);jax=configure_jax()

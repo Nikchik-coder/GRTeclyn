@@ -6,16 +6,22 @@ Current findings only; detailed run records and numerical checks are in
 
 ## Live
 
-**Running: `ringwormhole-cont108-20261105T074046`**, first node/card 0.
-Frozen source `e9b8aa2d1`; started **Nov 5 10:40:46 MSK**.
-Physical amplitude continuation from the accepted weak ring: 0.0284222725
-at the CMA-derived anchor toward 0.2846529189, at most 32 attempts plus
-three final validation solves. No evolution time; solve speed not yet measured.
-One hour / four threads / 160 GiB, checkpoints OFF; hard stop **11:40:46 MSK**.
-Estimated duration **0.25–0.75 h (10:56–11:26 MSK)**, pending first steps.
-Startup storage: scratch clean, **4 KB cache / 302 GB free**;
-second node not listed. Output `runs/ringwormhole/ergoregion108_continuation_20261105/`;
-log under the job name in `runs/capped_jobs/`. No follow-on queued.
+No live run. Outer-amplitude continuation `ringwormhole-cont108-20261105T074046`
+ended **Nov 5 11:05:05 MSK**, exit 2, after **0.405 h** on first node/card 0
+(source `e9b8aa2d1`). 31 continuation attempts, then three final solves;
+109 CUDA tests passed. All final physical checks passed; the original
+exterior-ring preference alone rejected every grid. The subsequent clarification
+allows matter overlapping the throat; assess saved rows separately without
+changing their original verdicts. Both GPUs idle. Scratch clean:
+**4 KB cache / 302 GB free**; second node not listed. No remaining run ETA.
+
+Prepared numerical reconfiguration within the authorized retry: control scalar
+amplitude on the throat, where it remains increasing, rather than at the outer
+anchor that stalled near 0.1913. Start from the refined 240x40 field, target the
+same mapped CMA seed's throat amplitude **0.3884042904**. Up to eight attempts
+and three final validation solves; at most **0.333 h**, bounded by the original
+**11:40:46 MSK** deadline, GPU 0 / four threads / 160 GiB / checkpoints OFF.
+[Configuration](ergoregion108_throat.json), [dispatcher](run_ergoregion108_throat.sh).
 
 ## Planned (nothing launches without the go)
 
@@ -71,6 +77,21 @@ Retry output: `runs/ringwormhole/ergoregion108_continuation_20261105/`.
 - Test qualified configurations in time evolution before making a stability claim.
 
 ## Main results
+
+**Stronger throat-overlapping matter (Nov 5):** three grids
+210x36 / 224x38 / 240x40 give X_full **2.491951887687**, or
+**20.678708% below static Ellis** at the same area.
+Finest throat shift/lapse **0.7584879785**, max throat g_tt **-0.0851191289**:
+no sampled throat ergoregion. E_b/R_A **0.8883857544**, peak tide
+**0.2207550586 < 0.3333333333**. Independent Einstein/scalar errors
+**6.16e-12 / 1.40e-11** on 49x21 points; each final solve recovered a 1e-6
+perturbation in two Newton updates. Finest-pair X_full drift **6.16e-11**.
+Matter density peaks on the throat. Original diagnostics reject only the
+exterior-ring preference; overlapping matter is now allowed. No new same-spin
+control or stability result. Fields/logs remain in
+`runs/ringwormhole/ergoregion108_continuation_20261105/` (11 MB);
+one-second sampled GPU peak **54665 MiB**. No NaN/OOM/traceback in its own log.
+
 
 **Model:** a two-ended wormhole surrounded by matching ordinary scalar rings,
 adapted from the weak railgun ring. True minimal throat area **16 pi (R_A=2)**,
