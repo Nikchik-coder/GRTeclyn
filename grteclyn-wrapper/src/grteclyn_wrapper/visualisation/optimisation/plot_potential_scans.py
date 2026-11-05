@@ -35,7 +35,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style
 
 REPO = pathlib.Path(__file__).resolve().parents[5]
 OPT = REPO / "results" / "optimisation" / "opt"
-OUT = REPO / "results" / "optimisation" / "figures" / "search" / "potential_scans"
+OUT = REPO / "results" / "optimisation" / "figures" / "coverage" / "potential_scans"
 # Explicit provenance: no glob can silently substitute an older search.
 SEARCHES = (
     ("Drainhole", "D0", "fam_a_r1_0000_opt4s_150x30_d0.tsv"),

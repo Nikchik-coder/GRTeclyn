@@ -4,11 +4,11 @@ Campaign F (plan: `research/optimisation/Quantum Budget Wormhole Search.md`,
 status: `research/optimisation/STATUS.md`).  Everything here rebuilds from a
 clean checkout on CPU; no run output is involved.
 Figures live under [`figures/`](figures/README.md), grouped by meaning:
-search, stationary, evolution, quantum-budget and setup.
+search, coverage, stationary, evolution and setup.
 
 ## Campaign M search figures
 
-`figures/search/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
+`figures/coverage/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
 fixed-spin CMA-ES searches through 2026-10-30, replacing the earlier
 fixed-mass slice overview. Rebuild with the wrapper Python and
 `-m grteclyn_wrapper.visualisation.optimisation.plot_potential_scans`.
@@ -98,7 +98,6 @@ stay under `physics/`. The redundant NEC map and trade-off plot are removed.
 | `binaries.tsv` | Campaign M GRTeclyn evolution builds and provenance | `grteclyn-wrapper/scripts/campaigns/optimisation/build_binary.sh` |
 | `fcurve/f_curve.tsv` | one row per solution of both spin families (200 saved solutions + 2 synthesized static anchors): the Ford–Roman compliance factor fhat, its normalizations, gates | `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/quantum_budget/measure_f.py` |
 | `fcurve/measurement.json` | the measurement's configuration and provenance | written by the same script |
-| `figures/quantum-budget/f_curve.png` | log10 F at a 1 m throat against v_e | `.../plot_f_curve.py` |
 
 Definitions (one place: `grteclyn_wrapper/analysis/quantum_budget/conventions.py`):
 fhat is F with the code length unit read as one Planck length;
