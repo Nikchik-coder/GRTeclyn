@@ -6,23 +6,20 @@ Current findings only; detailed run records and numerical checks are in
 
 ## Live
 
-No live run. Direct CMA-seed insertion `ringwormhole-ergo108-20261105T072903`
-ended **Nov 5 10:33:09 MSK**, exit 2, after 0.068 h on first node/card 0.
-The first 210x36 solve stalled before any accepted Newton update at residual
-**3.492e-3** (25.62 s); finer grids did not run. 102 CUDA tests passed.
-No coupled ergoregion or exoticity result. Saved mapped seed, static reference,
-checks and log remain in `runs/ringwormhole/ergoregion108_20261105/` and
-its `runs/capped_jobs/` directory. Sampled GPU peak **34487 MiB**.
-Both cards idle; scratch clean, **4 KB cache / 303 GB free**;
-second node not listed. No remaining ETA.
-
-Retry/reconfiguration authorized November 5: physical amplitude continuation
-from the validated weak ring, with the same R_A=2, V=0, nonrotating infinities,
-canonical scalar, final grids, acceptance gates and resource caps.
+**Running: `ringwormhole-cont108-20261105T074046`**, first node/card 0.
+Frozen source `e9b8aa2d1`; started **Nov 5 10:40:46 MSK**.
+Physical amplitude continuation from the accepted weak ring: 0.0284222725
+at the CMA-derived anchor toward 0.2846529189, at most 32 attempts plus
+three final validation solves. No evolution time; solve speed not yet measured.
+One hour / four threads / 160 GiB, checkpoints OFF; hard stop **11:40:46 MSK**.
+Estimated duration **0.25–0.75 h (10:56–11:26 MSK)**, pending first steps.
+Startup storage: scratch clean, **4 KB cache / 302 GB free**;
+second node not listed. Output `runs/ringwormhole/ergoregion108_continuation_20261105/`;
+log under the job name in `runs/capped_jobs/`. No follow-on queued.
 
 ## Planned (nothing launches without the go)
 
-**Retry in preparation: continuation toward the CMA-derived amplitude border.**
+**Retry running: continuation toward the CMA-derived amplitude border.**
 [Retry configuration](ergoregion108_continuation.json),
 [dispatcher](run_ergoregion108_continuation.sh). Start at the accepted weak-ring
 fields, reanchor the same solution at xi=0.4877785081 (amplitude 0.0284222725),
@@ -98,6 +95,18 @@ failures were fixed before these successful runs; operational notes are in
 the local `CLUSTER_GPU.local.md` runbook.
 
 ## Saved evidence
+
+Previous direct CMA-seed insertion `ringwormhole-ergo108-20261105T072903`
+ended **Nov 5 10:33:09 MSK**, exit 2, after 0.068 h on first node/card 0.
+The first 210x36 solve stalled before any accepted Newton update at residual
+**3.492e-3** (25.62 s); finer grids did not run. 102 CUDA tests passed.
+No coupled ergoregion or exoticity result. Saved mapped seed, static reference,
+checks and log remain in `runs/ringwormhole/ergoregion108_20261105/` and
+its `runs/capped_jobs/` directory. Sampled GPU peak **34487 MiB**.
+Both cards idle; scratch clean, **4 KB cache / 303 GB free**;
+second node not listed. No remaining ETA.
+
+
 
 | Study | Frozen source | Finished MSK | Output on persistent storage |
 |---|---|---|---|
