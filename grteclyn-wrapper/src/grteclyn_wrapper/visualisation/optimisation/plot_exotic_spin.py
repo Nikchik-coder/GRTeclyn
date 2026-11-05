@@ -13,7 +13,7 @@ from grteclyn_wrapper.visualisation.spinning_wormhole.solutions import load as l
 from grteclyn_wrapper.visualisation.wormhole_merger import style
 from .palette import BLUE, LIGHT_BLUE, INK
 from .paper_results import REPO, load_models
-OUT = REPO / 'results/optimisation/figures'
+OUT = REPO / 'results/optimisation/figures/stationary'
 REFINED = {
     'D0': 'validation/2026-10-30-alternatives/d0/009_e0211/handoff.npz',
     'D30': 'completed/2026-10-31/d30/fam_a_r1_0005_cma_resolution_20261030_best_clean.npz',

@@ -34,7 +34,7 @@ def read_rows(path: Path) -> list[dict]:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--tsv", default="results/optimisation/fcurve/f_curve.tsv")
-    ap.add_argument("--out", default="results/optimisation/figures/f_curve.png")
+    ap.add_argument("--out", default="results/optimisation/figures/quantum-budget/f_curve.png")
     args = ap.parse_args()
 
     rows = read_rows(Path(args.tsv))

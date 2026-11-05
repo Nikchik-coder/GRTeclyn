@@ -21,7 +21,7 @@ from .palette import BLUE, LIGHT_BLUE, INK, GREY, RESOLUTIONS
 
 REPO = Path(__file__).resolve().parents[5]
 PACKED = REPO / "results/optimisation/campaign"
-FIGURES = REPO / "results/optimisation/figures"
+FIGURES = REPO / "results/optimisation/figures/evolution"
 RUNS = tuple((n, f"D21_X1p829_L64_N{n:03d}_ml3_spdrv0_t150") for n in (96, 128, 192))
 R_EXACT = 4.063830498135651
 TIMES = (10., 20., 30., 40., 50.)

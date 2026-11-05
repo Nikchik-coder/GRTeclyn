@@ -30,7 +30,7 @@ from .paper_results import REPO
 
 CLASSICAL = REPO / "results/spinningwormhole/campaign/drainhole/00_paper_runs"
 POTENTIAL = REPO / "results/optimisation/campaign/D21_X1p829_L64_N128_ml3_spdrv0_t150"
-FIGURES = REPO / "results/optimisation/figures"
+FIGURES = REPO / "results/optimisation/figures/evolution"
 GROWTH_TABLE = REPO / "results/optimisation/article/instability_curve.tsv"
 MODELS = ("D0", "D21", "D30", "D40", "D46", "D51")
 

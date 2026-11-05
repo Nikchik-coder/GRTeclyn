@@ -12,7 +12,7 @@ from .palette import BLUE, INK
 
 ROOT = resolve_repo_root()
 DATA = ROOT/'results/optimisation/physics'
-OUT = ROOT/'results/optimisation/figures'
+OUT = ROOT/'results/optimisation/figures/stationary'
 
 
 def key(ax):

@@ -316,7 +316,7 @@ The parameter projections show which combinations were sampled, rather than an i
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{potential_scans.pdf}
+\includegraphics[width=\textwidth]{search/potential_scans.pdf}
 \caption{CMA-ES exploration of the four potential parameters at fixed $R_e$ and $J$, for the drainhole (top) and symmetric (bottom) families. Panels (a,b,d,e) project recorded proposals, coloured by evaluation order; diamonds mark each search's lowest $X$ with both background-constraint residuals below $10^{-6}$. The $q_3$ axes are symmetric-logarithmic, linear for $|q_3|\le1$. Panels (c,f) show the running minimum relative to the first candidate below that threshold. The searches concentrate in distinct parameter regions and approach plateaus at different rates.}
 \label{fig:search-regions}
 \end{figure*}
@@ -406,7 +406,7 @@ The search finds lower exoticity at most of the sampled rotations in both famili
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{exotic_spin.pdf}
+\includegraphics[width=\columnwidth]{stationary/exotic_spin.pdf}
 \caption{Exoticity relative to each family's massless static member, against the reference rotation $v_e$. D and S denote drainhole and symmetric families. Black curves show the massless solutions; blue markers show selected potential-bearing solutions. Filled markers identify the five $210\times42$ backgrounds; open markers show search-grid candidates. Curves are shape-preserving interpolants through the sampled values, used as visual guides within the sampled ranges. Most selected solutions require less exotic matter than their massless counterparts.}
 \label{fig:exotic}
 \end{figure}
@@ -441,7 +441,7 @@ these two numerical setups rather than a controlled potential-only effect.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{contraction_delay.pdf}
+\includegraphics[width=\columnwidth]{evolution/contraction_delay.pdf}
 \caption{Time to the first $1\%$ decrease in throat areal radius at $N=128$, for classical (black circles) and optimized (open blue squares) runs. Crossings are interpolated between saved samples; lines join measured points, and grey segments show the delay. Horizontal positions use the classical reference spins. D21$^\star$ has the spin and damping differences described in the text. Every optimized run reaches this contraction threshold later; the classical D46 subsequently reverses and expands.}
 \label{fig:delay}
 \end{figure}
@@ -456,7 +456,7 @@ The growth rate answers a separate question: how rapidly does contraction amplif
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{instability_curve.pdf}
+\includegraphics[width=\columnwidth]{evolution/instability_curve.pdf}
 \caption{Measured growth rates at $N=128$ for the classical models and five potential-bearing solutions (open blue squares). Positions retain $8\pi J/A$; ticks name the classical references. Grey and blue curves fit $a-b(8\pi J/A)^2$ to contracting models; the dashed blue extension is an extrapolation, not a measured stability threshold. Over the common $0.2$--$1\%$ contraction interval, the potential lowers the rate for D0--D30 but raises it at D40. The two D46 points describe contraction with the potential and expansion without it.}
 \label{fig:growth}
 \end{figure}
@@ -485,7 +485,7 @@ The solver, optimization and figure-generation scripts are available in the \tex
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{convergence_d21.pdf}
+\includegraphics[width=\textwidth]{evolution/convergence_d21.pdf}
 \caption{Resolution study of D21$^\star$ at $N=96,128,192$. Top two rows: Hamiltonian and momentum constraint norms through $t=50$; grey dashed and dotted curves multiply the finest-grid norms by $2^2$ and $2^4$. Bottom row: fractional equatorial- and areal-radius changes, the change in $r\,\mathrm{Re}\,\Psi_4^{20}$ at $r=14$, and minimum lapse over each recorded history. Near-throat constraints scale approximately at fourth order early on; the later contraction begins at resolution-dependent times.}
 \label{fig:conv}
 \end{figure*}

@@ -13,7 +13,7 @@ evaluation order).  Default: the packed D51 drainhole search.
     python -m grteclyn_wrapper.visualisation.optimisation.plot_cma_progress
     ... plot_cma_progress --tsv <path>
 
-Writes ``results/optimisation/figures/cma_progress_d51`` (PNG + PDF).
+Writes ``results/optimisation/figures/search/cma_progress_d51`` (PNG + PDF).
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 REPO = pathlib.Path(__file__).resolve().parents[5]
 PACKED = REPO / "results" / "optimisation" / "opt"
 RUNS = REPO / "runs" / "optimisation" / "opt"
-OUT = REPO / "results" / "optimisation" / "figures" / "cma_progress_d51"
+OUT = REPO / "results" / "optimisation" / "figures" / "search" / "cma_progress_d51"
 DEFAULT_TSV = "fam_a_r1_0012_opt4s_150x30.tsv"
 GATED = ("PASS", "FRONTIER")
 TIGHT = dict(handlelength=1.6, handletextpad=0.4, columnspacing=0.8,

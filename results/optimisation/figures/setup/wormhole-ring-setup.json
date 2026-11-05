@@ -1,0 +1,19 @@
+{
+  "kind": "setup schematic; not a numerical field reconstruction",
+  "run": "railgun-throat-20261104T201026",
+  "source_commit": "1bb61204b3d4bcf378c0dddf788a481d77f2834a",
+  "configuration": "research/optimisation/studies/railgun_throat.json",
+  "diagnostic_source": "research/optimisation/STATUS.md",
+  "diagnostic_grid": [
+    210,
+    36
+  ],
+  "throat_area_radius": 2.0,
+  "ring_peak_circumferential_radius_rounded": 6.77122,
+  "geometry": "matching scalar ring lobes on the two sides of one throat",
+  "artwork": "Qualitative blue tails, throat disk and embedding wireframe; no density data inferred",
+  "arrows": "White: matter angular momentum; purple: induced frame dragging. No angular speeds encoded.",
+  "validation": "Finest grid passed; campaign three-grid acceptance failed. No stability or reduction claim depicted.",
+  "label_audit": [],
+  "rebuild": "grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_wormhole_ring_setup"
+}

@@ -3,10 +3,12 @@
 Campaign F (plan: `research/optimisation/Quantum Budget Wormhole Search.md`,
 status: `research/optimisation/STATUS.md`).  Everything here rebuilds from a
 clean checkout on CPU; no run output is involved.
+Figures live under [`figures/`](figures/README.md), grouped by meaning:
+search, stationary, evolution, quantum-budget and setup.
 
 ## Campaign M search figures
 
-`figures/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
+`figures/search/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
 fixed-spin CMA-ES searches through 2026-10-30, replacing the earlier
 fixed-mass slice overview. Rebuild with the wrapper Python and
 `-m grteclyn_wrapper.visualisation.optimisation.plot_potential_scans`.
@@ -19,7 +21,7 @@ Each progress curve is divided by its own first qualifying candidate's X.
 Evaluation numbers are TSV row indices; inadmissible proposals rejected before
 the Newton solve are absent from these TSVs. Extension trials are excluded.
 
-`figures/cma_progress_d21.{png,pdf}` uses
+`figures/search/cma_progress_d21.{png,pdf}` uses
 `opt/fam_a_r1_0000_opt4s_150x30_kink.tsv`. Rebuild with
 `-m grteclyn_wrapper.visualisation.optimisation.plot_cma_progress --tsv`
 followed by that file path. It shows the same constraint threshold, a running
@@ -28,7 +30,7 @@ minimum, and an inset resolving the second half of the recorded search.
 ## Campaign M article tables and resolution study
 
 `article/ledger_models.tsv` selects the parameter and exoticity tables and
-the original search-grid points in `figures/exotic_spin.{png,pdf}`. The spin
+the original search-grid points in `figures/stationary/exotic_spin.{png,pdf}`. The spin
 figure now replaces D0/D21/D30 with their selected 210x42 fields and adds
 the validated D40/D46 finalists. Filled squares identify these five fine-grid
 solutions; open markers retain the other search-grid selections. Squares and
@@ -44,7 +46,7 @@ Rebuild with `-m grteclyn_wrapper.visualisation.optimisation.plot_exotic_spin`.
 See `article/README.md` for table provenance and the claims checker.
 
 `campaign/` contains the final D21 N96/N128/N192 diagnostic streams and
-numerical settings. Rebuild `figures/convergence_d21.{png,pdf}` with
+numerical settings. Rebuild `figures/evolution/convergence_d21.{png,pdf}` with
 `-m grteclyn_wrapper.visualisation.optimisation.plot_convergence`.
 The plot and measured order table use these tracked inputs. Constraint orders
 are measured through t=50; the later diagnostic histories show contraction.
@@ -85,7 +87,7 @@ interval. These exploratory outputs are excluded from article figures.
 fixed-J massless references. Optimisation localises the scalar gradients:
 the total exoticity decreases while peak NEC violation, peak tides and
 finite-endpoint light transit increase. See [definitions, results and
-checks](physics/README.md). The article uses `figures/mechanism_d21` and a
+checks](physics/README.md). The article uses `figures/stationary/mechanism_d21` and a
 comparison table from `article/ledger_physics.tsv`; the numerical profiles
 stay under `physics/`. The redundant NEC map and trade-off plot are removed.
 
@@ -96,7 +98,7 @@ stay under `physics/`. The redundant NEC map and trade-off plot are removed.
 | `binaries.tsv` | Campaign M GRTeclyn evolution builds and provenance | `grteclyn-wrapper/scripts/campaigns/optimisation/build_binary.sh` |
 | `fcurve/f_curve.tsv` | one row per solution of both spin families (200 saved solutions + 2 synthesized static anchors): the Ford–Roman compliance factor fhat, its normalizations, gates | `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/quantum_budget/measure_f.py` |
 | `fcurve/measurement.json` | the measurement's configuration and provenance | written by the same script |
-| `figures/f_curve.png` | log10 F at a 1 m throat against v_e | `.../plot_f_curve.py` |
+| `figures/quantum-budget/f_curve.png` | log10 F at a 1 m throat against v_e | `.../plot_f_curve.py` |
 
 Definitions (one place: `grteclyn_wrapper/analysis/quantum_budget/conventions.py`):
 fhat is F with the code length unit read as one Planck length;
