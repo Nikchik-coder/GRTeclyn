@@ -339,6 +339,36 @@ fields and diagnostics persist on NFS. `--run` needs a fresh go for this
 replacement configuration. There are no retries, automatic stronger-ring
 steps, one-mouth continuations or resumed optimisation searches.
 
+### Same-angular-momentum control after ring qualification
+
+The November 5 ring passed 210x36 / 224x38 / 240x40. Its separate comparison
+is prepared in `research/optimisation/studies/railgun_matched_control.json`;
+the entry point is `grteclyn_wrapper.optimisation.railgun_control`. This stage
+reads the hash-pinned accepted ring and its same-area static reference without
+changing either archive. A fresh ring-free V=0, gamma=0 solution continues
+from Ellis to the measured J+=-0.9477747390613108 in ten fixed steps no larger
+than 0.1. The true minimal throat area remains 16 pi throughout. Its far-end
+rotating frame can differ from the ring solution's nonrotating ends.
+
+Three fresh perturbed recoveries on the ring's grids then use the unchanged
+49x21 independent equations, minimum-surface, phantom interval, volume,
+angular-momentum and tidal gates. A failed walk or refinement gives no matched
+reduction. A successful comparison records a signed fractional reduction;
+negative values mean the ring uses more phantom support than the control.
+
+```bash
+bash research/optimisation/studies/run_railgun_matched_control.sh 0 \
+  runs/optimisation/railgun_matched_control_20261105
+```
+
+Preview starts no JAX/GPU and writes nothing. Proposed cap: thirteen solves
+(ten continuation steps plus three refinements), 24 Newton iterations each,
+one hour including CUDA tests, four CPU threads and 160 GiB host address
+space, float64/platform allocator, chunk 256, first node/card 0. AMR
+checkpoints are proposed OFF; stationary fields/logs stay on NFS. The new
+control requires its own run-specific go and checkpoint decision before
+`--run`. Stronger-ring and evolution stages are not dispatched by this runner.
+
 ## Older S0-seeded wormhole/ring pilot (stopped November 4)
 
 `research/optimisation/studies/wormhole_ring.toml` prepares a bounded pilot

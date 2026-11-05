@@ -2,11 +2,47 @@
 
 **Weak railgun ring around the wormhole: all three grids PASS.**
 The corrected November 5 validation finished at **09:40:51 MSK**, exit 0.
-No optimisation job is live or queued. The older S0 pilots remain stopped;
+No optimisation job is live or queued. The same-spin control is prepared
+below for a separate launch decision. The older S0 pilots remain stopped;
 this result uses the archived weak railgun ring with a two-ended throat.
 Matching ring lobes surround both mouths, with nonrotating infinities and
 matter-induced dragging. Stronger rings, matched-spin controls and evolution
 remain separate follow-up work; no automatic follow-on is authorised.
+
+## Prepared next stage — ring-free matched-spin control
+
+[Configuration](studies/railgun_matched_control.json),
+[preview/dispatcher](studies/run_railgun_matched_control.sh),
+implementation `grteclyn_wrapper.optimisation.railgun_control`.
+The continuing plan prepares this comparison first. **No GPU startup has
+occurred for this stage.** A run-specific go and checkpoint decision are
+required by root AGENTS.md before startup. Proposed checkpoints OFF;
+stationary fields/logs retained. Preview and shell syntax checks pass;
+**70 targeted CPU tests pass** for this control and solver/area regressions.
+
+Read-only reference: the accepted November 5 ring, SHA256
+`4c3a266ba19be7af214ef41c612644113053bfeb20d2b6887fb105d6f8bf8c3b`,
+and its hash-pinned static reference. Both are on the first node's NFS.
+No ring re-solve or change to its amplitude. Fresh V=0, gamma=0 ring-free
+control starts from static Ellis and walks ten fixed J steps of at most 0.1
+to **J+=-0.9477747390613108**, holding true minimal area **16 pi (R_A=2)**.
+The control can have a different far-end rotating frame because its spin
+is carried by the wormhole rather than canonical matter.
+
+Then 210x36 / 224x38 / 240x40: fresh 1e-6 seed perturbations and at least
+one Newton correction, target 1e-14, unchanged independent equations on
+49x21 points, minimum-surface, volume, interval, spin-match and tidal gates.
+No matched reduction is recorded if a continuation or final check fails.
+A signed comparison can show the ring improves on or loses to the control.
+
+Proposed first node/card 0; **13 solves maximum**, 24 Newton iterations per
+solve, 1 h hard cap including CUDA tests, four threads, 160 GiB host address
+space, float64/platform allocator, no preallocation, chunk 256. Expected
+0.05–0.25 h after startup; no clock ETA until launch. Fresh output proposed:
+`runs/optimisation/railgun_matched_control_20261105/`. Stop after this
+comparison; stronger-dragging continuation and evolution get separate scopes.
+Last read-only check: both cards idle, scratch 4 KB cache / 303 GB free;
+second node not listed. No scratch plotfiles/checkpoints or restart dependency.
 
 ## Completed three-grid verification — November 5
 
