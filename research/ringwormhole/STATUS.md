@@ -8,21 +8,24 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-**Running: `ringwormhole-spin-ring-20261105T090701`**, first node/card 0.
-Frozen source `985121bb7`; started **Nov 5 12:07:01 MSK**. Independent
-wormhole spin + rotating matter, then the ring-free control at identical
-R_A=2 and total J+ = -0.7963901140. Four continuation steps and three final
-grids per arm, **14 solves maximum**, 24 Newton updates each. Stationary
-(no evolution time); solve speed not yet measured. One hour / four threads /
-160 GiB, CUDA float64/platform allocator/chunk 256, checkpoints OFF.
-Estimated duration **0.15–0.25 h (12:16–12:22 MSK)**; hard stop **13:07:01 MSK**.
-Startup storage: scratch clean, **4 KB cache / 302 GB free**; second node
-not listed. Output `runs/ringwormhole/spin_ring_co_rotating_20261105/`;
-log under the job name in `runs/capped_jobs/`. No follow-on queued.
+**Coupled arm finished; the already approved control arm remains queued.**
+`ringwormhole-spin-ring-20261105T090701` (source `985121bb7`) ran
+**Nov 5 12:07:01–12:12:33 MSK**, exit 2. Four continuation solves and three
+final re-solves converged; all physical checks pass, but the measured
+geometric and matter fluxes oppose. This is a **counter-rotating diagnostic**,
+not the intended co-rotating configuration. 125 CUDA regressions passed.
+
+Complete only the original ring-free control: same pinned seed, target
+J+ = -0.7963901140, four steps and 210x36 / 224x38 / 240x40 checks.
+**Seven solves remain; total stays at 14.** No coupled solve is retried.
+The original one-hour deadline **13:07:01 MSK**, four threads / 160 GiB /
+checkpoints OFF remain. Remaining-arm dispatch being prepared; both GPUs
+idle. Scratch clean, **4 KB cache / 302 GB free**; second node not listed.
+Original coupled output `runs/ringwormhole/spin_ring_co_rotating_20261105/`.
 
 ## Planned (nothing launches without the go)
 
-**Approved and running: independently spinning wormhole plus co-rotating matter.**
+**Approved paired experiment: intended co-rotation produced counter-rotation.**
 [Configuration](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_co_rotating.json),
 [launcher](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/run_spin_ring.sh).
 Start from the accepted overlapping-matter point (20.678708% static reduction),
@@ -55,6 +58,19 @@ counter-rotating case.
 - Test stationary qualified configurations in evolution before assessing stability.
 
 ## Main results
+
+**Independent-spin pilot, coupled arm:** equations, geometry, energy and
+tides pass on all three grids. X_full **2.498042477464**, or
+**20.484838% below static**. Geometric flux at xi=0
+**+0.09154397967** opposes matter flux **-0.8879340937**; their sum gives
+J+ **-0.7963901140**. Relative end angular velocity **+0.04068994820**.
+Independent Einstein/scalar defects **6.30e-12 / 8.33e-12**, E_b/R_A
+**0.8983325013**, peak tide **0.2292231669 < 0.3333333333**. Original
+rejection is only `fluxes_not_co_rotating`. The original classification
+remains rejected; no co-rotating or matched-control benefit is claimed yet.
+The maximum far-side coordinate g_tt is not evidence of a throat ergoregion:
+the opposite infinity rotates in these coordinates. Actual throat g_tt is
+**-0.1134992190**, shift/lapse **0.6590485977**.
 
 **A coupled throat ergoregion is solved on all three grids.** The final
 210x36 / 224x38 / 240x40 solutions have X_full **2.422262173008**, a

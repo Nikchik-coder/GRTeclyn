@@ -18,6 +18,11 @@ A run-specific go is required before GPU startup.
   plus co-rotating matter, and its ring-free same-area/same-total-J control;
   four J steps and three final grids per arm, 14 solves maximum. The two ends
   may be asymmetric. See `configs/spin_ring_co_rotating.json` and STATUS.
+  A fourth argument names the original coupled output to complete its unstarted
+  control arm only. This requires `RINGWORMHOLE_DEADLINE_UTC` set to the original
+  approved deadline, refuses additional physical failures or an already claimed
+  control, and consumes exactly the remaining seven solves. The counter-rotating
+  diagnostic retains its original failed co-rotation classification.
 
 Workers enforce CUDA float64, the platform allocator, no preallocation,
 Jacobian chunk 256, four CPU threads and 160 GiB through `capped_job.sh`.

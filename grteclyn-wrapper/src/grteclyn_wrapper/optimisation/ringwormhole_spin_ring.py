@@ -105,6 +105,89 @@ def continue_j(state,cfg,targets,plan,directory):
     return state,cfg,records,True
 
 
+def read_remaining_control(p,parent):
+    """Identify the unstarted control arm; never retry a coupled solve.
+
+    The original co-rotation verdict remains rejected. An equation-qualified
+    counter-rotating diagnostic can still be compared with the already planned
+    ring-free control, without treating it as the intended co-rotating case.
+    """
+    from .exploration import load_seed
+    from .resolution import consistent
+    seeds,target,ladders=read_seeds(p);parent=Path(parent)
+    if json.loads((parent/'plan.json').read_text())!=p:
+        raise ValueError('parent plan differs from the approved comparison')
+    old=json.loads((parent/'outcome.json').read_text())
+    result=json.loads((parent/'ring/result.json').read_text());rows=result['records']
+    if (old.get('reason')!='ring_validation_failed' or old.get('solves')!=7
+            or old.get('ring_accepted') or old.get('control_accepted')
+            or (parent/'control').exists() or (parent/'control_continuation').exists()
+            or (parent/'control_arm_started.json').exists()
+            or [(r.get('nx'),r.get('ny')) for r in rows]!=[tuple(g) for g in p['grids']]):
+        raise ValueError('control is not an unstarted seven-solve remainder')
+    for r in rows:
+        if (r.get('rejection_reasons')!=['fluxes_not_co_rotating']
+                or r.get('verdict')!='ABOVE_GATE' or not r.get('offgrid_pass')
+                or not r.get('surface_verified') or not r.get('tidal_converged')
+                or not r.get('independent_rotation_present')
+                or r.get('geometric_and_matter_flux_aligned') is not False
+                or r.get('offgrid_sampling')!=[49,21]
+                or r.get('newton_updates',0)<1 or r.get('newton',np.inf)>1e-9
+                or abs(r.get('J_measured',np.inf)-target)>1e-6):
+            raise ValueError('coupled arm has failures beyond the orientation target')
+    checked=[dict(r,verdict='PASS') for r in rows]
+    ok,_=consistent(checked,'X_full')
+    drift=max(abs(rows[-1][k]-rows[-2][k])/max(abs(rows[-1][k]),1e-12)
+        for k in ('E_b','Q_b','J_measured','ring_peak_radius','equatorial_shift_over_lapse_max'))
+    if not ok or not np.isfinite(drift) or drift>1e-6:
+        raise ValueError('coupled observables lack three-grid agreement')
+    _,base=load_seed(parent/'static_reference.npz');reference=base['diagnostics']
+    if reference.get('verdict')!='PASS' or not reference.get('offgrid_pass'):
+        raise ValueError('missing checked static reference')
+    if old['solves']+len(ladders[1])+3!=p['max_solves']:
+        raise ValueError('remaining control exceeds the original total solve budget')
+    return seeds[1],target,ladders[1],rows[-1],reference
+
+
+def run_remaining_control(p,out,parent):
+    from .resolution import check_candidate,save_checked
+    from .study import write_json
+    from .study_validation import validate
+    (state,cfg),target,targets,ring,reference=read_remaining_control(p,parent)
+    out=Path(out);out.mkdir(parents=True,exist_ok=False);parent=Path(parent)
+    with (parent/'control_arm_started.json').open('x') as f:
+        json.dump(dict(output=str(out),target_J=target,max_remaining_solves=7),f)
+    write_json(out/'plan.json',p)
+    inputs=['plan.json','outcome.json','ring/result.json','ring/diagnostic_240x40.npz','static_reference.npz']
+    write_json(out/'code.json',dict(commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        parent=str(parent),parent_sha256={k:hashlib.sha256((parent/k).read_bytes()).hexdigest() for k in inputs}))
+    outcome=dict(original_solves=7,solves_this_arm=0,total_solves=7,target_J=target,
+        original_co_rotation_target_reached=False,coupled_orientation='counter_rotating',
+        coupled_physical_checks_passed=True,control_accepted=False,stability='not_assessed')
+    write_json(out/'outcome.json',outcome)
+    state,cfg,steps,ok=continue_j(state,cfg,targets,p,out/'control_continuation')
+    outcome.update(solves_this_arm=len(steps),total_solves=7+len(steps))
+    if not ok:
+        outcome['reason']='control_continuation_failed';write_json(out/'outcome.json',outcome);return 2
+    def validator(s,c,r):
+        return validate(s,c,r,reference_peak=reference['tidal_peak'],tidal_factor=4.,independent_points=[49,21])
+    result,state=check_candidate(state,cfg,[tuple(g) for g in p['grids']],('minimal_area',16*np.pi),4.,
+        out/'control',validator=validator,score_key='X_full',perturb_seed=True)
+    outcome['solves_this_arm']+=len(result['records']);outcome['total_solves']=7+outcome['solves_this_arm']
+    if not result['passed']:
+        outcome['reason']='control_validation_failed';write_json(out/'outcome.json',outcome);return 2
+    control=result['records'][-1]
+    match=abs(control['J_measured']-ring['J_measured'])/max(1.,abs(target))
+    if match>1e-6:
+        outcome['reason']='total_J_mismatch';write_json(out/'outcome.json',outcome);return 2
+    save_checked(out/'control_accepted.npz',state,cfg,dict(pin=['minimal_area',16*np.pi]),result)
+    outcome.update(control_accepted=True,X_ring=ring['X_full'],X_control=control['X_full'],
+        X_static=reference['X_full'],static_fractional_reduction=1-ring['X_full']/reference['X_full'],
+        matched_spin_fractional_reduction=1-ring['X_full']/control['X_full'],total_J_match_error=match,
+        reason='original_control_complete_counter_rotating_diagnostic')
+    write_json(out/'outcome.json',outcome);return 0
+
+
 def run(p,out):
     from .exploration import save_trial
     from .resolution import check_candidate,save_checked
@@ -174,7 +257,13 @@ def run(p,out):
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--config',required=True)
     ap.add_argument('--out',required=True);ap.add_argument('--gpu',type=int);ap.add_argument('--run',action='store_true')
+    ap.add_argument('--control-only-from',type=Path)
     a=ap.parse_args();p=json.loads(Path(a.config).read_text());seeds,target,ladders=read_seeds(p)
+    if a.control_only_from:
+        _,target,targets,_,_=read_remaining_control(p,a.control_only_from)
+        if not a.run:
+            print(json.dumps(dict(status='PREPARED_ONLY',target_J=target,planned_solves=len(targets)+3,
+                original_solves=7,total_solves=14,mode='original_unstarted_control')));return 0
     if not a.run:
         print(json.dumps(dict(status='PREPARED_ONLY',target_J=target,J_ladders=ladders,
             planned_solves=sum(map(len,ladders))+6,ring_amplitude=seeds[0][1]['amplitude'])));return 0
@@ -183,6 +272,7 @@ def main():
     select_device(a.gpu,256);jax=configure_jax()
     if jax.default_backend()!='gpu' or not jax.config.x64_enabled:raise RuntimeError('CUDA float64 required')
     print('devices:',jax.devices(),'float64:',jax.config.x64_enabled,flush=True)
+    if a.control_only_from:return run_remaining_control(p,a.out,a.control_only_from)
     return run(p,a.out)
 
 if __name__=='__main__':raise SystemExit(main())

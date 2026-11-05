@@ -94,3 +94,71 @@ def test_comparison_requires_both_qualified_arms_and_matching_J(tmp_path,monkeyp
     assert ('matched_spin_fractional_reduction' in o)==passed
     if passed:assert o['matched_spin_fractional_reduction']==pytest.approx(-.25)
     assert o['solves']<=14 and len(calls)==(2 if ring_ok else 1)
+
+
+def remaining_parent(tmp_path):
+    from grteclyn_wrapper.optimisation.exploration import save_trial
+    p,_=seeded_plan(tmp_path);parent=tmp_path/'parent';(parent/'ring').mkdir(parents=True)
+    target=-.7963901140129952
+    row=dict(verdict='ABOVE_GATE',rejection_reasons=['fluxes_not_co_rotating'],
+        offgrid_pass=True,surface_verified=True,tidal_converged=True,
+        independent_rotation_present=True,geometric_and_matter_flux_aligned=False,
+        offgrid_sampling=[49,21],newton_updates=2,newton=1e-15,J_measured=target,
+        X_full=2.5,E_b=1.,Q_b=1.,ring_peak_radius=2.,equatorial_shift_over_lapse_max=5.)
+    rows=[dict(row,nx=n,ny=m) for n,m in p['grids']]
+    (parent/'plan.json').write_text(json.dumps(p))
+    (parent/'outcome.json').write_text(json.dumps(dict(reason='ring_validation_failed',solves=7,
+        ring_accepted=False,control_accepted=False)))
+    (parent/'ring/result.json').write_text(json.dumps(dict(records=rows,passed=False)))
+    (parent/'ring/diagnostic_240x40.npz').write_bytes(b'checked fields')
+    save_trial(parent/'static_reference.npz',m.bridge.ellis(2.,6,3),
+        dict(m=0.,q=[0.,0.,0.],gamma=0.,J=0.),
+        dict(verdict='PASS',offgrid_pass=True,tidal_peak=1.,X_full=np.pi),('minimal_area',16*np.pi))
+    return p,parent
+
+
+def test_remaining_control_is_exactly_seven_and_keeps_original_rejection(tmp_path):
+    p,parent=remaining_parent(tmp_path)
+    seed,target,ladder,row,reference=m.read_remaining_control(p,parent)
+    assert len(ladder)+3==7 and row['rejection_reasons']==['fluxes_not_co_rotating']
+    assert not (parent/'control_arm_started.json').exists()
+
+
+@pytest.mark.parametrize('change',['extra_physical_failure','wrong_count','missing_grid','claimed_control','started_control'])
+def test_remaining_control_refuses_extra_scope_or_repetition(tmp_path,change):
+    p,parent=remaining_parent(tmp_path)
+    if change in ('extra_physical_failure','missing_grid'):
+        path=parent/'ring/result.json';r=json.loads(path.read_text())
+        if change=='extra_physical_failure':r['records'][0]['rejection_reasons'].append('tidal_limit')
+        else:r['records'].pop()
+        path.write_text(json.dumps(r))
+    elif change=='wrong_count':
+        path=parent/'outcome.json';r=json.loads(path.read_text());r['solves']=8;path.write_text(json.dumps(r))
+    elif change=='claimed_control':(parent/'control_arm_started.json').write_text('{}')
+    else:(parent/'control_continuation').mkdir()
+    with pytest.raises(ValueError):m.read_remaining_control(p,parent)
+
+
+@pytest.mark.parametrize('control_ok',[True,False])
+def test_remaining_arm_does_not_retry_ring_or_claim_co_rotation(tmp_path,monkeypatch,control_ok):
+    from grteclyn_wrapper.optimisation import resolution,study
+    p,parent=remaining_parent(tmp_path)
+    def continued(s,c,targets,p,d):
+        assert c.get('matter') is None and len(targets)==4
+        return s,dict(c,J=targets[-1]),[{}]*4,True
+    monkeypatch.setattr(m,'continue_j',continued)
+    def check(s,c,grids,*a,**kw):
+        assert c.get('matter') is None
+        row=dict(X_full=2.,J_measured=c['J'])
+        return dict(passed=control_ok,records=[row]*3),s
+    monkeypatch.setattr(resolution,'check_candidate',check)
+    monkeypatch.setattr(resolution,'save_checked',lambda *a,**kw:None)
+    out=tmp_path/'remaining'
+    result=m.run_remaining_control(p,out,parent)
+    o=json.loads((out/'outcome.json').read_text())
+    assert o['total_solves']==14 and o['solves_this_arm']==7
+    assert o['original_co_rotation_target_reached'] is False
+    assert o['coupled_orientation']=='counter_rotating'
+    assert (result==0)==control_ok
+    assert ('matched_spin_fractional_reduction' in o)==control_ok
+    assert (parent/'control_arm_started.json').exists()

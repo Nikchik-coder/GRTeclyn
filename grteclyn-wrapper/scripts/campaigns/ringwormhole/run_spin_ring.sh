@@ -1,21 +1,32 @@
 #!/usr/bin/env bash
 # Preview only unless the exact coupled case has received its run-specific go.
 set -euo pipefail
-card="${1:?usage: run_spin_ring.sh GPU OUT [--run]}"
+card="${1:?usage: run_spin_ring.sh GPU OUT [--run] [CONTROL_PARENT]}"
 out="${2:?fresh output directory required}"
 mode="${3:---dry-run}"
-[[ $# -le 3 && "$card" =~ ^[0-9]+$ ]] || exit 2
+parent="${4:-}"
+extra=()
+wall=3600
+if [[ -n "$parent" ]]; then
+    extra=(--control-only-from "$parent")
+    if [[ "$mode" == --run ]]; then
+        : "${RINGWORMHOLE_DEADLINE_UTC:?original approved deadline required}"
+        wall=$(( $(date -u -d "$RINGWORMHOLE_DEADLINE_UTC" +%s) - $(date -u +%s) ))
+        (( wall > 0 && wall <= 3600 )) || exit 4
+    fi
+fi
+[[ $# -le 4 && "$card" =~ ^[0-9]+$ ]] || exit 2
 [[ "$mode" == --dry-run || "$mode" == --run ]] || exit 2
 cd "$(dirname "${BASH_SOURCE[0]}")/../../../.."
 [[ ! -e "$out" ]] || { echo 'output must be fresh' >&2; exit 2; }
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.ringwormhole_spin_ring \
-    --config grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_co_rotating.json --out "$out"
+    --config grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_co_rotating.json --out "$out" "${extra[@]}"
 command=(bash grteclyn-wrapper/scripts/ops/capped_job.sh start
          "ringwormhole-spin-ring-$(date -u +%Y%m%dT%H%M%S)"
-         --gpu --threads 4 --mem 160 --timeout 3600 --
+         --gpu --threads 4 --mem 160 --timeout "$wall" --
          env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
          PYTHONUNBUFFERED=1
-         bash grteclyn-wrapper/scripts/campaigns/ringwormhole/run_spin_ring_worker.sh "$card" "$out")
+         bash grteclyn-wrapper/scripts/campaigns/ringwormhole/run_spin_ring_worker.sh "$card" "$out" "$parent")
 printf '%q ' "${command[@]}"; printf '\n'
 [[ "$mode" == --run ]] || exit 0
 used="$(nvidia-smi -i "$card" --query-gpu=memory.used --format=csv,noheader,nounits)"
