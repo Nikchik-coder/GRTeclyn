@@ -8,34 +8,15 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-**LIVE: corrected direct-flux pilot**, first node GPU 0, started
-**Nov 5 13:04:10 MSK**, job `ringwormhole-spin-ring-20261105T100410`,
-source `a65386966`. Latest explicit go confirms the full run settings and
-checkpoints OFF. Output: `runs/ringwormhole/spin_ring_flux_20261105/`.
-CUDA regressions start first, then the four physical continuation steps;
-progress 0/14 maximum solves at launch. ETA approximately **0.2 h
-(13:16 MSK)**, hard stop **14:04:10 MSK** (one hour). No automatic retry.
-
-Fix geometric Killing flux through the specified xi=0 cut at
--0.02/-0.04/-0.06/-0.08, retaining the accepted overlapping-matter seed's
-amplitude and true R_A=2. Check alignment and all independent physical gates
-at each rung before three-grid validation. Same 210x36 / 224x38 / 240x40,
-at most 14 solves / 24 Newton updates each / four threads / 160 GiB.
-Fields and logs retained on NFS. The ring-free control starts from the latest
-accepted control and targets the coupled solution's measured total J, only
-within the remaining solve budget. Config:
-[spin_ring_flux.json](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_flux.json).
-157 CPU regression cases passed before launch. Startup inspection: both
-GPUs idle before dispatch; scratch clean **4 KB cache / 302 GB free**.
-Second node not listed. Stationary solve: no evolution time or consumer.
+No live or queued runs. The corrected direct-flux pilot completed
+**Nov 5 13:11:22 MSK**, exit 0, **13 solves** within the approved maximum 14.
+Both coupled and matched-control arms pass all three grids, including the
+requested alignment. Both first-node GPUs are idle; checkpoints OFF;
+fields/logs retained on NFS (4.1 MB). Scratch clean: **4 KB cache / 302 GB free**.
+Second node not listed. No remaining ETA or automatic follow-on.
 
 ## Planned (nothing launches without the go)
 
-- Running above: obtain co-rotation at the specified mouth by controlling the measured
-  geometric flux, rather than assuming that more negative total J+ selects
-  that orientation. The completed pilot reached the opposite orientation;
-  the corrected condition replaces the total-J assumption without changing
-  the independent physical gates.
 - Try slightly less throat matter to retain g_tt > 0 while bringing peak tide
   below 0.333333. The present ergoregion solution exceeds that ceiling by 6.22%.
 - Compare a qualified new point with a ring-free control at its own area and J.
@@ -44,7 +25,33 @@ Second node not listed. Stationary solve: no evolution time or consumer.
 
 ## Main results
 
-**Independent wormhole rotation + rotating matter: the completed pilot
+**Directly controlled co-alignment is solved and accepted on all three grids.**
+The geometric Killing flux through the specified xi=0 cut is
+**-0.0800000000**, aligned with matter-half flux **-0.5784255996**;
+relative end angular velocity is **-0.03573543701**. Every continuation
+rung passed alignment and the independent physical gates before refinement.
+This specified-cut diagnostic is not a unique global split into object spins.
+
+At the same true **R_A=2** and plus-end **J=-0.6584255996**, the combined
+solution has **X_full=2.496562794825**, **20.531938% below static**.
+The ring-free rotating control has **X_full=2.336759496721**,
+**25.618635% below static**. The co-aligned configuration therefore requires
+**6.838671% more exotic support than its control**. There is no additional
+saving from matter at this tested point. At fixed matter anchor and area,
+its X_full is also **0.185032% higher** than the earlier zero-central-flux,
+matter-driven seed; this is a different comparison from matching total J.
+
+Both arms pass 210x36 / 224x38 / 240x40 with two Newton corrections after
+an independent 1e-6 perturbation on each grid. Finest Einstein/scalar defects
+are **6.48e-12 / 8.91e-12** for the coupled solution and
+**3.48e-12 / 2.92e-12** for its control, on 49x21 off-grid points.
+Finest-pair relative X_full drifts are **2.48e-14 / 4.30e-14**;
+total-J match error **3.33e-16**. Coupled E_b/R_A **0.8958633525** and
+peak tides **0.2272007565 / 0.09071530382** pass the unchanged caps.
+Coupled throat g_tt **-0.05987211796**, shift/lapse **0.8375954844**:
+no throat ergoregion in the plus-end inertial frame. Stability is unassessed.
+
+**Earlier independent wormhole rotation + rotating matter: the original pilot
 counter-rotates at the specified xi=0 cut.** Both arms reproduce the same
 true R_A=2 and J+ **-0.7963901140** on 210x36 / 224x38 / 240x40, with total-J
 match error **1.55e-15**. The coupled configuration has X_full
@@ -108,6 +115,8 @@ No stability result is established by these stationary solves.
 | Weak exterior ring | 3.106532920 | 1.115986% | three grids pass |
 | Stronger matter overlapping throat | 2.491951888 | 20.678708% | three grids pass with overlap allowed |
 | Throat ergoregion | 2.422262173 | 22.897000% | equations pass; tide exceeds cap |
+| Independent spin + matter, aligned fluxes | 2.496562795 | 20.531938% | all physical and alignment gates pass |
+| Ring-free control matched to aligned-flux pilot J | 2.336759497 | 25.618635% | three grids pass |
 | Independent spin + matter, opposite fluxes | 2.498042477 | 20.484838% | physical gates pass; intended co-rotation fails |
 | Ring-free control matched to opposite-flux pilot J | 2.051637544 | 34.694349% | three grids pass |
 | Ring-free control matched to weak-ring J | 1.734504204 | 44.789016% | three grids pass |
@@ -127,6 +136,23 @@ therefore establishes no extra benefit over that rotating control.
 | Throat-amplitude continuation | `a8c33d5b8` | Nov 5 11:13:41 | `runs/ringwormhole/ergoregion108_throat_20261105/` |
 | Independent-spin coupled arm | `985121bb7` | Nov 5 12:12:33 | `runs/ringwormhole/spin_ring_co_rotating_20261105/` |
 | Original independent-spin control remainder | `1f693f484` | Nov 5 12:24:38 | `runs/ringwormhole/spin_ring_control_20261105/` |
+| Direct-flux co-aligned pair | `a65386966` | Nov 5 13:11:22 | `runs/ringwormhole/spin_ring_flux_20261105/` |
+
+The direct-flux pair ran **13:04:10–13:11:22 MSK (0.120 h)**,
+job `ringwormhole-spin-ring-20261105T100410`, source `a65386966`, exit 0.
+Four flux continuation steps, three coupled grid solves, three control
+continuation steps and three control grid solves: **13 total**, no retry.
+157 CPU and 157 CUDA regression cases passed. No NaN/OOM/traceback in its
+log; saved accepted fields are finite and their metadata agrees with both
+three-grid result files and `outcome.json`. A compact audit is retained as
+`closeout-summary.json` beside the fields. Config:
+[spin_ring_flux.json](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_flux.json);
+launch via the campaign's `run_spin_ring.sh ... --run --flux` only on a new go.
+Accepted `ring_accepted.npz` SHA256:
+`ca9c67b8d87665bbb212e4d554529d0126f57e8d74e0f6b98f0d35c9225f24af`;
+`control_accepted.npz` SHA256:
+`81fe50c129320b228011e40825e1f5b441dd619634ed1d11fdd1f356868937c8`.
+Numerical archives remain on persistent storage; only the findings are published here.
 
 The independent-spin coupled arm ran **12:07:01–12:12:33 MSK**, exit 2
 (orientation target); its original control remainder ran **12:22:25–12:24:38**,
