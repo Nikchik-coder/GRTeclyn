@@ -9,6 +9,8 @@ PY=grteclyn-wrapper/.venv/bin/python
 "$PY" -c 'import json; from grteclyn_wrapper.optimisation.railgun_wormhole import read_restart; read_restart(json.load(open("research/optimisation/studies/railgun_throat_validation.json")))'
 "$PY" -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_throat.py \
     grteclyn-wrapper/tests/optimisation/test_railgun_throat_validation.py \
+    grteclyn-wrapper/tests/optimisation/test_equilibration_memory.py \
+    grteclyn-wrapper/tests/optimisation/test_solver_core.py \
     grteclyn-wrapper/tests/optimisation/test_fixed_area_study.py \
     grteclyn-wrapper/tests/optimisation/test_wormhole_ring_study.py
 exec "$PY" -u -m grteclyn_wrapper.optimisation.railgun_wormhole \

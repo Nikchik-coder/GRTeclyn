@@ -32,7 +32,7 @@
   "checkpoints": false,
   "geometry": "matching rings at both mouths; nonrotating infinities",
   "phantom_potential": "V=0 throughout",
-  "status": "approved November 5: first node GPU 0; three solves only",
+  "status": "first attempt complete; memory-corrected three-solve retry awaits go",
   "stage": "ring_validation",
   "independent_points": [
     49,

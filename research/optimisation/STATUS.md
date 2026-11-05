@@ -11,6 +11,27 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
+## Prepared memory correction — awaiting retry go
+
+The CUDA Newton path now fuses row-norm reduction with row scaling and
+donates the consumed Jacobian buffer, followed by donation to LU. Equations,
+scaling formula, Newton stopping rules and all acceptance gates are unchanged.
+The actual compiled scaling executable must report at least one matrix of
+input/output aliasing and less than one matrix of temporary storage before
+execution; otherwise the solve fails closed. Matrix, alias and temporary
+sizes are logged for each grid. This avoids assuming that a small test's
+memory layout also applies to the production matrix.
+
+**97 targeted CPU tests pass**, including reference scaling values, the padded
+column-Jacobian producer, compiler alias/scratch sizes and accelerated Newton
+recovery. The same tests are included in the capped CUDA worker. This is
+CPU qualification only; production GPU memory use remains to be checked.
+Proposed separate retry: the same pinned initial fields, 210x36 / 224x38 /
+240x40, three solves, 24 updates maximum per solve, first node/card 0,
+1 h / four threads / 160 GiB, checkpoints OFF, fields/logs retained.
+Fresh output `runs/optimisation/railgun_throat_validation_20261105_r2/`.
+No matched-spin control or automatic follow-on. No retry has started.
+
 ## Finished validation attempt — November 5
 
 **Started 08:58:02 MSK; finished 09:02:24 MSK**, exit 2, total 0.0728 h.

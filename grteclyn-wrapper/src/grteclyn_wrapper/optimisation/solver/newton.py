@@ -30,8 +30,26 @@ from scipy.linalg import lu_factor, lu_solve
 __all__ = ["newton"]
 
 
+def _donating_equilibrator():
+    """Scale rows while reusing the consumed Jacobian's device buffer.
+
+    A separate broadcast multiply can allocate layout-conversion temporaries
+    as well as its output: the 240x40 throat run requested 52.51 GiB here on
+    top of its 26.23 GiB Jacobian. Fusing the reduction and scaling permits
+    input/output aliasing; the returned matrix is then donated to LU too.
+    """
+    import jax
+    import jax.numpy as jnp
+
+    def equilibrate(jac):
+        scale = 1.0 / jnp.maximum(jnp.max(jnp.abs(jac), axis=1), 1e-300)
+        return jac * scale[:, None], scale
+
+    return jax.jit(equilibrate, donate_argnums=(0,))
+
+
 def _cuda_backend(jac):
-    """(xp, lu_factor, lu_solve) when ``jac`` lives on a CUDA device."""
+    """Device array, factorization, solve and row scaling for a CUDA Jacobian."""
     if not type(jac).__module__.startswith(("jax", "jaxlib")):
         return None
     try:
@@ -41,7 +59,8 @@ def _cuda_backend(jac):
             import jax.numpy as jnp
             import jax.scipy.linalg as jsl
             import jax
-            return jnp, jax.jit(jsl.lu_factor, donate_argnums=(0,)), jsl.lu_solve
+            return (jnp, jax.jit(jsl.lu_factor, donate_argnums=(0,)),
+                    jsl.lu_solve, _donating_equilibrator())
     except Exception:
         return None
     return None
@@ -91,13 +110,22 @@ def newton(residual, jacobian, u0, *, tol: float = 1e-12,
             if jac_evals == 1:
                 cuda = _cuda_backend(jac)
                 if cuda is not None:
-                    xp, factor, solve = cuda
+                    xp, factor, solve, equilibrate = cuda
                     gpu = True
+                    equilibrate = equilibrate.lower(jac).compile()
+                    memory = equilibrate.memory_analysis()
+                    if (memory is None or memory.alias_size_in_bytes < jac.nbytes or
+                            memory.temp_size_in_bytes >= jac.nbytes):
+                        raise RuntimeError('device row scaling did not reuse the Jacobian buffer')
+                    print('[row_scaling] matrix_GiB={:.4f} alias_GiB={:.4f} temp_GiB={:.4f}'.format(
+                        jac.nbytes/2**30, memory.alias_size_in_bytes/2**30,
+                        memory.temp_size_in_bytes/2**30), flush=True)
             if not gpu:
                 jac = np.asarray(jac)
-            scale = 1.0 / xp.maximum(xp.max(xp.abs(jac), axis=1), 1e-300)
-            equilibrated = scale[:, None] * jac
-            if gpu:
+                scale = 1.0 / np.maximum(np.max(np.abs(jac), axis=1), 1e-300)
+                equilibrated = scale[:, None] * jac
+            else:
+                equilibrated, scale = equilibrate(jac)
                 equilibrated.block_until_ready()
             del jac
             lu, piv = factor(equilibrated)
