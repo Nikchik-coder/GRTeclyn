@@ -10,7 +10,17 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
-## Approved validation — November 5
+## Live validation — November 5
+
+**Started 08:58:02 MSK**, first node/card 0, source **76ecac2dc** verified
+through `myfork` push/pull. Capped job
+`railgun-throat-validation-20261105T055802`, supervisor PID 97015.
+Startup regression tests are advancing; production will confirm CUDA/float64.
+No evolution time or u/h speed applies to this stationary solve.
+
+| Run | Node/card | Stage | Start MSK | ETA / hard deadline |
+|---|---|---|---|---|
+| `railgun-throat-validation-20261105T055802` | first / 0 | live startup tests; 0/3 solves | Nov 5 08:58:02 | 0.1–0.25 h total; 09:04–09:13 MSK; hard stop 09:58:02 |
 
 [Plan](studies/railgun_throat_validation.json),
 [preview/dispatcher](studies/run_railgun_throat_validation.sh).
@@ -40,16 +50,16 @@ remain. Exactly three solves, zero control steps. Approved first node/card 0,
 1 h hard cap, four threads, 160 GiB address-space cap, CUDA float64/platform
 allocator, Jacobian chunk 256. Largest dense matrix is 26.23 GiB; actual
 device allocation must be checked at startup. Estimated total 0.1–0.25 h
-after launch; clock ETA will be recorded at startup. AMR checkpoints OFF; stationary
+after launch, as clock times above. AMR checkpoints OFF; stationary
 fields and logs retained. Fresh output:
 `runs/optimisation/railgun_throat_validation_20261105/`.
 
 **86 targeted CPU tests pass**; shell syntax and no-GPU previews pass.
 Tests enforce restart identity, unchanged scalar border, the three-solve cap,
 denser equation sampling and stopping before any matched-spin control.
-No new GPU startup. Read-only first-node check: both cards idle, scratch
+Before launch both cards were idle. Startup scratch check:
 4 KB cache / 303 GB free; no plots, checkpoints or cleanup. Second node was
-not listed for this preparation.
+not listed for this run. No queued restart or consumer is required.
 
 ## Finished replacement — weak railgun ring with a throat
 
