@@ -8,34 +8,30 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-**Corrected direct-flux pilot prepared; GPU startup blocked pending explicit
-run settings and checkpoint confirmation.** Code committed as `afb114584`
-and pulled onto the first node; CPU-only pinned-seed preview passed.
-Automatic approval review rejected startup before execution: the general
-go for the correction did not explicitly approve this exact bounded run
-and its checkpoint choice. No retry or alternate startup was attempted.
-157 regression cases passed across the full CPU selection and added
-paired-claim guards. Proposed run: fix the
-geometric Killing flux through the specified xi=0 cut at
+**LIVE: corrected direct-flux pilot**, first node GPU 0, started
+**Nov 5 13:04:10 MSK**, job `ringwormhole-spin-ring-20261105T100410`,
+source `a65386966`. Latest explicit go confirms the full run settings and
+checkpoints OFF. Output: `runs/ringwormhole/spin_ring_flux_20261105/`.
+CUDA regressions start first, then the four physical continuation steps;
+progress 0/14 maximum solves at launch. ETA approximately **0.2 h
+(13:16 MSK)**, hard stop **14:04:10 MSK** (one hour). No automatic retry.
+
+Fix geometric Killing flux through the specified xi=0 cut at
 -0.02/-0.04/-0.06/-0.08, retaining the accepted overlapping-matter seed's
 amplitude and true R_A=2. Check alignment and all independent physical gates
 at each rung before three-grid validation. Same 210x36 / 224x38 / 240x40,
-first node GPU 0, at most 14 solves / 24 Newton updates each / one hour /
-four threads / 160 GiB, checkpoints OFF; fields and logs retained. The
-ring-free control starts from the latest accepted control and targets the
-coupled solution's measured total J, only within the remaining solve budget.
-No automatic retry. Config: [spin_ring_flux.json](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_flux.json).
-
-The original paired spin+ring experiment is complete:
-**14 solves total**, seven for the coupled arm and seven for its unchanged
-ring-free control. Last job finished **Nov 5 12:24:38 MSK**, before the original
-13:07:01 deadline. Both GPUs on the first node are idle; checkpoints OFF;
-fields/logs retained on NFS. Scratch clean: **4 KB cache / 302 GB free**.
-Second node not listed. The corrected pilot has no launch time or ETA yet.
+at most 14 solves / 24 Newton updates each / four threads / 160 GiB.
+Fields and logs retained on NFS. The ring-free control starts from the latest
+accepted control and targets the coupled solution's measured total J, only
+within the remaining solve budget. Config:
+[spin_ring_flux.json](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_flux.json).
+157 CPU regression cases passed before launch. Startup inspection: both
+GPUs idle before dispatch; scratch clean **4 KB cache / 302 GB free**.
+Second node not listed. Stationary solve: no evolution time or consumer.
 
 ## Planned (nothing launches without the go)
 
-- Prepared above: obtain co-rotation at the specified mouth by controlling the measured
+- Running above: obtain co-rotation at the specified mouth by controlling the measured
   geometric flux, rather than assuming that more negative total J+ selects
   that orientation. The completed pilot reached the opposite orientation;
   the corrected condition replaces the total-J assumption without changing
