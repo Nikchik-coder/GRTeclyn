@@ -3,24 +3,41 @@
 **All three November 4 wormhole/ring pilots STOPPED on request at
 22:54 MSK.** Their older S0 seed does not test a railgun ring around a
 wormhole. Logs and partial results are preserved. The replacement weak-ring
-pilot below finished with failed three-grid acceptance. November 5: the specific
-three-grid validation below is authorised on first node/card 0.
+pilot below finished with failed three-grid acceptance. November 5 validation
+finished: two grids passed; the third exhausted GPU memory during scaling.
+No retry is authorised; a memory correction is being prepared.
 No old queue is authorised. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
-## Live validation — November 5
+## Finished validation attempt — November 5
 
-**Started 08:58:02 MSK**, first node/card 0, source **76ecac2dc** verified
+**Started 08:58:02 MSK; finished 09:02:24 MSK**, exit 2, total 0.0728 h.
+First node/card 0, source **76ecac2dc** verified
 through `myfork` push/pull. Capped job
 `railgun-throat-validation-20261105T055802`, supervisor PID 97015.
-Startup regression tests are advancing; production will confirm CUDA/float64.
+All 86 CUDA startup tests passed in 34.23 s; production confirmed CUDA/float64.
 No evolution time or u/h speed applies to this stationary solve.
 
 | Run | Node/card | Stage | Start MSK | ETA / hard deadline |
 |---|---|---|---|---|
-| `railgun-throat-validation-20261105T055802` | first / 0 | live startup tests; 0/3 solves | Nov 5 08:58:02 | 0.1–0.25 h total; 09:04–09:13 MSK; hard stop 09:58:02 |
+| `railgun-throat-validation-20261105T055802` | first / 0 | finished exit 2; 2 PASS, 1 GPU OOM | Nov 5 08:58:02 | 0.0728 h total; ended 09:02:24 MSK; no ETA |
+
+210x36: PASS, two Newton updates, 18.05 s; independent Einstein/scalar
+defects 2.2713e-12 / 1.6515e-9; X_full=3.1065329199719924.
+224x38: PASS, two updates, 19.24 s; defects 4.3899e-12 / 4.4711e-10;
+X_full=3.1065329199720417. Both include the unchanged far-tail test and
+the denser 49x21 independent checks. Their X_full values differ by 1.6e-14
+fractionally, but two grids do not meet the three-grid acceptance policy.
+
+240x40: FAILED after 5.86 s, before a corrected solution was saved.
+`jit_multiply` requested 52.51 GiB during row scaling of the 26.23 GiB dense
+Jacobian. The GPU allocation failed; the node stayed alive, the capped job
+exited, both cards returned to 0 MiB, and no host OOM or scratch loss was
+observed. Overall `ring_accepted=false`; no accepted ring or matched control.
+The next action is to remove avoidable scaling copies and test the unchanged
+linear algebra before proposing a separate bounded retry. No automatic retry.
 
 [Plan](studies/railgun_throat_validation.json),
 [preview/dispatcher](studies/run_railgun_throat_validation.sh).
@@ -49,15 +66,14 @@ All prior geometry, energy, tides, symmetry, charge/flux and refinement gates
 remain. Exactly three solves, zero control steps. Approved first node/card 0,
 1 h hard cap, four threads, 160 GiB address-space cap, CUDA float64/platform
 allocator, Jacobian chunk 256. Largest dense matrix is 26.23 GiB; actual
-device allocation must be checked at startup. Estimated total 0.1–0.25 h
-after launch, as clock times above. AMR checkpoints OFF; stationary
-fields and logs retained. Fresh output:
+device allocation failed as recorded above. AMR checkpoints OFF; stationary
+fields and logs retained. Output:
 `runs/optimisation/railgun_throat_validation_20261105/`.
 
 **86 targeted CPU tests pass**; shell syntax and no-GPU previews pass.
 Tests enforce restart identity, unchanged scalar border, the three-solve cap,
 denser equation sampling and stopping before any matched-spin control.
-Before launch both cards were idle. Startup scratch check:
+Before launch both cards were idle. Completion scratch check:
 4 KB cache / 303 GB free; no plots, checkpoints or cleanup. Second node was
 not listed for this run. No queued restart or consumer is required.
 
