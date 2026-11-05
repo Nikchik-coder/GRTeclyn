@@ -1,9 +1,9 @@
-"""A bounded, symmetric throat insertion starting from the weak railgun ring.
+"""Bounded symmetric throat insertions starting from archived railgun rings.
 
 The archive supplies an initial guess, never a superposed solution. Both ends
 are nonrotating at infinity; ring matter sources all frame dragging. V=0 is
-kept fixed. This first experiment establishes a branch and matched controls,
-not an optimisation or a stability result. No stronger ring is auto-dispatched.
+kept fixed. Separate stages qualify a ring, build matched controls, or test
+an ergoregion on the actual throat. No further case is auto-dispatched.
 """
 from __future__ import annotations
 
@@ -21,10 +21,11 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import ArctanMap, cheb
 def validate_plan(plan):
     """Keep the prepared pilot inside its declared resource and solve budget."""
     stage=plan.get('stage','ring_and_control')
-    if stage not in ('ring_and_control','ring_validation'):
+    if stage not in ('ring_and_control','ring_validation','ring_ergoregion'):
         raise ValueError('unknown study stage')
     validation_only=stage=='ring_validation'
-    ceiling=(240,40) if validation_only else (210,36)
+    ergoregion_only=stage=='ring_ergoregion'
+    ceiling=(240,40) if validation_only or ergoregion_only else (210,36)
     grids=plan['grids']
     if (len(grids)!=3 or any(len(g)!=2 or g[0]%2 or not 6<=g[0]<=ceiling[0]
                             or not 3<=g[1]<=ceiling[1] for g in grids)
@@ -35,6 +36,13 @@ def validate_plan(plan):
                 or plan.get('independent_points')!=[49,21]
                 or not plan.get('restart_source') or len(plan.get('restart_sha256',''))!=64):
             raise ValueError('validation-only stage needs three solves, dense checks and a pinned restart')
+    elif ergoregion_only:
+        if (plan['max_control_steps']!=0 or plan['max_solves']!=3
+                or plan.get('independent_points')!=[49,21]
+                or plan.get('source_grid')!=[192,24] or 'restart_source' in plan
+                or plan['throat_radius']!=2. or plan['energy_budget']!=1.
+                or plan['tidal_factor']!=4.):
+            raise ValueError('ergoregion stage needs the bounded three-solve fixed-area profile')
     elif (not 1<=plan['max_control_steps']<=12
             or not 2*len(grids)+plan['max_control_steps']<=plan['max_solves']<=18
             or 'restart_source' in plan or 'independent_points' in plan):
@@ -52,18 +60,28 @@ def validate_plan(plan):
 def read_source(plan):
     """Read the pinned nodal archive without starting JAX or a GPU."""
     root = Path(plan['source_directory'])
+    nx,ny=plan.get('source_grid',[128,16])
+    basename=f'grid_{nx}x{ny}'
+    if not {basename+'.npz',basename+'.json','outcome.json'} <= set(plan['source_sha256']):
+        raise ValueError('source fields and acceptance records must all be hash-pinned')
     for name, digest in plan['source_sha256'].items():
         if hashlib.sha256((root/name).read_bytes()).hexdigest() != digest:
             raise ValueError(f'railgun source hash mismatch: {name}')
     outcome = json.loads((root/'outcome.json').read_text())
-    record = json.loads((root/'grid_128x16.json').read_text())
+    record = json.loads((root/(basename+'.json')).read_text())
     if not outcome.get('accepted') or record['verdict'] != 'PASS':
         raise ValueError('source lacks accepted three-grid evidence')
-    with np.load(root/'grid_128x16.npz', allow_pickle=False) as data:
+    if plan.get('stage')=='ring_ergoregion':
+        extra=outcome.get('additional_acceptance',{})
+        if (extra.get('passed') is not True or extra.get('ergoregion_resolved') is not True
+                or len(outcome.get('records',[]))!=3
+                or any(r.get('verdict')!='PASS' for r in outcome['records'])):
+            raise ValueError('source lacks independently resolved three-grid ergoregion evidence')
+    with np.load(root/(basename+'.npz'), allow_pickle=False) as data:
         meta = json.loads(str(data['metadata']))
         u = np.array(data['u'])
     if (meta['model'] != 'canonical_regular_centre' or meta.get('representation')
-            or len(meta['fields']) != 1):
+            or len(meta['fields']) != 1 or [meta['nx'],meta['ny']]!=[nx,ny]):
         raise ValueError('bridge supports only the pinned single-field nodal source')
     field = meta['fields'][0]
     if (field['winding'] != 1 or field['parity'] != 'even'
@@ -184,6 +202,47 @@ def ring_geometry(state, config):
                 equatorial_gtt_max=float(max(gtt)),equatorial_ergoregion_sampled=bool(max(gtt)>0))
 
 
+def throat_ergoregion(state):
+    """Sample g_tt on the actual deformed minimal surface, including its axis.
+
+    This uses the asymptotically nonrotating time coordinate of the ring
+    problem. A positive value establishes an ergoregion at a sampled point;
+    absence at these points alone does not exclude a narrow unsampled patch.
+    """
+    from .exoticity import _grid_eval
+    mu=np.linspace(0.,1.,129)
+    y=2*mu**2-1
+    x=np.polynomial.chebyshev.chebval(y,state['surface_coefficients'])
+    def surface(key):
+        return np.diag(_grid_eval(state['sx'],state['sy'],state[key],x,y))
+    f,w,b=(surface(k) for k in ('F','W','B'))
+    ratio=abs(b*w)*np.exp(-f)*np.sqrt(1+state['map'].eta(x)**2)*np.sqrt(1-mu**2)
+    gtt=np.exp(f)*(ratio**2-1)
+    if not np.isfinite([ratio,gtt]).all():
+        raise ValueError('nonfinite throat ergoregion diagnostic')
+    i=int(np.argmax(gtt))
+    return dict(throat_gtt_max=float(gtt[i]),throat_gtt_mu=float(mu[i]),
+                throat_shift_over_lapse_max=float(max(ratio)),
+                throat_equatorial_gtt=float(gtt[0]),throat_samples=len(mu),
+                throat_ergoregion_sampled=bool(max(gtt)>0))
+
+
+def throat_ergoregion_convergence(rows):
+    """Require three accepted solutions and a positive, resolved throat sign."""
+    names=('throat_gtt_max','throat_shift_over_lapse_max')
+    if len(rows)!=3 or any(r.get('verdict')!='PASS' for r in rows):
+        return dict(throat_ergoregion_resolved=False)
+    values=np.array([[r.get(k,np.nan) for k in names] for r in rows])
+    if not np.isfinite(values).all():
+        return dict(throat_ergoregion_resolved=False)
+    spread=float(np.ptp(values[:,0]))
+    drift=float(np.max(abs(values[-1]-values[-2])/np.maximum(1.,abs(values[-1]))))
+    passed=bool(min(values[:,0])>max(1e-8,spread)
+                and min(values[:,1])>1 and drift<=1e-6)
+    return dict(throat_ergoregion_resolved=passed,throat_gtt_three_grid_spread=spread,
+                throat_observable_relative_drift=drift)
+
+
 def run(plan, out):
     from .exploration import solve_trial,save_trial
     from .resolution import check_candidate,save_checked
@@ -210,6 +269,8 @@ def run(plan, out):
                    independent_points=plan.get('independent_points'))
         if c.get('matter'):
             r.update(ring_geometry(s,c))
+            if plan.get('stage')=='ring_ergoregion':
+                r.update(throat_ergoregion(s))
             resolved=s['Z'][abs(s['Z'])>1e-5*np.max(abs(s['Z']))]
             if r['Q_b']<=1e-8 or not len(resolved) or np.min(resolved)*np.max(resolved)<0:
                 r['rejection_reasons'].append('nonzero_nodeless_ring')
@@ -234,6 +295,8 @@ def run(plan, out):
     outcome=dict(ring_accepted=False,source=plan['source_directory'],
                  stage=plan.get('stage','ring_and_control'),
                  stability='not_assessed',solves=len(result['records']))
+    if plan.get('stage')=='ring_ergoregion':
+        outcome['throat_ergoregion_resolved']=False
     if not result['passed']:
         outcome['reason']='ring_refinement_failed'
         write_json(out/'outcome.json',outcome); return 2
@@ -253,6 +316,12 @@ def run(plan, out):
         outcome.update(reason='ring_validation_complete',matched_control_status='not_run')
         write_json(out/'outcome.json',outcome)
         return 0
+    if plan.get('stage')=='ring_ergoregion':
+        outcome.update(throat_ergoregion_convergence(rows),matched_control_status='not_run')
+        reached=outcome['throat_ergoregion_resolved']
+        outcome['reason']='throat_ergoregion_validated' if reached else 'throat_ergoregion_not_reached'
+        write_json(out/'outcome.json',outcome)
+        return 0 if reached else 2
     # A failed matched control gives no ring-only reduction claim. One fixed
     # step ladder, no retries, no bisection, no alternate source or larger grid.
     count=max(1,math.ceil(abs(config['J'])/plan['control_J_step']))
