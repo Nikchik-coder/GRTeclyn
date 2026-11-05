@@ -32,7 +32,7 @@
   "checkpoints": false,
   "geometry": "matching rings at both mouths; nonrotating infinities",
   "phantom_potential": "V=0 throughout",
-  "status": "assembly and LU fixes verified at full size; same three-grid verification authorised by go fix it and continue",
+  "status": "completed November 5 09:40:51 MSK: all three grids PASS, ring accepted, no follow-on queued",
   "stage": "ring_validation",
   "independent_points": [
     49,

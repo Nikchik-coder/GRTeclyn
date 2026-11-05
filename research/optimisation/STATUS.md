@@ -1,30 +1,53 @@
 # Campaign M — status
 
-**All three November 4 wormhole/ring pilots STOPPED on request at
-22:54 MSK.** Their older S0 seed does not test a railgun ring around a
-wormhole. Logs and partial results are preserved. The replacement weak-ring
-pilot below finished with failed three-grid acceptance. November 5 validation
-finished: two grids passed; the third exhausted GPU memory during scaling.
-The memory-corrected retry also finished with two PASS and a GPU allocation
-failure at 240x40. The November 5 “go fix it” authorises the memory
-investigation below; physical settings and acceptance gates remain fixed.
-No old queue is authorised. The corrected direction starts from an archived weak
-regular-centre railgun ring, solves the two-ended throat geometry with its
-canonical scalar, and increases dragging only after that branch is validated.
-An ergoregion is optional. Earlier searches and evolution queues stay paused.
+**Weak railgun ring around the wormhole: all three grids PASS.**
+The corrected November 5 validation finished at **09:40:51 MSK**, exit 0.
+No optimisation job is live or queued. The older S0 pilots remain stopped;
+this result uses the archived weak railgun ring with a two-ended throat.
+Matching ring lobes surround both mouths, with nonrotating infinities and
+matter-induced dragging. Stronger rings, matched-spin controls and evolution
+remain separate follow-up work; no automatic follow-on is authorised.
 
-## Live corrected three-grid verification — November 5
+## Completed three-grid verification — November 5
 
-**Started 09:36:14 MSK**, first node/card 0, source **f9f29a566** verified by
-`myfork` push/pull. Job `railgun-throat-validation-20261105T063614`, supervisor
-PID 108139; fresh output `runs/optimisation/railgun_throat_validation_20261105_r3/`.
-Startup CUDA tests followed by exactly three re-solves on 210x36 / 224x38 /
-240x40, 24 updates maximum, all gates unchanged. Cap one hour, four threads,
-160 GiB, checkpoints OFF. No matched-spin control or evolution. Expected
-0.1–0.25 h total, 09:42–09:51 MSK; hard deadline 10:36:14 MSK. No evolution
-t or u/h applies. One-second GPU samples retained in the capped-job directory.
-Both cards idle at launch; scratch clean, 4 KB cache / 303 GB free; second
-node not listed. No plots, checkpoints, consumers or restart dependencies.
+**09:36:14–09:40:51 MSK, exit 0**, total **0.0769 h**. First node/card 0,
+frozen source **f9f29a566**, verified through `myfork` push/pull.
+Job `railgun-throat-validation-20261105T063614`; output
+`runs/optimisation/railgun_throat_validation_20261105_r3/`.
+**99 CUDA regressions passed in 36.62 s.** Exactly three solves, two Newton
+updates per grid; 24-update cap unchanged, target 1e-14, seed perturbation
+1e-6, independent sampling 49x21, all geometry/energy/tidal/tail/equation
+gates unchanged. Static-reference checks also PASS.
+
+| Grid | Verdict | Solve + checks (s) | Independent Einstein | Independent scalar | X_full |
+|---|---|---:|---:|---:|---:|
+| 210x36 | PASS | 16.93 | 2.1611e-12 | 1.6514e-9 | 3.106532919971992 |
+| 224x38 | PASS | 18.50 | 4.0638e-12 | 4.4732e-10 | 3.1065329199720435 |
+| 240x40 | PASS | 19.70 | 4.4520e-12 | 7.6722e-11 | 3.106532919972195 |
+
+`ring_accepted=true`, reason `ring_validation_complete`. Finest-pair
+X_full relative drift **4.8850e-14**; other checked ring observables drift
+**1.8645e-12** (gate 1e-6). Same-area static Ellis X_full=3.14159265358975;
+ring X_full=3.106532919972195, a **1.11598598% reduction relative to static
+Ellis**. This is the stationary comparison at R_A=2; stability is not assessed
+and the same-angular-momentum ring-free control has not run. It does not
+isolate a rotation-only benefit. No sampled equatorial ergoregion.
+
+Accepted fields saved as `accepted_ring.npz`, SHA256
+`4c3a266ba19be7af214ef41c612644113053bfeb20d2b6887fb105d6f8bf8c3b`.
+All three diagnostic arrays, reference, restart, source hashes and checks
+retained on NFS (1.8 MB output, 40 KB job logs/samples). Raw numerical archives
+have not been published; their separate publication approval is outstanding.
+No NaN or allocation errors in the successful run log. The LU compiler's
+conservative memory warning remains; all synchronized solves completed.
+
+One-second GPU samples peaked at **54659 MiB (53.38 GiB)** at
+**09:40:38 MSK**; this is a sampled peak. The memory monitor was stopped
+at close-out. Both cards returned to 0 MiB. Scratch clean: **4 KB cache /
+303 GB free**, no plotfiles, AMR checkpoints, consumers or queued restart
+requirements. Second node not listed. No evolution t, u/h or remaining ETA.
+Caps were one hour, four threads, 160 GiB host address space; float64,
+platform allocator, chunk 256, checkpoints OFF. No data deleted.
 
 ## Full-size matrix path verified — November 5
 
