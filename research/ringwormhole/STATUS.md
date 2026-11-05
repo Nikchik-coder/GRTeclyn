@@ -8,7 +8,14 @@ This directory holds STATUS and research writing. Earlier weak-ring records:
 
 ## Live
 
-**Corrected direct-flux pilot authorized; preparing, not started.** Fix the
+**Corrected direct-flux pilot prepared; GPU startup blocked pending explicit
+run settings and checkpoint confirmation.** Code committed as `afb114584`
+and pulled onto the first node; CPU-only pinned-seed preview passed.
+Automatic approval review rejected startup before execution: the general
+go for the correction did not explicitly approve this exact bounded run
+and its checkpoint choice. No retry or alternate startup was attempted.
+157 regression cases passed across the full CPU selection and added
+paired-claim guards. Proposed run: fix the
 geometric Killing flux through the specified xi=0 cut at
 -0.02/-0.04/-0.06/-0.08, retaining the accepted overlapping-matter seed's
 amplitude and true R_A=2. Check alignment and all independent physical gates
@@ -28,7 +35,7 @@ Second node not listed. The corrected pilot has no launch time or ETA yet.
 
 ## Planned (nothing launches without the go)
 
-- Authorized above: obtain co-rotation at the specified mouth by controlling the measured
+- Prepared above: obtain co-rotation at the specified mouth by controlling the measured
   geometric flux, rather than assuming that more negative total J+ selects
   that orientation. The completed pilot reached the opposite orientation;
   the corrected condition replaces the total-J assumption without changing
