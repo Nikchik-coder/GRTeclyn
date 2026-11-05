@@ -6,14 +6,21 @@ Current findings only; detailed run records and numerical checks are in
 
 ## Live
 
-No live or queued run. Both completed studies exited successfully on the
-first node/card 0, with checkpoints OFF and stationary fields/logs retained.
-Last close-out check, November 5: both GPUs idle; scratch clean,
-**4 KB cache / 303 GB free**. Second node not listed. No remaining ETA.
+**Running: `ringwormhole-ergo108-20261105T072903`**, first node/card 0.
+Frozen source `7dc132c8d`; started **Nov 5 10:29:03 MSK**. Stationary solve
+(no evolution time): 102 CUDA regressions passed in 38.82 s; static reference
+preparation underway before 210x36 / 224x38 / 240x40. At most 24 Newton
+updates per grid; 1 h / four threads / 160 GiB, checkpoints OFF.
+Estimated finish **0.1–0.25 h after launch (10:35–10:44 MSK)**;
+hard stop **11:29:03 MSK**. No measured solve speed yet.
+Startup storage: scratch clean, **4 KB cache / 303 GB free**;
+second node not listed. Fields/logs retained on persistent storage at
+`runs/ringwormhole/ergoregion108_20261105/`; capped-job log under the job name
+in `runs/capped_jobs/`. No follow-on run approved or queued.
 
 ## Planned (nothing launches without the go)
 
-**Prepared: one near-threshold ergoregion-ring/throat case.**
+**Approved and running: one near-threshold ergoregion-ring/throat case.**
 [Configuration](ergoregion108.json), [preview/dispatcher](run_ergoregion108.sh).
 Reuse the accepted CMA-ES finalist at source shift/lapse **1.080970704**,
 frequency **0.655065086594** and maximum g_tt **+0.0150110091**; its original
@@ -33,10 +40,9 @@ The ergoregion target samples the actual deformed minimal surface at 129
 angles and requires positive g_tt on all three accepted solutions, exceeding
 both 1e-8 and the three-grid spread. An outer ergoregion alone does not meet
 the throat target. **102 CPU tests pass**; shell and no-GPU previews pass.
-Proposed first node/card 0, three solves only, 24 Newton updates each,
+Approved first node/card 0, three solves only, 24 Newton updates each,
 1 h / four threads / 160 GiB, float64/platform allocator, chunk 256,
-checkpoints OFF, fields/logs retained. No GPU startup yet; run-specific go
-and checkpoint decision pending. Output:
+checkpoints OFF, fields/logs retained. Run-specific go received. Output:
 `runs/ringwormhole/ergoregion108_20261105/`. Stop after this single case.
 
 - Continue the coupled ring branch toward stronger measured dragging, then
