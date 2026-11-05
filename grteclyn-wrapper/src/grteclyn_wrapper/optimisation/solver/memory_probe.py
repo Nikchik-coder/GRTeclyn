@@ -20,7 +20,7 @@ def main():
     args.out.mkdir(parents=True, exist_ok=False)
 
     from .device import configure_jax
-    from .newton import _donating_equilibrator
+    from .newton import _donating_equilibrator, _cuda_linear_algebra
     from ..railgun_wormhole import read_restart, validate_plan
     from ..exploration import make_problem, pack_seed
     import numpy as np
@@ -72,14 +72,14 @@ def main():
         scaled, scale = actual(jac)
         scaled.block_until_ready()
         mark('scaling_done', format=str(scaled.format))
-        import jax.scipy.linalg as jsl
-        factor = jax.jit(jsl.lu_factor, donate_argnums=(0,)).lower(scaled).compile()
+        factor, solve = _cuda_linear_algebra()
+        factor = factor.lower(scaled).compile()
         report('lu', factor)
         lu, piv = factor(scaled)
         lu.block_until_ready()
         mark('lu_done')
         rhs = scale*problem.residual(seed)
-        correction = jsl.lu_solve((lu, piv), rhs)
+        correction = solve((lu, piv), rhs)
         correction.block_until_ready()
         if not np.isfinite(np.asarray(correction)).all():
             raise RuntimeError('nonfinite correction')

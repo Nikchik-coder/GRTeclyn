@@ -62,10 +62,10 @@ def test_jacobian_assembly_does_not_materialise_full_matrix_temporaries():
 
 def test_donated_scaling_preserves_accelerated_newton_solution(monkeypatch):
     module=importlib.import_module('grteclyn_wrapper.optimisation.solver.newton')
-    from jax.scipy.linalg import lu_factor,lu_solve
+    factor,solve=module._cuda_linear_algebra()
     # Exercise the accelerated branch on CPU as well as CUDA startup tests.
     monkeypatch.setattr(module,'_cuda_backend',lambda matrix:(
-        jnp,jax.jit(lu_factor,donate_argnums=(0,)),lu_solve,_donating_equilibrator()))
+        jnp,factor,solve,_donating_equilibrator()))
     matrix=jnp.asarray([[4.,1.,0.],[0.,3.,-.5],[.2,0.,2.]])
     def residual(x): return matrix@x+.2*jnp.sin(x)-1.
     solution,info=module.newton(residual,chunked_jacfwd(residual,3,2),np.zeros(3),tol=1e-13)

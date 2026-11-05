@@ -13,6 +13,26 @@ regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
 
+## Assembly correction checked on the full matrix — November 5
+
+`railgun-memory-fixed-20261105T063142`, first node/card 0, source **8dc043d43**,
+09:31:42–09:31:52 MSK, exit 1 (0.0028 h). The actual 240x40 Jacobian now
+builds and synchronizes successfully: **26.2264 GiB output + 1.2298 GiB
+compiler temporary storage**, versus the old 52.51 GiB temporary request.
+Row scaling also succeeds; device snapshots show 27487 / 27489 MiB after
+assembly/scaling. **99 CPU regressions pass**, including derivative values,
+overlapping last blocks, assembly memory and Newton recovery.
+
+The remaining failure is distinct: LU compilation profiles full-matrix
+transpose kernels while the scaled matrix is live. Its autotuner fails all
+candidate configurations on 26.24 GiB profiling allocations, before LU runs.
+The next correction disables compile-time autotuning only for the dense
+factor/solve wrappers, preserving cuSOLVER LU, float64 and the equations.
+No scientific re-solve ran. Diagnostic cap was 0.25 h / four threads /
+160 GiB, checkpoints OFF. Both cards returned to 0 MiB; scratch clean,
+4 KB cache / 303 GB free. Second node not listed. Logs/compiler reports
+remain under `runs/optimisation/railgun-memory-fixed-20261105T063142/`.
+
 ## Full-size memory diagnostic — November 5
 
 Job `railgun-memory-20261105T062442`, first node/card 0, source **778315725**,

@@ -47,6 +47,20 @@ def _donating_equilibrator():
     return jax.jit(equilibrate, donate_argnums=(0,))
 
 
+def _cuda_linear_algebra():
+    """Dense LU without compile-time benchmarks of full-matrix transposes.
+
+    At 59,330 unknowns the autotuner's profiling buffers exhaust an 80 GiB
+    card while the live matrix occupies 26.23 GiB. Use default kernel
+    configurations for these two wrappers; cuSOLVER still performs the LU.
+    """
+    import jax
+    import jax.scipy.linalg as jsl
+    options = {'xla_gpu_autotune_level': 0}
+    return (jax.jit(jsl.lu_factor, donate_argnums=(0,), compiler_options=options),
+            jax.jit(jsl.lu_solve, compiler_options=options))
+
+
 def _cuda_backend(jac):
     """Device array, factorization, solve and row scaling for a CUDA Jacobian."""
     if not type(jac).__module__.startswith(("jax", "jaxlib")):
@@ -56,10 +70,8 @@ def _cuda_backend(jac):
             else {jac.device}
         if any(getattr(d, "platform", "") == "gpu" for d in devs):
             import jax.numpy as jnp
-            import jax.scipy.linalg as jsl
-            import jax
-            return (jnp, jax.jit(jsl.lu_factor, donate_argnums=(0,)),
-                    jsl.lu_solve, _donating_equilibrator())
+            factor, solve = _cuda_linear_algebra()
+            return (jnp, factor, solve, _donating_equilibrator())
     except Exception:
         return None
     return None
