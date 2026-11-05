@@ -19,6 +19,14 @@ log under the job name in `runs/capped_jobs/`. No follow-on queued.
 
 ## Planned (nothing launches without the go)
 
+November 5 clarification: **matter may overlap the throat**. The running
+job retains its original exterior-ring rejection record. A separate
+[CPU assessment](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/ringwormhole_overlap.py)
+will remove only that preference from saved three-grid checks; all equation,
+energy, minimal-surface, symmetry, volume and tidal gates remain. Six policy
+tests pass. No ergoregion is inherited from the CMA source or assumed.
+
+
 **Retry running: continuation toward the CMA-derived amplitude border.**
 [Retry configuration](ergoregion108_continuation.json),
 [dispatcher](run_ergoregion108_continuation.sh). Start at the accepted weak-ring
