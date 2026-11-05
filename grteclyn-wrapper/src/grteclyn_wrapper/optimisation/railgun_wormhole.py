@@ -20,14 +20,26 @@ from grteclyn_wrapper.analysis.spinning_wormhole.spectral import ArctanMap, cheb
 
 def validate_plan(plan):
     """Keep the prepared pilot inside its declared resource and solve budget."""
+    stage=plan.get('stage','ring_and_control')
+    if stage not in ('ring_and_control','ring_validation'):
+        raise ValueError('unknown study stage')
+    validation_only=stage=='ring_validation'
+    ceiling=(240,40) if validation_only else (210,36)
     grids=plan['grids']
-    if (len(grids)!=3 or any(len(g)!=2 or g[0]%2 or not 6<=g[0]<=210
-                            or not 3<=g[1]<=36 for g in grids)
+    if (len(grids)!=3 or any(len(g)!=2 or g[0]%2 or not 6<=g[0]<=ceiling[0]
+                            or not 3<=g[1]<=ceiling[1] for g in grids)
             or any(a[0]>=b[0] or a[1]>=b[1] for a,b in zip(grids,grids[1:]))):
         raise ValueError('expected three increasing grids within the pilot ceiling')
-    if (not 1<=plan['max_control_steps']<=12
+    if validation_only:
+        if (plan['max_control_steps']!=0 or plan['max_solves']!=3
+                or plan.get('independent_points')!=[49,21]
+                or not plan.get('restart_source') or len(plan.get('restart_sha256',''))!=64):
+            raise ValueError('validation-only stage needs three solves, dense checks and a pinned restart')
+    elif (not 1<=plan['max_control_steps']<=12
             or not 2*len(grids)+plan['max_control_steps']<=plan['max_solves']<=18
-            or plan['max_newton_iterations']!=24):
+            or 'restart_source' in plan or 'independent_points' in plan):
+        raise ValueError('invalid bounded solve budget')
+    if plan['max_newton_iterations']!=24:
         raise ValueError('invalid bounded solve budget')
     if (plan['wall_seconds']!=3600 or plan['threads']!=4 or plan['memory_gib']!=160
             or plan['checkpoints'] is not False):
@@ -81,6 +93,8 @@ def prepare_seed(plan):
     coordinate transformation of a solution. The phantom kink, geometry,
     frequency and entire ring profile must subsequently be solved together.
     """
+    if plan.get('stage')=='ring_validation':
+        return read_restart(plan)
     from scipy.optimize import brentq
     from .exploration import matter_anchor
     meta, arrays, frequency, record = read_source(plan)
@@ -115,6 +129,25 @@ def prepare_seed(plan):
                   matter_mass=meta['fields'][0]['mass'],zeta_anchor_xi=xi)
     config['amplitude'] = matter_anchor(s['Z'],s['sx'],config)
     return s,config
+
+
+def read_restart(plan):
+    """Reuse the original amplitude border and fields, without inheriting PASS."""
+    from .exploration import load_seed
+    path=Path(plan['restart_source'])
+    if hashlib.sha256(path.read_bytes()).hexdigest()!=plan['restart_sha256']:
+        raise ValueError('restart hash mismatch')
+    state,meta=load_seed(path)
+    config=meta['config']
+    expected=dict(m=0.,q=[0.,0.,0.],gamma=0.,rotation_control='nonrotating_ends',
+                  matter='winding',winding_k=1,matter_mass=1.)
+    if (any(config.get(k)!=v for k,v in expected.items()) or
+            meta.get('pin')!=['minimal_area',4*np.pi*plan['throat_radius']**2] or
+            state['omega']!=0. or not 0<config.get('zeta_anchor_xi',0)<1 or
+            config.get('amplitude',0)<=0 or
+            not np.isfinite(config.get('amplitude',np.nan))):
+        raise ValueError('restart is not the same fixed-area weak-ring model')
+    return state,config
 
 
 def ring_geometry(state, config):
@@ -173,7 +206,8 @@ def run(plan, out):
     reference_peak=tidal_envelope(baseline)['tidal_peak']
     def validator(s,c,r):
         r=validate(s,c,r,reference_peak=reference_peak,tidal_factor=plan['tidal_factor'],
-                   energy_budget=plan['energy_budget'] if c.get('matter') else None)
+                   energy_budget=plan['energy_budget'] if c.get('matter') else None,
+                   independent_points=plan.get('independent_points'))
         if c.get('matter'):
             r.update(ring_geometry(s,c))
             resolved=s['Z'][abs(s['Z'])>1e-5*np.max(abs(s['Z']))]
@@ -192,10 +226,13 @@ def run(plan, out):
     if baseline_row['verdict']!='PASS':
         write_json(out/'outcome.json',dict(reason='static_reference_failed',solves=0))
         return 2
-    save_trial(out/'mapped_seed.npz',seed,config,dict(verdict='UNSOLVED',source=plan['source_directory']),pin)
+    seed_name='restart_seed.npz' if plan.get('stage')=='ring_validation' else 'mapped_seed.npz'
+    save_trial(out/seed_name,seed,config,dict(verdict='UNSOLVED',source=plan.get(
+        'restart_source',plan['source_directory'])),pin)
     result,ring=check_candidate(seed,config,grids,pin,d2,out/'ring',
                   validator=validator,score_key='X_full',perturb_seed=True)
     outcome=dict(ring_accepted=False,source=plan['source_directory'],
+                 stage=plan.get('stage','ring_and_control'),
                  stability='not_assessed',solves=len(result['records']))
     if not result['passed']:
         outcome['reason']='ring_refinement_failed'
@@ -212,6 +249,10 @@ def run(plan, out):
     outcome.update(ring_accepted=True,J=config['J'],X_ring=last['X_full'],
                    X_static=baseline_row['X_full'],static_fractional_reduction=1-last['X_full']/baseline_row['X_full'])
     write_json(out/'outcome.json',outcome)
+    if plan.get('stage')=='ring_validation':
+        outcome.update(reason='ring_validation_complete',matched_control_status='not_run')
+        write_json(out/'outcome.json',outcome)
+        return 0
     # A failed matched control gives no ring-only reduction claim. One fixed
     # step ladder, no retries, no bisection, no alternate source or larger grid.
     count=max(1,math.ceil(abs(config['J'])/plan['control_J_step']))

@@ -3,11 +3,53 @@
 **All three November 4 wormhole/ring pilots STOPPED on request at
 22:54 MSK.** Their older S0 seed does not test a railgun ring around a
 wormhole. Logs and partial results are preserved. The replacement weak-ring
-pilot below finished with failed three-grid acceptance; no restart or old
-queue is authorised. The corrected direction starts from an archived weak
+pilot below finished with failed three-grid acceptance. November 5: the specific
+three-grid validation below is authorised on first node/card 0.
+No old queue is authorised. The corrected direction starts from an archived weak
 regular-centre railgun ring, solves the two-ended throat geometry with its
 canonical scalar, and increases dragging only after that branch is validated.
 An ergoregion is optional. Earlier searches and evolution queues stay paused.
+
+## Approved validation — November 5
+
+[Plan](studies/railgun_throat_validation.json),
+[preview/dispatcher](studies/run_railgun_throat_validation.sh).
+Scope: validate the same weak-ring model only, then stop. No matched-spin
+control, stronger ring, evolution or automatic retry. The earlier diagnostic
+210x36 fields are a hash-pinned starting guess; their previous PASS is not
+inherited. Preserve their exact scalar-amplitude border, R_A=2, V=0, gamma=0,
+k=+1, scalar mass=1 and nonrotating infinities.
+
+CPU-only audit of the saved fields: two interpolation methods agree within
+1.6e-14 of peak amplitude. The last ten radial coefficients fall from
+3.24e-10 (150x24) to 1.47e-11 (180x30) to 7.02e-13 (210x36); angular tails
+are already near roundoff. This supports radial under-resolution as the cause
+of the rejected far-tail behaviour, rather than an interpolation bug.
+On a common, denser 49x21 independent point set, scalar defects are
+1.5871e-7 / 3.6782e-9 / 1.6513e-9; Einstein defects are
+2.8798e-10 / 1.0927e-11 / 2.5140e-12. The 150x24 scalar equation still fails.
+The 180x30 localisation failure remains; no acceptance threshold was changed.
+Audit logs are retained with the original run under `audit_20261105/`.
+
+Approved re-solves: **210x36 / 224x38 / 240x40**, each with a 1e-6 seed
+perturbation and at least one Newton correction, target 1e-14, maximum 24
+iterations. Independent sampling increases from 17x9 to 49x21 on every grid;
+the equation gate stays 1e-8 and tail monotonicity allowance stays 1e-12.
+All prior geometry, energy, tides, symmetry, charge/flux and refinement gates
+remain. Exactly three solves, zero control steps. Approved first node/card 0,
+1 h hard cap, four threads, 160 GiB address-space cap, CUDA float64/platform
+allocator, Jacobian chunk 256. Largest dense matrix is 26.23 GiB; actual
+device allocation must be checked at startup. Estimated total 0.1–0.25 h
+after launch; clock ETA will be recorded at startup. AMR checkpoints OFF; stationary
+fields and logs retained. Fresh output:
+`runs/optimisation/railgun_throat_validation_20261105/`.
+
+**86 targeted CPU tests pass**; shell syntax and no-GPU previews pass.
+Tests enforce restart identity, unchanged scalar border, the three-solve cap,
+denser equation sampling and stopping before any matched-spin control.
+No new GPU startup. Read-only first-node check: both cards idle, scratch
+4 KB cache / 303 GB free; no plots, checkpoints or cleanup. Second node was
+not listed for this preparation.
 
 ## Finished replacement — weak railgun ring with a throat
 

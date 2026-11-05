@@ -7,7 +7,11 @@ from .potential_domain import admissible, shape_diagnostics
 
 
 def validate(state, config, row, *, reference_peak, tidal_factor, energy_budget=None,
-             detailed=False):
+             detailed=False, independent_points=None):
+    if independent_points is not None and (len(independent_points)!=2 or
+            any(type(n) is not int for n in independent_points) or
+            independent_points[0]<17 or independent_points[1]<9):
+        raise ValueError('independent equation sampling cannot shrink below 17x9')
     out=dict(row); reasons=[]
     domain=config.get('potential_domain','positive')
     q=config.get('q',[])
@@ -58,10 +62,13 @@ def validate(state, config, row, *, reference_peak, tidal_factor, energy_budget=
         out.update(surface)
         if not surface['surface_verified']: reasons.append('minimal_surface')
     if geometry_ready():
+        nr,nt=independent_points or (
+            max(17,len(state['sx'])//4) if detailed else 17,
+            max(9,len(state['sy'])//2) if detailed else 9)
         off=independent_equations(state,config,
-              radial_points=max(17,len(state['sx'])//4) if detailed else 17,
-              angular_points=max(9,len(state['sy'])//2) if detailed else 9)
+                                  radial_points=nr,angular_points=nt)
         out.update(off)
+        out['offgrid_sampling']=[nr,nt]
         if not off['offgrid_pass']: reasons.append('offgrid_equations')
     if geometry_ready():
         tides=tidal_envelope(state)

@@ -1,0 +1,43 @@
+{
+  "source_directory": "results/railgun/studies/ring-validated",
+  "source_sha256": {
+    "grid_128x16.npz": "eceef1d1fe1efbe78194d96988d7899213e0ecd1efd640e9a1096e235d81e5fa",
+    "grid_128x16.json": "902049ac65d0bd5dd4bf36ba5a8f68062a230dc17ce9dcfa336108cdf767d754",
+    "outcome.json": "67582901ca95027cc425c22c23b994dd194bf03a21b0e9daff10f9f5775aaa72"
+  },
+  "throat_radius": 2.0,
+  "grids": [
+    [
+      210,
+      36
+    ],
+    [
+      224,
+      38
+    ],
+    [
+      240,
+      40
+    ]
+  ],
+  "tidal_factor": 4.0,
+  "energy_budget": 1.0,
+  "control_J_step": 0.1,
+  "max_control_steps": 0,
+  "max_solves": 3,
+  "max_newton_iterations": 24,
+  "wall_seconds": 3600,
+  "threads": 4,
+  "memory_gib": 160,
+  "checkpoints": false,
+  "geometry": "matching rings at both mouths; nonrotating infinities",
+  "phantom_potential": "V=0 throughout",
+  "status": "approved November 5: first node GPU 0; three solves only",
+  "stage": "ring_validation",
+  "independent_points": [
+    49,
+    21
+  ],
+  "restart_source": "runs/optimisation/railgun_throat_weak_20261104/ring/diagnostic_210x36.npz",
+  "restart_sha256": "78a698731a658e1bb19a97e26ede095a8d5fd6379cf2d9a0046ac8673ad1e2e1"
+}
