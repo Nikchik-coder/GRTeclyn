@@ -15,6 +15,32 @@ Second node not listed. No remaining ETA.
 
 ## Planned (nothing launches without the go)
 
+**Prepared: independently spinning wormhole plus co-rotating canonical matter.**
+[Configuration](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/spin_ring_co_rotating.json),
+[launcher](../../grteclyn-wrapper/scripts/campaigns/ringwormhole/run_spin_ring.sh).
+Start from the accepted overlapping-matter point (20.678708% static reduction),
+keep true R_A=2, V=0, gamma=0 and scalar normalization at xi=0 fixed, and
+continue total J+ from -0.7163901140 to **-0.7963901140** in four steps.
+Solve the relative rotation of the two asymptotic frames; allow two-ended
+asymmetry. Require nonzero geometric angular-momentum flux across xi=0,
+aligned with the matter flux. This specified-cut diagnostic is not a unique
+global separation into wormhole and matter spins.
+
+Compare with a ring-free rotating control at the **same minimal area and
+final total J+**, continued in four steps from the existing control. Both arms
+then get 210x36 / 224x38 / 240x40 perturbed recoveries and independent 49x21
+equation checks. Keep the existing energy, surface, volume and tidal gates;
+throat overlap remains allowed. The symmetric-family identities (reflection
+and J_b/2=J+) are inapplicable here; full angular-momentum conservation and
+localization at both ends remain required. A failed arm or mismatched J gives
+no matched-spin reduction claim.
+
+Prepared first node/card 0, **14 solves maximum**, 24 Newton updates each,
+1 h / four threads / 160 GiB, CUDA float64/platform allocator/chunk 256;
+checkpoints proposed OFF, fields/logs retained. **132 CPU tests pass**; shell
+syntax checks pass. **No GPU startup; run-specific
+go and checkpoint decision pending.** No follow-on or counter-rotating case.
+
 - Try slightly less throat matter to retain g_tt > 0 while bringing peak tide
   below 0.333333. The present ergoregion solution exceeds that ceiling by 6.22%.
 - Compare a qualified new point with a ring-free control at its own area and J.
