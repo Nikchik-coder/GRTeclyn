@@ -2,21 +2,22 @@
 
 **Weak railgun ring around the wormhole: all three grids PASS.**
 The corrected November 5 validation finished at **09:40:51 MSK**, exit 0.
-No optimisation job is live or queued. The same-spin control is prepared
-below for a separate launch decision. The older S0 pilots remain stopped;
+The approved same-spin, ring-free control is now live on first-node GPU 0.
+The older S0 pilots remain stopped;
 this result uses the archived weak railgun ring with a two-ended throat.
 Matching ring lobes surround both mouths, with nonrotating infinities and
-matter-induced dragging. Stronger rings, matched-spin controls and evolution
-remain separate follow-up work; no automatic follow-on is authorised.
+matter-induced dragging. Stronger rings and evolution remain separate
+follow-up work; no automatic follow-on is authorised.
 
-## Prepared next stage — ring-free matched-spin control
+## Live ring-free matched-spin control — November 5
 
 [Configuration](studies/railgun_matched_control.json),
 [preview/dispatcher](studies/run_railgun_matched_control.sh),
 implementation `grteclyn_wrapper.optimisation.railgun_control`.
-The continuing plan prepares this comparison first. **No GPU startup has
-occurred for this stage.** A run-specific go and checkpoint decision are
-required by root AGENTS.md before startup. Proposed checkpoints OFF;
+**Started 09:58:54 MSK**, source **bb0b68851** verified by `myfork`
+push/pull. Job `railgun-matched-control-20261105T065853`, supervisor PID
+113194. **70 CUDA startup tests PASS in 23.54 s**; production confirms
+CUDA/float64 and the spin continuation is running. Approved checkpoints OFF;
 stationary fields/logs retained. Preview and shell syntax checks pass;
 **70 targeted CPU tests pass** for this control and solver/area regressions.
 
@@ -35,10 +36,12 @@ one Newton correction, target 1e-14, unchanged independent equations on
 No matched reduction is recorded if a continuation or final check fails.
 A signed comparison can show the ring improves on or loses to the control.
 
-Proposed first node/card 0; **13 solves maximum**, 24 Newton iterations per
+Approved first node/card 0; **13 solves maximum**, 24 Newton iterations per
 solve, 1 h hard cap including CUDA tests, four threads, 160 GiB host address
 space, float64/platform allocator, no preallocation, chunk 256. Expected
-0.05–0.25 h after startup; no clock ETA until launch. Fresh output proposed:
+0.05–0.25 h total, **10:02–10:14 MSK**; hard stop **10:58:54 MSK**.
+No evolution t or u/h applies. One-second GPU memory samples are retained.
+Fresh output:
 `runs/optimisation/railgun_matched_control_20261105/`. Stop after this
 comparison; stronger-dragging continuation and evolution get separate scopes.
 Last read-only check: both cards idle, scratch 4 KB cache / 303 GB free;
