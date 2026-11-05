@@ -6,21 +6,36 @@ Current findings only; detailed run records and numerical checks are in
 
 ## Live
 
-**Running: `ringwormhole-ergo108-20261105T072903`**, first node/card 0.
-Frozen source `7dc132c8d`; started **Nov 5 10:29:03 MSK**. Stationary solve
-(no evolution time): 102 CUDA regressions passed in 38.82 s; static reference
-preparation underway before 210x36 / 224x38 / 240x40. At most 24 Newton
-updates per grid; 1 h / four threads / 160 GiB, checkpoints OFF.
-Estimated finish **0.1–0.25 h after launch (10:35–10:44 MSK)**;
-hard stop **11:29:03 MSK**. No measured solve speed yet.
-Startup storage: scratch clean, **4 KB cache / 303 GB free**;
-second node not listed. Fields/logs retained on persistent storage at
-`runs/ringwormhole/ergoregion108_20261105/`; capped-job log under the job name
-in `runs/capped_jobs/`. No follow-on run approved or queued.
+No live run. Direct CMA-seed insertion `ringwormhole-ergo108-20261105T072903`
+ended **Nov 5 10:33:09 MSK**, exit 2, after 0.068 h on first node/card 0.
+The first 210x36 solve stalled before any accepted Newton update at residual
+**3.492e-3** (25.62 s); finer grids did not run. 102 CUDA tests passed.
+No coupled ergoregion or exoticity result. Saved mapped seed, static reference,
+checks and log remain in `runs/ringwormhole/ergoregion108_20261105/` and
+its `runs/capped_jobs/` directory. Sampled GPU peak **34487 MiB**.
+Both cards idle; scratch clean, **4 KB cache / 303 GB free**;
+second node not listed. No remaining ETA.
+
+Retry/reconfiguration authorized November 5: physical amplitude continuation
+from the validated weak ring, with the same R_A=2, V=0, nonrotating infinities,
+canonical scalar, final grids, acceptance gates and resource caps.
 
 ## Planned (nothing launches without the go)
 
-**Approved and running: one near-threshold ergoregion-ring/throat case.**
+**Retry in preparation: continuation toward the CMA-derived amplitude border.**
+[Retry configuration](ergoregion108_continuation.json),
+[dispatcher](run_ergoregion108_continuation.sh). Start at the accepted weak-ring
+fields, reanchor the same solution at xi=0.4877785081 (amplitude 0.0284222725),
+and raise amplitude toward 0.2846529189. At most 32 continuation attempts
+(20% initial growth, adaptive halving, minimum absolute step 1e-5), then
+three perturbed validation solves of the target or strongest converged point.
+109 CPU regression tests pass. Each solve retains the 24-update cap;
+backtracking may reach 1/4096. Keep failed raw iterates/history and each
+converged intermediate field. Total cap 1 h / four threads / 160 GiB,
+GPU 0, checkpoints OFF. This follows the weak-ring branch; sharing a scalar
+amplitude with the CMA seed does not identify the resulting spacetime with it.
+
+**Original target and unchanged qualification:**
 [Configuration](ergoregion108.json), [preview/dispatcher](run_ergoregion108.sh).
 Reuse the accepted CMA-ES finalist at source shift/lapse **1.080970704**,
 frequency **0.655065086594** and maximum g_tt **+0.0150110091**; its original
@@ -42,8 +57,8 @@ both 1e-8 and the three-grid spread. An outer ergoregion alone does not meet
 the throat target. **102 CPU tests pass**; shell and no-GPU previews pass.
 Approved first node/card 0, three solves only, 24 Newton updates each,
 1 h / four threads / 160 GiB, float64/platform allocator, chunk 256,
-checkpoints OFF, fields/logs retained. Run-specific go received. Output:
-`runs/ringwormhole/ergoregion108_20261105/`. Stop after this single case.
+checkpoints OFF, fields/logs retained. Original attempt failed as recorded above.
+Retry output: `runs/ringwormhole/ergoregion108_continuation_20261105/`.
 
 - Continue the coupled ring branch toward stronger measured dragging, then
   repeat three-grid validation and the same-spin comparison at the new J.

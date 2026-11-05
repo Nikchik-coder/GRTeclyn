@@ -175,7 +175,7 @@ def bound_mode(state, config, pin, nx=40, ny=10):
 
 def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                 max_iter=14, stall_ok=1e-9, newton_tol=1e-14, min_updates=0,
-                chord_ratio=.1):
+                chord_ratio=.1, min_damping=1/64, verbose=False, failure_path=None):
     if not 0 < newton_tol <= stall_ok:
         raise ValueError("Newton stopping tolerance must not exceed acceptance tolerance")
     from .solver.newton import newton
@@ -199,9 +199,16 @@ def solve_trial(state, config, nx, ny, pin, d2, *, mode=None,
                      amplitude=config.get("amplitude") if kind else None)
     u, info = newton(p.residual, p.jacobian, pack_seed(p, state, cloud, frequency),
                      tol=newton_tol, max_iter=max_iter, min_updates=min_updates,
-                     chord_ratio=chord_ratio)
+                     chord_ratio=chord_ratio, min_damping=min_damping, verbose=verbose)
     residual = float(info["res_scaled_inf"])
     if not np.isfinite(residual) or residual > stall_ok or len(info['newton_steps'])<min_updates:
+        if failure_path is not None:
+            # Preserve the unaccepted iterate and Newton history for diagnosis.
+            path = Path(failure_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(path, u=u, sx=p.sx, sy=p.sy,
+                metadata=json.dumps(dict(accepted=False, config=config, pin=list(pin),
+                    nx=nx, ny=ny, newton=info), default=float))
         raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")
     fields = [np.asarray(v) for v in p.fields(u)]
     if not all(np.isfinite(v).all() for v in fields):
