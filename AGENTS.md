@@ -45,6 +45,10 @@ session start goes stale within hours.
 
 ## Environment
 
+- For cluster access, capped CUDA/JAX solves, allocator startup failures and
+  evolution launch checks, read [CLUSTER_GPU.local.md](CLUSTER_GPU.local.md)
+  when present. This local runbook is intentionally Git-ignored and may be
+  absent in other checkouts; it does not grant launch approval.
 - **LaTeX: the workstation only.** It has TeX Live (`latexmk`, `lualatex`, `pdflatex`);
   the GPU nodes have none. The editor rebuilds the article with `latexmk -lualatex` on
   save, so build test copies with `-outdir` elsewhere, and check that both engines build.
