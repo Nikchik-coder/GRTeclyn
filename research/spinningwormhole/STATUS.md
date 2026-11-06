@@ -8,6 +8,18 @@ solver: [`SpinningSolver.md`](SpinningSolver.md). Code: `Examples/SpinningWormho
 Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per run; `trust_windows.tsv`). Branch
 `trunk`, pushed to `myfork` (`feature/spinning` was merged into it and deleted on 2026-10-26).
 
+## PUBLICATION (2026-11-06)
+
+- Submitted to **General Relativity and Gravitation** on 2026-11-06; receipt confirmed, stage **Technical Check**.
+  Await technical-check queries or the next editorial update. Tracking details and correspondence are kept locally
+  in `referee/PUBLICATION_STATUS.md`.
+- The arXiv:2610.29941 v2 replacement was submitted on the same day and was awaiting announcement at journal submission.
+- Revised wording and references: commit `3def68a9a`. The correction is explicitly a published misprint; the earlier
+  numerical results are unaffected. The mode-crossing comparison is scoped to its asymmetry range, and the D90
+  three-resolution result through t = 150 is retained as a finite-time observation.
+- Submitted files: [`grg_submission/`](grg_submission/), using the 12-page arXiv layout with journal declarations.
+  The initial Springer-template conversion was replaced before submission. Numerical results are unchanged.
+
 ## RESULTS SO FAR (2026-10-21)
 
 Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat

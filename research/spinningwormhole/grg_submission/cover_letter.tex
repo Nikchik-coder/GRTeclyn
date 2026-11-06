@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}
+\fi
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+\pagestyle{empty}
+\begin{document}
+\begin{flushright}
+6 November 2026
+\end{flushright}
+To the Editors, \emph{General Relativity and Gravitation}
+
+Dear Editors,
+
+We submit \emph{``Rotation slows the instability of Ellis--Bronnikov wormholes''}, by Nikita M.\ Shirokov and Ilya Nachevsky, for consideration as an original research article in \emph{General Relativity and Gravitation}.
+
+The radial instability of the static Ellis--Bronnikov wormhole is well established, including in this journal (Cremona, Pirotta and Pizzocchero, \emph{Gen.\ Relativ.\ Gravit.}~\textbf{51}, 19, 2019). Slow-rotation perturbation theory predicts that rotation weakens it. We investigate the nonlinear evolution of an asymmetric rotating family using independently constructed stationary spectral backgrounds and three-dimensional numerical relativity.
+
+The evolutions show a decreasing collapse rate with increasing spin. The fastest evolved model, with equatorial rotation parameter $v_e=0.9$, shows no growing areal-radius departure through $t=150$ at three resolutions, about 28 e-folding times of the static reference. Constraint convergence accompanies this result. Intermediate-spin simulations show both collapse and expansion, with the direction depending on the effective perturbation. Rotating collapse also produces an axisymmetric quadrupolar gravitational-wave burst, stronger in the faster of the two compared models.
+
+The manuscript distinguishes these finite-time results from an eigenmode stability analysis. Its contribution is the nonlinear evolution and numerical validation of the selected asymmetric family, together with a reproducible spectral construction. It therefore connects the stationary-solution and perturbation literature with the subsequent dynamics, within the journal's scope in classical gravitation.
+
+Additional field-equation checks identify a misprint in a published stationary equation. The original authors have confirmed that their code used the correct equation and their numerical results are unaffected; this is stated explicitly in the manuscript. Our stationary solutions agree with their published results.
+
+The code, parameters and diagnostic data are public, with an archival record at \url{https://doi.org/10.5281/zenodo.23245933}. A preprint is available as arXiv:2610.29941; its replacement incorporating the revised wording and references has been submitted and is awaiting announcement. The manuscript is not under consideration at another journal. Funding, competing interests, author contributions and data availability are declared in the submission.
+
+Yours sincerely,
+
+Nikita M.\ Shirokov (corresponding author)\\
+Moscow Institute of Physics and Technology\\
+\href{mailto:shirokov.nm@phystech.edu}{shirokov.nm@phystech.edu}
+\end{document}
