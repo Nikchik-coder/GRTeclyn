@@ -15,6 +15,7 @@ import importlib.abc
 import importlib.metadata
 import json
 import math
+import os
 from pathlib import Path
 import sys
 import time
@@ -41,6 +42,11 @@ def worker(args):
     modern = args.version == "wheel"
     if modern and args.case != "application":
         sys.meta_path.insert(0, NoWrapper())
+    selected = "grteclyn_workflows" if args.case == "application" else "grteclyn_stationary"
+    if not modern:
+        selected = "grteclyn_wrapper"
+    package = importlib.import_module(selected)
+    assert Path(package.__file__).resolve().is_relative_to(Path(os.environ["PYTHONPATH"]).resolve())
     roots = {
         "spin": "grteclyn_stationary.spinning_wormhole" if modern else "grteclyn_wrapper.analysis.spinning_wormhole",
         "ring": "grteclyn_stationary.railgun" if modern else "grteclyn_wrapper.optimisation.railgun",
@@ -141,10 +147,15 @@ def worker(args):
         assert np.isfinite(value).all(), key
     np.savez_compressed(out / "arrays.npz", **arrays)
     write_json(out / "values.json", record)
+    backend = None
+    if args.case in ("spin", "spherical", "accepted_ring", "rejected_ring"):
+        import jax
+        backend = jax.default_backend()
+        assert backend == "cpu" and jax.config.x64_enabled
     write_json(out / "run.json", dict(case=args.case, version=args.version, revision=args.revision,
         inputs=inputs, seconds=time.monotonic()-started, python=sys.version.split()[0],
         dependencies={p: importlib.metadata.version(p) for p in ("jax", "jaxlib", "numpy", "scipy", "matplotlib")},
-        wrapper_imports_blocked=modern and args.case != "application", backend="cpu"))
+        wrapper_imports_blocked=modern and args.case != "application", backend=backend))
     print(f"PASS {args.version} {args.case}", flush=True)
 
 
