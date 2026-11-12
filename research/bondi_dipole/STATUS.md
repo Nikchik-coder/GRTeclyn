@@ -11,6 +11,18 @@ the published v1 pack in the tag `v1.0-bondi-dipole`.
 Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Work is on `trunk`: `feature/fix_bondi`, cut
 from `feature/spinning` on 2026-10-22, was merged into it at the v2 release and deleted on 2026-10-26.
 
+## Upstream validation — 2026-11-12
+
+Rebuilt RadialRecipe with the same CUDA/MPI/AMReX toolchain before and after
+the upstream merge (`66ed1a658` / `ef14909fc`). An archived N128 unigrid lone-star
+diagnostic is rerunning to its original t=10 on first-node card 1 (after),
+with checkpoints disabled and a 1 h wall cap. Original initial-data file is
+reused; only its relocated path and checkpoint output policy are changed.
+The old-build control is queued. This tests code compatibility on that input,
+not reproduction of the revised paper's full t=200/1000 runs. Logs and templates:
+`runs/upstream-evolution-20261112/`; job `upstream-scalar-after-20261112`.
+Preflight/start verification pending; speed and ETA not yet measured.
+
 ## Journal trail
 
 - PRD, then CQG: rejected (dates not recorded).
