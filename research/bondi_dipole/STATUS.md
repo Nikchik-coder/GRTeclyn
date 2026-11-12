@@ -13,20 +13,18 @@ from `feature/spinning` on 2026-10-22, was merged into it at the v2 release and 
 
 ## Upstream validation — 2026-11-12
 
-Rebuilt RadialRecipe with the same CUDA/MPI/AMReX toolchain before and after
-the upstream merge (`66ed1a658` / `ef14909fc`). An archived N128 unigrid lone-star
-diagnostic is rerunning to its original t=10 on first-node card 1 (after),
-with checkpoints disabled and a 1 h wall cap. Original initial-data file is
-reused; only its relocated path and checkpoint output policy are changed.
-Both initial probes refused the same 47 unread archived keys. The complete
-unused-key lists agree; those inactive lines were removed identically from
-both templates, with no active input changed. Before/after evolutions are now
-launched on first-node cards 0/1 (`upstream-scalar-{before,after}-active-20261112`). This tests code compatibility on that input,
-not reproduction of the revised paper's full t=200/1000 runs. Logs and templates:
-`runs/upstream-evolution-20261112/`; job `upstream-scalar-after-20261112`.
-Both full preflights passed and consumers are advancing. At 13:48 MSK,
-before/after are at t=6.23/6.82, 241/265 units per hour; estimated remaining
-evolution 0.02 h, finishing around 13:49 MSK. Final comparison pending.
+Both CUDA builds (`66ed1a658` / `ef14909fc`, same AMReX/toolchain) completed
+an archived N128 lone-star diagnostic: 1,001 steps, t=10.01 for stop_time=10.
+All 20 stored evolution fields agree within 3.2e-15; `rho_req` within 1.4e-15.
+All saved diagnostic streams pass the comparison. Weyl4 differs by up to
+7.4e-9, consistent with the changed matter coupling identified in the merger
+control. Both initial probes reported the same 47 unread historical keys;
+only those inactive lines were removed from both inputs. Initial data, grid,
+gauge, timestep, stop time and plot cadence were retained; checkpoints off.
+Both full-frame consumers exited 0. Evidence and six binary hashes:
+`results/software-validation/upstream-evolution-20261112/`. Scratch cleared,
+NFS frames retained; no validation job remains live. This is a compatibility
+test on that archived diagnostic, not the revised paper's t=200/1000 runs.
 
 ## Journal trail
 

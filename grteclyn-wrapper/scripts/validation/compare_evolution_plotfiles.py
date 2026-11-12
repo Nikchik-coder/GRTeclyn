@@ -19,6 +19,8 @@ def compare(before: Path, after: Path, atol: float, rtol: float) -> dict:
     a, b = yt.load(str(before)), yt.load(str(after))
     fields_a = sorted(f for f in a.field_list if f[0] == "boxlib")
     fields_b = sorted(f for f in b.field_list if f[0] == "boxlib")
+    if not fields_a:
+        raise ValueError("No stored AMReX fields found")
     if fields_a != fields_b:
         raise ValueError(f"Stored fields differ: {fields_a} vs {fields_b}")
     if float(a.current_time) != float(b.current_time):

@@ -319,5 +319,17 @@ with all 189 archived source/build/test files verified against Git. The new
 syntax compilation. Selected Python checks gave 138 passed, four skipped and
 the previously documented incomplete preflight-fixture failure.
 [Validation record](../results/software-validation/upstream-20261112.json).
-No full example evolution or GPU build was performed for this upstream merge;
-the earlier cluster reproduction establishes the Python refactor baseline.
+Subsequent cluster validation rebuilt BinaryWormholeMerger, SpinningWormhole
+and RadialRecipe with CUDA/MPI, before and after the merge, using the same
+AMReX `d7da50458966`. The original one-step N128 merger input reproduces all
+20 stored evolution fields within 4.8e-16 and the archived constraint norms
+exactly at printed precision. An archived N128 scalar diagnostic completes
+1,001 steps to t=10.01: its 20 stored evolution fields agree within 3.2e-15.
+
+Weyl4 does **not** reproduce the original defaults. The old derive callback
+read `G_newton` with default zero; the new callback uses `G_Newton`/matter
+coupling. An old-binary control changing only `G_newton=1` restores all merger
+plot fields to within 7.1e-15. Production binary pins were retained. These
+checks do not establish long merger/spinning evolution or published waveform
+energy equivalence. [CUDA evidence](../results/software-validation/upstream-evolution-20261112/README.md)
+records exact inputs, executable hashes, cellwise comparisons and streams.
