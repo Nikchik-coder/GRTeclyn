@@ -108,5 +108,6 @@ TEST_CASE("Weyl4WithMatter"
 }
 
 TEST_CASE("MatterDispatch") { run_matter_dispatch_test(); }
+TEST_CASE("WeylMatterCoupling") { run_weyl_matter_coupling_test(); }
 
 #endif /* TESTCASES_HPP_ */

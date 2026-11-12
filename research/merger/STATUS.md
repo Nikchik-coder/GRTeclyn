@@ -6,6 +6,31 @@ What is live, what is planned, the main results — nothing else. Run-by-run out
 `git show f2c4caa9:research/merger/STATUS.md`. **When a run ends, its row leaves Live and its result goes into
 Main results in a line or two; the details go to the registry.**
 
+## Upstream rebuild validation — 2026-11-12
+
+Authorized: rebuild the C++ research binaries and compare pre-upstream
+`66ed1a658` with `ef14909fc` on the first GPU node. Checkpoints disabled.
+Both revisions use the same CUDA/MPI toolchain and AMReX `d7da50458966`.
+Builds: BinaryWormholeMerger, SpinningWormhole and RadialRecipe; separate
+executables, with the production pins retained. First comparison: archived
+`place_d8_step1_csm`, unchanged N=128, L=64, three refinement levels,
+mode-3 constraint solve, dt=0.01 and one coarse evolution step.
+Completed: all three one-step runs and their full-frame consumers exited 0.
+All 20 stored evolution fields agree within 4.8e-16. Constraint norms match
+both the pre-merge build and the archived run at printed precision.
+Weyl4 differs by up to 0.0371 under the original inputs. Changing **only**
+the old callback's `G_newton` to 1 restores agreement to 7.1e-15: the default
+matter coupling explains the discrepancy. At R=14 the t=0 real l=2,m=0
+mode changes from 1.4060318e-3 to 1.2134236e-3; this initial near-field
+comparison is not a measurement of the change in radiated energy.
+Evidence: `results/software-validation/upstream-evolution-20261112/`.
+All three updated research CUDA binaries are built. Production pins remain
+unchanged. Placement scratch was pruned after packing; all NFS frames remain.
+No long merger/spinning evolution equivalence has been established.
+Weyl follow-up: upstream `7c510350f` removed the zero-default matter coupling;
+the merged callback passes independent analytic coupling/time/ghost-cell checks
+(4 targeted CPU cases, 75 assertions). No additional formula correction needed.
+
 ## Live
 
 No run is live. Both nodes are idle: the first node's two H100s since 03:10 UTC 10-08 (scratch empty, 1.1T free),

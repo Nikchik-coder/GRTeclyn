@@ -1,0 +1,69 @@
+{
+  "before": "66ed1a658ff6a20725c53f22925ae8c41254c286",
+  "after": "ef14909fcafa525f6a3f96d1fd090865398e4c87",
+  "amrex": "d7da504589664922ce3e21972782713d31ec50e9",
+  "builds": [
+    {
+      "side": "before",
+      "example": "BinaryWormholeMerger",
+      "file": "main3d_before_66ed1a65_2026-11-12.ex",
+      "source": "66ed1a65",
+      "sha256": "4434fa002d469a19f5e496971d6ac66356b5107869457b54c91b1aa9190f8af8",
+      "bytes": 145703568
+    },
+    {
+      "side": "before",
+      "example": "SpinningWormhole",
+      "file": "main3d_before_66ed1a65_2026-11-12.ex",
+      "source": "66ed1a65",
+      "sha256": "d4b4577ee27a39c2490ee6801c88893e5613632036c27cab7b0bd8606cd58704",
+      "bytes": 128755880
+    },
+    {
+      "side": "before",
+      "example": "RadialRecipe",
+      "file": "main3d_before_66ed1a65_2026-11-12.ex",
+      "source": "66ed1a65",
+      "sha256": "00cfc5b915b0a42fc3882f7ccb38f2c86f2670f561372aaa7b03914adcf802de",
+      "bytes": 158743040
+    },
+    {
+      "side": "after",
+      "example": "BinaryWormholeMerger",
+      "file": "main3d_upstream_ef14909f_2026-11-12.ex",
+      "source": "ef14909f",
+      "sha256": "29de15fa24bce75d438ea729a1c23704bcdfb05c052521752f61f63144f657b1",
+      "bytes": 145516328
+    },
+    {
+      "side": "after",
+      "example": "SpinningWormhole",
+      "file": "main3d_upstream_ef14909f_2026-11-12.ex",
+      "source": "ef14909f",
+      "sha256": "3e6a2d3c3870973735cefc84c62cb5a4aa444985ed60380d9ac71c4a5ba9f904",
+      "bytes": 128589344
+    },
+    {
+      "side": "after",
+      "example": "RadialRecipe",
+      "file": "main3d_upstream_ef14909f_2026-11-12.ex",
+      "source": "ef14909f",
+      "sha256": "97d481c9fc89e2b216dea77d4f81e62f211c1f92ef4d6a191a0bde428da0c474",
+      "bytes": 154468704
+    }
+  ],
+  "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+  "build_jobs_per_arm": 8,
+  "build_address_space_GiB": 16,
+  "run_address_space_GiB": 160,
+  "checkpoint_output": false,
+  "placement_steps": 1,
+  "scalar_steps": 1001,
+  "scalar_input_sha256": "9f3d7fe204c6c2aa300bede2a205da3778e5e04c2f0cb43d6dafd2a28ad0f9a3",
+  "spinning_evolution_tested": false,
+  "long_merger_evolution_tested": false,
+  "production_pins_changed": false,
+  "old_spin_build_note": "Compile and executable copy succeeded; manifest append failed because sparse checkout omitted its parent directory. Executable retained and hashed here.",
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0",
+  "cuda": "Build cuda_12.1.r12.1/compiler.32688072_0"
+}

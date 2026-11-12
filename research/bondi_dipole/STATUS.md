@@ -11,6 +11,21 @@ the published v1 pack in the tag `v1.0-bondi-dipole`.
 Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Work is on `trunk`: `feature/fix_bondi`, cut
 from `feature/spinning` on 2026-10-22, was merged into it at the v2 release and deleted on 2026-10-26.
 
+## Upstream validation — 2026-11-12
+
+Both CUDA builds (`66ed1a658` / `ef14909fc`, same AMReX/toolchain) completed
+an archived N128 lone-star diagnostic: 1,001 steps, t=10.01 for stop_time=10.
+All 20 stored evolution fields agree within 3.2e-15; `rho_req` within 1.4e-15.
+All saved diagnostic streams pass the comparison. Weyl4 differs by up to
+7.4e-9, consistent with the changed matter coupling identified in the merger
+control. Both initial probes reported the same 47 unread historical keys;
+only those inactive lines were removed from both inputs. Initial data, grid,
+gauge, timestep, stop time and plot cadence were retained; checkpoints off.
+Both full-frame consumers exited 0. Evidence and six binary hashes:
+`results/software-validation/upstream-evolution-20261112/`. Scratch cleared,
+NFS frames retained; no validation job remains live. This is a compatibility
+test on that archived diagnostic, not the revised paper's t=200/1000 runs.
+
 ## Journal trail
 
 - PRD, then CQG: rejected (dates not recorded).
