@@ -20,10 +20,12 @@ template <class matter_t> class Weyl4WithMatter : public Weyl4
 {
   public:
     //! Constructor
-    Weyl4WithMatter(const amrex::Real a_dx, const int a_dcomp,
-                    amrex::Real a_G_Newton = 1.0, amrex::Real a_time = 0.0)
-        : Weyl4(a_dx, a_dcomp), m_dcomp(a_dcomp), m_G_Newton(a_G_Newton),
-          m_time(a_time)
+    Weyl4WithMatter(amrex::Real a_dx, int a_dcomp) : Weyl4(a_dx, a_dcomp) {}
+
+    Weyl4WithMatter(amrex::Real a_dx, int a_dcomp, amrex::Real a_G_Newton,
+                    amrex::Real a_time = 0.0)
+        : Weyl4(a_dx, a_dcomp), m_G_Newton(a_G_Newton),
+          m_use_matter_coupling(false), m_time(a_time)
     {
     }
 
@@ -40,18 +42,17 @@ template <class matter_t> class Weyl4WithMatter : public Weyl4
     static void set_up(int a_state_index);
 
     // Has signature of DeriveFuncMF so that it can be stored in the derive_lst
-    static void compute_mf(amrex::MultiFab &out_mf, int out_comp, int ncomp,
+    static void compute_mf(amrex::MultiFab &out_mf, int dcomp, int ncomp,
                            const amrex::MultiFab &src_mf,
-                           const amrex::Geometry &geomdata,
-                           amrex::Real time, const int * /*bcrec*/,
-                           int /*level*/);
+                           const amrex::Geometry &geomdata, amrex::Real time,
+                           const int * /*bcrec*/, int /*level*/);
 
   protected:
 
+    amrex::Real m_G_Newton{1.0};
+    bool m_use_matter_coupling{true};
+    amrex::Real m_time{0.0};
     matter_t m_matter;
-    int m_dcomp;            //!< index for storing the results of compute
-    amrex::Real m_G_Newton; //!< Newton's constant, set to one by default
-    amrex::Real m_time;
 
     //! Add matter terms to electric and magnetic parts
 

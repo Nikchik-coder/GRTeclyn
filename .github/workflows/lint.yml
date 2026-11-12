@@ -11,10 +11,11 @@ jobs:
     name: clang-tidy & clang-format
     runs-on: ubuntu-24.04
     env:
-      LLVM_VERSION: '19'
+      LLVM_VERSION: '23'
       AMREX_HOME: ${{ github.workspace }}/amrex
       BINARYBH_EXAMPLE_DIR: ${{ github.workspace }}/GRTeclyn/Examples/BinaryBH
       KG_EXAMPLE_DIR: ${{ github.workspace }}/GRTeclyn/Examples/KleinGordon
+      SCALARFIELD_EXAMPLE_DIR: ${{ github.workspace }}/GRTeclyn/Examples/ScalarField
       TESTS_DIR: ${{ github.workspace }}/GRTeclyn/Tests
       TMP_BUILD_DIR: ${{ github.workspace }}/GRTeclyn/tmp_build_dir
       COMPILATION_DATABASE: ${{ github.workspace }}/GRTeclyn/compile_commands.json
@@ -61,11 +62,31 @@ jobs:
         compiledb -o ${{ env.COMPILATION_DATABASE }} -n make ${{ env.BUILD_ARGS }}
         cd ${{ env.KG_EXAMPLE_DIR }}
         compiledb -o ${{ env.COMPILATION_DATABASE }} -n make ${{ env.BUILD_ARGS }}
+        cd ${{ env.SCALARFIELD_EXAMPLE_DIR }}
+        compiledb -o ${{ env.COMPILATION_DATABASE }} -n make ${{ env.BUILD_ARGS }}
         cd ${{ env.TESTS_DIR }}
         compiledb -o ${{ env.COMPILATION_DATABASE }} -n make ${{ env.BUILD_ARGS }}
 
     - name: Generate compilation database for headers
       run: |
+        # compiledb drops the compiler executable from the commands it
+        # captures, so clang-tidy would consume the first flag (e.g.
+        # -std=c++20) as the compiler name and ignore it. Restore a
+        # compiler so that the flags are not lost.
+        python3 - <<'EOF'
+        import json
+        import os
+
+        path = os.environ["COMPILATION_DATABASE"]
+        with open(path) as f:
+            db = json.load(f)
+        for entry in db:
+            args = entry.get("arguments")
+            if args and args[0].startswith("-"):
+                args.insert(0, "clang++")
+        with open(path, "w") as f:
+            json.dump(db, f, indent=1)
+        EOF
         compdb -p ${{ github.workspace }}/GRTeclyn list > compile_commands_with_headers.json
         mv compile_commands_with_headers.json ${{ env.COMPILATION_DATABASE }}
 
@@ -109,4 +130,3 @@ jobs:
     - name: Fail job if checks fail
       if: steps.linter.outputs.checks-failed > 0
       run: exit 1
-

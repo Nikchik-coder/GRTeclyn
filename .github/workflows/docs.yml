@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-      - develop
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: "."
       - name: Deploy to GitHub Pages

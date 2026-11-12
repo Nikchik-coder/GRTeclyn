@@ -32,18 +32,24 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
         Can specify the vars of the constraint vars instead of using the
         hardcoded ones.
     */
+    ConstraintsWithMatter(amrex::Real dx, int a_c_Ham, const Interval &a_c_Moms,
+                          int a_c_Ham_abs_terms              = -1,
+                          const Interval &a_c_Moms_abs_terms = Interval());
+
     ConstraintsWithMatter(amrex::Real dx, amrex::Real G_Newton, int a_c_Ham,
                           const Interval &a_c_Moms,
-                          std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0, 0.0},
+                          std::array<double, AMREX_SPACEDIM> a_center = {0.0,
+                                                                         0.0,
+                                                                         0.0},
                           amrex::Real a_time = 0.0, int a_c_Ham_abs_terms = -1,
                           const Interval &a_c_Moms_abs_terms = Interval());
 
-    ConstraintsWithMatter(matter_t a_matter, amrex::Real dx,
-                          amrex::Real G_Newton, int a_c_Ham,
-                          const Interval &a_c_Moms,
-                          std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0, 0.0},
-                          amrex::Real a_time = 0.0, int a_c_Ham_abs_terms = -1,
-                          const Interval &a_c_Moms_abs_terms = Interval());
+    ConstraintsWithMatter(
+        matter_t a_matter, amrex::Real dx, amrex::Real G_Newton, int a_c_Ham,
+        const Interval &a_c_Moms,
+        std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0, 0.0},
+        amrex::Real a_time = 0.0, int a_c_Ham_abs_terms = -1,
+        const Interval &a_c_Moms_abs_terms = Interval());
 
     //! The compute member which calculates the constraints at each point in the
     //! box
@@ -59,14 +65,14 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
     // Has signature of DeriveFuncMF so that it can be stored in the derive_lst
     static void compute_mf(amrex::MultiFab &out_mf, int dcomp, int ncomp,
                            const amrex::MultiFab &src_mf,
-                           const amrex::Geometry &geomdata,
-                           amrex::Real time, const int * /*bcrec*/,
-                           int /*level*/);
+                           const amrex::Geometry &geomdata, amrex::Real time,
+                           const int * /*bcrec*/, int /*level*/);
 
   protected:
     static matter_t &derived_matter();
 
-    matter_t my_matter;     //!< The matter object, e.g. a scalar field
+    matter_t my_matter; //!< The matter object, e.g. a scalar field
+    bool m_use_matter_coupling{false};
     amrex::Real m_G_Newton; //!< Newton's constant, set to one by default.
     amrex::Real m_dx;
     std::array<double, AMREX_SPACEDIM> m_center;

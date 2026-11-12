@@ -277,7 +277,7 @@ class SimulationParameters : public SimulationParametersBase
 
     std::string spinning_background_file;
     int spinning_background_interp = 1;
-    //! 1: specificEvalRHS re-fills each RK stage from StateData (see there)
+    //! 1: specific_eval_rhs re-fills each RK stage from StateData (see there)
     int rk_stage_refill = 1;
     SpinningWormholeInitialData::params_t spinning_params{};
     bool kick_radius_given{};

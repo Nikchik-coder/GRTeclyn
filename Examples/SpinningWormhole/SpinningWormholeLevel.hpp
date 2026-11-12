@@ -1,49 +1,49 @@
 #ifndef SPINNINGWORMHOLELEVEL_HPP_
 #define SPINNINGWORMHOLELEVEL_HPP_
 
-#include "BHAMR.hpp"
-#include "DefaultLevelFactory.hpp"
-#include "GRAMRLevel.hpp"
+#include "BHAmr.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmrLevel.hpp"
 
 class SimulationParameters;
 
-class SpinningWormholeLevel : public GRAMRLevel
+class SpinningWormholeLevel : public GRAmrLevel
 {
   public:
     //! One throat, fixed at the grid centre; it is not a puncture and
     //! puncture tracking stays disabled (puncture_tracking.enabled = 0).
-    //! The AMR container is a BHAMR (a GRAMR child) purely to reuse the
-    //! ParticleInterpolator that BHAMR::init() sets up for in-code
+    //! The AMR container is a BHAmr (a GRAmr child) purely to reuse the
+    //! ParticleInterpolator that BHAmr::init() sets up for in-code
     //! Weyl4 / Psi4 spherical-harmonic extraction - see
-    //! specificPostTimeStep.
+    //! specific_post_timestep.
     static constexpr int num_punctures = 1;
 
     static void variableSetUp();
 
-    using GRAMRLevel::GRAMRLevel;
+    using GRAmrLevel::GRAmrLevel;
 
-    //! Fork-local replacement for the GRAMR simulation-parameters store that
+    //! Fork-local replacement for the GRAmr simulation-parameters store that
     //! upstream deleted: main() hands this class a pointer to its
     //! SimulationParameters before Amr::init.
     static void set_sim_params(const SimulationParameters *a_sim_params);
     static const SimulationParameters &simParams();
 
-    //! Access the owning BHAMR (for its m_weyl_interpolator).
-    BHAMR<num_punctures> *get_bhamr_ptr();
+    //! Access the owning BHAmr (for its m_weyl_interpolator).
+    BHAmr<num_punctures> *get_bhamr_ptr();
 
-    void specificAdvance() override;
+    void specific_advance() override;
     void initData() override;
-    void specificEvalRHS(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
+    void specific_eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                          const double a_time) override;
-    void specificUpdateODE(amrex::MultiFab &a_soln) override;
+    void specific_update_ode(amrex::MultiFab &a_soln) override;
     void pre_tag_cells() final;
     void tag_cells(amrex::TagBoxArray &a_tag_box_array,
                    amrex::Real a_regrid_threshold) final;
-    void specificPostTimeStep() override;
+    void specific_post_timestep() override;
 
     //! Write the t = 0 row of every scalar diagnostic stream.
     /*!
-        specificPostTimeStep first runs at t = dt, so without this the .dat
+        specific_post_timestep first runs at t = dt, so without this the .dat
         files begin one step in - and their `first_step = (time == 0)` test
         never fires, so they never get a header line either.  The t = 0 row
         is the measurement for every initial-data check (the background's
@@ -52,7 +52,7 @@ class SpinningWormholeLevel : public GRAMRLevel
     void specific_post_init() override;
 
     //! Constraint norms + collapse + throat/ergoregion diagnostics.  Shared
-    //! by specific_post_init (t = 0) and specificPostTimeStep (t > 0) so both
+    //! by specific_post_init (t = 0) and specific_post_timestep (t > 0) so both
     //! write identical columns to the same files.  Public only because nvcc
     //! refuses extended __device__ lambdas inside a private member function.
     void write_scalar_diagnostics();
@@ -61,7 +61,7 @@ class SpinningWormholeLevel : public GRAMRLevel
     //! and the background-relative Sommerfeld boundaries
     //! (sommerfeld_relative_to_background = 1): the stationary background on
     //! this level's grids (table data + InitialGammas, the same fill as
-    //! initData).  Built lazily in specificEvalRHS and rebuilt whenever the
+    //! initData).  Built lazily in specific_eval_rhs and rebuilt whenever the
     //! level's BoxArray or DistributionMapping changes (regrid, restart), so a
     //! restarted run drives toward the same background as a fresh one.  Public
     //! for the same nvcc extended-lambda reason as write_scalar_diagnostics.

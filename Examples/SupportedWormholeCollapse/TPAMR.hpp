@@ -6,12 +6,12 @@
 #ifndef TPAMR_HPP_
 #define TPAMR_HPP_
 
-#include "BHAMR.hpp"
+#include "BHAmr.hpp"
 
 #ifdef USE_TWOPUNCTURES
 #include "TwoPunctures.hpp"
 
-class TPAMR : public BHAMR
+class TPAMR : public BHAmr
 {
   public:
     TP::TwoPunctures m_two_punctures;

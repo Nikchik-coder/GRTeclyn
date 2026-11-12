@@ -84,7 +84,7 @@
    across regrids, restarts and checkpoints.
 
    INTERACTION WITH CoreMatterDamping, stated because it is not obvious.
-   The damping is applied in specificAdvance(), to the state, NOT to the
+   The damping is applied in specific_advance(), to the state, NOT to the
    right-hand side -- so it is outside this module's reach and keeps acting
    inside the fill.  That is deliberate and benign: the intended arm runs
    the tau = 0.05 ring from t = 50 (it is what buys the later wall, hence
@@ -93,7 +93,7 @@
    decay exponentially towards zero there.  A smooth monotone relaxation
    cannot steepen into the shock this module exists to prevent.  What must
    NOT be done is adding a new RHS contributor after the fill in
-   specificEvalRHS -- that would be a partial freeze.  If a strictly frozen
+   specific_eval_rhs -- that would be a partial freeze.  If a strictly frozen
    core is ever wanted, disable the damping rather than reaching across
    module boundaries from here.
 

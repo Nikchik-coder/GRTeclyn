@@ -16,7 +16,7 @@
 #include "ScalarField.hpp"
 #include "ExoticScalarField.hpp"
 #include "SmallDataIO.hpp"
-#include "TraceARemoval.hpp"
+#include "AlgebraicConstraintsEnforcer.hpp"
 #include "RLMatterPumpParams.hpp"
 #include "RLPumpForce.hpp"
 #include "Weyl4WithMatter.hpp"
@@ -299,7 +299,7 @@ void compute_rho_req_mf(amrex::MultiFab &out_mf, int dcomp, int /*ncomp*/,
 void RadialRecipeLevel::variableSetUp()
 {
     BL_PROFILE("RadialRecipeLevel::variableSetUp()");
-    stateVariableSetUp();
+    state_variable_set_up();
 
     RadialRecipeMatter::setup_derived_quantities(state_index, simParams());
 
@@ -319,11 +319,11 @@ void RadialRecipeLevel::variableSetUp()
     }
 }
 
-void RadialRecipeLevel::specificAdvance()
+void RadialRecipeLevel::specific_advance()
 {
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
@@ -381,11 +381,11 @@ void RadialRecipeLevel::initData()
     amrex::Gpu::streamSynchronize();
 }
 
-void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+void RadialRecipeLevel::specific_eval_rhs(amrex::MultiFab &a_soln,
                                         amrex::MultiFab &a_rhs,
                                         const double a_time)
 {
-    BL_PROFILE("RadialRecipeLevel::specificEvalRHS()");
+    BL_PROFILE("RadialRecipeLevel::specific_eval_rhs()");
     // No FillPatch here.  AmrLevel::RK fills the stage's ghost cells itself
     // (FillRKPatch) right before this call, and FillPatch also overwrites the
     // VALID cells with the old and new state interpolated to a_time: RK4's two
@@ -393,7 +393,7 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     // integrator drops to first order (2026-10-23: the Bondi stars' core drift
     // converged at order 1.0 in dx with dt = 0.02 dx).
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
@@ -486,10 +486,10 @@ const amrex::MultiFab *RadialRecipeLevel::sommerfeld_reference_dt() const
     return sommerfeld_reference() ? &m_background_dt : nullptr;
 }
 
-void RadialRecipeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+void RadialRecipeLevel::specific_update_ode(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -912,7 +912,7 @@ void RadialRecipeLevel::specific_post_init()
     // Initial diagnostics are opt-in so existing campaigns keep their cadence.
     // This includes the t=0 constraints and collapse streams, not only charge.
     if (Level() == 0 && simParams().calculate_complex_scalar_diagnostics)
-        specificPostTimeStep();
+        specific_post_timestep();
 }
 
 void RadialRecipeLevel::write_complex_scalar_diagnostics()
@@ -996,7 +996,7 @@ void RadialRecipeLevel::write_complex_scalar_diagnostics()
     const auto directory = output + "/" + subpath + "/";
     amrex::UtilCreateDirectory(directory, 0755, false);
     SmallDataIO file(directory + "complex_scalar_diagnostics", parent->dtLevel(0),
-                     time, get_gramr_ptr()->get_restart_time(), SmallDataIO::APPEND,
+                     time, get_gr_amr_ptr()->get_restart_time(), SmallDataIO::APPEND,
                      time == 0.);
     file.remove_duplicate_time_data();
     if (time == 0.)
@@ -1007,9 +1007,9 @@ void RadialRecipeLevel::write_complex_scalar_diagnostics()
                               total[3]/norm, total[4]/norm, total[5]});
 }
 
-void RadialRecipeLevel::specificPostTimeStep()
+void RadialRecipeLevel::specific_post_timestep()
 {
-    BL_PROFILE("RadialRecipeLevel::specificPostTimeStep");
+    BL_PROFILE("RadialRecipeLevel::specific_post_timestep");
 
     if (Level() == 0 && simParams().calculate_complex_scalar_diagnostics)
         write_complex_scalar_diagnostics();
@@ -1018,7 +1018,7 @@ void RadialRecipeLevel::specificPostTimeStep()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         amrex::MultiFab &state_new = get_new_data(state_index);
@@ -1360,7 +1360,7 @@ void RadialRecipeLevel::specificPostTimeStep()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev = parent->finestLevel();
@@ -1373,7 +1373,7 @@ void RadialRecipeLevel::specificPostTimeStep()
 
         {
             const auto &arrs = state_fine.arrays();
-            TraceARemoval trace_A_removal;
+            AlgebraicConstraintsEnforcer trace_A_removal(false);
             PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_fine, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
@@ -2052,7 +2052,7 @@ void RadialRecipeLevel::specificPostTimeStep()
 
         const RecentringBox::Step tread = recentring_box().advance(
             states, Geom(), parent->levelSteps(0), state_data.curTime(),
-            parent->dtLevel(0), get_gramr_ptr()->get_restart_time());
+            parent->dtLevel(0), get_gr_amr_ptr()->get_restart_time());
 
         if (tread.shifted)
         {

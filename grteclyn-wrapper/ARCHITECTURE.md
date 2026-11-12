@@ -297,3 +297,27 @@ For a fresh run, use `scripts/validation/run_refactor_reproduction.sh` through
 bounded timeout. The script builds both wheels, selects the original source
 through Git, and exports `GRTECLYN_ROOT` for the application checks. This does
 not rerun GPU solves, C++ time evolution, or every research campaign.
+
+
+## Upstream integration — 2026-11-12
+
+Merged 173 commits from GRTLCollaboration's `main` through `ed2e9a9d6`.
+The C++ research examples now use `GRAmr`, `BHAmr`, the renamed level hooks,
+and the separate gauge kernel. Matter sources carry the gravitational coupling
+once; explicit research constructors retain their configured coupling and time.
+Checkpoint retention, background-relative boundaries, chi regularisation,
+shock-avoiding slicing, centered refinement boxes and the archived opt-in
+determinant policy remain available. The legacy parameter reader is retained
+because the research examples still use it. Extraction level separation stays
+at 1 for archived flat-key campaigns; upstream's default is 1.5.
+
+Validation used GCC 13.3, CPU AMReX `bac24575699e`, HDF5, no MPI or OpenMP:
+19 C++ cases ran, 18 passed. The puncture-refinement test failed 24 coverage
+assertions; an untouched upstream archive reproduced the same 24 failures,
+with all 189 archived source/build/test files verified against Git. The new
+13-assertion matter/gauge compatibility test passed. All eight examples passed
+syntax compilation. Selected Python checks gave 138 passed, four skipped and
+the previously documented incomplete preflight-fixture failure.
+[Validation record](../results/software-validation/upstream-20261112.json).
+No full example evolution or GPU build was performed for this upstream merge;
+the earlier cluster reproduction establishes the Python refactor baseline.

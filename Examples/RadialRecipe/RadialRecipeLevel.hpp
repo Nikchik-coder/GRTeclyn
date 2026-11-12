@@ -1,19 +1,19 @@
 #ifndef RADIALRECIPELEVEL_HPP_
 #define RADIALRECIPELEVEL_HPP_
 
-#include "DefaultLevelFactory.hpp"
-#include "GRAMRLevel.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmrLevel.hpp"
 
 class SimulationParameters;
 
-class RadialRecipeLevel : public GRAMRLevel
+class RadialRecipeLevel : public GRAmrLevel
 {
   public:
     static void variableSetUp();
 
-    using GRAMRLevel::GRAMRLevel;
+    using GRAmrLevel::GRAmrLevel;
 
-    //! Fork-local replacement for the GRAMR simulation-parameters store that
+    //! Fork-local replacement for the GRAmr simulation-parameters store that
     //! upstream deleted: main() hands this class a pointer to its
     //! SimulationParameters before Amr::init.  Pointer semantics preserve the
     //! old behaviour where runtime updates made in main (RL pump state) are
@@ -22,15 +22,15 @@ class RadialRecipeLevel : public GRAMRLevel
     static const SimulationParameters &simParams();
 
 
-    void specificAdvance() override;
+    void specific_advance() override;
     void initData() override;
-    void specificEvalRHS(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
+    void specific_eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                          const double a_time) override;
-    void specificUpdateODE(amrex::MultiFab &a_soln) override;
+    void specific_update_ode(amrex::MultiFab &a_soln) override;
     void pre_tag_cells() final;
     void tag_cells(amrex::TagBoxArray &a_tag_box_array,
                    amrex::Real a_regrid_threshold) final;
-    void specificPostTimeStep() override;
+    void specific_post_timestep() override;
     void specific_post_init() override;
 
     //! Composite Noether charge, matter Jz and scalar-shape modes; opt-in.

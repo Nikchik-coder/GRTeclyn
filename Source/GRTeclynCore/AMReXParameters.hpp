@@ -649,7 +649,7 @@ class AMReXParameters
     amrex::Vector<double> regrid_thresholds;
 
     // For checking parameters and then exiting rather before instantiating
-    // GRAMR (or child) object
+    // GRAmr (or child) object
     bool just_check_params = false;
     bool print_progress_only_to_rank_0{};
 
