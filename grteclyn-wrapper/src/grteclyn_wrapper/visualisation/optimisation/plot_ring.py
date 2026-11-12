@@ -12,7 +12,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval, lobatto
+from grteclyn_stationary.numerics.spectral import cheb_eval
+from grteclyn_stationary.numerics.spectral import lobatto
 
 
 def main(argv=None):

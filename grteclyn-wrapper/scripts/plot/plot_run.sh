@@ -102,9 +102,9 @@ if [ "$REMOVE_STALE" = true ]; then
     echo "Reset run diagnostics in: ${RUN_DATA_DIR}"
   fi
 
-  rm -f "${VIS_ROOT}/constraines/constraints_plot.png" \
-        "${VIS_ROOT}/constraines/constraints_plot.eps" \
-        "${VIS_ROOT}/constraines/constraints_plot.pdf" \
+  rm -f "${VIS_ROOT}/constraints/constraints_plot.png" \
+        "${VIS_ROOT}/constraints/constraints_plot.eps" \
+        "${VIS_ROOT}/constraints/constraints_plot.pdf" \
         "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.png" \
         "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.eps" \
         "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.pdf" \

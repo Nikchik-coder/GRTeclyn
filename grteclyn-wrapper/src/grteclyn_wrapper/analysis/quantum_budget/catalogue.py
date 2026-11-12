@@ -15,9 +15,9 @@ from pathlib import Path
 
 import numpy as np
 
-from ..spinning_wormhole import conventions as spin_cv
-from ..spinning_wormhole import spectral
-from ..spinning_wormhole.solution import Solution
+from grteclyn_stationary.spinning_wormhole import conventions as spin_cv
+from grteclyn_stationary.numerics import spectral
+from grteclyn_stationary.spinning_wormhole.solution import Solution
 from . import conventions as cv
 from .compliance import ComplianceEvaluator
 

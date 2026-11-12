@@ -17,18 +17,18 @@ set -euo pipefail
     df -h /tmp/grteclyn_scratch
     du -sh /tmp/grteclyn_scratch/*
     mkdir -p runs/railgun/checks
-    "$py" -m grteclyn_wrapper.optimisation.railgun.ergoregion_cma \
-        research/railgun/studies/ergoregion_cma.json --source "$source_field" \
+    "$py" -m grteclyn_stationary.railgun.ergoregion_cma \
+        grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_cma.json --source "$source_field" \
         --out "$out" --gpu 0 --dry-run > "${report%.xml}-plan.json"
     export JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES=0 WH_JAC_CHUNK=128
     export XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
     export MPLCONFIGDIR=/tmp/grteclyn_mpl
     "$py" -m pytest -q --junitxml="$report" \
-        grteclyn-wrapper/tests/optimisation/test_railgun_ergoregion_cma.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_ergoregion_scan.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_frequency.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_diagnostics.py
-    exec "$py" -u -m grteclyn_wrapper.optimisation.railgun.ergoregion_cma \
-        research/railgun/studies/ergoregion_cma.json --source "$source_field" --out "$out" --gpu 0
+        grteclyn-wrapper/tests/stationary/test_railgun_ergoregion_cma.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_ergoregion_scan.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_frequency.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_geometry.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_diagnostics.py
+    exec "$py" -u -m grteclyn_stationary.railgun.ergoregion_cma \
+        grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_cma.json --source "$source_field" --out "$out" --gpu 0
 }

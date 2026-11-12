@@ -17,7 +17,7 @@ from grteclyn_wrapper.grtresna.profiles.boson_star import (
     PROFILE_SECH_BOUND,
     grtresna_lump_profile,
 )
-from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
+from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
 from grteclyn_wrapper.grtresna.solver import _lump_lines, write_grtresna_params
 from grteclyn_wrapper.search.optimize.config import build_grtresna_config
 

@@ -80,7 +80,7 @@ def test_rotating_solution_gates():
     """A mid-spin family (a) solution: omega and nu nonzero, so every
     frame component contributes; the unimposed contraction must still
     close and fhat must self-converge."""
-    from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution
+    from grteclyn_stationary.spinning_wormhole.solution import Solution
 
     sol = Solution.load(FAM_A_SOLUTION)
     row = measure_solution(sol, ComplianceEvaluator(), "fam_a_r1", 16)

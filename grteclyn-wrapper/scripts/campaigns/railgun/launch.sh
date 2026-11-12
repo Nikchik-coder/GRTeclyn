@@ -28,7 +28,7 @@ export SWH_REGISTRY="${SWH_CAMPAIGN_DIR}/runs_registry.tsv"
 TEMPLATE="${SWH_CAMPAIGN_DIR}/templates/${NAME}.txt"
 cd "${REPO}"
 "${REPO}/grteclyn-wrapper/.venv/bin/python" -m \
-  grteclyn_wrapper.optimisation.railgun.evolution_pilot \
+  grteclyn_stationary.railgun.evolution_pilot \
   --data-dir "${DATA}" --template "${TEMPLATE}" --checkpoints off
 # Required before every start; the operator also checks other card occupants.
 nvidia-smi

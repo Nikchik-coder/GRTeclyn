@@ -16,7 +16,7 @@ import numpy as np
 from numpy.polynomial.chebyshev import chebval, chebder
 from scipy.optimize import minimize_scalar, brentq
 
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_coeffs
+from grteclyn_stationary.numerics.spectral import cheb_coeffs
 
 
 INK, MUTED = '#253445', '#617287'

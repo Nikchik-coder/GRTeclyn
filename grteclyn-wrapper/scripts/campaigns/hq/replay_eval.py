@@ -27,7 +27,7 @@ from grteclyn_wrapper.grtresna.matter.wiring import (
     read_matter_metadata,
 )
 from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
-from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
+from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
 from grteclyn_wrapper.grtresna.io import read_gridinit
 from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, apply_exotic_safe_solver
 from grteclyn_wrapper.objective_modes import OBJECTIVE_MODES

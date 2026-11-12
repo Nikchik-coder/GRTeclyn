@@ -18,17 +18,17 @@ set -euo pipefail
     df -h /tmp/grteclyn_scratch
     du -sh /tmp/grteclyn_scratch/*
     mkdir -p runs/railgun/checks
-    "$py" -m grteclyn_wrapper.optimisation.railgun.validate_max_candidate \
+    "$py" -m grteclyn_stationary.railgun.validate_max_candidate \
         --seed "$seed" --gpu "$card" --out "$out" --dry-run > "${report%.xml}-plan.json"
     export JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES="$card" WH_JAC_CHUNK=128
     export XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
     export MPLCONFIGDIR="/tmp/grteclyn_mpl_${card}"
     "$py" -m pytest -q --junitxml="$report" \
-        grteclyn-wrapper/tests/optimisation/test_railgun_ergoregion_cma.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_ergoregion_scan.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_frequency.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
-        grteclyn-wrapper/tests/optimisation/test_railgun_diagnostics.py
-    exec "$py" -u -m grteclyn_wrapper.optimisation.railgun.validate_max_candidate \
+        grteclyn-wrapper/tests/stationary/test_railgun_ergoregion_cma.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_ergoregion_scan.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_frequency.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_geometry.py \
+        grteclyn-wrapper/tests/stationary/test_railgun_diagnostics.py
+    exec "$py" -u -m grteclyn_stationary.railgun.validate_max_candidate \
         --seed "$seed" --gpu "$card" --out "$out"
 }

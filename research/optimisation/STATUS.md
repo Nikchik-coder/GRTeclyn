@@ -11,9 +11,9 @@ Stronger rings and evolution require separate scopes; no follow-on is live.
 
 ## Completed ring-free matched-spin control — November 5
 
-[Configuration](studies/railgun_matched_control.json),
-[dispatcher](studies/run_railgun_matched_control.sh),
-implementation `grteclyn_wrapper.optimisation.railgun_control`.
+[Configuration](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_matched_control.json),
+[dispatcher](../../grteclyn-wrapper/scripts/campaigns/optimisation/run_railgun_matched_control.sh),
+implementation `grteclyn_stationary.ringwormhole.control`.
 **09:58:54–10:01:55 MSK, exit 0**, 181 s (**0.0503 h**), first node/card 0.
 Job `railgun-matched-control-20261105T065853`, frozen source **bb0b68851**
 verified by `myfork` push/pull. Output:
@@ -244,8 +244,8 @@ observed. Overall `ring_accepted=false`; no accepted ring or matched control.
 The next action is to remove avoidable scaling copies and test the unchanged
 linear algebra before proposing a separate bounded retry. No automatic retry.
 
-[Plan](studies/railgun_throat_validation.json),
-[preview/dispatcher](studies/run_railgun_throat_validation.sh).
+[Plan](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_throat_validation.json),
+[preview/dispatcher](../../grteclyn-wrapper/scripts/campaigns/optimisation/run_railgun_throat_validation.sh).
 Scope: validate the same weak-ring model only, then stop. No matched-spin
 control, stronger ring, evolution or automatic retry. The earlier diagnostic
 210x36 fields are a hash-pinned starting guess; their previous PASS is not
@@ -293,9 +293,9 @@ nonrotating infinities, solved matter-induced dragging. True minimal area
 16 pi (R_A=2), V=0; no ergoregion requirement. Exterior scalar-amplitude pin;
 no prescribed density peak, clipped matter, or exact-vacuum claim.
 
-[Configuration](studies/railgun_throat.json),
-[preview/dispatcher](studies/run_railgun_throat.sh), and implementation
-`grteclyn_wrapper.optimisation.railgun_wormhole`. **77 targeted CPU tests
+[Configuration](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_throat.json),
+[preview/dispatcher](../../grteclyn-wrapper/scripts/campaigns/optimisation/run_railgun_throat.sh), and implementation
+`grteclyn_stationary.ringwormhole.workflow`. **77 targeted CPU tests
 pass** (including the new 15-test source/border/budget/control suite).
 **73 CUDA startup tests pass** in 30.89 s under the production cap and
 allocator. Production confirms CUDA/float64. All three Newton solves
@@ -344,8 +344,8 @@ Scratch remains only 4 KB cache / 305 GB free. No data deleted.
 
 ## Rotating scalar ring around a wormhole — November 4
 
-Configuration: [`studies/wormhole_ring.toml`](studies/wormhole_ring.toml).
-Preview/one-case dispatcher: [`studies/run_wormhole_ring.sh`](studies/run_wormhole_ring.sh).
+Configuration: [`grteclyn-wrapper/scripts/campaigns/optimisation/configs/wormhole_ring.toml`](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/wormhole_ring.toml).
+Preview/one-case dispatcher: [`grteclyn-wrapper/scripts/campaigns/optimisation/run_wormhole_ring.sh`](../../grteclyn-wrapper/scripts/campaigns/optimisation/run_wormhole_ring.sh).
 The default prints the capped command and accesses no GPU. The November 4
 cluster go covered these now-stopped cases; it does not authorise a restart.
 
@@ -434,9 +434,9 @@ free. No data deleted. No reduction or stability claim from these pilots.
 
 What is live, what is planned, the main results — nothing else. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md).
-Code: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/`
+Code: `grteclyn-wrapper/packages/stationary/src/grteclyn_stationary/`
 (commands, workflows, checks and derivations; layout in its
-[README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md)).
+[README](../../grteclyn-wrapper/packages/stationary/src/grteclyn_stationary/README.md)).
 The page before this compaction (the campaign diary to 2026-10-29) is
 `git show 96c177ee1:research/optimisation/STATUS.md`.
 
@@ -574,7 +574,7 @@ not a deduction from the sign of V. Default full-interval positivity remains.
 Signed D90 uses m=[0.001,0.20], q_i=[-8,8], x0=(0.05,-4.2,4.2,0), seed 239;
 relaxed geometry uses m=[0.005,1.2], the same q box, x0=(0.5,-4.2,4.2,0),
 seed 241, and the same J range/area/tidal constraint as the positive pilot.
-Commands: `studies/run_signed_potential.sh`; signed code 485f8d44.
+Commands: `grteclyn-wrapper/scripts/campaigns/optimisation/run_signed_potential.sh`; signed code 485f8d44.
 The implementation passed 189 tests before dispatch.
 
 Outstanding diagnostics, **not launched or queued by this closeout**:
@@ -688,7 +688,7 @@ The nonrotating joint CMA continues; scratch 47 MB cache, 475 GB free.
 
 `opt-boson-k0-joint-cma-20261031` started **15:55 MSK** on second/card 0,
 after pulling `ea97e390` and checking the card free. Config
-`studies/d21_boson_warm_cma.toml`, explicit CMA, seed 57, **96 proposals**
+`grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_boson_warm_cma.toml`, explicit CMA, seed 57, **96 proposals**
 for this targeted pilot, followed by independent three-grid refinement.
 The warm candidate is re-solved; energy and tidal excesses both guide the
 search. Same total area/J/gamma and t4/energy-one gates; four threads,
@@ -747,7 +747,7 @@ No plotfiles or AMR checkpoints; scratch 47 MB cache, 476 GB free.
 `opt-boson-k0-warm-20261031` started **15:44:46 MSK** on second/card 0
 after pulling `cb72d5a3` and checking the card idle. The archived numerical
 seed 00046 is re-solved with the vacuum fix; no old verdict is inherited.
-Case boson-k0-t4-e1, config `studies/d21_boson_warm.toml`,
+Case boson-k0-t4-e1, config `grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_boson_warm.toml`,
 200 local Nelder-Mead evaluations, same area/J/asymmetry and acceptance gates.
 The launch omitted `--engine cma`, so its default is NM (seed 37 is unused).
 Retain this useful local refinement; fresh global runs specify CMA explicitly. Four
@@ -794,7 +794,7 @@ AMR checkpoints from stationary jobs.
 after pulling `fd81f1d5` and confirming both cards idle. Case
 `boson-k0-t4-e1`: canonical non-winding complex field, four-times-reference
 tidal cap, ordinary-energy budget E_b/R_A <= 1, mass/amplitude seeds from
-`studies/d21_fixed_area.toml`, 150x30 search and three-grid reference/finalist
+`grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_fixed_area.toml`, 150x30 search and three-grid reference/finalist
 validation, 200 CMA evaluations, seed 17. Four threads, 200 GiB virtual-memory
 cap, 2 h timeout (**17:22 MSK**); measured ETA pending. Output:
 `runs/optimisation/fixed_area/boson_pilot_20261031/boson-k0-t4-e1/`.
@@ -968,7 +968,7 @@ its original common 0.2–1% definition. D30 is now included in the growth
 figure and its checked numerical table.
 
 The module entry point is
-`python -m grteclyn_wrapper.optimisation.commands.optimize_potential`.
+`python -m grteclyn_stationary.commands.optimize_potential`.
 D40 uses `fam_a_r1_0008`, seed 104; D46 uses `fam_a_r1_0010`, seed 146;
 D51 uses `fam_a_log_0017`, seed 151, matching the plotted classical members.
 All searches: 400 evaluations, 150x30, fixed reference R_e/J, cheap checks per
@@ -1157,7 +1157,7 @@ branch. No evolution restart checkpoints are needed. Details and costs:
    constraints. Measure wall time and memory, verify the throat is a local
    minimum, and perform independent finer-grid re-solves before expanding.
 2. **Potential-only searches:** `potential-t1`, `potential-t2`,
-   `potential-t4` in [the study configuration](studies/d21_fixed_area.toml).
+   `potential-t4` in [the study configuration](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_fixed_area.toml).
    Test whether the full phantom integral, including angular gradients,
    decreases at fixed true area/J/gamma while the maximum tide remains below
    1, 2 or 4 times the matched massless value. Check both ends, all latitudes
@@ -1614,8 +1614,8 @@ tidal forces and null-ray NEC deficit can increase while $X$ decreases.
 Infrastructure implemented; **the corrected t4 potential finalist passes all
 three grids and two boson pilots are active. The full matrix and mixed-field
 evolutions have not launched**. Configuration:
-[`studies/d21_fixed_area.toml`](studies/d21_fixed_area.toml); commands and
-definitions: [package README](../../grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
+[`grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_fixed_area.toml`](../../grteclyn-wrapper/scripts/campaigns/optimisation/configs/d21_fixed_area.toml); commands and
+definitions: [package README](../../grteclyn-wrapper/packages/stationary/src/grteclyn_stationary/README.md#fixed-true-area-bounded-tides-and-massive-bosons).
 
 - The minimal-surface graph joins the Newton solve. Independent higher-order
   minimisation checks the area and Hessian; multiple or unresolved graph

@@ -19,8 +19,9 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import ArctanMap, lobatto
-from grteclyn_wrapper.optimisation.exoticity import throat
+from grteclyn_stationary.numerics.spectral import ArctanMap
+from grteclyn_stationary.numerics.spectral import lobatto
+from grteclyn_stationary.geometry.exoticity import throat
 from grteclyn_wrapper.visualisation.spinning_wormhole.plot_instability_curve import (
     BAND, RUNS, fit_zero, rate_tau, table_meta,
 )

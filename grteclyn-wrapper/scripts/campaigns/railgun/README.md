@@ -30,14 +30,14 @@ The current study definitions and run instructions are in
 - `organize_runs.py` previews raw-run folder moves; `--apply` performs them.
 
 The solver, initial-data conversion, origin check and physical-claims audit
-live in `grteclyn_wrapper.optimisation.railgun`. In particular:
+live in `grteclyn_stationary.railgun`. In particular:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.certify_ergoregion_core --help
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.certify_ergoregion_core \
-  --config research/railgun/studies/evolution_ergoregion_372.json --dry-run
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.evolution_amr plan --n 96
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.audit_ring_claims
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.certify_ergoregion_core --help
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.certify_ergoregion_core \
+  --config grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_372.json --dry-run
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.evolution_amr plan --n 96
 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/campaigns/railgun/verify_pack.py
 ```
 

@@ -35,8 +35,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..spinning_wormhole.observables import C_GATE
-from ..spinning_wormhole.solution import Solution
+from grteclyn_stationary.spinning_wormhole.observables import C_GATE
+from grteclyn_stationary.spinning_wormhole.solution import Solution
 from . import conventions as cv
 from . import curvature, stress
 

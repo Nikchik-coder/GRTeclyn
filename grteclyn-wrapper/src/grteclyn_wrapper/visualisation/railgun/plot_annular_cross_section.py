@@ -15,7 +15,7 @@ import numpy as np
 from numpy.polynomial.chebyshev import chebval2d
 from scipy.optimize import brentq
 
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_coeffs
+from grteclyn_stationary.numerics.spectral import cheb_coeffs
 from grteclyn_wrapper.visualisation.optimisation.palette import BLUE, GREY, INK
 from grteclyn_wrapper.visualisation.optimisation.plot_ring_physics import SavedRing
 
@@ -87,7 +87,7 @@ def measurements(source=SOURCE):
     np.testing.assert_allclose(metric['drag_ratio'].max(), record['shift_norm_over_lapse_max'], atol=2e-6)
     # The saved density starts at rho=0.001. Evaluate its finite central limit
     # independently; the winding-one field retains a nonzero gradient there.
-    from grteclyn_wrapper.optimisation.railgun.gap import equatorial_densities
+    from grteclyn_stationary.railgun.gap import equatorial_densities
     central = equatorial_densities(meta, ring.u, np.array([1e-6, 2e-6]))
     np.testing.assert_allclose(central[:, 0], central[:, 1], atol=1e-16)
     density = np.array([np.interp(rr, archived[:, 0], row) for row in relative])

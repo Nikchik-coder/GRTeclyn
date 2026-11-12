@@ -11,7 +11,7 @@ from grteclyn_wrapper.grtresna.profiles.boson_star import (
     PROFILE_SELFGRAV_BOUND,
     grtresna_lump_profile,
 )
-from grteclyn_wrapper.grtresna.profiles.boson_star_ode import cached_selfgrav_profile
+from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_profile
 from grteclyn_wrapper.grtresna.solver.config import GRTresnaConfig
 from grteclyn_wrapper.grtresna.solver.params import write_grtresna_params
 
@@ -120,7 +120,7 @@ def test_selfgrav_pump_target_uses_fitted_width() -> None:
         evolution_overrides_from_config,
     )
     from grteclyn_wrapper.grtresna.profiles.boson_star import PROFILE_SECH_BOUND, bound_width
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         selfgrav_pump_target_width,
     )
 
@@ -203,7 +203,7 @@ def test_selfgrav_at_omega_params_write_back_amp_and_eigenvalue(tmp_path: Path) 
     """
     import numpy as np
 
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
     from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
@@ -251,7 +251,7 @@ def test_selfgrav_pair_gets_per_sector_tables(tmp_path: Path) -> None:
     """
     import numpy as np
 
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
     from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
@@ -325,7 +325,7 @@ def test_selfgrav_pair_mixed_frequency_equal_mass(tmp_path: Path) -> None:
     """
     import numpy as np
 
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
     from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius

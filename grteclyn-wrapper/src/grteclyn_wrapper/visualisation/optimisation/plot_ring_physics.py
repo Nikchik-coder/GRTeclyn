@@ -14,7 +14,7 @@ import numpy as np
 from numpy.polynomial.chebyshev import chebval2d
 from scipy.optimize import minimize
 
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_coeffs
+from grteclyn_stationary.numerics.spectral import cheb_coeffs
 
 
 class SavedRing:
@@ -74,7 +74,7 @@ def create(source, output, reports):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LinearSegmentedColormap
     from matplotlib.patches import ConnectionPatch, FancyArrowPatch, Circle
-    from grteclyn_wrapper.optimisation.railgun.gap import equatorial_densities
+    from grteclyn_stationary.railgun.gap import equatorial_densities
 
     output, reports = Path(output), Path(reports)
     output.parent.mkdir(parents=True, exist_ok=True)

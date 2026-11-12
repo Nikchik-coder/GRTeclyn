@@ -11,7 +11,7 @@ def plot(directory,out,*,diagnostic=False):
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.patches import Patch
-    from grteclyn_wrapper.optimisation.railgun.gap import cylindrical_densities
+    from grteclyn_stationary.railgun.gap import cylindrical_densities
     directory=Path(directory);result=json.loads((directory/'outcome.json').read_text())
     accepted=bool(result.get('accepted'))
     passing=[row for row in result['records'] if row.get('verdict')=='PASS']

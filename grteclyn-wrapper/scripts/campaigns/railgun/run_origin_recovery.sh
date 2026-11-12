@@ -5,7 +5,7 @@ set -euo pipefail
 CARD="${1:?GPU card required}" OUT="${2:?New output directory required}"
 RESUME=()
 [[ -z "${3:-}" ]] || RESUME=(--resume-from "$3")
-CONFIG="research/railgun/studies/ergoregion_origin_recovery_372.json"
+CONFIG="grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_origin_recovery_372.json"
 [[ "${CARD}" == 0 ]] || { echo 'This recovery is assigned to card 0.' >&2; exit 2; }
 [[ ! -e "${OUT}" ]] || { echo 'Existing evidence is immutable.' >&2; exit 2; }
 PY=grteclyn-wrapper/.venv/bin/python
@@ -19,23 +19,23 @@ du -sh /tmp/grteclyn_scratch/*
 mkdir -p runs/railgun/checks
 REPORT="runs/railgun/checks/$(basename -- "${OUT}")"
 [[ ! -e "${REPORT}.xml" ]] || { echo 'Existing test evidence is immutable.' >&2; exit 2; }
-"${PY}" -m grteclyn_wrapper.optimisation.railgun.smooth_origin_recovery \
+"${PY}" -m grteclyn_stationary.railgun.smooth_origin_recovery \
   --config "${CONFIG}" --dry-run > "${REPORT}-plan.json"
 export JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES="${CARD}" WH_JAC_CHUNK=128
 export XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
 "${PY}" -m pytest -q --junitxml="${REPORT}.xml" \
-  grteclyn-wrapper/tests/optimisation/test_solver_core.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_resume.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_372_handoff.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_evolution.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_evolution_amr.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_interpolation.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_smooth_origin.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_smooth_origin_device.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_source_refinement.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_372_recovery.py
-exec "${PY}" -u -m grteclyn_wrapper.optimisation.railgun.smooth_origin_recovery \
+  grteclyn-wrapper/tests/stationary/test_solver_core.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_resume.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_372_handoff.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_evolution.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_evolution_amr.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_interpolation.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_geometry.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_transport.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_smooth_origin.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_smooth_origin_device.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_source_refinement.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_372_recovery.py
+exec "${PY}" -u -m grteclyn_stationary.railgun.smooth_origin_recovery \
   --gpu "${CARD}" --config "${CONFIG}" --out "${OUT}" "${RESUME[@]}"
 }

@@ -53,7 +53,7 @@ def main():
         "results/optimisation/figures/setup/wormhole-ring-setup.png"))
     args = parser.parse_args()
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    config = json.loads(Path("research/optimisation/studies/railgun_throat.json").read_text())
+    config = json.loads(Path("grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_throat.json").read_text())
     if config["throat_radius"] != 2.0:
         raise ValueError("This illustration describes the R_A=2 weak-ring pilot")
 
@@ -165,7 +165,7 @@ def main():
         "kind": "setup schematic; not a numerical field reconstruction",
         "run": "railgun-throat-20261104T201026",
         "source_commit": "1bb61204b3d4bcf378c0dddf788a481d77f2834a",
-        "configuration": "research/optimisation/studies/railgun_throat.json",
+        "configuration": "grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_throat.json",
         "diagnostic_source": "research/optimisation/STATUS.md",
         "diagnostic_grid": [210, 36],
         "throat_area_radius": 2.0,

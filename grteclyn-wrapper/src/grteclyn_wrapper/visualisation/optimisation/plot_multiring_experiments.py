@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from .plot_ring_physics import SavedRing
-from grteclyn_wrapper.optimisation.railgun.gap import cylindrical_densities
+from grteclyn_stationary.railgun.gap import cylindrical_densities
 
 
 ROOT = Path('results/railgun')

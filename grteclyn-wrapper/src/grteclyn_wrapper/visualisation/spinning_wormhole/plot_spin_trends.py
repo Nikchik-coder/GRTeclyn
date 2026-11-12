@@ -62,9 +62,9 @@ from matplotlib.patches import Patch  # noqa: E402
 
 from scipy.interpolate import PchipInterpolator  # noqa: E402
 
-from grteclyn_wrapper.analysis.spinning_wormhole.observables import (  # noqa: E402
-    exotic_matter, static_exotic_matter)
-from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution  # noqa: E402
+from grteclyn_stationary.spinning_wormhole.observables import exotic_matter
+from grteclyn_stationary.spinning_wormhole.observables import static_exotic_matter
+from grteclyn_stationary.spinning_wormhole.solution import Solution  # noqa: E402
 from grteclyn_wrapper.visualisation.spinning_wormhole import headers, kk2014, solutions  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 

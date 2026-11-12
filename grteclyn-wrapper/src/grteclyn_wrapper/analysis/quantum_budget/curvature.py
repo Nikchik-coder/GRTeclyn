@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ..spinning_wormhole.solution import Solution
+from grteclyn_stationary.spinning_wormhole.solution import Solution
 
 __all__ = [
     "PAIRS", "frame_riemann", "kk_jets", "ell_curvature", "kretschmann",

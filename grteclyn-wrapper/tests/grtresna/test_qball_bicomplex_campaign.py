@@ -82,7 +82,7 @@ def _bondi_style_overrides(**extra: float) -> dict:
 
 
 def test_qball_exact_amplitude_paints_eigenstate_phi_c() -> None:
-    from grteclyn_wrapper.grtresna.profiles.qball_ode import (
+    from grteclyn_stationary.profiles.qball_ode import (
         cached_qball_radial_profile,
     )
 

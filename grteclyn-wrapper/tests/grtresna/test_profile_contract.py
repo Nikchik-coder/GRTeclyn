@@ -163,7 +163,7 @@ _TORUS_ID = (
     reason="real torus gridinit artifact not present",
 )
 def test_real_torus_gridinit_matches_solver() -> None:
-    from grteclyn_wrapper.grtresna.profiles.qball_torus import read_torus_profile
+    from grteclyn_stationary.profiles.qball_torus import read_torus_profile
 
     tor = read_torus_profile(_TORUS_ID / "qball_torus.dat")
     spec = MatterProfileSpec(

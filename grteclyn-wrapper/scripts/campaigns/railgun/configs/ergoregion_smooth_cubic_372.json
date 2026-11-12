@@ -1,0 +1,53 @@
+{
+  "fields": [
+    {
+      "winding": 1,
+      "mass": 1.0,
+      "amplitude": 0.32584258793528914,
+      "parity": "even",
+      "anchor_radius": 1.2028929844078005,
+      "quartic": 0.0,
+      "sextic": 0.0
+    }
+  ],
+  "length": 2.5,
+  "central_lapse": 0.12993066385192364,
+  "grids": [
+    [
+      224,
+      28
+    ],
+    [
+      256,
+      32
+    ],
+    [
+      288,
+      36
+    ]
+  ],
+  "require_gpu": true,
+  "max_iter": 30,
+  "min_updates": 2,
+  "newton_tol": 1e-14,
+  "chord_ratio": 0.0,
+  "perturbation": 1e-05,
+  "equation_tol": 1e-08,
+  "tail_tol": 1e-06,
+  "observable_tol": 1e-06,
+  "minimum_charges": [
+    0.0011265884759944886
+  ],
+  "require_nodeless": true,
+  "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "max_solves": 3,
+  "core": {
+    "radius": 0.08,
+    "degree": 12,
+    "tolerance": 1e-08
+  },
+  "evolution_config": "grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_372.json",
+  "discretisation": "dragging_cubic_smooth_origin_v1",
+  "approval": "November 4: continue the far-distance correction and repeat validation, then the approved GPU evolutions. Same ring and original tolerances; retain the bounded three-resolution correction on GPU 0, 224x28 / 256x32 / 288x36, max 30 iterations/minimum two updates, fresh Jacobians, Newton 1e-14, then radius-0.08 degrees-12/14 centre certificate. Four threads, 160 GiB, one hour, chunks 128, checkpoints OFF. Stop on rejected physical validation; conditional t=50 evolutions retain their existing configuration."
+}

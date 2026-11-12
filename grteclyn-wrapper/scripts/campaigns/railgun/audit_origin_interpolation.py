@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-from grteclyn_wrapper.optimisation.railgun.geometry import interpolation_coefficients
+from grteclyn_stationary.railgun.geometry import interpolation_coefficients
 
 
 def audit(path):

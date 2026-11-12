@@ -10,7 +10,7 @@ GENUINE 2D spinning Q-ball eigenstate
     Phi = f(rho, z) e^{i(m phi_az - omega t)}
 
 via the Newton/amplitude-continuation solver in
-``grteclyn_wrapper.grtresna.profiles.qball_torus``, tabulate f(rho, z), and paint
+``grteclyn_stationary.profiles.qball_torus``, tabulate f(rho, z), and paint
 it into GRTresna as a single ``profile == 4`` winding lump on a THROAT-FREE,
 CENTERED, full-box background (bh1_bare_mass = 0, all-Sommerfeld boundaries so
 GRTresna centres the grid at L/2).  GRTresna re-solves the Hamiltonian + momentum
@@ -91,8 +91,8 @@ def _tag() -> str:
 
 def _solve_and_write_torus(run_dir: Path) -> tuple[Path, float, float]:
     """Solve the 2D Q-torus eigenstate, tabulate it, return (path, f_max, omega)."""
-    from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
-    from grteclyn_wrapper.grtresna.profiles.qball_torus import (
+    from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
+    from grteclyn_stationary.profiles.qball_torus import (
         solve_qball_torus_profile,
         write_torus_profile,
     )
@@ -252,7 +252,7 @@ def main() -> int:
         MatterProfileSpec,
         check_gridinit_matches_spec,
     )
-    from grteclyn_wrapper.grtresna.profiles.qball_torus import read_torus_profile
+    from grteclyn_stationary.profiles.qball_torus import read_torus_profile
 
     tor = read_torus_profile(torus_path)
     spec = MatterProfileSpec(

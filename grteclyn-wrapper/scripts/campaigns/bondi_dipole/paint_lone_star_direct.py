@@ -42,7 +42,7 @@ from grteclyn_wrapper.grtresna.io.gridinit import (  # noqa: E402
     GRTECLYN_STATE_VARS,
     write_gridinit,
 )
-from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (  # noqa: E402
+from grteclyn_stationary.profiles.boson_star_ode import (  # noqa: E402
     QBallCouplings,
     solve_selfgrav_at_omega,
 )

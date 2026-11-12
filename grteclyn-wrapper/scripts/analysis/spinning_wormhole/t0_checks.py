@@ -42,8 +42,8 @@ from pathlib import Path
 
 import numpy as np
 
-from grteclyn_wrapper.analysis.spinning_wormhole import adm
-from grteclyn_wrapper.analysis.spinning_wormhole.backgrounds import read_spinbg
+from grteclyn_stationary.spinning_wormhole import adm
+from grteclyn_stationary.spinning_wormhole.backgrounds import read_spinbg
 
 LEVEL3_EDGES = (0.125, 0.25, 0.5, 1.0, 2.0)
 

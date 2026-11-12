@@ -1,10 +1,14 @@
 # `grteclyn_wrapper` — Python package reference
 
-Closed-loop search engine for exotic spacetime metrics on top of the
-`GRTeclyn` C++/GPU numerical-relativity code. The package proposes initial-data
-parameter vectors, runs constrained GPU evolutions, scores the result against
-FTL / energy-condition / stability metrics, and drives the search with CMA-ES,
-a quality-diversity archive, or a surrogate-assisted loop.
+Stationary spacetime solvers, evolution orchestration and analysis for the
+repository's research studies. [`grteclyn-stationary`](../../packages/stationary/README.md) contains
+rotating wormholes, interacting scalar matter and regular-centre rings.
+Its `numerics/` package supplies their shared spectral and nonlinear algorithms.
+
+The episode CLI below serves the matter-first searches: it proposes initial
+data, runs constrained GRTeclyn evolutions and scores their physical diagnostics.
+Stationary commands use `python -m grteclyn_stationary.commands.<name>`;
+install their dependencies with `uv sync --extra stationary`.
 
 This README documents the **Python modules and the CLI**. For the GPU shell
 scripts (`run_radialrecipe_gpu_smoke.sh`, `run_nonspherical_gpu_batch.sh`, …)
@@ -66,13 +70,17 @@ uv run python -m grteclyn_wrapper warpfactory \
 
 ## Module map
 
-Package layout (each area lives in its own subfolder under
+The independent solver lives under `packages/stationary/src/grteclyn_stationary/`.
+The complete folder inventory is in [ARCHITECTURE.md](../../ARCHITECTURE.md).
+
+Wrapper package layout (each area lives in its own subfolder under
 `grteclyn-wrapper/src/grteclyn_wrapper/`):
 
 ```
 grteclyn_wrapper/
   __init__.py
   __main__.py          CLI entry point (facade → cli/)
+  campaigns/stationary/  checkout-specific pipeline, comparisons and movies
   cli/
     parser.py          argparse definitions
     main.py            command dispatch

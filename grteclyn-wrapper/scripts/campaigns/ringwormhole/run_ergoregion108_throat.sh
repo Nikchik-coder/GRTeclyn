@@ -8,7 +8,7 @@ mode="${3:---dry-run}"
 [[ "$mode" == --dry-run || "$mode" == --run ]] || exit 2
 cd "$(dirname "${BASH_SOURCE[0]}")/../../../.."
 [[ ! -e "$out" ]] || { echo 'output must be fresh' >&2; exit 2; }
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.ringwormhole_continuation \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.ringwormhole.continuation \
     --config grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108_throat.json --out "$out"
 # Reconfiguration shares the first continuation's original one-hour window.
 wall=1200

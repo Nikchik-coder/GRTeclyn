@@ -29,6 +29,16 @@ in their immutable archives.
 GRTeclyn grids and evolved in full 3+1.** The three-resolution Richardson
 study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](EVOLUTION.md).
 
+## Software validation — 2026-11-12
+
+The wrapper refactor extracts `grteclyn-stationary` as a standalone package.
+The installed wheel passes cold-import, CLI and exact-background recovery checks
+with wrapper imports blocked. Physics equations and acceptance gates are unchanged.
+CPU-only cluster verification is queued for the archived spherical-core fixture
+and slow boson-profile regressions: first node, four CPU threads, 64 GiB
+address-space cap, 0.5 h hard limit. No evolution, GPU or checkpoints.
+Logs will be in `runs/capped_jobs/stationary-packaging-cpu-20261112/`.
+
 ## Live and queue
 
 **Full-coefficient recovery COMPLETE; source qualified for evolution.**
@@ -101,7 +111,7 @@ and three passing stationary grids (128x16 / 160x20 / 192x24).
 No accepted saved source near 2 was found. The November 4 explicit go
 selects this weaker ring, checkpoints **OFF**, for **t=2** pilots:
 N96 then N128 on card 0, N192 on card 1, only on the first two-GPU node.
-[Configuration](studies/evolution_ergoregion_108_pilot.json),
+[Configuration](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_108_pilot.json),
 `run_weak_ergoregion_pilot.sh`: GPU regressions first; every export must
 pass the unchanged radius-0.08, degrees-12/14 centre certificate and
 preflight before evolution. No new stationary solves. Preserve L=64,
@@ -129,7 +139,7 @@ H in w=(1-s)^3 H, extending the existing coefficient method to dragging.
 It preserves all interior equations, origin conditions, infinity checks,
 archives, refinement and common-point measurements. **108 targeted local
 tests pass**; the completed GPU validation passes above.
-[Prepared configuration](studies/ergoregion_full_spectral_372.json) and
+[Prepared configuration](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_full_spectral_372.json) and
 `run_full_spectral_recovery.sh` retain the same ring, three grids,
 centre certificate, resource caps and physical acceptance limits.
 The previous three-solve budget is spent; the fresh go and launch are
@@ -182,7 +192,7 @@ preserve these coefficients. **76 targeted local tests pass**; the completed GPU
 unchanged centre certificate; original physical limits, four threads, 160 GiB,
 one hour, chunks 128. The November 4 explicit go authorizes this separate
 three-solve budget and conditional evolutions, with checkpoints OFF.
-[Prepared configuration](studies/ergoregion_smooth_spectral_372.json).
+[Prepared configuration](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_smooth_spectral_372.json).
 The evolution sequence is also prepared: it refuses a missing or mismatched
 centre certificate, preserves N96 then N128 on card 0 and N192 on card 1,
 and stops the queue if its predecessor fails or ends before t=50.
@@ -211,7 +221,7 @@ archive retains both physical fields and exact H coefficients; geometry,
 common-point comparisons and Cartesian export preserve the representation.
 No sponge or evolution boundary has been applied: the current discrepancy
 comes from the stationary solution before transfer to GRTeclyn.
-Configuration: [ergoregion_smooth_cubic_372.json](studies/ergoregion_smooth_cubic_372.json).
+Configuration: [ergoregion_smooth_cubic_372.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_smooth_cubic_372.json).
 
 **Previous origin recovery COMPLETE, REJECTED**, continuation job
 `railgun-ergo372-origin-recovery-r2-resume-20261104`, card 0,
@@ -320,14 +330,14 @@ constraint is 6.43e-10 and physical origin error is 9.53e-12, both passing.
 Next: diagnose the Newton rounding floor and the centre interpolation, then
 re-run only after the numerical correction is tested. The conditional
 three-resolution evolution configuration and checkpoint choice remain intact.
-Recovery configuration: [ergoregion_origin_recovery_372.json](studies/ergoregion_origin_recovery_372.json).
+Recovery configuration: [ergoregion_origin_recovery_372.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_origin_recovery_372.json).
 The November 3 interrupted check remains in the
 [paused archive](../../results/railgun/studies/evolution-ergo372-core-paused-20261103/).
 The 5.23 origin-recovery implementation is saved as a draft, unlaunched.
 Its four CPU manufactured checks passed earlier; no GPU validation or
 stationary recovery was run. Defaults of the established solver are unchanged.
 The substituted source is defined in
-[evolution_ergoregion_372.json](studies/evolution_ergoregion_372.json).
+[evolution_ergoregion_372.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_372.json).
 Nineteen CPU source-identity, phase, layout and unchanged-limit checks pass.
 The candidate reuses the completed CUDA binary; no new stationary solve is
 needed for its first origin check. Only a passing certificate permits export.
@@ -376,7 +386,7 @@ three new grids. Test the final Cartesian core with degrees 12/14 and
 unchanged 1e-8 equation/curvature limits before qualifying it for export.
 No new search or automatic evolution from a failed candidate. Seven
 CPU plan/layout checks pass. Definition:
-[studies/ergoregion_source_refined.json](studies/ergoregion_source_refined.json).
+[studies/ergoregion_source_refined.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_source_refined.json).
 
 **Repeat origin certification finished REJECTED**, job
 `railgun-ergo523-core-dct-20261103`, source `71b2cabb8`, card 0,
@@ -435,11 +445,11 @@ default frame and slice cache and the last three plotfiles per member.
 Each evolution is supervised with four CPU threads and a 160 GiB host cap;
 its wall budget will be recorded with the finished launcher. No added
 perturbation; no automatic renewed stationary search. Definition:
-[studies/evolution_ergoregion_best.json](studies/evolution_ergoregion_best.json).
+[studies/evolution_ergoregion_best.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_best.json).
 
 **Script relocation complete:** operational runners and archive tools are in
 `grteclyn-wrapper/scripts/campaigns/railgun/`; numerical commands and the
-claims audit are in `grteclyn_wrapper.optimisation.railgun`. No Python or
+claims audit are in `grteclyn_stationary.railgun`. No Python or
 shell script remains here. Both layout tests, moved-script syntax/import
 checks and exact CPU audit reproduction pass. All 1450 package files and
 immutable study checksums verify. The layout commit is `574f1a6ac`.
@@ -475,7 +485,7 @@ a turn but do not locate it. Close three-grid agreement is not a twelve-digit
 bound on every physical quantity, and one stalled Newton correction does not
 establish a universal floating-point limit. The new accepted 5.13 result
 already exceeds the proposed 4.3–4.8 ceiling. Reproduce this CPU-only audit
-with `python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims`; its hash-checked field results
+with `python -m grteclyn_stationary.railgun.audit_ring_claims`; its hash-checked field results
 are in `results/railgun/reports/ergoregion-comparison/claims-audit.json`.
 No new field solves or particle tracks were run for the audit.
 
@@ -632,7 +642,7 @@ Visual inspection and the label audit pass. This small figure snapshot is
 separate from a completed campaign archive. No new solve or trajectory ran.
 
 Completed discovery scope:
-[ergoregion_cma.json](studies/ergoregion_cma.json). The central-lapse border
+[ergoregion_cma.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_cma.json). The central-lapse border
 replaces the amplitude border without changing the field equations or the
 number of unknowns. It explores the same canonical free scalar model.
 
@@ -710,7 +720,7 @@ Scratch at startup: 14 GB retained, 531 GB free, three plotfiles per old
 evolution, zero checkpoints. No scratch or frame was removed.
 
 Single-ring ergoregion search,
-[ergoregion_amplitude.json](studies/ergoregion_amplitude.json). Start from the
+[ergoregion_amplitude.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_amplitude.json). Start from the
 hash-checked accepted omega=0.70 state; k=1, m=1 and the matter model stay fixed.
 First reproduce it on radial scale 2.5, with the amplitude pinned at its scalar
 maximum: radius 1.202893, amplitude 0.307398668. The old radius-5 pin measured
@@ -748,7 +758,7 @@ address-space cap per process, keep-last three plotfiles. No evolution is queued
 Eleven local preparation/spawn/preflight regressions pass; actual-cube
 CPU-only preparation passes both checkpoint policies. The image-worker
 entry point guards spawn and waits for workers before the final drain.
-Scope: [evolution_long_070.json](studies/evolution_long_070.json).
+Scope: [evolution_long_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_long_070.json).
 The original box can affect the ring before t=50; this is exploratory,
 not a new long-time Richardson or isolated-ring stability result.
 
@@ -842,7 +852,7 @@ remain in every archive and are not used for the interior convergence claim.
 Archive: `results/railgun/studies/evolution-070-n192/`, alongside the original
 two immutable pilot archives. Three-grid figure: `figures/evolution/ring070-evolution-convergence.png`
 under results/railgun, rebuilt from the portable diagnostics. The completed
-budget is [evolution_richardson_070.json](studies/evolution_richardson_070.json).
+budget is [evolution_richardson_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_richardson_070.json).
 This establishes short-duration numerical convergence of the import/evolution;
 long-time stability remains untested. A larger-domain, longer, explicitly
 perturbed three-resolution study requires a separate proposal and go.
@@ -1012,7 +1022,7 @@ Failed checks stop a recovery; no acceptance limit was relaxed.
 
 Equations and definitions: [EQUATIONS.md](EQUATIONS.md).
 Commands, budgets and reproduction: [RUNNING.md](RUNNING.md).
-Source: `grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/`;
+Source: `grteclyn-wrapper/packages/stationary/src/grteclyn_stationary/railgun/`;
 shared device/Jacobian/Newton core: `optimisation/solver/`.
 
 ## Earlier accepted baselines and remaining research

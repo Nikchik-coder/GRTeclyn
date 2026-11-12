@@ -220,7 +220,7 @@ def _pump_controller_overrides(
     if mass > 0.0:
         overrides["rl_pump_target_profile"] = int(PROFILE_SECH_BOUND)
         if selfgrav:
-            from ..profiles.boson_star_ode import (
+            from grteclyn_stationary.profiles.boson_star_ode import (
                 default_selfgrav_phi_c,
                 selfgrav_pump_target_width,
             )

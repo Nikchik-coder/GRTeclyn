@@ -67,7 +67,7 @@ def phi0_at_radius(r: NDArray, lump: Mapping[str, Any], *, raw_amp: bool) -> NDA
     profile_type = int(lump.get("profile", 0))
     scale = amp if raw_amp else effective_amp(lump)
     if profile_type == PROFILE_ODE_BOUND:
-        from .qball_ode import profile_for_lump
+        from grteclyn_stationary.profiles.qball_ode import profile_for_lump
 
         radial = profile_for_lump(
             dict(lump),
@@ -88,12 +88,12 @@ def phi0_at_radius(r: NDArray, lump: Mapping[str, Any], *, raw_amp: bool) -> NDA
         q_mu = float(lump.get("qball_mu", 0.0))
         q_omega = float(lump.get("qball_omega", 0.0))
         if q_omega > 0.0 and q_lam > 0.0 and q_mu > 0.0:
-            from .boson_star_ode import cached_selfgrav_at_omega
+            from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_at_omega
 
             gravity_sign = -1.0 if int(lump.get("exotic", 0)) else 1.0
             star = cached_selfgrav_at_omega(q_mass, q_lam, q_mu, q_omega, gravity_sign)
         else:
-            from .boson_star_ode import cached_selfgrav_profile
+            from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_profile
 
             star = cached_selfgrav_profile(q_mass, q_lam, q_mu, amp)
         return np.asarray(star.eval_phi0(r), dtype=np.float64)

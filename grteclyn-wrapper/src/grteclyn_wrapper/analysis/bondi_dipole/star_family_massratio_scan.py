@@ -45,9 +45,7 @@ OMEGAS = [
 
 
 def main(argv: list[str]) -> int:
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
-        cached_selfgrav_at_omega,
-    )
+    from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_at_omega
 
     pack = pathlib.Path(argv[0]) if argv else PACK
     out = pack / "stars" / "star_family_massratio.csv"

@@ -4,7 +4,7 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 DATA="" NAME="" GPU="" BINARY="" CHECKPOINTS="" N=""
-CONFIG="research/railgun/studies/evolution_ergoregion_best.json"
+CONFIG="grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_best.json"
 EXTRA=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -40,7 +40,7 @@ TEMPLATE="${SWH_CAMPAIGN_DIR}/templates/${NAME}.txt"
 mkdir -p -- "$(dirname -- "${TEMPLATE}")"
 cd "${REPO}"
 "${REPO}/grteclyn-wrapper/.venv/bin/python" -m \
-  grteclyn_wrapper.optimisation.railgun.evolution_amr prepare \
+  grteclyn_stationary.railgun.evolution_amr prepare \
   --out "${DATA}" --n "${N}" --config "${CONFIG}" --template "${TEMPLATE}" --checkpoints off \
   > "${TEMPLATE}.contract.json.tmp"
 mv -- "${TEMPLATE}.contract.json.tmp" "${TEMPLATE}.contract.json"

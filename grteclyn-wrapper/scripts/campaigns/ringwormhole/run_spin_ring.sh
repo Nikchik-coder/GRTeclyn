@@ -26,7 +26,7 @@ fi
 [[ "$mode" == --dry-run || "$mode" == --run ]] || exit 2
 cd "$(dirname "${BASH_SOURCE[0]}")/../../../.."
 [[ ! -e "$out" ]] || { echo 'output must be fresh' >&2; exit 2; }
-grteclyn-wrapper/.venv/bin/python -m "grteclyn_wrapper.optimisation.$module" \
+grteclyn-wrapper/.venv/bin/python -m "grteclyn_stationary.$module" \
     --config "grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/$config.json" --out "$out" "${extra[@]}"
 command=(bash grteclyn-wrapper/scripts/ops/capped_job.sh start
          "ringwormhole-spin-ring-$(date -u +%Y%m%dT%H%M%S)"

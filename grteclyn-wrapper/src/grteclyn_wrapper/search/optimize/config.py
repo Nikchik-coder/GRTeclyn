@@ -366,7 +366,7 @@ def _expand_trajectory_boson_lumps_from_overrides(
         PROFILE_SELFGRAV_BOUND,
         bound_width,
     )
-    from ...grtresna.profiles.qball_couplings import QBallCouplings
+    from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
     from .spaces import TRAJECTORY_DEFAULT_NUM_LUMPS
 
     num_lumps = max(1, int(round(get_float("trajectory_num_lumps", float(TRAJECTORY_DEFAULT_NUM_LUMPS)))))
@@ -495,7 +495,7 @@ def _expand_trajectory_boson_lumps_from_overrides(
             # branch via the gravitational eigenvalue; it is NOT the pump depth.
             amp = bs_phi_c
         elif use_ode and use_exact_amp and lam > 0.0 and mu > 0.0:
-            from ...grtresna.profiles.qball_ode import cached_qball_radial_profile
+            from grteclyn_stationary.profiles.qball_ode import cached_qball_radial_profile
 
             amp = float(cached_qball_radial_profile(mass, lam, mu, omega).phi_c)
         elif use_equilibrium and lam > 0.0 and mu > 0.0:

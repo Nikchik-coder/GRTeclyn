@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import numpy as np
 
-from grteclyn_wrapper.optimisation.railgun.evolution_convergence import (
-    analyse, load_triplet, RESOLUTIONS,
-)
+from grteclyn_stationary.railgun.evolution_convergence import analyse
+from grteclyn_stationary.railgun.evolution_convergence import load_triplet
+from grteclyn_stationary.railgun.evolution_convergence import RESOLUTIONS
 from grteclyn_wrapper.visualisation.wormhole_merger import style
 from .palette import BLUE, INK, GREY, RESOLUTIONS as RESOLUTION_COLOURS
 

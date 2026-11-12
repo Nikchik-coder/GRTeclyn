@@ -17,7 +17,7 @@ import numpy as np
 
 from ...initial_data.motif import GeometryMotif, MomentumTarget, SupportRegion
 from ..profiles.boson_star import PROFILE_ODE_BOUND
-from ..profiles.qball_couplings import QBallCouplings
+from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
 from ..solver import GRTresnaConfig, apply_exotic_safe_solver
 
 DEFAULT_AMP_SCALE = 0.15

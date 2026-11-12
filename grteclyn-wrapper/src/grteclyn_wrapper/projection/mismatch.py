@@ -54,8 +54,7 @@ W_AIJ: float = 0.3          # Traceless extrinsic curvature A_ij
 # Phase A2: weight for the momentum-density (S_i) mismatch term (warp motifs).
 W_SI: float = 1.0
 
-# Gate fitness returned when a solve fails entirely (analogous to
-# cmaes_adapter.DEFAULT_GATE_FITNESS).
+# Gate fitness returned when a solve fails entirely, matching search.optimize.eval.
 GATE_FITNESS: float = 100.0
 
 # Profile comparison resolution (number of 1-D sample points along axis).

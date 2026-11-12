@@ -30,7 +30,7 @@ import math
 
 import numpy as np
 
-from ..spinning_wormhole.solution import Solution
+from grteclyn_stationary.spinning_wormhole.solution import Solution
 
 __all__ = ["d_charge_sq", "rho_stationary"]
 

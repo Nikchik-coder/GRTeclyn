@@ -794,7 +794,7 @@ export GRTECLYN_EVOLVING_GEODESIC_MODE=hq
 export GRTECLYN_GEO_EMIT_INTERVAL=2.0
 export GRTECLYN_GEO_MAX_EMISSIONS=<from the manifest — matches the window>
 grteclyn-wrapper/.venv/bin/python \
-  grteclyn-wrapper/scripts/campaigns/rl/score_evolving_geodesic.py \
+  grteclyn-wrapper/scripts/campaigns/neuralspacetime/score_evolving_geodesic.py \
   runs/neuralspacetime/hq/<run> --ftl-l 8
 # verify the first stdout line says mode=hq; use --dry-run for any
 # --max-time comparison, or the truncated result overwrites the full one.

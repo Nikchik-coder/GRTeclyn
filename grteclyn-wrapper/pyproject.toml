@@ -1,9 +1,10 @@
 [project]
 name = "grteclyn-wrapper"
 version = "0.1.0"
-description = "Python episode runner and failure-atlas tooling for GRTeclyn SupportedWormholeCollapse"
+description = "Stationary spacetime solvers, evolution campaigns and research analysis for GRTeclyn"
 requires-python = ">=3.10"
 dependencies = [
+    "grteclyn-stationary==0.1.0",
     "tomli>=2; python_version < '3.11'",
     "numpy>=1.24",
     "h5py>=3.10",
@@ -38,17 +39,9 @@ gw-search = [
     "scipy>=1.10",
 ]
 
-# The fast-spin Ellis-Bronnikov background solver (analysis/spinning_wormhole):
-# JAX gives the Newton solver its exact Jacobian (jacfwd), CPU + float64 only.
-spinning-solver = [
-    "jax>=0.4.30",
-    "sympy>=1.12",
-]
-
-rl = [
-    "gymnasium>=0.29",
-    "pyzmq>=25.0",
-    "stable-baselines3>=2.3",
+# Stationary wormholes and scalar rings; float64 on CPU or an explicitly selected GPU.
+stationary = [
+    "grteclyn-stationary[plots,symbolic]==0.1.0",
 ]
 
 [project.scripts]
@@ -70,3 +63,9 @@ packages = ["src/grteclyn_wrapper"]
 
 [tool.uv]
 managed = true
+
+[tool.uv.workspace]
+members = ["packages/stationary"]
+
+[tool.uv.sources]
+grteclyn-stationary = {workspace = true}

@@ -27,7 +27,7 @@ export SWH_CONSUMER_THREADS=1
 TEMPLATE="${SWH_CAMPAIGN_DIR}/templates/${NAME}.txt"
 cd "${REPO}"
 "${REPO}/grteclyn-wrapper/.venv/bin/python" -m \
-  grteclyn_wrapper.optimisation.railgun.evolution_long \
+  grteclyn_stationary.railgun.evolution_long \
   --data-dir "${DATA}" --reference results/railgun/studies/evolution-070-n192 \
   --template "${TEMPLATE}" --binary "${BINARY}" --checkpoints "${CHECKPOINTS}"
 nvidia-smi

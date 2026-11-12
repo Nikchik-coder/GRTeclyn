@@ -22,7 +22,7 @@ bash grteclyn-wrapper/scripts/plot/plot_diagnostic.sh \
 
 | Figure | Input data | Module |
 |--------|------------|--------|
-| `constraints_plot.*` | `data/constraint_norms.dat` (`t`, `L2_Ham`, `L2_Mom`) | `constraines/` |
+| `constraints_plot.*` | `data/constraint_norms.dat` (`t`, `L2_Ham`, `L2_Mom`) | `constraints/` |
 | `collapse_diagnostics_plot.*` | `data/collapse_diagnostics.dat` (+ optional `small_data/areal_radius.dat`) | `diagnostic/` |
 | `psi4_analysis_M1000_D1.*` etc. | `small_data/psi4_mode_l2m0.dat` | `process_wave/plot_extracted_psi4.py` (`--combined --strain`) |
 
@@ -44,7 +44,7 @@ See also the wrapper overview: [`grteclyn-wrapper/README.md`](../../../README.md
 | **`extract_wave/`** | Extract \(\Psi_4\) from plotfiles and plot time series + PSD. |
 | **`process_wave/`** | Stream plotfiles to `psi4_mode_l2m0.dat`, render frames while consuming, plot from `.dat`, LIGO/strain propagation extras. |
 | **`diagnostic/`** | Collapse diagnostics multi-panel plot (`collapse_diagnostics.dat`, optional `areal_radius.dat`). |
-| **`constraines/`** | Constraint norms \(L_2\) of Hamiltonian and momentum (`constraint_norms.dat`). |
+| **`constraints/`** | Constraint norms \(L_2\) of Hamiltonian and momentum (`constraint_norms.dat`). |
 | **`figures/`** | Standalone publication-style schematic figures (not driven by simulation dumps). |
 | **`search/`** | QD / search campaign analytics from `trajectory.jsonl` (batch improvement, saturation). |
 | **`geometry_atlas/`** | Midplane field panels of the top MAP-Elites elites of a geometry-atlas campaign (`python -m grteclyn_wrapper.visualisation.geometry_atlas <campaign> --top 5`). |
@@ -268,7 +268,7 @@ uv run python -m grteclyn_wrapper.visualisation.diagnostic.diagnostic --data /pa
 
 ---
 
-## 5. `constraines/` — Constraint norms
+## 5. `constraints/` — Constraint norms
 
 Plots \(L_2\) norms of Hamiltonian and momentum constraints from `constraint_norms.dat`
 (typically `<run>/data/constraint_norms.dat`). Two log-scale panels: \(\|\mathcal{H}\|_{L^2}\) and
@@ -277,13 +277,13 @@ Plots \(L_2\) norms of Hamiltonian and momentum constraints from `constraint_nor
 Requires `calculate_constraint_norms=1` during GPU evolution (wrapper campaigns enable this).
 
 ```bash
-uv run python -m grteclyn_wrapper.visualisation.constraines \
+uv run python -m grteclyn_wrapper.visualisation.constraints \
   /path/to/run/data/constraint_norms.dat \
   -o /path/to/run/plots/constraints_plot.eps
 ```
 
 If you pass only `-o myplot.eps` (no directory component), outputs go under
-`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/constraines/`. The module also writes matching
+`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/constraints/`. The module also writes matching
 `.png` and `.pdf` next to the EPS stem.
 
 **Not plotted here:** `grtresna/Ham_and_Mom_errors.txt` (GRTresna percent errors on initial data).
@@ -346,7 +346,7 @@ uv run python -m grteclyn_wrapper.visualisation.visualize --field K --axis z --c
 ```
 <run_dir>/
 ├── data/
-│   ├── constraint_norms.dat      # constraines/
+│   ├── constraint_norms.dat      # constraints/
 │   └── collapse_diagnostics.dat    # diagnostic/
 ├── small_data/
 │   ├── psi4_mode_l2m0.dat          # plot_extracted_psi4 (from consume_plotfiles --psi4)
@@ -364,7 +364,7 @@ grteclyn-wrapper/src/grteclyn_wrapper/visualisation/
 ├── extract_wave/                   # default --out for plot_psi4 (plotfile-direct, 2-panel)
 ├── process_wave/                   # optional default --out for plot_extracted_psi4
 ├── diagnostic/
-├── constraines/                    # default location for relative -o on constraines CLI
+├── constraints/                    # default location for relative -o on constraints CLI
 ├── figures/
 ├── search/
 └── README.md
@@ -548,7 +548,7 @@ uv run python -m grteclyn_wrapper.visualisation.visualize --field K --data /path
 ```
 
 ```bash
-uv run python -m grteclyn_wrapper.visualisation.constraines /path/to/data/data/constraint_norms.dat
+uv run python -m grteclyn_wrapper.visualisation.constraints /path/to/data/data/constraint_norms.dat
 ```
 
 ```bash

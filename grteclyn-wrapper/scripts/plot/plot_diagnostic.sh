@@ -117,7 +117,7 @@ if command -v uv >/dev/null 2>&1 && [[ -f "${WRAPPER_ROOT}/pyproject.toml" ]]; t
 fi
 
 echo "[1/3] Plotting constraint norms..."
-"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.constraines \
+"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.constraints \
   "${CONSTRAINT_FILE}" \
   -o "${PLOTS_DIR}/constraints_plot.eps"
 

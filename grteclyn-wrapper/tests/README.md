@@ -14,6 +14,9 @@ Pytest suite organized by domain, mirroring `grteclyn_wrapper/` package layout.
 | `projection/` | `projection.*` — geometry-first → GRTresna pipeline | `uv run pytest tests/projection/ -q` |
 | `initial_data/` | `initial_data.*` — seeds, candidates, constrained guesser | `uv run pytest tests/initial_data/ -q` |
 | `analysis/` | `analysis.symbolic_extract` | `uv run pytest tests/analysis/ -q` |
+| `stationary/` | Stationary models, numerical kernels, validation and installed commands | `uv run pytest tests/stationary/ -q` |
+| `stationary/spinning_wormhole/` | Rotating-background benchmarks and spectral checks | `uv run pytest tests/stationary/spinning_wormhole/ -q` |
+| `quantum_budget/` | Quantum-budget analysis of stationary backgrounds | `uv run pytest tests/quantum_budget/ -q` |
 | `scripts/` | Repo script smoke tests (`scripts/wormhole/rollback`) | `uv run pytest tests/scripts/ -q` |
 | `tools/` | Manual helpers (plots, validation scripts; not pytest) | `uv run python tests/tools/validate_metric_guesser.py` |
 

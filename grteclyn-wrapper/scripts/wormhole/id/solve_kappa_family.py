@@ -121,7 +121,7 @@ def _write_qball_profile(dst_dir: Path) -> Path:
     point at; the winding painter loads it for profile==3 lumps and normalises
     to phi0(0)=1, so ``lump0_amp`` sets the throat's central amplitude.
     """
-    from grteclyn_wrapper.grtresna.profiles.qball_ode import (
+    from grteclyn_stationary.profiles.qball_ode import (
         cached_qball_radial_profile,
     )
 

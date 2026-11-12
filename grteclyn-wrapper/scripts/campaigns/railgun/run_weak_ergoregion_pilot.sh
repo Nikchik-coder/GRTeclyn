@@ -4,13 +4,13 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 cd "${REPO}"
-CONFIG="research/railgun/studies/evolution_ergoregion_108_pilot.json"
+CONFIG="grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_ergoregion_108_pilot.json"
 CARD="${1:?card required}" STEM="${2:?new name required}"
 BINARY="${3:?binary required}" CHECKPOINTS="${4:?explicit checkpoints policy required}"
 [[ "${CARD}" == 0 || "${CARD}" == 1 ]] || exit 2
 [[ "${STEM}" =~ ^[A-Za-z0-9._-]+$ && "${CHECKPOINTS}" == off && -x "${BINARY}" ]] || exit 2
 PY=grteclyn-wrapper/.venv/bin/python
-"${PY}" -m grteclyn_wrapper.optimisation.railgun.evolution_amr plan --config "${CONFIG}" --n 96
+"${PY}" -m grteclyn_stationary.railgun.evolution_amr plan --config "${CONFIG}" --n 96
 UUID=$(nvidia-smi --id="${CARD}" --query-gpu=uuid --format=csv,noheader)
 PROCESSES=$(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader)
 [[ -n "${UUID}" && "${PROCESSES}" != *"${UUID}"* ]] || {
@@ -25,12 +25,12 @@ mkdir -p runs/railgun/checks
 REPORT="runs/railgun/checks/${STEM}-gpu${CARD}.xml"
 [[ ! -e "${REPORT}" ]] || { echo 'Existing evidence is immutable.' >&2; exit 2; }
 "${PY}" -m pytest -q --junitxml="${REPORT}" \
-  grteclyn-wrapper/tests/optimisation/test_railgun_evolution.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_evolution_amr.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_interpolation.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_smooth_origin.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_smooth_origin_device.py
+  grteclyn-wrapper/tests/stationary/test_railgun_evolution.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_evolution_amr.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_interpolation.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_geometry.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_smooth_origin.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_smooth_origin_device.py
 if [[ "${CARD}" == 0 ]]; then RESOLUTIONS=(96 128); else RESOLUTIONS=(192); fi
 for N in "${RESOLUTIONS[@]}"; do
   NAME="${STEM}-n${N}"
@@ -40,7 +40,7 @@ for N in "${RESOLUTIONS[@]}"; do
   # The launcher independently checks the cube hashes and repeats preflight.
   timeout --signal=TERM --kill-after=30 10800 bash -c '
     set -euo pipefail
-    "$1" -u -m grteclyn_wrapper.optimisation.railgun.evolution_amr export \
+    "$1" -u -m grteclyn_stationary.railgun.evolution_amr export \
       --config "$2" --n "$3" --out "$4" --gpu "$5"
     exec bash "$6/launch_ergoregion.sh" --config "$2" --n "$3" \
       --data-dir "$4" --gpu "$5" --name "$7" --binary "$8" --checkpoints off

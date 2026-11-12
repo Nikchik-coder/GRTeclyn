@@ -1,16 +1,28 @@
 # grteclyn-wrapper
 
-A Python orchestration layer for numerical-relativity experiments built on
-**GRTeclyn** (GPU evolution, AMReX + CCZ4) and **GRTresna** (elliptic constraint
-solver, Chombo). It turns *"here is a candidate spacetime"* into a finished,
-constraint-satisfying, artefact-checked result.
+The numerical and operational layer for the studies in [`research/`](../research/):
+wormhole dynamics and mergers, Bondi dipoles, matter-first searches, spinning
+wormholes, exotic-matter optimisation, scalar rings and ring--wormhole coupling.
 
-For each candidate it asks GRTresna for constraint-satisfying initial data,
-hands that data to GRTeclyn for time evolution, streams plotfiles into
-`small_data/` + `frames/` **while the GPU run is still going**, deletes the heavy
-HDF5 directories afterwards, and scores what is left with a pluggable objective.
-On top of that episode loop sit quality-diversity (MAP-Elites) and CMA-ES search
-campaigns over matter and geometry configurations.
+- [`grteclyn-stationary`](packages/stationary/README.md) solves rotating
+  wormholes and scalar rings, searches their parameters and independently
+  validates stationary solutions. The spinning-wormhole model is part of it.
+- Its `numerics/` package owns shared spectral grids, maps, exact Jacobians and Newton
+  iteration on CPU or an explicitly selected GPU. Install with
+  `uv sync --extra stationary`.
+- `core/`, `grtresna/` and `scripts/campaigns/` prepare and run GRTeclyn
+  evolutions. Campaign definitions live in `scripts/campaigns/<study>/configs/`.
+- `analysis/`, `metrics/`, `visualisation/` and `gw_search/` measure, check and
+  present the saved results. `search/`, `initial_data/` and `projection/` retain
+  the matter-first discovery and reproducibility workflows.
+
+The solver builds and installs independently from `packages/stationary/`; the
+wrapper consumes it as a workspace dependency. See [ARCHITECTURE.md](ARCHITECTURE.md)
+for the folder audit and [STATIONARY_RESEARCH.md](STATIONARY_RESEARCH.md) for campaign recipes.
+
+Python RL training has been retired. The pump queues and geodesic/confinement
+scoring tools now live in `scripts/campaigns/neuralspacetime/`. The simulation's
+existing pump parameters remain part of those reproducible experiments.
 
 > **This is research code, not a released library.** It is a fork of
 > [GRTeclyn](https://github.com/GRTLCollaboration/GRTeclyn) with a research tree
@@ -805,7 +817,7 @@ The corrected campaign and its data are in
 | **Solved-FTL gate** — cheap t=0 filter on `.gridinit` | `search/solved_ftl_gate.py` | ~1 s/candidate; rejects flat/degenerate slices |
 | **Visualization** — constraint plots, GW panels, frame movies | `src/.../visualisation/`, `scripts/plot/` | Article-style 6-panel Ψ₄ figures; `make_movies.sh` |
 | **LIGO matched-filter search** — methodology + reference script | `src/.../gw_search/` | Intermediate-mass collapse templates vs GWOSC; see [`src/.../gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) |
-| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5 |
+| **Matter-first pump studies** — queues and scoring | `scripts/campaigns/neuralspacetime/` | Reproducibility tools |
 | **Self-gravitating boson star seed** — stationary single-star confinement | `grtresna/profiles/boson_star_ode.py`, GRTresna C++ | Four-bug fix; see [Self-gravitating boson star](#self-gravitating-boson-star) |
 
 ---
@@ -1688,7 +1700,7 @@ export GRTECLYN_EVOLVING_GEODESIC_MODE=hq GEODESIC_EMIT_MIN_TIME=0 \
        TMPDIR=$S/tmp PYTHONPYCACHEPREFIX=$S/pyc
 for k in 0 4 8 16 24 30; do
   nohup grteclyn-wrapper/.venv/bin/python -u \
-    grteclyn-wrapper/scripts/campaigns/rl/score_evolving_geodesic.py \
+    grteclyn-wrapper/scripts/campaigns/neuralspacetime/score_evolving_geodesic.py \
     runs/pump/pump_ladder_m0/lad_m0_tp$k --ftl-l 8 \
     > $S/score_tp$k.log 2>&1 &
 done

@@ -4,14 +4,14 @@ The research directory contains documentation and JSON study definitions.
 Executable campaign scripts are in
 [`grteclyn-wrapper/scripts/campaigns/railgun`](../../grteclyn-wrapper/scripts/campaigns/railgun/README.md);
 the numerical code and physical-claims audit are in
-`grteclyn_wrapper.optimisation.railgun` under the wrapper's `src/` tree.
+`grteclyn_stationary.railgun` under the wrapper's `src/` tree.
 Run the commands below from the repository root.
 
 **Completed November 2:** N=192 reached t=50 at 12:56:40 MSK, exit 0.
 The 16 movies finished encoding at 14:02:43 MSK; contact sheets await visual
 review. Checkpoints OFF. No evolution remains live; the new stationary study
 is listed below. See STATUS for storage.
-Scope: [studies/evolution_long_070.json](studies/evolution_long_070.json).
+Scope: [studies/evolution_long_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_long_070.json).
 
 **Completed November 2:** the omega=0.70 Cartesian 3+1 import and full
 96^3 / 128^3 / 192^3 Richardson study through t=2 finished. All approved
@@ -90,7 +90,7 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-ergoregion-max-r2-
   bash grteclyn-wrapper/scripts/campaigns/railgun/run_ergoregion_maximise_r2.sh 1
 ```
 
-Configs: `studies/ergoregion_max_r2_seed271.json` and `...seed272.json`.
+Configs: `grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_max_r2_seed271.json` and `...seed272.json`.
 CPU-only `--dry-run` reads and hashes the accepted field without starting JAX.
 The original failed jobs and the completed validation remain immutable.
 
@@ -137,7 +137,7 @@ job including tests, chunks 128; six new solves maximum in total. Proposed
 checkpoints OFF; retain every log and field. Dry plan (no JAX startup):
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.validate_max_candidate \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.validate_max_candidate \
   --seed 271 --gpu 0 --out runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102 --dry-run
 ```
 
@@ -183,7 +183,7 @@ AMR checkpoint is part of the proposal. These original launches have stopped.
 
 ### Completed discovery
 
-Scope: [ergoregion_cma.json](studies/ergoregion_cma.json), approved November 2
+Scope: [ergoregion_cma.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_cma.json), approved November 2
 with checkpoints OFF; ran 18:38:03–18:44:52 MSK on the two-GPU node/card 0.
 It found a three-grid validated ergoregion after five proposals: shift/lapse
 1.080970704, g_tt maximum +0.0150110091, omega=0.655065086594. All 41 GPU
@@ -217,8 +217,8 @@ The process stops on full ergoregion acceptance or its work/time cap.
 CPU-only preview on the authorised node:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.ergoregion_cma \
-  research/railgun/studies/ergoregion_cma.json \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.ergoregion_cma \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_cma.json \
   --source runs/railgun/single-ring/scans/ergoregion-amplitude-20261102-r2/amplitude_01/accepted.npz \
   --out runs/railgun/single-ring/scans/ergoregion-cma-20261102 --gpu 0 --dry-run
 ```
@@ -240,7 +240,7 @@ rejected proposals do not close the approved search budget.
 
 ## Amplitude continuation toward a single-ring ergoregion
 
-Prepared scope: [ergoregion_amplitude.json](studies/ergoregion_amplitude.json).
+Prepared scope: [ergoregion_amplitude.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_amplitude.json).
 The stationary study received its go November 2, checkpoints OFF, and started
 at 17:56:39 MSK on the second GPU node/card 0. It stopped at 17:59:36 MSK
 after all three reproduction grids passed the original checks: the added
@@ -248,8 +248,8 @@ extrema comparison used different physical sample positions. See STATUS.
 The dry run reads only NumPy data and does not initialise JAX:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.ergoregion_scan \
-  research/railgun/studies/ergoregion_amplitude.json \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.railgun.ergoregion_scan \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/ergoregion_amplitude.json \
   --source results/railgun/studies/frequency-deep/frequency_01/accepted.npz \
   --out runs/railgun/single-ring/scans/ergoregion-amplitude-20261102 --gpu 0 --dry-run
 ```
@@ -329,16 +329,16 @@ From the repository root:
 
 ```bash
 PY=grteclyn-wrapper/.venv/bin/python
-MOD=grteclyn_wrapper.optimisation.commands.railgun
+MOD=grteclyn_stationary.commands.railgun
 
 # Does not initialise JAX.
-$PY -m "$MOD" solve research/railgun/studies/single_ring.json \
+$PY -m "$MOD" solve grteclyn-wrapper/scripts/campaigns/railgun/configs/single_ring.json \
   --gpu 0 --out runs/railgun/single-ring/construction/single-pilot --dry-run
 
 # Run only after the named pilot has a go and nvidia-smi/storage are checked.
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-spherical-pilot \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
-  "$PY" -m "$MOD" solve research/railgun/studies/spherical_reference.json \
+  "$PY" -m "$MOD" solve grteclyn-wrapper/scripts/campaigns/railgun/configs/spherical_reference.json \
   --gpu 0 --jac-chunk 128 --out runs/railgun/spherical/spherical-pilot
 ```
 
@@ -381,15 +381,15 @@ bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-regression \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
   env JAX_PLATFORMS=cuda CUDA_VISIBLE_DEVICES=0 WH_JAC_CHUNK=128 \
   XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
-  "$PY" -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_model.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_geometry.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_diagnostics.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_transport.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_continuation.py \
-  grteclyn-wrapper/tests/optimisation/test_railgun_baseline.py \
-  grteclyn-wrapper/tests/optimisation/test_solver_core.py \
-  grteclyn-wrapper/tests/optimisation/test_winding_field.py \
-  grteclyn-wrapper/tests/optimisation/test_layout.py
+  "$PY" -m pytest -q grteclyn-wrapper/tests/stationary/test_railgun_model.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_geometry.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_diagnostics.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_transport.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_continuation.py \
+  grteclyn-wrapper/tests/stationary/test_railgun_baseline.py \
+  grteclyn-wrapper/tests/stationary/test_solver_core.py \
+  grteclyn-wrapper/tests/stationary/test_winding_field.py \
+  grteclyn-wrapper/tests/stationary/test_layout.py
 ```
 
 Preserve NFS logs, configs, manifests, rejected diagnostics and accepted fields.
@@ -399,7 +399,7 @@ Do not prune scratch or discard frames as part of a test run.
 The spherical-to-ring branch has a separate bounded initializer:
 
 ```bash
-$PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring.json \
+$PY -m "$MOD" homotopy grteclyn-wrapper/scripts/campaigns/railgun/configs/spherical_to_ring.json \
   --source results/railgun/studies/spherical-validated/accepted.npz \
   --gpu 0 --out runs/railgun/single-ring/construction/spherical-to-ring --dry-run
 ```
@@ -425,7 +425,7 @@ the grids to 72x10 / 96x12 / 128x16:
 
 ```bash
 # Lists the proposal; initialises no GPU. The actual pilot needs its own go.
-$PY -m "$MOD" homotopy research/railgun/studies/spherical_to_ring_refined.json \
+$PY -m "$MOD" homotopy grteclyn-wrapper/scripts/campaigns/railgun/configs/spherical_to_ring_refined.json \
   --source results/railgun/studies/spherical-validated/accepted.npz \
   --resume results/railgun/studies/spherical-to-ring-resumed --refine-resume \
   --gpu 0 --jac-chunk 128 --out runs/railgun/single-ring/construction/spherical-to-ring-refined --dry-run
@@ -445,8 +445,8 @@ original spherical-coordinate interpolant is refused.
 The separated-ring screen has a dedicated nonlinear recovery, with its own go:
 
 ```bash
-$PY -m grteclyn_wrapper.optimisation.railgun.annular_recovery \
-  research/railgun/studies/annular_recovery_k12.json \
+$PY -m grteclyn_stationary.railgun.annular_recovery \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_recovery_k12.json \
   --source results/railgun/studies/annular-gap-screen/k12_128x16.npz \
   --out runs/railgun/two-rings/separated/annular-recovery-k12 --gpu 0 --dry-run
 ```
@@ -482,8 +482,8 @@ The asymmetric uphill experiment uses the already accepted pure ring and
 its exact core certificate. The dry run starts no JAX:
 
 ```bash
-$PY -m grteclyn_wrapper.optimisation.railgun.uphill \
-  research/railgun/studies/uphill_transit.json \
+$PY -m grteclyn_stationary.railgun.uphill \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/uphill_transit.json \
   --source results/railgun/studies/ring-validated/accepted.npz \
   --profile results/railgun/studies/ring-profile \
   --out runs/railgun/particles/single-ring/uphill --gpu 0 --dry-run
@@ -500,8 +500,8 @@ finite endpoint selection can be claimed; no asymptotic escape follows.
 The independently gated compactness scan has its own dry run and go:
 
 ```bash
-$PY -m grteclyn_wrapper.optimisation.railgun.compactness \
-  research/railgun/studies/compactness_scan.json \
+$PY -m grteclyn_stationary.railgun.compactness \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/compactness_scan.json \
   --source results/railgun/studies/ring-validated/accepted.npz \
   --out runs/railgun/single-ring/scans/compactness --gpu 0 --dry-run
 ```
@@ -518,8 +518,8 @@ separately approved follow-on controls frequency rather than the amplitude
 at a fixed coordinate radius:
 
 ```bash
-$PY -m grteclyn_wrapper.optimisation.railgun.frequency_scan \
-  research/railgun/studies/frequency_scan.json \
+$PY -m grteclyn_stationary.railgun.frequency_scan \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/frequency_scan.json \
   --source results/railgun/studies/compactness-scan/amplitude_03/accepted.npz \
   --out runs/railgun/single-ring/scans/frequency-scan --gpu 0 --dry-run
 ```
@@ -536,7 +536,7 @@ validated sampled ergoregion. Use the same capped GPU execution limits.
 ### Completed resolution recovery at omega=0.73
 
 The frequency scan stopped on the 72x10 unimposed constraint at omega=0.73.
-`studies/frequency_073_refined.json` changes only the grids to 96x12 / 128x16 /
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/frequency_073_refined.json` changes only the grids to 96x12 / 128x16 /
 160x20, keeping frequency, model, branch guards and tolerances. Seed from the
 converged but rejected 72x10 field; its use as an initial guess does not accept
 its constraint error. Every new grid must make at least two real corrections
@@ -550,8 +550,8 @@ already exists; a rerun needs a new run-specific go:
 bash grteclyn-wrapper/scripts/ops/capped_job.sh start railgun-frequency-073-refined-20261101 \
   --threads 4 --mem 160 --timeout 1800 --gpu -- \
   env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
-  grteclyn-wrapper/.venv/bin/python -u -m grteclyn_wrapper.optimisation.commands.railgun solve \
-  research/railgun/studies/frequency_073_refined.json \
+  grteclyn-wrapper/.venv/bin/python -u -m grteclyn_stationary.commands.railgun solve \
+  grteclyn-wrapper/scripts/campaigns/railgun/configs/frequency_073_refined.json \
   --seed results/railgun/studies/frequency-scan/frequency_05/grid_72x10.npz \
   --out runs/railgun/single-ring/scans/frequency-073-refined-20261101 --gpu 0 --jac-chunk 128
 ```
@@ -561,7 +561,7 @@ No AMR checkpoints or automatic lower-frequency follow-on.
 
 ### Deep frequency continuation and stronger-ring transport
 
-The November 1 direct instruction authorises `studies/frequency_deep.json`:
+The November 1 direct instruction authorises `grteclyn-wrapper/scripts/campaigns/railgun/configs/frequency_deep.json`:
 omega=0.70 then 0.67, three grids 96x12 / 128x16 / 160x20, at most six
 solves, max 30 Newton iterations each, at least two updates per grid. Keep
 all independent gates and branch guards. Stop on first rejection or a
@@ -581,7 +581,7 @@ checkpoints, retain profiles, tracks and logs.
 
 ### Prepared discrete-field seed screen
 
-`railgun.branch_seeds` and `studies/branch_seeds.json` define six GPU linear
+`railgun.branch_seeds` and `grteclyn-wrapper/scripts/campaigns/railgun/configs/branch_seeds.json` define six GPU linear
 mode pencils: k=+2, m=2.5 or 3, even; and k=+1, m=1, odd, each on
 96x12 / 128x16. The original accepted weak k=1 species remains field 0;
 the new species is field 1 at amplitude 0.001. Fixed-metric seeds are saved
@@ -598,7 +598,7 @@ No final mixed-mass two-ring or stacked spacetime is generated by this screen.
 
 The initial strong-ring study retains 32 tracks but fails only two timing
 comparisons. `railgun.uphill_precision` with
-`studies/uphill_precision_073.json` reintegrates just those two controls
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/uphill_precision_073.json` reintegrates just those two controls
 at rtol=2e-13, comparing each with its saved 2e-12 track. Initial states
 are reused bit for bit; all passing controls and the original failed
 archive remain unchanged. The accepted matching source/core certificate
@@ -606,7 +606,7 @@ is hash-checked and reused. No timing or conservation limit is relaxed.
 
 The cubic boundary experiment passes finite-sphere flux but fails its
 literal-infinity coefficient. The separately prepared
-`studies/annular_quintic_k12.json` uses r^-5 falloff appropriate to J=0
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_quintic_k12.json` uses r^-5 falloff appropriate to J=0
 and equatorial symmetry. It adds a leading angular-mode test and retains
 every original equation/flux/gap/channel/convergence limit. All four
 omitted outer PDE rows are checked independently. Three solves maximum,
@@ -628,8 +628,8 @@ and studies/annular-quintic-k12. No new numerical run is authorised.
 
 ### Approved regular-operator recovery and independent phase audit
 
-Configs `studies/annular_regular_k12.json` (card 1) and
-`studies/axial_audit_073.json` (card 0) have a separate go. Each follows
+Configs `grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_regular_k12.json` (card 1) and
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/axial_audit_073.json` (card 0) have a separate go. Each follows
 its targeted GPU tests, four threads, 160 GiB, 1800 s, chunks 128,
 no AMR checkpoints. The former has at most three fresh 192x16/224x18/256x20
 solves, max 30 iterations/minimum two updates, stop on rejection. The latter
@@ -640,14 +640,14 @@ are preserved. All existing numerical gates remain unchanged.
 
 ### Prepared final Newton polish and conditional annular particles
 
-`studies/annular_regular_polish_k12.json` tightens only the Newton solve:
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_regular_polish_k12.json` tightens only the Newton solve:
 1e-14, a fresh Jacobian every update, minimum two updates; three grids
 192x16/224x18/256x20, at most three solves/max 30 iterations. The source,
 physics and every original acceptance gate stay unchanged. Direct H-coefficient
 transfer preserves the solved infinity data on refinement instead of refitting
 tiny physical w values. The previous first-grid flux rejection remains archived.
 
-`studies/annular_transit_k12.json` is a conditional eight-track pilot that
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_transit_k12.json` is a conditional eight-track pilot that
 refuses any unvalidated or non-archived background. Launch at the midpoint
 of the common three-grid matter channel, z=+10, axial speed -0.5; match the
 full Killing energy for spin 0/+0.001/-0.001 and a background/spin reversal,
@@ -663,10 +663,10 @@ checkpoints per job. GPU regressions precede any production execution.
 
 ### Prepared regular-cubic and two-integral phase polish
 
-`studies/annular_regular_cubic_k12.json` changes only the regular operator's
+`grteclyn-wrapper/scripts/campaigns/railgun/configs/annular_regular_cubic_k12.json` changes only the regular operator's
 falloff power to 3, allowing independent infinity J measurement; original
 source, grids, all physical gates and fresh-Jacobian 1e-14 settings stay fixed.
-At most three solves, stop on rejection. `studies/axial_phase_polish_073.json`
+At most three solves, stop on rejection. `grteclyn-wrapper/scripts/campaigns/railgun/configs/axial_phase_polish_073.json`
 adds only two order-32 scalar integrals against saved order-16 values;
 all 656 full MPD checks and the existing particle tracks are reused with
 hash verification. No new tracks or MPD checks; cumulative phase budget 34.

@@ -18,13 +18,20 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | ring–wormhole coupling | [`research/ringwormhole/`](research/ringwormhole/) | — | `runs/ringwormhole/` | [`STATUS.md`](research/ringwormhole/STATUS.md) |
 | ring spacetimes and spin transport | [`research/railgun/`](research/railgun/) | [`results/railgun/`](results/railgun/README.md) | `runs/railgun/` | spherical, rotating and counter-rotating states validated: [`STATUS.md`](research/railgun/STATUS.md) |
 
-Optimisation's Python code and command entry points live together in
-[`grteclyn_wrapper.optimisation`](grteclyn-wrapper/src/grteclyn_wrapper/optimisation/README.md).
-Its README explains the search, validation and outputs. Plots remain in
-`visualisation/optimisation/`; tests remain in `grteclyn-wrapper/tests/optimisation/`.
+Stationary spinning wormholes, interacting matter and scalar rings live in
+[`grteclyn_stationary`](grteclyn-wrapper/packages/stationary/README.md).
+Shared spectral grids, maps, Jacobians and Newton iteration live in
+`grteclyn_stationary.numerics`. The standalone package builds without the wrapper.
+Its README explains installation and export; `grteclyn-wrapper/STATIONARY_RESEARCH.md`
+explains campaign workflows and outputs. Plots remain in
+`visualisation/optimisation/`; tests remain in `grteclyn-wrapper/tests/stationary/`.
 Scalar-ring launch, packing and run-organisation scripts are in
 [`grteclyn-wrapper/scripts/campaigns/railgun/`](grteclyn-wrapper/scripts/campaigns/railgun/README.md).
-`research/railgun/` contains documentation and JSON study definitions.
+JSON study definitions live in the campaign's `configs/`; `research/railgun/`
+contains research writing. Optimisation launchers and configurations likewise
+live in `grteclyn-wrapper/scripts/campaigns/optimisation/` and its `configs/` directory.
+The matter-first pump queues and scoring tools live in
+`grteclyn-wrapper/scripts/campaigns/neuralspacetime/`; the Python RL training package is retired.
 Ring–wormhole launchers, workers and run configurations live in
 [`grteclyn-wrapper/scripts/campaigns/ringwormhole/`](grteclyn-wrapper/scripts/campaigns/ringwormhole/README.md).
 `research/ringwormhole/` holds STATUS and research writing.

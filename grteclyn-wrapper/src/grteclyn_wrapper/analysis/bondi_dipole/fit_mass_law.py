@@ -36,9 +36,7 @@ from pathlib import Path
 import numpy as np
 
 from grteclyn_wrapper.analysis.bondi_dipole import REPO
-from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
-    cached_selfgrav_at_omega,
-)
+from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_at_omega
 
 # Model constants of the campaign's boson-star family.
 LAM = 10240.0

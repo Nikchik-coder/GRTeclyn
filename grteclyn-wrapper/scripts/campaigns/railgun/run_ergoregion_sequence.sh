@@ -16,8 +16,8 @@ PY=grteclyn-wrapper/.venv/bin/python
 import json
 import sys
 from pathlib import Path
-from grteclyn_wrapper.optimisation.railgun.evolution import digest
-from grteclyn_wrapper.optimisation.railgun.evolution_amr import load_plan
+from grteclyn_stationary.railgun.evolution import digest
+from grteclyn_stationary.railgun.evolution_amr import load_plan
 cfg, _ = load_plan(sys.argv[1], 96)
 source = Path(cfg['source'])
 if not (source.parent/'evolution_qualification.json').is_file():
@@ -47,7 +47,7 @@ if (( MEMBER )); then
   df -h /tmp/grteclyn_scratch
   du -sh /tmp/grteclyn_scratch/*
   export XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_ALLOCATOR=platform
-  "${PY}" -u -m grteclyn_wrapper.optimisation.railgun.evolution_amr export \
+  "${PY}" -u -m grteclyn_stationary.railgun.evolution_amr export \
     --config "${CONFIG}" --n "${N}" --out "${OUT}" --gpu "${CARD}"
   exec bash "${HERE}/launch_ergoregion.sh" --config "${CONFIG}" \
     --data-dir "${OUT}" --name "${NAME}" --n "${N}" --gpu "${CARD}" \

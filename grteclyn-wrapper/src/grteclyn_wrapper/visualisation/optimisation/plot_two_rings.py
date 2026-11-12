@@ -8,14 +8,15 @@ import argparse
 import json
 from pathlib import Path
 import numpy as np
-from grteclyn_wrapper.analysis.spinning_wormhole.spectral import cheb_eval,lobatto
+from grteclyn_stationary.numerics.spectral import cheb_eval
+from grteclyn_stationary.numerics.spectral import lobatto
 
 
 def equatorial_density(source,*,extent=25.,samples=2001):
     """Canonical Eulerian energy densities from spectral first derivatives."""
     with np.load(source,allow_pickle=False) as data:
         meta=json.loads(str(data['metadata']));u=np.asarray(data['u'])
-    from grteclyn_wrapper.optimisation.railgun.gap import equatorial_densities
+    from grteclyn_stationary.railgun.gap import equatorial_densities
     r=np.linspace(.001,extent,samples)
     return r,equatorial_densities(meta,u,r)
 
@@ -30,7 +31,7 @@ def plot_density(source,out,*,extent=25.,data_directory=None):
     summary=dict(component_peak_radii=r[peaks].tolist(),midpoint_radius=middle,
         midpoint_component_density=values,midpoint_total_fraction_of_peak=float(sum(values)/np.max(total)),
         radial_sample_spacing=float(r[1]-r[0]),scope='Density overlap only; no between-ring particle path has been integrated.')
-    from grteclyn_wrapper.optimisation.railgun.gap import annular_gap
+    from grteclyn_stationary.railgun.gap import annular_gap
     tail_r,tail_density=equatorial_density(source,extent=max(120.,extent),samples=6001)
     summary['annular_gap']=annular_gap(tail_r,tail_density,relative_cutoff=1e-6)
     fig,ax=plt.subplots(figsize=(8,4.5),layout='constrained')

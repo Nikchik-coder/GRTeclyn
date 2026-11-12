@@ -8,7 +8,7 @@ they were extracted.  Writing them to the node's own NVMe instead drops shared
 filesystem traffic to the ~1.4 MB of numbers each plotfile distils down to, and
 the concurrency ceiling becomes the GPU count.
 
-The promotion queues (``scripts/campaigns/rl/pump_ladder_queue.py``,
+The promotion queues (``scripts/campaigns/neuralspacetime/pump_ladder_queue.py``,
 ``pump_confine_queue.py``) each did this by hand, rewriting ``amr.plot_file``
 in their own params.  This module is the same policy applied at the one place
 every campaign passes through, so QD and CMA-ES inherit it without a launcher

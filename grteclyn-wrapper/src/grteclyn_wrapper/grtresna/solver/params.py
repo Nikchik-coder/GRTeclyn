@@ -69,7 +69,7 @@ def _maybe_write_qball_profile(cfg: GRTresnaConfig, params_path: Path) -> str | 
     Self-gravitating lumps take priority when both are present (they should not
     be mixed in one campaign).
     """
-    from ..profiles.qball_ode import cached_qball_radial_profile
+    from grteclyn_stationary.profiles.qball_ode import cached_qball_radial_profile
 
     selfgrav_lumps = [
         lump for lump in cfg.lumps
@@ -141,7 +141,7 @@ def _write_selfgrav_profile(
     U(1) phase velocity.  This is what an equal-|ADM| mixed pair needs -- the
     phantom star matches the canonical star's mass at a slightly higher omega.
     """
-    from ..profiles.boson_star_ode import cached_selfgrav_profile
+    from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_profile
 
     src = selfgrav_lumps[0]
     mass = float(src.get("qball_mass", cfg.scalar_mass))
@@ -152,7 +152,7 @@ def _write_selfgrav_profile(
     # otherwise phi_c parameterizes the star (mini-star path, omega solved).
     omega_target = float(src.get("qball_omega", 0.0))
     if omega_target > 0.0 and lam > 0.0 and mu > 0.0:
-        from ..profiles.boson_star_ode import cached_selfgrav_at_omega
+        from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_at_omega
 
         global_path: str | None = None
         omega_out = 0.0

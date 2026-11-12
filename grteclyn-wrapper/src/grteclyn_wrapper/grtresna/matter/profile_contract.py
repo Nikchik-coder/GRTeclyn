@@ -52,7 +52,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from ..io.gridinit import read_gridinit
-from ..profiles.qball_torus import QBallTorusProfile, read_torus_profile
+from grteclyn_stationary.profiles.qball_torus import QBallTorusProfile, read_torus_profile
 
 ProfileKind = Literal["torus", "qball1d", "gaussian"]
 

@@ -8,7 +8,7 @@ mode="${3:---dry-run}"
 [[ "$mode" == --dry-run || "$mode" == --run ]] || exit 2
 cd "$(dirname "${BASH_SOURCE[0]}")/../../../.."
 [[ ! -e "$out" ]] || { echo 'output must be fresh' >&2; exit 2; }
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun_wormhole \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.ringwormhole.workflow \
     --config grteclyn-wrapper/scripts/campaigns/ringwormhole/configs/ergoregion108.json --out "$out"
 command=(bash grteclyn-wrapper/scripts/ops/capped_job.sh start
          "ringwormhole-ergo108-$(date -u +%Y%m%dT%H%M%S)"

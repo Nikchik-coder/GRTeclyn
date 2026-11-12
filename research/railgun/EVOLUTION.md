@@ -2,7 +2,7 @@
 
 The first experiment is a completed **unperturbed import and short-evolution
 pilot**, not a long-time stability test. Its exact bounded scope is in
-[studies/evolution_pilot_070.json](studies/evolution_pilot_070.json).
+[studies/evolution_pilot_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_pilot_070.json).
 The separate go for GPU tests, two production exports/core certificates,
 four zero-step preflights and two t<=2 evolutions was received November 2.
 Both exports, four zero-step startups and two evolutions are now spent.
@@ -10,7 +10,7 @@ A separate November 2 go authorised the matching 192^3 completion
 described below. Perturbations and longer evolutions remain outside scope.
 
 The subsequent **96^3 / 128^3 / 192^3 Richardson study is complete**;
-its separate scope is [studies/evolution_richardson_070.json](studies/evolution_richardson_070.json).
+its separate scope is [studies/evolution_richardson_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_richardson_070.json).
 The final member reached t=2 and finished processing at 10:24:52 MSK on
 November 2, exit 0. Every approved budget is now spent.
 Measured orders and extrapolations are in
@@ -152,7 +152,7 @@ tests on the selected card, then for each approved N:
 # Run this command inside capped_job.sh, --threads 4 --mem 160 --timeout 1800 --gpu.
 env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false \
   grteclyn-wrapper/.venv/bin/python -u -m \
-  grteclyn_wrapper.optimisation.railgun.evolution \
+  grteclyn_stationary.railgun.evolution \
   --source results/railgun/studies/frequency-deep/frequency_01/accepted.npz \
   --out runs/railgun/evolution/initial-070-n${N} --n ${N} --length 32 --gpu 0
 
@@ -239,7 +239,7 @@ no missing member is synthesized. Rebuild the completed comparison:
 
 ```bash
 grteclyn-wrapper/.venv/bin/python -m \
-  grteclyn_wrapper.optimisation.railgun.evolution_convergence \
+  grteclyn_stationary.railgun.evolution_convergence \
   results/railgun/studies/evolution-070-n96 \
   results/railgun/studies/evolution-070-n128 \
   results/railgun/studies/evolution-070-n192 \
@@ -294,7 +294,7 @@ Before GPU startup the checkpoint choice must be answered explicitly for
 this run: off, or on every 1500 steps (5 time units), keep three. The latter
 requires `amr.checkpoint_files_output=1`, `checkpoint_interval=1500` and
 `checkpoint_keep=3`; both choices are covered by the preparer tests.
-The run definition is [studies/evolution_long_070.json](studies/evolution_long_070.json).
+The run definition is [studies/evolution_long_070.json](../../grteclyn-wrapper/scripts/campaigns/railgun/configs/evolution_long_070.json).
 
 The box is only 32 wide and already has boundary-dominated whole-box
 constraint norms. Boundary effects can reach the interior before t=50.

@@ -120,7 +120,7 @@ If 0.99 cannot pass the gates, stop at the highest v_e that does and say so, as 
 
 ## 6. Code layout in grteclyn-wrapper
 
-New modules sit beside `backgrounds.py` in `src/grteclyn_wrapper/analysis/spinning_wormhole/`. `write_spinbg` and the table format stay untouched.
+New modules sit beside `backgrounds.py` in `packages/stationary/src/grteclyn_stationary/spinning_wormhole/`. `write_spinbg` and the table format stay untouched.
 
 | File | Holds |
 |---|---|
@@ -138,7 +138,7 @@ Scripts in `scripts/analysis/spinning_wormhole/`:
 - `solve_family.py`: runs a family and writes its catalogue under `results/spinningwormhole/backgrounds/<family>/`.
 - `check_einstein.py`: `check_slowspin_einstein.py` generalized. Its `ricci_lambdas` already take general f, ν, ω of (η, θ). Only `residuals` assumes slow spin (w_01 = w_02 = w_11 = 0, ν = n(η) sin²θ); feed it jets from `Solution` instead.
 
-Tests go in `tests/spinning_wormhole/`: static exactness, manufactured solutions, J⁴ scaling, identities, γ = 0 mirror symmetry and a table round trip. New dependency: `jax` (CPU, float64); the rest is already used.
+Tests go in `tests/stationary/spinning_wormhole/`: static exactness, manufactured solutions, J⁴ scaling, identities, γ = 0 mirror symmetry and a table round trip. New dependency: `jax` (CPU, float64); the rest is already used.
 
 ---
 
