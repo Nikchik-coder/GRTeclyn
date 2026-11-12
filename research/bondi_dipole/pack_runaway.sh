@@ -26,7 +26,7 @@
 # packed; a run is packed once it is filed into its group.
 #
 # Machine identity is never hard-coded: absolute paths are scrubbed at runtime
-# by grteclyn_wrapper.packaging.scrub_paths using tokens derived from the
+# by grteclyn_workflows.packaging.scrub_paths using tokens derived from the
 # environment.
 #
 # Usage: bash research/bondi_dipole/pack_runaway.sh
@@ -44,7 +44,7 @@ DEST="${BONDI_PACK_DEST:-${ROOT}/results/bondi-dipole-runaway}"
 PACK_GROUPS="${PACK_GROUPS:-01_star_family 02_lone_star 03_same_sign 04_runaway 05_separation 06_mass 07_numerics 08_late_separation 09_convergence}"
 
 export ROOT SIM_ROOT
-scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
+scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py" "$@"; }
 
 if [[ ! -d "${RUNS}" ]]; then
   echo "[pack-runaway] no run tree at ${RUNS#"${ROOT}"/} -- nothing to do"
@@ -200,7 +200,7 @@ PY
     PP[0-9]*|MM[0-9]*|control_pair_pp_*|control_pair_mm_*)
       if [[ -d "${run}/frames/_slice_cache/chi_minus_1_z" ]]; then
         "${ROOT}/grteclyn-wrapper/.venv/bin/python" \
-          -m grteclyn_wrapper.analysis.bondi_dipole.track_wells \
+          -m grteclyn_workflows.analysis.bondi_dipole.track_wells \
           "${run}/frames" "${out}/well_tracking.dat" --label "${cell##*/}" \
           || echo "[pack-runaway] ${cell}: well tracking failed, continuing"
       fi

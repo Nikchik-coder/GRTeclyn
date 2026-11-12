@@ -50,7 +50,7 @@ Source hashes and numeric profiles are in
 `reports/ergoregion-372-cross-section.json` and `.tsv`. Rebuild on CPU:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.railgun.plot_ring_cross_section
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.railgun.plot_ring_cross_section
 ```
 
 **Spatial guide to the omega=0.70 ring:** `figures/single-ring/ring070-physics.png`
@@ -66,7 +66,7 @@ bold inner/outer outlines mark half-peak energy density, with diffuse tails
 extending beyond the outlines. Rebuild without a GPU:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_physics
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_physics
 ```
 
 **Separated-ring explanatory figures:**
@@ -78,7 +78,7 @@ rings and saved paths; the overlapping configuration is excluded. Numeric
 companions are in `reports/multiring-explanatory.json`. Rebuild with:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_multiring_experiments
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_multiring_experiments
 ```
 
 **Verified maximisation restart, seed 272:**
@@ -109,7 +109,7 @@ the continuing search has since accepted stronger rings
 Rebuild from the saved numeric profiles, without a GPU or cluster access:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_comparison \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_comparison \
   --snapshot results/railgun/reports/ergoregion-comparison/validated-comparison.json
 ```
 
@@ -121,7 +121,7 @@ It does not integrate photon paths or perform an energy-extraction experiment.
 Reproduce it on a CPU, without JAX or cluster access:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.railgun.audit_ring_claims
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.optimisation.railgun.audit_ring_claims
 ```
 
 **November 2: three-grid full 3+1 convergence study complete.** The accepted
@@ -141,7 +141,7 @@ remain in the archived diagnostics. Figure:
 `figures/evolution/ring070-evolution-convergence.png` (also PDF). Rebuild with:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_convergence \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_convergence \
   results/railgun/studies/evolution-070-n96 \
   results/railgun/studies/evolution-070-n128 \
   results/railgun/studies/evolution-070-n192
@@ -162,7 +162,7 @@ Summary: `reports/evolution-pilot-070.json`. Initial grid figures:
 Rebuild the time comparison from portable numerical slice/diagnostic inputs:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_evolution
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_evolution
 ```
 
 The completed stationary/particle experiments pass every original acceptance gate:
@@ -205,7 +205,7 @@ source checksums, marker radii and definitions are in
 `reports/annular-cross-section.json` and `.tsv`. Rebuild on CPU:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.railgun.plot_annular_cross_section
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.railgun.plot_annular_cross_section
 ```
 
 Check the complete inventory and original study checksums:
@@ -223,13 +223,13 @@ Model parameters and interpretation belong in the paper caption.
 All three updated figures export PNG and PDF only. Rebuild it with:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_uphill \
   results/railgun/studies/uphill-transit --out results/railgun/figures/particles/uphill-transit.png
 ```
 
 The November 1 spherical benchmark passes independent checks on 56x8, 72x10 and 96x12. A pure k=1 rotating ring also passes on 72x10, 96x12 and 128x16, with observable drift 3.52e-10. The latest full suite passed 63 GPU tests. These are stationary numerical solutions; 32 finite-radius through-ring particle tracks pass conservation and tolerance checks; dynamical stability remains untested.
 
-- `figures/single-ring/scans/compactness-scan.png`: three independently accepted amplitude points; rejected points are excluded. Rebuild with `python -m grteclyn_wrapper.visualisation.optimisation.plot_compactness results/railgun/studies/compactness-scan --out results/railgun/figures/single-ring/scans/compactness-scan.png` using the wrapper environment.
+- `figures/single-ring/scans/compactness-scan.png`: three independently accepted amplitude points; rejected points are excluded. Rebuild with `python -m grteclyn_workflows.plotting.optimisation.plot_compactness results/railgun/studies/compactness-scan --out results/railgun/figures/single-ring/scans/compactness-scan.png` using the wrapper environment.
 - `figures/single-ring/scans/frequency-scan.png`: accepted fixed-frequency points; the measured amplitude at radius 5 falls as lapse decreases and dragging strengthens. Rebuild with the same `plot_compactness` command, using `studies/frequency-scan` and `figures/single-ring/scans/frequency-scan.png`.
 - `figures/single-ring/scans/frequency-073-recovery.png`: independent constraints and off-grid Einstein/Klein–Gordon residuals across the original and three refined grids, with the unchanged acceptance limit.
 - `figures/single-ring/strong-profile-073.png`: matter wall, lapse, dragging and signed magnetic tidal curvature on the certified omega=0.73 ring. `reports/strong-profile-comparison.json` compares the saved weak and strong profiles: peak instantaneous Eulerian linear force per unit spin rises by 78.30, which is not a moving-particle timing ratio.
@@ -280,9 +280,9 @@ Implementation and numerical contract: `research/railgun/EQUATIONS.md`. Current 
 Rebuild the meridional scalar-amplitude/frame-dragging figure from this archive:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring \
   results/railgun/studies/ring-validated/accepted.npz --out results/railgun/figures/single-ring/ring-validated.png
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring \
   results/railgun/studies/ring-validated/accepted.npz --3d --out results/railgun/figures/single-ring/ring-validated-3d.png
 ```
 
@@ -292,18 +292,18 @@ amplitude squared; it is not an idealised torus or a sharp matter boundary.
 Rebuild the interior/axial profile figure:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_profile \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_profile \
   results/railgun/studies/ring-profile --out results/railgun/figures/single-ring/ring-profile.png
 ```
 
 Rebuild the overlapping two-field baseline and its gap diagnostic:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_two_rings \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_two_rings \
   results/railgun/studies/counter-rotation/accepted.npz --out results/railgun/figures/two-rings/overlapping/two-rings.png \
   --density-out results/railgun/figures/two-rings/overlapping/two-rings-density.png \
   --density-data-dir results/railgun/reports --extent 18
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_counter_dragging \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_counter_dragging \
   results/railgun/studies/counter-rotation --out results/railgun/figures/two-rings/overlapping/counter-dragging.png
 ```
 
@@ -315,7 +315,7 @@ has a positive annular channel. It is a design diagram, not a solved field.
 Rebuild the fixed-frequency resolution diagnostic:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_recovery \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_recovery \
   results/railgun/studies/frequency-scan/frequency_05/grid_72x10.json \
   results/railgun/studies/frequency-073-refined \
   --out results/railgun/figures/single-ring/scans/frequency-073-recovery.png
@@ -324,10 +324,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 Rebuild the strong profile and accepted frequency sequence:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_ring_profile \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_ring_profile \
   results/railgun/studies/strong-profile-073 --out results/railgun/figures/single-ring/strong-profile-073.png \
   --title 'ω=0.73 single ring: matter wall and certified axial profile'
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_frequency_sequence \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_frequency_sequence \
   results/railgun --out results/railgun/figures/single-ring/scans/single-ring-frequency-sequence.png
 ```
 
@@ -335,10 +335,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation
 Rebuild the newly accepted figures with the wrapper environment:
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_rings \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_annular_rings \
   results/railgun/studies/annular-validated-k12 --out results/railgun/figures/two-rings/annular-rings-validated.png
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_annular_transit \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_annular_transit \
   results/railgun/studies/annular-transit-k12 --out results/railgun/figures/particles/annular-transit-k12.png
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_uphill \
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_uphill \
   results/railgun/studies/strong-uphill-073-validated --out results/railgun/figures/particles/strong-uphill-073.png
 ```

@@ -102,7 +102,7 @@ ftl_search_common_pipeline_args
 export SKIP_QD_PREFLIGHT_TESTS=1
 
 # shellcheck disable=SC2086
-exec ${PYTHON_BIN} -m grteclyn_wrapper \
+exec ${PYTHON_BIN} -m grteclyn_workflows \
   --runs-dir "${RUNS_DIR}" \
   "${NAME_ARGS[@]}" \
   "${FTL_GLOBAL_ARGS[@]}" \

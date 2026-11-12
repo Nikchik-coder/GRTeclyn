@@ -44,7 +44,7 @@ def test_installed_help_and_import_do_not_start_jax(installed, entry):
 import importlib, importlib.abc, pathlib, runpy, sys
 class NoJax(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, *args):
-        if fullname.split('.')[0] in {'jax', 'grteclyn_wrapper', 'yt', 'h5py'}:
+        if fullname.split('.')[0] in {'jax', 'grteclyn_workflows', 'yt', 'h5py'}:
             raise AssertionError(f'help/import attempted to import {fullname}')
 sys.meta_path.insert(0, NoJax())
 module = importlib.import_module(sys.argv[1])
@@ -78,7 +78,7 @@ def test_installed_pipeline_resource_and_dry_run(installed):
     env = dict(env, PYTHONPATH=str(directory/'wrapper') + os.pathsep + env['PYTHONPATH'])
     code = '''
 import importlib.util
-from grteclyn_wrapper.campaigns.stationary.pipeline import load
+from grteclyn_workflows.campaigns.stationary.pipeline import load
 cfg, stages = load()
 assert len(stages) == len(cfg['stage']) > 0
 for stage in stages.values():
@@ -95,7 +95,7 @@ for stage in stages.values():
     marker.touch()
     env = dict(env, GRTECLYN_ROOT=str(checkout))
     result = subprocess.run([sys.executable, '-S', '-m',
-                             'grteclyn_wrapper.campaigns.stationary.pipeline', 'run',
+                             'grteclyn_workflows.campaigns.stationary.pipeline', 'run',
                              'first-v-0003-150', '--dry-run'], cwd=directory,
                             env=env, text=True, capture_output=True)
     assert result.returncode == 0, result.stderr
@@ -116,14 +116,14 @@ def test_installed_models_and_retired_namespaces(installed):
 import importlib, importlib.abc, importlib.util, sys
 class NoJax(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, *args):
-        if fullname.split('.')[0] in {'jax', 'grteclyn_wrapper', 'yt', 'h5py'}:
+        if fullname.split('.')[0] in {'jax', 'grteclyn_workflows', 'yt', 'h5py'}:
             raise AssertionError('model import attempted to initialise JAX')
 sys.meta_path.insert(0, NoJax())
 for module in ('numerics.newton', 'numerics.jacobian', 'numerics.spectral',
                'spinning_wormhole.solution', 'railgun.problem', 'matter.equations',
                'profiles.boson_star_ode', 'profiles.qball_ode', 'profiles.qball_torus'):
     importlib.import_module('grteclyn_stationary.' + module)
-assert not any(n == 'grteclyn_wrapper' or n.startswith('grteclyn_wrapper.') for n in sys.modules)
+assert not any(n == 'grteclyn_workflows' or n.startswith('grteclyn_workflows.') for n in sys.modules)
 from grteclyn_stationary.provenance import source_revision
 assert source_revision() is None
 '''
@@ -138,7 +138,7 @@ def test_installed_solver_recovers_exact_background_without_wrapper(installed):
 import importlib.abc, sys
 class NoWrapper(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, *args):
-        if fullname.split('.')[0] in {'grteclyn_wrapper', 'yt', 'h5py'}:
+        if fullname.split('.')[0] in {'grteclyn_workflows', 'yt', 'h5py'}:
             raise AssertionError(fullname)
 sys.meta_path.insert(0, NoWrapper())
 import numpy as np

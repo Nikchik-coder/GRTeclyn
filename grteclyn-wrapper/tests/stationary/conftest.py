@@ -20,7 +20,7 @@ def cuda_device():
 def command():
     def load(name):
         if name in {'pipeline', 'compare_backgrounds'}:
-            return importlib.import_module(f'grteclyn_wrapper.campaigns.stationary.{name}')
+            return importlib.import_module(f'grteclyn_workflows.campaigns.stationary.{name}')
         return importlib.import_module(f'grteclyn_stationary.commands.{name}')
     return load
 

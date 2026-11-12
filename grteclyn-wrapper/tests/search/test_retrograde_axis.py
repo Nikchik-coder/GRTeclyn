@@ -11,12 +11,9 @@ from __future__ import annotations
 
 import math
 
-from grteclyn_wrapper.search.optimize.candidates import _vector_to_overrides
-from grteclyn_wrapper.search.optimize.dimension import SearchDimension
-from grteclyn_wrapper.search.optimize.spaces import (
-    grtresna_trajectory_search_space,
-    restrict_retrograde_omega,
-)
+from grteclyn_workflows.search.optimize.candidates import _vector_to_overrides
+from grteclyn_workflows.search.optimize.dimension import SearchDimension
+from grteclyn_workflows.search.optimize.spaces import grtresna_trajectory_search_space, restrict_retrograde_omega
 
 _OMEGA = "trajectory_lump0_omega_rot"
 

@@ -18,7 +18,7 @@ continuation branch: `<leg>.tsv` (one row per step: v_e, J, the gates) plus
 
 The evolution tables (`.spinbg`, 13 MB - 193 MB each, 2.1 GB the set) are NOT
 tracked: they regenerate from these solutions with
-`grteclyn_wrapper.analysis.spinning_wormhole.backgrounds.full_background`
+`grteclyn_workflows.analysis.spinning_wormhole.backgrounds.full_background`
 (doubling from 1025x65 until midpoint_err_f <= 1e-7, the
 `runs/spinning_p3/p5_catalogue.py` code path, ~minutes per table on CPU).
 These solutions are the small, slow-to-recompute part; keep them tracked.

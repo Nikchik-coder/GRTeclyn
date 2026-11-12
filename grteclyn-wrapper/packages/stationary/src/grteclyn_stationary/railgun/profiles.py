@@ -74,7 +74,7 @@ def run_profile(source,directory,*,z_min=-15.,z_max=15.,samples=301,
                 certify_core=True,corridor_radius=.4,corridor_degree=6):
     """Bounded stage A: certify the core, then save signed axial/equatorial data."""
     import hashlib
-        import time
+    import time
     from pathlib import Path
     from grteclyn_stationary.railgun.workflow import load_state, write_json
     from grteclyn_stationary.railgun.geometry import RingGeometry

@@ -1,13 +1,9 @@
 import argparse
 import math
 
-from grteclyn_wrapper.__main__ import build_parser
-from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
-from grteclyn_wrapper.search.optimize import (
-    build_grtresna_config,
-    build_search_space,
-    grtresna_ring_search_space,
-)
+from grteclyn_workflows.__main__ import build_parser
+from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
+from grteclyn_workflows.search.optimize import build_grtresna_config, build_search_space, grtresna_ring_search_space
 
 
 def test_shell_ansatz_search_space_is_low_dimensional() -> None:
@@ -379,7 +375,7 @@ def test_profile_fraction_assigns_top_hat_to_subset() -> None:
 
 
 def test_top_hat_envelope_has_flatter_core_than_gaussian() -> None:
-    from grteclyn_wrapper.grtresna.fields.lump import lump_phi_at
+    from grteclyn_workflows.grtresna.fields.lump import lump_phi_at
 
     width = 3.0
     gauss = {"amp": 0.2, "width": width, "center": (0.0, 0.0, 0.0), "mode": 0, "profile": 0}
@@ -393,7 +389,7 @@ def test_top_hat_envelope_has_flatter_core_than_gaussian() -> None:
 
 
 def test_solver_serializes_lump_profile() -> None:
-    from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, _lump_lines
+    from grteclyn_workflows.grtresna.solver import GRTresnaConfig, _lump_lines
 
     cfg = GRTresnaConfig()
     cfg.lumps = [

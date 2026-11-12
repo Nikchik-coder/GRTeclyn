@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
-from grteclyn_wrapper.grtresna.matter.wiring import evolution_overrides_from_config
-from grteclyn_wrapper.search.optimize.config import build_grtresna_config
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
+from grteclyn_workflows.grtresna.matter.wiring import evolution_overrides_from_config
+from grteclyn_workflows.search.optimize.config import build_grtresna_config
 
 _RUN_SH = (
     Path(__file__).resolve().parents[2]

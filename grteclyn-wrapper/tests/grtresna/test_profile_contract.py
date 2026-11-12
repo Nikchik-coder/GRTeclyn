@@ -18,14 +18,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.core.site_paths import grteclyn_root
-from grteclyn_wrapper.grtresna.io.gridinit import read_gridinit, write_gridinit
-from grteclyn_wrapper.grtresna.matter.profile_contract import (
-    PROFILE_KIND_TO_INT,
-    MatterProfileSpec,
-    check_gridinit_matches_spec,
-    reference_paint,
-)
+from grteclyn_workflows.evolution.site_paths import grteclyn_root
+from grteclyn_workflows.grtresna.io.gridinit import read_gridinit, write_gridinit
+from grteclyn_workflows.grtresna.matter.profile_contract import PROFILE_KIND_TO_INT, MatterProfileSpec, check_gridinit_matches_spec, reference_paint
 
 _MATTER = ("phi", "phi2", "Pi", "Pi2")
 _COMPS = ["chi", "lapse", *_MATTER]

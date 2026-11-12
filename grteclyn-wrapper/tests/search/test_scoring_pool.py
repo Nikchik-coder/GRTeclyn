@@ -9,20 +9,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from grteclyn_wrapper.core.config import resolve_example
-from grteclyn_wrapper.core.episode import create_episode
-from grteclyn_wrapper.core.evaluation import (
-    CpuGateResult,
-    Evaluation,
-    ScoringRequest,
-    _run_gpu_session,
-    _score_episode_phase,
-)
-from grteclyn_wrapper.search.gpu_pool import GpuPool, GpuPoolConfig
-from grteclyn_wrapper.search.grtresna_evaluation_gates import (
-    GRTresnaPreEvolutionGateConfig,
-)
-from grteclyn_wrapper.search.scoring_pool import ScoringPool
+from grteclyn_workflows.evolution.config import resolve_example
+from grteclyn_workflows.evolution.episode import create_episode
+from grteclyn_workflows.evolution.evaluation import CpuGateResult, Evaluation, ScoringRequest, _run_gpu_session, _score_episode_phase
+from grteclyn_workflows.search.gpu_pool import GpuPool, GpuPoolConfig
+from grteclyn_workflows.search.grtresna_evaluation_gates import GRTresnaPreEvolutionGateConfig
+from grteclyn_workflows.search.scoring_pool import ScoringPool
 
 
 @pytest.fixture
@@ -79,11 +71,11 @@ def test_lease_released_before_scoring(cpu_result) -> None:
             )
 
     with patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate", return_value=None,
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate", return_value=None,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.run_episode",
+        "grteclyn_workflows.evolution.evaluation.run_episode",
         return_value=MagicMock(returncode=0),
-    ), patch("grteclyn_wrapper.core.evaluation.write_params"):
+    ), patch("grteclyn_workflows.evolution.evaluation.write_params"):
         result = _run(cpu_result, gpu_pool=pool, scoring_pool=RecordingScorer())
 
     assert seen_active == [0]  # no lease held during scoring
@@ -98,12 +90,12 @@ def test_scoring_delegated_to_pool_not_inline(cpu_result) -> None:
         preflight_rejected=False, reason=None, metrics={},
     )
     with patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate", return_value=None,
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate", return_value=None,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.run_episode",
+        "grteclyn_workflows.evolution.evaluation.run_episode",
         return_value=MagicMock(returncode=0),
-    ), patch("grteclyn_wrapper.core.evaluation.write_params"), patch(
-        "grteclyn_wrapper.core.evaluation._score_episode_phase",
+    ), patch("grteclyn_workflows.evolution.evaluation.write_params"), patch(
+        "grteclyn_workflows.evolution.evaluation._score_episode_phase",
     ) as inline_score:
         _run(cpu_result, scoring_pool=scorer)
 
@@ -116,12 +108,12 @@ def test_scoring_delegated_to_pool_not_inline(cpu_result) -> None:
 
 def test_inline_scoring_when_no_pool(cpu_result) -> None:
     with patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate", return_value=None,
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate", return_value=None,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.run_episode",
+        "grteclyn_workflows.evolution.evaluation.run_episode",
         return_value=MagicMock(returncode=0),
-    ), patch("grteclyn_wrapper.core.evaluation.write_params"), patch(
-        "grteclyn_wrapper.core.evaluation._score_episode_phase",
+    ), patch("grteclyn_workflows.evolution.evaluation.write_params"), patch(
+        "grteclyn_workflows.evolution.evaluation._score_episode_phase",
         return_value=Evaluation(
             score=2.0, components={}, notes=[], episode_path=None, exit_code=0,
             preflight_rejected=False, reason=None, metrics={},
@@ -150,15 +142,15 @@ def test_score_episode_phase_is_pure_function(tmp_path: Path) -> None:
     )
     metrics = MagicMock(__dataclass_fields__={})
     with patch(
-        "grteclyn_wrapper.core.evaluation.read_episode_metrics", return_value=metrics,
+        "grteclyn_workflows.evolution.evaluation.read_episode_metrics", return_value=metrics,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.score_episode",
+        "grteclyn_workflows.evolution.evaluation.score_episode",
         return_value=MagicMock(total=7.5, components={"a": 1.0}, notes=["n"]),
     ), patch(
-        "grteclyn_wrapper.core.evaluation.domain_half_width_for_episode",
+        "grteclyn_workflows.evolution.evaluation.domain_half_width_for_episode",
         return_value=1.0,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.dataclass_to_dict",
+        "grteclyn_workflows.evolution.evaluation.dataclass_to_dict",
         side_effect=lambda obj: {"total": 7.5} if hasattr(obj, "total") else {},
     ):
         result = _score_episode_phase(request)

@@ -102,10 +102,10 @@ vanishing eigenvalue. The existing exact-limit `check_tidal` also passes.
 From the repository root, using the wrapper environment:
 
 ```bash
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.commands.compare_backgrounds
-MPLCONFIGDIR=/tmp/grteclyn-mpl grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.optimisation.plot_physics
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.optimisation.commands.compare_backgrounds
+MPLCONFIGDIR=/tmp/grteclyn-mpl grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.optimisation.plot_physics
 grteclyn-wrapper/.venv/bin/python -m pytest grteclyn-wrapper/tests/optimisation/test_diagnostics.py -q
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.optimisation.checks.check_tidal
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.optimisation.checks.check_tidal
 ```
 
 The six `*_profiles.npz` files contain dimensionless arrays consumed by the

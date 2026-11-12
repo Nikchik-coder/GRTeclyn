@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.core import scratch
+from grteclyn_workflows.evolution import scratch
 
 
 @pytest.fixture

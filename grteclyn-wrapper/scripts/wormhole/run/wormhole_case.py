@@ -47,7 +47,7 @@ from pathlib import Path
 WRAPPER_SRC = Path(__file__).resolve().parents[3] / "src"
 if str(WRAPPER_SRC) not in sys.path:
     sys.path.insert(0, str(WRAPPER_SRC))
-from grteclyn_wrapper.core.site_paths import grteclyn_root, openmpi_root
+from grteclyn_workflows.evolution.site_paths import grteclyn_root, openmpi_root
 
 GRTECLYN_ROOT = grteclyn_root()
 EXAMPLE_DIR = GRTECLYN_ROOT / "Examples" / "RotatingWormholeCollapse"
@@ -448,7 +448,7 @@ def _consumer_cmd(run_out: Path, jobs: int, *, watch: bool,
     cx, cy, cz = _run_center
     cmd = [
         sys.executable, "-m",
-        "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles",
+        "grteclyn_workflows.postprocessing",
         "--data", str(run_out), "--out", str(run_out / "small_data"),
         "--center", str(cx), str(cy), str(cz),
         "--radii", *(str(r) for r in _run_radii), "--n-points", "128",

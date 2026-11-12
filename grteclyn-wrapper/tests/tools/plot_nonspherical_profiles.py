@@ -19,12 +19,7 @@ from pathlib import Path
 
 import numpy as np
 
-from grteclyn_wrapper.initial_data.nonspherical_guesser import (
-    evaluate_chi_ray,
-    generate_nonspherical_candidates,
-    validate_candidate_rays,
-    NonSphericalCandidate,
-)
+from grteclyn_workflows.initial_data.nonspherical_guesser import evaluate_chi_ray, generate_nonspherical_candidates, validate_candidate_rays, NonSphericalCandidate
 
 
 SHOWCASE = {
@@ -98,7 +93,7 @@ def _evaluate_xz_fast(
         R_safe.ravel(), candidate.chi_asymptotic, candidate.chi_coeffs
     ).reshape(R.shape)
 
-    from grteclyn_wrapper.initial_data.nonspherical_guesser import legendre_p
+    from grteclyn_workflows.initial_data.nonspherical_guesser import legendre_p
 
     chi = chi_base.copy()
     for mode in candidate.modes:

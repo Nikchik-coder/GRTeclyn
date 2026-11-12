@@ -5,8 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna import io
-from grteclyn_wrapper.grtresna.domain import GRTresnaDomainConfig
+from grteclyn_workflows.grtresna import io
+from grteclyn_workflows.grtresna.domain import GRTresnaDomainConfig
 
 
 def test_target_span_slice_respects_source_origin() -> None:

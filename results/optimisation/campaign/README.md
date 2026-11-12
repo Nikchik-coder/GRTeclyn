@@ -20,10 +20,10 @@ constraint-order comparison uses t<=50. The first 1% equatorial-radius
 contraction occurs at 58.2666667, 67.31, and 80.7, respectively.
 
 Rebuild with the wrapper Python:
-`-m grteclyn_wrapper.visualisation.optimisation.plot_convergence`.
+`-m grteclyn_workflows.plotting.optimisation.plot_convergence`.
 
 The finite-resolution comparison with the spinning paper rebuilds with
-`-m grteclyn_wrapper.visualisation.optimisation.plot_instability_curve`.
+`-m grteclyn_workflows.plotting.optimisation.plot_instability_curve`.
 Add `--with-history --out /tmp/d21_growth_with_history` to include the two
 radius histories beside the growth-rate plot. The article uses the compact
 single-column version, replacing its standalone CMA-ES progress figure.

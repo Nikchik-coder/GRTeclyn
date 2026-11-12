@@ -8,7 +8,7 @@ name the extractor and give its keyword arguments as JSON (claims.py).
 Generic extractors live here; section modules (extract_<area>.py) register
 their own with the same decorator.  Every extractor takes keyword arguments
 only, and the run argument is a packed run NAME (resolved through
-grteclyn_wrapper.analysis.wormhole_merger.pack.paths, so the pack layout can
+grteclyn_workflows.analysis.wormhole_merger.pack.paths, so the pack layout can
 change freely).
 """
 
@@ -27,7 +27,7 @@ REPO = ARTICLE.parents[2]
 PACK = REPO / "results" / "merger"
 # The pack's analysis package lives in the wrapper; reachable without installing it.
 sys.path.append(str(REPO / "grteclyn-wrapper" / "src"))
-from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import find_run, iter_runs  # noqa: E402
+from grteclyn_workflows.analysis.wormhole_merger.pack.paths import find_run, iter_runs  # noqa: E402
 
 EXTRACTORS: dict[str, Callable[..., float]] = {}
 

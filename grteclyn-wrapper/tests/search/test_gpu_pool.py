@@ -7,13 +7,7 @@ import time
 
 import pytest
 
-from grteclyn_wrapper.search.gpu_pool import (
-    CpuAdmissionController,
-    GpuPool,
-    GpuPoolConfig,
-    cluster_cpu_budget,
-    max_concurrent_grtresna,
-)
+from grteclyn_workflows.search.gpu_pool import CpuAdmissionController, GpuPool, GpuPoolConfig, cluster_cpu_budget, max_concurrent_grtresna
 
 
 def test_multi_slot_same_gpu() -> None:

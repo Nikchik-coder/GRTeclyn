@@ -52,9 +52,9 @@ CLAIMS = REPO / "research" / "merger" / "article" / "claims"
 
 from astropy.cosmology import Planck18  # noqa: E402
 
-from grteclyn_wrapper.gw_search import lisa as LISA  # noqa: E402
-from grteclyn_wrapper.gw_search.templates.nr import load_all_arms  # noqa: E402
-from grteclyn_wrapper.visualisation.wormhole_merger import plot_heavy_seeds as HS  # noqa: E402
+from grteclyn_workflows.gw_search import lisa as LISA  # noqa: E402
+from grteclyn_workflows.gw_search.templates.nr import load_all_arms  # noqa: E402
+from grteclyn_workflows.plotting.wormhole_merger import plot_heavy_seeds as HS  # noqa: E402
 
 # The noise, the record's spectrum and the burst SNR are gw_search.lisa's, the one
 # implementation this script, Fig. heavy_seeds and the claims extractors share.

@@ -1,0 +1,1 @@
+"""Research plotting entry points."""

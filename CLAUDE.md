@@ -32,7 +32,7 @@ session start goes stale within hours.
   save, so build test copies with `-outdir` elsewhere, and check that both engines build.
 - **Python** is the wrapper's venv: `grteclyn-wrapper/.venv/bin/python` (setup:
   `cd grteclyn-wrapper && uv sync --extra plots --extra visualization --extra gw-search`). System `python3` and the root
-  `.venv` do not have `grteclyn_wrapper` installed.
+  `.venv` do not have `grteclyn_workflows` installed.
 - **Building**: use `grteclyn-wrapper/scripts/campaigns/wormhole_merger/build_binary.sh`.
   By hand you need `/usr/local/cuda/bin` on PATH (it is not by default), the
   campaign OpenMPI on PATH, and the *system* g++ 11 — `scripts/lib/env.sh` puts the
@@ -98,7 +98,7 @@ after session because it lived only in one machine's agent memory.
    - `-j N > 1` fails through the run dir's `post.py`: it runs the module as `__main__` without a guard, so every
      spawned worker dies ("... before the current process has finished its bootstrapping phase"); so does
      `CONSUMER_JOBS > 1` at launch, which goes through the same `post.py`. Start the watcher as `test_post -m
-     grteclyn_wrapper.visualisation.process_wave.consume_plotfiles <args> -j 3 --keep-existing-frames` (the guarded
+     grteclyn_workflows.postprocessing <args> -j 3 --keep-existing-frames` (the guarded
      `__main__.py`). A failed batch loses nothing: its plotfiles stay on scratch, unmarked. Never put `-j > 1` in
      `consumer_args.extra`: the end-of-run drain runs through `post.py`.
    - Size it at launch: one N 192 plotfile with the full frame set takes ~2.7 min per worker on the second node

@@ -13,7 +13,7 @@ pack, behind the paper's v1, is the tag `v1.0-bondi-dipole`.
 release `v2.0-bondi-dipole`, archived on Zenodo as version DOI 10.5281/zenodo.23662692 (concept DOI
 10.5281/zenodo.23245933, which resolves to the newest version). The same repository holds the evolution code (`Examples/RadialRecipe/`) and the launchers
 (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/`). Every figure of the paper is drawn, and every number it quotes is
-printed, from this pack alone by `python -m grteclyn_wrapper.visualisation.bondi_dipole` ("The figures", below); where
+printed, from this pack alone by `python -m grteclyn_workflows.plotting.bondi_dipole` ("The figures", below); where
 a number here and the script disagree, the script is the arbiter.
 
 The pack holds the light artefacts: per-run time series, the parameter files and launch record of each run, stills of
@@ -119,9 +119,9 @@ t 1000.
 Rebuild them from the repository root on a machine with TeX Live (the labels go through pdflatex):
 
 ```bash
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole            # all
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole article    # Figs. 1-7 and the quoted numbers
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole convergence  # Figs. 8-9 (Appendix A)
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole            # all
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole article    # Figs. 1-7 and the quoted numbers
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole convergence  # Figs. 8-9 (Appendix A)
 ```
 
 The `article` target also prints every number the text quotes, in order of appearance. `figures/FIGURES.md` lists

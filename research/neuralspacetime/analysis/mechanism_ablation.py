@@ -29,15 +29,9 @@ from pathlib import Path
 
 import numpy as np
 
-from grteclyn_wrapper.core.site_paths import grteclyn_root
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic import (
-    _ray_fan_geometry,
-    compute_evolving_geodesic_ftl,
-)
-from grteclyn_wrapper.metrics.probes.ftl.metric_stack_cache import (
-    evolving_field_from_metric_stack_cache,
-    metric_stack_dir,
-)
+from grteclyn_workflows.evolution.site_paths import grteclyn_root
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic import _ray_fan_geometry, compute_evolving_geodesic_ftl
+from grteclyn_workflows.diagnostics.probes.ftl.metric_stack_cache import evolving_field_from_metric_stack_cache, metric_stack_dir
 
 REPO = grteclyn_root()
 PROMOTE = REPO / "runs" / "grtresna_promote"

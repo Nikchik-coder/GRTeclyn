@@ -93,7 +93,7 @@ def test_compact_omega_gives_smaller_soliton_than_thinwall() -> None:
 
 
 def test_ode_profile_differs_from_sech() -> None:
-    from grteclyn_wrapper.grtresna.profiles.boson_star import bound_width
+    from grteclyn_workflows.grtresna.profiles.boson_star import bound_width
 
     c = QBallCouplings.standard()
     prof = solve_qball_radial_profile(c)

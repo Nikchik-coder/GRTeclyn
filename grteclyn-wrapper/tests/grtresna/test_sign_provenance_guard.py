@@ -7,13 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from grteclyn_wrapper.grtresna.matter.sign_consistency import (
-    SignMismatchError,
-    check_id_evolution_sign_consistency,
-    evolution_effective_signs,
-)
-from grteclyn_wrapper.grtresna.matter.wiring import read_matter_metadata
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.grtresna.matter.sign_consistency import SignMismatchError, check_id_evolution_sign_consistency, evolution_effective_signs
+from grteclyn_workflows.grtresna.matter.wiring import read_matter_metadata
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
 
 
 def _assert_artifact_sign_consistency(episode_dir: Path) -> None:
@@ -62,7 +58,7 @@ def _assert_artifact_sign_consistency(episode_dir: Path) -> None:
 
 def test_eval118_artifacts_are_flagged_as_mismatch() -> None:
     """Real corrupted eval-118 directory must fail the provenance guard."""
-    from grteclyn_wrapper.core.site_paths import grteclyn_root
+    from grteclyn_workflows.evolution.site_paths import grteclyn_root
 
     episode = (
         grteclyn_root()

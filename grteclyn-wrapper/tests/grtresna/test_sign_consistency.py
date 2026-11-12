@@ -8,23 +8,10 @@ from __future__ import annotations
 
 import pytest
 
-from grteclyn_wrapper.grtresna.matter.models import (
-    GRTRESNA_BICOMPLEX_SCALAR_MODEL,
-    GRTRESNA_COMPLEX_SCALAR_MODEL,
-    GRTRESNA_INDEPENDENT_MATTER_MODEL,
-)
-from grteclyn_wrapper.grtresna.matter.sign_consistency import (
-    SignMismatchError,
-    assert_id_evolution_sign_consistency,
-    check_id_evolution_sign_consistency,
-    evolution_effective_signs,
-    id_lump_signs,
-)
-from grteclyn_wrapper.grtresna.matter.wiring import (
-    GRTresnaMatterMetadata,
-    evolution_overrides_from_config,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL, GRTRESNA_COMPLEX_SCALAR_MODEL, GRTRESNA_INDEPENDENT_MATTER_MODEL
+from grteclyn_workflows.grtresna.matter.sign_consistency import SignMismatchError, assert_id_evolution_sign_consistency, check_id_evolution_sign_consistency, evolution_effective_signs, id_lump_signs
+from grteclyn_workflows.grtresna.matter.wiring import GRTresnaMatterMetadata, evolution_overrides_from_config
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
 
 
 def _lump(*, exotic: int = 0, amp: float = 0.15, center=(0.0, 0.0, 0.0)) -> dict:
@@ -184,7 +171,7 @@ def test_metadata_from_complex_scalar_drops_per_lump_signs() -> None:
 
 def test_build_grtresna_config_raises_on_eval118_style_mismatch() -> None:
     """Integration: config builder refuses single-complex + exotic lumps."""
-    from grteclyn_wrapper.search.optimize.config import build_grtresna_config
+    from grteclyn_workflows.search.optimize.config import build_grtresna_config
 
     overrides = {
         "grtresna_matter_model": GRTRESNA_COMPLEX_SCALAR_MODEL,
@@ -217,7 +204,7 @@ def test_build_grtresna_config_raises_on_eval118_style_mismatch() -> None:
 
 
 def test_build_grtresna_config_accepts_bicomplex_mixed_exotic() -> None:
-    from grteclyn_wrapper.search.optimize.config import build_grtresna_config
+    from grteclyn_workflows.search.optimize.config import build_grtresna_config
 
     overrides = {
         "grtresna_matter_model": GRTRESNA_BICOMPLEX_SCALAR_MODEL,
@@ -255,9 +242,7 @@ def test_build_grtresna_config_accepts_bicomplex_mixed_exotic() -> None:
 def test_allow_sign_mismatch_env_downgrades_to_warning(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from grteclyn_wrapper.grtresna.matter.sign_consistency import (
-        assert_id_evolution_sign_consistency,
-    )
+    from grteclyn_workflows.grtresna.matter.sign_consistency import assert_id_evolution_sign_consistency
 
     monkeypatch.setenv("GRTRESNA_ALLOW_SIGN_MISMATCH", "1")
     cfg = GRTresnaConfig(

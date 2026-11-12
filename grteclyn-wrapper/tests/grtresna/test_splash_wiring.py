@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-from grteclyn_wrapper.grtresna.matter.wiring import plot_vars_for_complex_scalar
-from grteclyn_wrapper.grtresna.matter.splash import (
-    append_gw_proxy_plot_vars,
-    apply_splash_overrides,
-    splash_evolution_overrides,
-)
+from grteclyn_workflows.grtresna.matter.wiring import plot_vars_for_complex_scalar
+from grteclyn_workflows.grtresna.matter.splash import append_gw_proxy_plot_vars, apply_splash_overrides, splash_evolution_overrides
 
 
 def test_default_scalar_plot_vars_exclude_ham_abs() -> None:

@@ -7,14 +7,8 @@ import argparse
 import json
 from pathlib import Path
 
-from grteclyn_wrapper.metrics.probes.ftl.solved import (
-    compute_solved_geometry_ftl,
-)
-from grteclyn_wrapper.search.solved_ftl_gate import (
-    SolvedFtlGateConfig,
-    solved_ftl_has_signal,
-    solved_geometry_ftl_to_dict,
-)
+from grteclyn_workflows.diagnostics.probes.ftl.solved import compute_solved_geometry_ftl
+from grteclyn_workflows.search.solved_ftl_gate import SolvedFtlGateConfig, solved_ftl_has_signal, solved_geometry_ftl_to_dict
 
 
 def main() -> None:

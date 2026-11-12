@@ -245,7 +245,7 @@ grteclyn-wrapper/.venv/bin/python -m \
   results/railgun/studies/evolution-070-n192 \
   --out results/railgun/reports/evolution-richardson-070.json
 grteclyn-wrapper/.venv/bin/python -m \
-  grteclyn_wrapper.visualisation.optimisation.plot_ring_convergence \
+  grteclyn_workflows.plotting.optimisation.plot_ring_convergence \
   results/railgun/studies/evolution-070-n96 \
   results/railgun/studies/evolution-070-n128 \
   results/railgun/studies/evolution-070-n192

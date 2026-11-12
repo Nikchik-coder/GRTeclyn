@@ -1,0 +1,1113 @@
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shlex
+import shutil
+import sys
+import time
+from pathlib import Path
+
+import yt
+
+from grteclyn_workflows.objective_modes import QD_OBJECTIVE_MODES
+
+from .extraction.horizon import HORIZON_HEADER
+from .extraction.mots_spectral import MOTS_SPECTRAL_HEADER
+from .extraction.throat_spheres import THROAT_SPHERES_HEADER
+from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
+from .extraction.central import CENTRAL_TIMESERIES_HEADER
+from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
+from .extraction.sector_barycenters import SECTOR_BARYCENTERS_HEADER
+from .extraction.sector_dynamics import SECTOR_DYNAMICS_HEADER
+from .extraction.psi4_higher_l import higher_l_header as _higher_l_header
+from .extraction.scalar_modes import (
+    parse_scalar_ells as _parse_scalar_ells,
+    scalar_modes_header as _scalar_modes_header,
+)
+from .extraction.ftl import FTL_TIMESERIES_HEADER
+from .extraction.shell import _shell_stats_header
+from .extraction.neck_horizons import NECK_HORIZONS_HEADER
+from .extraction.symmetry import field_parity
+from .fields import _canonical_field_name
+from .frames.cleanup import (
+    _cleanup_embedding_frames,
+    _cleanup_existing_frames,
+    _cleanup_projection_frames,
+)
+from .frames.zlim import _T0_KEY, _lock_frame_zlims_from_plotfile
+from .frames.zlim_scan import scan_series_zlims
+from .plotfiles import (
+    _is_plotfile_ready,
+    _iter_plotfile_dirs,
+    _parse_plot_index,
+    _should_auto_reset,
+    _truncate_if_exists,
+)
+from .state import _append_line, _load_state, _save_state
+from .worker import _process_single_plotfile
+
+from grteclyn_workflows.search.scoring.incremental import IncrementalScoreWriter
+from grteclyn_workflows.diagnostics.splash_early_term import evaluate_splash_early_term
+
+
+def _append_radial_block(path: Path, block: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(block)
+
+
+def _append_block_with_header(path: Path, header: str, block: str) -> None:
+    """Append a multi-row block, writing the column header once on an empty file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    need_header = (not path.exists()) or path.stat().st_size == 0
+    with path.open("a", encoding="utf-8") as handle:
+        if need_header:
+            handle.write(header.rstrip("\n") + "\n")
+        handle.write(block)
+
+
+def _parse_central_row(line: str) -> tuple[float, float | None, float | None, float | None]:
+    parts = line.split()
+    rho = float(parts[1]) if len(parts) > 1 else None
+    lapse = float(parts[2]) if len(parts) > 2 else None
+    activity = float(parts[3]) if len(parts) > 3 else None
+    return rho, lapse, activity
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Extract Psi4 (l=2,m=0) from plotfiles and optionally delete them."
+    )
+    parser.add_argument("--data", default=_default_data_dir(), help="Directory containing WormholePlt*/plt*")
+    parser.add_argument("--out", default=None, help="Output directory (default: <data>/small_data)")
+    parser.add_argument("--radii", type=float, nargs="+", default=[14.0, 30.0], help="Extraction radii")
+    parser.add_argument("--n-points", type=int, default=64, help="Angular resolution N (N×N points)")
+    parser.add_argument(
+        "--center",
+        type=float,
+        nargs=3,
+        default=[0.0, 0.0, 0.0],
+        help="Extraction center (x y z) in code units",
+    )
+    parser.add_argument("--stable-seconds", type=float, default=30.0, help="Require Header mtime older than this (30s default for NFS)")
+    parser.add_argument("--poll-seconds", type=float, default=2.0, help="Polling interval when --watch")
+    parser.add_argument("--watch", action="store_true", help="Keep running and process new plotfiles")
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print per-plotfile details (name, time, delete/keep, timings).",
+    )
+    parser.add_argument(
+        "--psi4",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable Psi4 mode extraction to .dat (default: enabled).",
+    )
+    parser.add_argument(
+        "--psi4-higher-l",
+        action="store_true",
+        help=(
+            "Also project Psi4 onto l>=3 s=-2 harmonics, into its own stream "
+            "psi4_mode_higher_l.dat.  Off by default; costs one extra sphere "
+            "sampling per plotfile.  Leaves the l=2 streams untouched."
+        ),
+    )
+    parser.add_argument(
+        "--psi4-ells",
+        nargs="+",
+        type=int,
+        default=[3, 4],
+        help="Multipoles for --psi4-higher-l (supported: 2 3 4; default: 3 4).",
+    )
+    parser.add_argument(
+        "--scalar-modes",
+        action="store_true",
+        help=(
+            "Project the scalar field phi and its momentum Pi onto s=0 "
+            "spherical harmonics on the extraction spheres, into its own "
+            "stream scalar_modes.dat (plus a kinematic scalar flux per "
+            "radius).  Off by default; costs three extra sphere samplings "
+            "per plotfile.  Leaves every existing stream untouched."
+        ),
+    )
+    parser.add_argument(
+        "--scalar-mode-ells",
+        nargs="+",
+        type=int,
+        default=[0, 1, 2],
+        help="Multipoles for --scalar-modes (supported: 0..4; default: 0 1 2).",
+    )
+    parser.add_argument(
+        "--scalar-flux-delta",
+        type=float,
+        default=0.5,
+        help="Radial half-step for the d_r phi central difference (default: 0.5).",
+    )
+    parser.add_argument(
+        "--shell-fields",
+        nargs="+",
+        default=[],
+        help="Extract mean/min/max on spherical shells for these fields (e.g. chi lapse K).",
+    )
+    parser.add_argument(
+        "--frames-fields",
+        nargs="+",
+        default=[],
+        help="Render SlicePlot frames for these fields (e.g. chi K Weyl4_Re).",
+    )
+    parser.add_argument("--frames-axis", default="z", choices=["x", "y", "z"], help="Slice axis for frames.")
+    parser.add_argument("--frames-coord", type=float, default=None, help="Slice coordinate for frames (axis coordinate).")
+    parser.add_argument("--frames-zoom", type=float, default=None, help="Zoom width in code units for frames.")
+    parser.add_argument("--frames-center", type=float, nargs=3, default=None, help="Center (x y z) for frames.")
+    parser.add_argument("--frames-corner", action="store_true", help="Corner mode for symmetry-reduced domains (frames).")
+    parser.add_argument(
+        "--frames-auto-zlim",
+        action="store_true",
+        help="Per-frame colorbar from slice percentiles (faint fields only; causes movie flicker).",
+    )
+    parser.add_argument(
+        "--frames-global-zlim",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Lock per-field colorbar limits from the first plotfile (stable movies, visible faint fields).",
+    )
+    parser.add_argument(
+        "--frames-cache-slices",
+        action="store_true",
+        help="Keep each rendered 2-D slice (~1e4x smaller than its plotfile) so the "
+             "frames can be redrawn afterwards against one fixed colorbar. The way "
+             "to get a still colorbar when plotfiles are deleted on the fly.",
+    )
+    parser.add_argument(
+        "--frames-blank-edge",
+        type=int,
+        default=0,
+        metavar="CELLS",
+        help="Draw the outer CELLS base-grid cells of the Weyl4 frames blank (NaN in "
+             "the slice cache too). Weyl4's 4th-order stencil reaches two cells beyond "
+             "the box there, into extrapolated ghosts, so those values are not data and "
+             "would set the colour scale (frames/edge.py). 0 (default) draws them.",
+    )
+    parser.add_argument(
+        "--frames-zlim-scan",
+        action="store_true",
+        help="Measure one fixed colorbar per field over ALL plotfiles before rendering "
+             "(paper-quality movies: the bar never moves). Needs the plotfiles kept.",
+    )
+    parser.add_argument(
+        "--frames-zlim-scan-stride",
+        type=int,
+        default=1,
+        help="Scan every Nth plotfile instead of all of them (default 1). The last "
+             "plotfile is always scanned.",
+    )
+    parser.add_argument(
+        "--frames-zlim-t0",
+        nargs="+",
+        default=[],
+        metavar="FIELD",
+        help="Lock these fields' colorbars to the full min..max of their slice in the "
+             "run's first plotfile (t = 0), linear, for the whole run; beats "
+             "--frames-auto-zlim and the presets. A field flat at t = 0 (K, Pi) keeps "
+             "its other scale. Stored in consume_state.json, so a restart keeps it.",
+    )
+    parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: ./frames in the working directory).")
+    parser.add_argument(
+        "--projection-fields",
+        nargs="+",
+        default=[],
+        help="Render 3D line-of-sight projection frames for these fields.",
+    )
+    parser.add_argument(
+        "--projection-axes",
+        nargs="+",
+        choices=["x", "y", "z"],
+        default=[],
+        help="Axes to project along for --projection-fields.",
+    )
+    parser.add_argument(
+        "--projection-method",
+        choices=["mip", "integrate", "sum"],
+        default="mip",
+        help="Projection method. mip is best for locating compact blobs.",
+    )
+    parser.add_argument(
+        "--areal-radius",
+        action="store_true",
+        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat "
+             "(with --areal-full-metric: r (h22 h33)^(1/4)/sqrt(chi)).",
+    )
+    parser.add_argument(
+        "--areal-full-metric",
+        action="store_true",
+        help="Areal radius from the full induced metric of the coordinate sphere, "
+             "R = r (h22 h33)^(1/4)/sqrt(chi), instead of r/sqrt(chi), which assumes a "
+             "flat conformal metric: exact at t = 0, a lower bound once the Gamma-driver "
+             "shift has moved the grid (h22 = 1.45 at the F1b neck at t = 90). Needs h22 "
+             "and h33 in the plotfile; a plotfile without them gets no row and a warning, "
+             "never the flat estimate. Opt-in; the launch preflight checks it.",
+    )
+    parser.add_argument(
+        "--neck-horizons",
+        action="store_true",
+        help="Per plotfile to neck_horizons.dat: the neck (min of the full-metric areal radius "
+             "along +x from --center, tracked from the previous plotfile) and the theta = 0 "
+             "trapping horizons either side of it, with lapse, Misner-Sharp mass and phi "
+             "(extraction/neck_horizons.py). Needs chi K lapse h11 h22 h33 A11 phi in the plotfile.",
+    )
+    parser.add_argument(
+        "--reflect",
+        nargs="+",
+        default=[],
+        choices=["x", "y", "z"],
+        help="Axes whose LOWER domain face is a reflective symmetry plane through --center "
+             "(the params' lo_boundary = 2). Sphere samplers fold their points into the domain "
+             "(even-parity fields), frames mirror the simulated part into the full plane "
+             "(--frames-zoom is the full width), and what cannot use the symmetry is switched "
+             "off with a notice: psi4 spheres, the boundary flux, the horizon star scan, "
+             "odd-parity frame fields. The launch preflight checks it against the params.",
+    )
+    parser.add_argument(
+        "--areal-min-radius",
+        type=float,
+        default=0.0,
+        help=(
+            "Exclude r < this from the areal-radius minimum.  Required for wormhole "
+            "initial data, where r = 0 is a compactified origin: the unresolved "
+            "inner cells win the argmin and report a collapse that is not happening. "
+            "Use a value below the throat radius b/2 (e.g. 0.1 for b = 0.5)."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-scan",
+        action="store_true",
+        help=(
+            "Orientation-corrected marginal-surface scan per plotfile to horizon_scan.dat: "
+            "areal radius of coordinate spheres about each mouth, outward = increasing R, "
+            "both null expansions, Misner-Sharp mass, outermost MOTS, trapped-shell counts, "
+            "per-mouth health metric R_min/R_exact - 1 and the outermost-surface count. "
+            "Needs full-state plotfiles (chi K h_ij A_ij)."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-centers",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Mouth centres as x y z triples (absolute). Default: --center.",
+    )
+    parser.add_argument(
+        "--horizon-track",
+        type=str,
+        default=None,
+        help=(
+            "Path to binary_throat_diagnostics.dat; mouth centres are read from it at each "
+            "plotfile time (positions relative to --center). Overrides --horizon-centers."
+        ),
+    )
+    parser.add_argument("--horizon-half", type=float, default=2.5, help="Half-width of the scan box about each mouth.")
+    parser.add_argument("--horizon-level", type=int, default=3, help="Covering-grid level for the mouth scans (capped at the finest).")
+    parser.add_argument("--horizon-common-level", type=int, default=1, help="Covering-grid level for the common (midpoint) scan of a pair.")
+    parser.add_argument("--horizon-rmin", type=float, default=0.25, help="Innermost shell radius; keep it inside the throat (r < b/2).")
+    parser.add_argument("--horizon-dr", type=float, default=0.02, help="Shell spacing.")
+    parser.add_argument(
+        "--mots-spectral",
+        action="store_true",
+        help=(
+            "The common MOTS itself per plotfile to mots_spectral.dat, its Y_lm coefficients to "
+            "mots_spectral_alm.jsonl: the spectral finder of headon_first_law.py, followed from the "
+            "previous plotfile's surface by Newton, with the first law's flux and shear on it "
+            "(extraction/mots_spectral.py). The round scan reads a deformed horizon 4-11 %% low "
+            "(2026-10-01). Needs full-state plotfiles plus lapse, phi and Pi."
+        ),
+    )
+    parser.add_argument("--mots-spectral-center", type=float, nargs=3, default=None,
+                        help="Centre of the surface (absolute). Default: --center.")
+    parser.add_argument("--mots-spectral-half", type=float, default=4.5,
+                        help="Half-width of the covering box about the centre.")
+    parser.add_argument("--mots-spectral-level", type=int, default=3,
+                        help="Finest covering-grid level; a coarser one is taken if it does not cover the box.")
+    parser.add_argument("--mots-spectral-lmax", type=int, default=6, help="Highest harmonic of the surface.")
+    parser.add_argument("--mots-spectral-tol", type=float, default=1.0e-6,
+                        help="Newton stops when every projected theta_out harmonic is below this.")
+    parser.add_argument("--mots-spectral-seeds", type=float, nargs="+", default=[3.2, 2.6],
+                        help="Seed radii of the flow when there is no previous surface.")
+    parser.add_argument("--mots-spectral-steps", type=int, default=400,
+                        help="Flow steps per seed when Newton has no previous surface to start from. "
+                             "A deforming surface needs more each plotfile (0.7c spin: 311 at t = 13, "
+                             "400 stalled at t = 22).")
+    parser.add_argument(
+        "--mots-spectral-untrapped",
+        action="store_true",
+        help=(
+            "Also record a surface with theta_out -> 0 whose theta_in is >= 0 somewhere (a MOTS that "
+            "is not marginally trapped; the log says 'taken although untrapped'). Without it such a "
+            "plotfile gets a row of nan (2026-10-16: the 0.7c spinning throat from t = 16 on)."
+        ),
+    )
+    parser.add_argument(
+        "--throat-spheres",
+        action="store_true",
+        help=(
+            "The throat's areal radius per plotfile to throat_spheres.dat: the outermost local minimum "
+            "of sqrt(A/4 pi) over coordinate spheres about the centre, full metric h_ij/chi "
+            "(extraction/throat_spheres.py). throat_geometry.dat's r >= 0.6 rays land in the min_chi-"
+            "floored core on the fast holds (2026-10-17)."
+        ),
+    )
+    parser.add_argument("--throat-spheres-center", type=float, nargs=3, default=None,
+                        help="Centre of the spheres (absolute). Default: --center.")
+    parser.add_argument("--throat-spheres-rmin", type=float, default=0.3, help="Innermost sphere radius.")
+    parser.add_argument(
+        "--mots-spectral-warm-flow",
+        action="store_true",
+        help=(
+            "When Newton from the previous plotfile's surface fails, flow from that surface before "
+            "the round seeds: a deformed surface (0.7c spin, 2026-10-16) stalls Newton, and the "
+            "flow from round seeds costs ~0.25 s a step and needs more steps each plotfile."
+        ),
+    )
+    parser.add_argument("--mots-spectral-from", type=float, default=0.0,
+                        help="Search plotfiles from this time on (before the common horizon there is none).")
+    parser.add_argument(
+        "--mots-spectral-track",
+        action="store_true",
+        help=(
+            "Follow a moving mouth: on each plotfile, centre the surface on the --horizon-track mouth "
+            "nearest --mots-spectral-center (default --center) instead of on that fixed point, and "
+            "record each centre in mots_spectral_alm.jsonl. A fixed centre loses a receding mouth once "
+            "it has moved about its own coordinate radius (SCATTER-fate, 2026-10-07). Needs --horizon-track."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-r-exact",
+        type=float,
+        default=None,
+        help="Exact static throat areal radius for the health metric R_min/R_exact - 1 (e.g. 3.8895).",
+    )
+    parser.add_argument(
+        "--ftl-timeseries",
+        action="store_true",
+        help="Per-plotfile FTL features (operational + gated geodesic) to ftl_timeseries.dat.",
+    )
+    parser.add_argument(
+        "--confinement-timeseries",
+        action="store_true",
+        help="Per-plotfile matter-confinement moments (rms_radius, confined_frac, "
+        "true matter barycentre) to confinement.dat -- the trustworthy "
+        "'matter dispersed / flew away' detector.",
+    )
+    parser.add_argument(
+        "--confinement-well-width",
+        type=float,
+        default=1.5,
+        help="Lump scale for confinement R_conf = 4*well_width (default 1.5).",
+    )
+    parser.add_argument(
+        "--sector-barycenters",
+        action="store_true",
+        help="Per-plotfile canonical/phantom sector centroids to "
+        "sector_barycenters.dat -- the Bondi-dipole runaway diagnostic "
+        "(the aggregate barycentre cancels for a mixed-sign pair).",
+    )
+    parser.add_argument(
+        "--sector-dynamics",
+        action="store_true",
+        help="Per-plotfile CORE dynamics to sector_dynamics.dat: halo-free core "
+        "positions, per-sector matter momentum (Bondi momentum balance) and a "
+        "gauge check (shift at the cores, proper separation).  Builds a "
+        "covering grid, so it is the most expensive stream -- opt in.",
+    )
+    parser.add_argument(
+        "--sector-dynamics-level",
+        type=int,
+        default=0,
+        help="AMR level for the sector-dynamics covering grid (default 0). "
+        "Each level up costs 8x memory and time.",
+    )
+    parser.add_argument(
+        "--matter-model",
+        default="",
+        help="Authoritative recipe_matter_model tag for the sector split "
+        "(field-sniffing cannot classify runs whose canonical sector is zero).",
+    )
+    parser.add_argument(
+        "--central-timeseries",
+        action="store_true",
+        help="Per-plotfile central ball rho/lapse/scalar activity to central_timeseries.dat.",
+    )
+    parser.add_argument(
+        "--central-ball",
+        action="store_true",
+        help="Average central fields over a small sphere instead of a single point.",
+    )
+    parser.add_argument(
+        "--central-ball-radius",
+        type=float,
+        default=None,
+        help="Central ball radius in code units (default: 2*dx_finest).",
+    )
+    parser.add_argument(
+        "--central-radial-profile",
+        action="store_true",
+        help="Append rho/lapse/activity vs r blocks to central_radial_profile.dat.",
+    )
+    parser.add_argument(
+        "--central-radial-r-max",
+        type=float,
+        default=6.0,
+        help="Outer radius for central radial profile extraction.",
+    )
+    parser.add_argument(
+        "--splash-early-term",
+        action="store_true",
+        help="Write .stop_sim when splash early-termination predicates fire.",
+    )
+    parser.add_argument(
+        "--stop-sim-path",
+        default=None,
+        help="Path for early-termination sentinel JSON (default: <data>/.stop_sim).",
+    )
+    parser.add_argument(
+        "--ftl-l",
+        type=float,
+        default=8.0,
+        help="FTL probe half-width / corridor extent (matches collector ftl_L).",
+    )
+    parser.add_argument(
+        "--evolving-geodesic",
+        action="store_true",
+        help="Set GRTECLYN_EVOLVING_GEODESIC=1 for end-of-run 4D null trace scoring.",
+    )
+    parser.add_argument(
+        "--incremental-score",
+        action="store_true",
+        help="After each FTL timeseries row, append prefix score to score_timeseries.jsonl.",
+    )
+    parser.add_argument(
+        "--objective-mode",
+        default="weighted",
+        choices=list(QD_OBJECTIVE_MODES),
+        help="Objective mode for incremental scoring (matches final score_episode).",
+    )
+    parser.add_argument(
+        "--target-stop-time",
+        type=float,
+        default=None,
+        help="Configured stop time for survival fraction in incremental scores.",
+    )
+    parser.add_argument(
+        "--score-weight",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="Score weight override for incremental scoring (repeatable).",
+    )
+    parser.add_argument(
+        "--embedding",
+        action="store_true",
+        help="Render 3D embedding-diagram frames (surface of revolution from chi profile).",
+    )
+    parser.add_argument(
+        "--embedding-rmax",
+        type=float,
+        default=None,
+        help="Maximum coordinate radius for embedding diagram (default: full domain).",
+    )
+    parser.add_argument(
+        "--delete",
+        action="store_true",
+        help="Delete plotfile directory after successful extraction",
+    )
+    parser.add_argument(
+        "--keep-last",
+        type=int,
+        default=2,
+        help="Never delete the newest N plotfiles (safety, default: 2)",
+    )
+    parser.add_argument(
+        "-j", "--jobs",
+        type=int,
+        default=1,
+        help="Number of parallel worker processes to use",
+    )
+    parser.add_argument(
+        "--keep-existing-frames",
+        action="store_true",
+        help="Do not delete existing frames at startup.",
+    )
+    # Flags added to this run's consumer after launch (restart_consumer.sh appends them to the
+    # run dir's consumer_args.extra).  Every consumer started in the run dir reads them -- the
+    # restarted watcher and run_single.sh's end-of-run drain, which otherwise runs with the
+    # launch flags -- so no plotfile is extracted with less than the live watcher does
+    # (2026-10-01: the drain would have skipped the spectral MOTS on the last plotfiles).
+    extra_path = Path("consumer_args.extra")
+    extra = shlex.split(extra_path.read_text()) if extra_path.is_file() else []
+    if extra:
+        print(f"[consumer] + {extra_path.resolve()}: {' '.join(extra)}", flush=True)
+    args = parser.parse_args(sys.argv[1:] + extra)
+    if args.mots_spectral_track and not args.horizon_track:
+        parser.error("--mots-spectral-track follows a --horizon-track mouth; pass --horizon-track")
+    # A symmetry-reduced run (--reflect): what cannot use the symmetry is
+    # switched off here, once and out loud, instead of producing sphere
+    # integrals over 1/8 of each sphere or a sign-flipped mirror.
+    args.boundary_flux = not args.reflect
+    if args.reflect:
+        off = []
+        if args.psi4:
+            args.psi4 = False
+            off.append("psi4 spheres (Psi4 is not even across the planes; the C++ extraction handles it)")
+        off.append("the boundary flux (the reflective faces are not outer boundary)")
+        if args.horizon_scan:
+            args.horizon_scan = False
+            off.append("the horizon star scan (samples the full sphere round the centre)")
+        if args.mots_spectral:
+            args.mots_spectral = False
+            off.append("the spectral MOTS (its surface spans the full sphere round the centre)")
+        # Odd frame fields are NOT dropped (they were until 2026-09-26, which is
+        # how the octant arm F4 got no shift and no Weyl4 movie): the mirrored
+        # frame carries the sign the code gives them in its own ghost cells
+        # (frames/mirror.py, extraction/symmetry.py field_parity).
+        odd = [f for f in (_canonical_field_name(n) for n in args.frames_fields)
+               if field_parity(f) != (1, 1, 1)]
+        print(f"[reflect] symmetry planes {' '.join(args.reflect)} through --center "
+              f"{' '.join(f'{v:g}' for v in args.center)}; off: {'; '.join(off)}"
+              + (f"; odd frame fields mirrored with their sign: {' '.join(odd)}" if odd else ""),
+              flush=True)
+    if args.evolving_geodesic:
+        os.environ["GRTECLYN_EVOLVING_GEODESIC"] = "1"
+    args.metric_stack_cache = bool(args.evolving_geodesic)
+    if args.evolving_geodesic:
+        from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic_options import metric_stack_n_space_from_env
+
+        args.metric_stack_n_space = metric_stack_n_space_from_env()
+    else:
+        args.metric_stack_n_space = 65
+
+    # Reduce yt logging overhead/spam (can be noisy in watch mode).
+    try:
+        # WARNING by default; INFO is extremely verbose.
+        yt.funcs.mylog.setLevel(30 if args.verbose else 40)  # WARNING/ERROR
+    except Exception:
+        pass
+
+    data_dir = os.path.abspath(args.data)
+    out_dir = Path(args.out) if args.out else Path(data_dir) / "small_data"
+    state_path = out_dir / "consume_state.json"
+    out_path = out_dir / "psi4_mode_l2m0.dat"
+    psi4_all_out_path = out_dir / "psi4_mode_l2_all.dat"
+    psi4_directional_out_path = out_dir / "psi4_directional.dat"
+    psi4_higher_l_out_path = out_dir / "psi4_mode_higher_l.dat"
+    scalar_modes_out_path = out_dir / "scalar_modes.dat"
+    areal_out_path = out_dir / "areal_radius.dat"
+    shell_out_path = out_dir / "shell_profiles.dat"
+    boundary_flux_out_path = out_dir / "boundary_flux.dat"
+    ftl_out_path = out_dir / "ftl_timeseries.dat"
+    confinement_out_path = out_dir / "confinement.dat"
+    sector_barycenters_out_path = out_dir / "sector_barycenters.dat"
+    sector_dynamics_out_path = out_dir / "sector_dynamics.dat"
+    central_out_path = out_dir / "central_timeseries.dat"
+    central_radial_out_path = out_dir / "central_radial_profile.dat"
+    horizon_out_path = out_dir / "horizon_scan.dat"
+    mots_out_path = out_dir / "mots_spectral.dat"
+    mots_alm_path = out_dir / "mots_spectral_alm.jsonl"
+    throat_out_path = out_dir / "throat_spheres.dat"
+    score_ts_path = out_dir / "score_timeseries.jsonl"
+    stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
+    header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
+    psi4_all_header = (
+        "# time  "
+        + "  ".join(
+            [
+                f"Re_m{m}(R={R:g})  Im_m{m}(R={R:g})"
+                for R in args.radii
+                for m in (-2, -1, 0, 1, 2)
+            ]
+        )
+    )
+    psi4_directional_header = "# time  P_total  P_z_beam  beam_ratio  beaming_gain  wavezone_std"
+    psi4_higher_l_ells = tuple(sorted(set(int(x) for x in args.psi4_ells)))
+    psi4_higher_l_header = _higher_l_header(psi4_higher_l_ells, args.radii)
+    scalar_modes_ells = _parse_scalar_ells(args.scalar_mode_ells)
+    scalar_modes_header_str = _scalar_modes_header(scalar_modes_ells, args.radii)
+    areal_header = "# time  R_areal_min  r_at_R_areal_min"
+    neck_out_path = out_dir / "neck_horizons.dat"
+    shell_header = _shell_stats_header(args.radii, args.shell_fields)
+
+    state = _load_state(state_path)
+
+    # Auto-reset on simulation restart (same output dir reused):
+    plot_dirs_now = _iter_plotfile_dirs(data_dir)
+    if _should_auto_reset(plot_dirs_now, state):
+        print("Detected a likely simulation restart in the same output directory.")
+        print(f"Resetting: {out_path} and {state_path}")
+        _truncate_if_exists(out_path)
+        _truncate_if_exists(psi4_all_out_path)
+        _truncate_if_exists(psi4_directional_out_path)
+        if args.psi4_higher_l:
+            _truncate_if_exists(psi4_higher_l_out_path)
+        if args.scalar_modes:
+            _truncate_if_exists(scalar_modes_out_path)
+        _truncate_if_exists(areal_out_path)
+        if args.neck_horizons:
+            _truncate_if_exists(neck_out_path)
+        if args.shell_fields:
+            _truncate_if_exists(shell_out_path)
+        if args.ftl_timeseries:
+            _truncate_if_exists(ftl_out_path)
+        if args.confinement_timeseries:
+            _truncate_if_exists(confinement_out_path)
+        if args.sector_barycenters:
+            _truncate_if_exists(sector_barycenters_out_path)
+        if args.sector_dynamics:
+            _truncate_if_exists(sector_dynamics_out_path)
+        if args.central_timeseries:
+            _truncate_if_exists(central_out_path)
+        if args.central_radial_profile:
+            _truncate_if_exists(central_radial_out_path)
+        if args.horizon_scan:
+            _truncate_if_exists(horizon_out_path)
+        if args.mots_spectral:
+            _truncate_if_exists(mots_out_path)
+            _truncate_if_exists(mots_alm_path)
+        if args.throat_spheres:
+            _truncate_if_exists(throat_out_path)
+        if args.incremental_score:
+            _truncate_if_exists(score_ts_path)
+        _save_state(state_path, {})
+        state = {}
+
+    score_weights = {}
+    for pair in args.score_weight:
+        if "=" in pair:
+            key, value = pair.split("=", 1)
+            score_weights[key.strip()] = float(value.strip())
+
+    incremental_writer: IncrementalScoreWriter | None = None
+    use_central_incremental = (
+        args.incremental_score
+        and args.central_timeseries
+        and args.objective_mode == "critical_collapse"
+    )
+    if args.incremental_score and (args.ftl_timeseries or use_central_incremental):
+        incremental_writer = IncrementalScoreWriter(
+            Path(data_dir),
+            objective_mode=args.objective_mode,
+            target_stop_time=args.target_stop_time,
+            ftl_L=args.ftl_l,
+            score_weights=score_weights or None,
+            evolving_geodesic_mode=bool(args.evolving_geodesic),
+            out_path=score_ts_path,
+        )
+
+    peak_rho_state = {"value": 0.0, "last_activity": None}
+
+    def _append_incremental_score(t: float) -> None:
+        if incremental_writer is None:
+            return
+        try:
+            record = incremental_writer.append(t)
+            if record is not None and args.verbose:
+                print(
+                    f"[score] t={record['t']:.3g} total={record['score']:.2f} "
+                    f"f_geo={record['f_geo'] * 100:.2f}% horizon={record['horizon_penalty']:.2f}",
+                    flush=True,
+                )
+        except Exception as exc:  # noqa: BLE001 - scoring must not stop the consumer
+            print(f"WARNING: incremental score at t={t:.6g} failed: {exc}")
+
+    def _handle_central_outputs(res: dict) -> None:
+        if res.get("central_line"):
+            _append_line(
+                central_out_path,
+                header=CENTRAL_TIMESERIES_HEADER,
+                line=res["central_line"],
+            )
+            if use_central_incremental:
+                _append_incremental_score(float(res["t"]))
+            if args.splash_early_term:
+                rho, lapse, activity = _parse_central_row(res["central_line"])
+                if rho is not None and rho > peak_rho_state["value"]:
+                    peak_rho_state["value"] = rho
+                decision = evaluate_splash_early_term(
+                    t=float(res["t"]),
+                    rho=rho,
+                    lapse=lapse,
+                    activity=activity,
+                    peak_rho_so_far=peak_rho_state["value"],
+                    previous_activity=peak_rho_state["last_activity"],
+                )
+                peak_rho_state["last_activity"] = activity
+                if decision.should_stop and not stop_sim_path.exists():
+                    stop_sim_path.write_text(
+                        json.dumps({"reason": decision.reason, "t": float(res["t"])}),
+                        encoding="utf-8",
+                    )
+        if res.get("central_radial_block"):
+            _append_radial_block(central_radial_out_path, res["central_radial_block"])
+        if res.get("horizon_block"):
+            _append_block_with_header(horizon_out_path, HORIZON_HEADER, res["horizon_block"])
+
+    def _handle_mots_outputs(res: dict) -> None:
+        # The surface's coefficients are the next plotfile's start, and survive a restart
+        # of the consumer in its state file.
+        if res.get("throat_line"):
+            _append_line(throat_out_path, header=THROAT_SPHERES_HEADER, line=res["throat_line"])
+        if not res.get("mots_line"):
+            return
+        _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])
+        if res.get("mots_alm") is None:   # a row of nan: no MOTS here; keep the last surface as the start
+            return
+        record = {"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}
+        if res.get("mots_centre") is not None:   # --mots-spectral-track: the a_lm are about this point
+            record["centre"] = res["mots_centre"]
+        with mots_alm_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record) + "\n")
+        state["mots_alm_prev"] = res["mots_alm"]
+        vars(args)["mots_alm_prev"] = res["mots_alm"]   # process_once's args_dict is vars(args)
+
+    # If rendering frames, clear existing frames for the requested fields/axis at startup.
+    frame_fields_startup = [_canonical_field_name(f) for f in args.frames_fields]
+    if frame_fields_startup and not args.keep_existing_frames:
+        _cleanup_existing_frames(
+            frames_out_dir=os.path.abspath(args.frames_out),
+            fields=frame_fields_startup,
+            axis=args.frames_axis,
+            verbose=args.verbose,
+        )
+
+    projection_fields_startup = [_canonical_field_name(f) for f in args.projection_fields]
+    if projection_fields_startup and args.projection_axes and not args.keep_existing_frames:
+        _cleanup_projection_frames(
+            frames_out_dir=os.path.abspath(args.frames_out),
+            fields=projection_fields_startup,
+            axes=args.projection_axes,
+            verbose=args.verbose,
+        )
+
+    if args.embedding and not args.keep_existing_frames:
+        _cleanup_embedding_frames(
+            frames_out_dir=os.path.abspath(args.frames_out),
+            verbose=args.verbose,
+        )
+
+    def process_once() -> int:
+        plot_dirs = _iter_plotfile_dirs(data_dir)
+        if not plot_dirs:
+            return 0
+        processed_count = 0
+
+        # Never delete newest keep_last plotfiles. With keep_last=0, protect none.
+        keep_last = max(0, int(args.keep_last))
+        protected = set(plot_dirs[-keep_last:]) if keep_last > 0 else set()
+
+        # Reclaim already-processed plotfiles before starting another expensive
+        # extraction batch. Otherwise GC is delayed by several minutes while
+        # the next multi-GB files are read from NFS.
+        if args.delete:
+            for p in plot_dirs:
+                if p in protected:
+                    continue
+                key = os.path.basename(p)
+                if not state.get(key):
+                    continue
+                if not _is_plotfile_ready(p, stable_seconds=float(args.stable_seconds)):
+                    continue
+                try:
+                    shutil.rmtree(p)
+                    if args.verbose:
+                        print(f"[gc] deleted previously-processed {key}")
+                except Exception as e:
+                    print(f"WARNING: failed to delete {p}: {e}")
+
+        to_process = []
+        for p in plot_dirs:
+            key = os.path.basename(p)
+            if state.get(key):
+                continue
+            if not _is_plotfile_ready(p, stable_seconds=float(args.stable_seconds)):
+                continue
+            to_process.append(p)
+
+        if not to_process:
+            return 0
+
+        # In watch mode, process only one worker-sized batch per pass. This
+        # returns to the cleanup pass promptly instead of queueing the entire
+        # backlog while multi-GB plotfiles continue accumulating.
+        if args.watch:
+            to_process = to_process[: max(1, int(args.jobs))]
+
+        print(
+            f"Processing {len(to_process)} plotfile(s) "
+            f"(~1–5 min each on large AMR; use -j 1 for reliability)...",
+            flush=True,
+        )
+
+        args_dict = vars(args)
+        args_dict["frames_out"] = os.path.abspath(args.frames_out)
+        frame_zlims = state.get("frame_zlims", {})
+        use_global_zlim = bool(
+            args.frames_global_zlim and not _frames_auto_zlim_enabled(args.frames_auto_zlim)
+        )
+        if frame_fields_startup and not frame_zlims and to_process:
+            if args.frames_zlim_scan:
+                # One scale for the whole run, measured from the whole run: the
+                # only way the colourbar can be guaranteed not to move.
+                frame_zlims = scan_series_zlims(
+                    to_process,
+                    args_dict,
+                    stride=max(1, int(args.frames_zlim_scan_stride)),
+                    record_dir=args_dict["frames_out"],
+                    verbose=bool(args.verbose),
+                )
+            if not frame_zlims and use_global_zlim:
+                first = min(
+                    to_process,
+                    key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
+                )
+                frame_zlims = _lock_frame_zlims_from_plotfile(first, args_dict)
+            if frame_zlims:
+                state["frame_zlims"] = frame_zlims
+                _save_state(state_path, state)
+        t0_fields = [_canonical_field_name(f) for f in args.frames_zlim_t0]
+        if t0_fields and to_process and _T0_KEY not in (frame_zlims or {}):
+            # Once per run, from the lowest-numbered plotfile (Plt00000 at
+            # launch); the empty list marks "tried" so a later batch never
+            # re-locks from a later time.
+            first = min(
+                to_process,
+                key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
+            )
+            locked = _lock_frame_zlims_from_plotfile(first, args_dict, t0_minmax_fields=t0_fields)
+            locked.setdefault(_T0_KEY, [])
+            frame_zlims = {**(frame_zlims or {}), **locked}
+            state["frame_zlims"] = frame_zlims
+            _save_state(state_path, state)
+        args_dict["frame_zlims"] = frame_zlims
+        args_dict["frames_global_zlim"] = use_global_zlim
+        args_dict["neck_x_prev"] = state.get("neck_x_prev")
+        args_dict["mots_alm_prev"] = state.get("mots_alm_prev")
+
+        if args.jobs > 1:
+            import multiprocessing as mp
+            from concurrent.futures import ProcessPoolExecutor, as_completed
+
+            mp_ctx = mp.get_context("spawn")
+            with ProcessPoolExecutor(max_workers=args.jobs, mp_context=mp_ctx) as executor:
+                futures = {
+                    executor.submit(
+                        _process_single_plotfile, p, args_dict, protected, processed_count + i
+                    ): (i, p)
+                    for i, p in enumerate(to_process)
+                }
+                # Collect every worker result first, then emit in SUBMISSION
+                # order.  as_completed() yields in COMPLETION order, so
+                # appending straight out of it interleaves rows from workers
+                # that finished out of turn, leaving each .dat stream
+                # non-monotone in time.  Nothing downstream validates that:
+                # the drift velocities, the psi4/|Xdot| correlation and every
+                # np.gradient/interp consumer would silently return garbage.
+                # A batch is at most args.jobs plotfiles (see the slice above),
+                # so this holds only `jobs` small_data rows in memory.
+                collected = {}
+                done = 0
+                for f in as_completed(futures):
+                    idx, p = futures[f]
+                    done += 1
+                    key = os.path.basename(p)
+                    print(f"[{done}/{len(to_process)}] finished {key}", flush=True)
+                    try:
+                        collected[idx] = (p, f.result())
+                    except Exception as e:
+                        print(f"WARNING: worker failed for {p}: {e}")
+                for idx in sorted(collected):
+                    p, res = collected[idx]
+                    try:
+                        if res["success"]:
+                            if res["psi4_line"]:
+                                _append_line(out_path, header=header, line=res["psi4_line"])
+                            if res.get("psi4_all_line"):
+                                _append_line(
+                                    psi4_all_out_path,
+                                    header=psi4_all_header,
+                                    line=res["psi4_all_line"],
+                                )
+                            if res.get("psi4_directional_line"):
+                                _append_line(
+                                    psi4_directional_out_path,
+                                    header=psi4_directional_header,
+                                    line=res["psi4_directional_line"],
+                                )
+                            if res.get("psi4_higher_l_line"):
+                                _append_line(
+                                    psi4_higher_l_out_path,
+                                    header=psi4_higher_l_header,
+                                    line=res["psi4_higher_l_line"],
+                                )
+                            if res.get("scalar_modes_line"):
+                                _append_line(
+                                    scalar_modes_out_path,
+                                    header=scalar_modes_header_str,
+                                    line=res["scalar_modes_line"],
+                                )
+                            if res["areal_line"]:
+                                _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                            if res.get("neck_line"):
+                                _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                            if res.get("neck_x") is not None:
+                                state["neck_x_prev"] = res["neck_x"]
+                                args_dict["neck_x_prev"] = res["neck_x"]
+                            if res["shell_line"]:
+                                _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
+                            if res.get("boundary_flux_line"):
+                                _append_line(
+                                    boundary_flux_out_path,
+                                    header="time  net_outward_flux  psi4_boundary_amp",
+                                    line=res["boundary_flux_line"],
+                                )
+                            if res.get("ftl_line"):
+                                _append_line(
+                                    ftl_out_path,
+                                    header=FTL_TIMESERIES_HEADER,
+                                    line=res["ftl_line"],
+                                )
+                                if args.ftl_timeseries:
+                                    _append_incremental_score(float(res["t"]))
+                            if res.get("confinement_line"):
+                                _append_line(
+                                    confinement_out_path,
+                                    header=CONFINEMENT_TIMESERIES_HEADER,
+                                    line=res["confinement_line"],
+                                )
+                            if res.get("sector_barycenters_line"):
+                                _append_line(
+                                    sector_barycenters_out_path,
+                                    header=SECTOR_BARYCENTERS_HEADER,
+                                    line=res["sector_barycenters_line"],
+                                )
+                            if res.get("sector_dynamics_line"):
+                                _append_line(
+                                    sector_dynamics_out_path,
+                                    header=SECTOR_DYNAMICS_HEADER,
+                                    line=res["sector_dynamics_line"],
+                                )
+                            _handle_central_outputs(res)
+                            _handle_mots_outputs(res)
+
+                            state[res["key"]] = True
+                            _save_state(state_path, state)
+                            processed_count += 1
+                            
+                            if args.verbose:
+                                print(f"[ok] {res['key']}  t={res['t']:.6g}  {res['status_str']}  ({res['dt_s']:.2f}s)")
+                        else:
+                            print(f"WARNING: failed to process {p}: {res.get('error', 'Unknown error')}")
+                    except Exception as e:
+                        print(f"WARNING: emitting result for {p} failed: {e}")
+        else:
+            for i, p in enumerate(to_process):
+                key = os.path.basename(p)
+                print(f"[{i + 1}/{len(to_process)}] loading {key} ...", flush=True)
+                res = _process_single_plotfile(p, args_dict, protected, processed_count + i)
+                if res["success"]:
+                    if res["psi4_line"]:
+                        _append_line(out_path, header=header, line=res["psi4_line"])
+                    if res.get("psi4_all_line"):
+                        _append_line(
+                            psi4_all_out_path,
+                            header=psi4_all_header,
+                            line=res["psi4_all_line"],
+                        )
+                    if res.get("psi4_directional_line"):
+                        _append_line(
+                            psi4_directional_out_path,
+                            header=psi4_directional_header,
+                            line=res["psi4_directional_line"],
+                        )
+                    if res.get("psi4_higher_l_line"):
+                        _append_line(
+                            psi4_higher_l_out_path,
+                            header=psi4_higher_l_header,
+                            line=res["psi4_higher_l_line"],
+                        )
+                    if res.get("scalar_modes_line"):
+                        _append_line(
+                            scalar_modes_out_path,
+                            header=scalar_modes_header_str,
+                            line=res["scalar_modes_line"],
+                        )
+                    if res["areal_line"]:
+                        _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                    if res.get("neck_line"):
+                        _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                    if res.get("neck_x") is not None:
+                        state["neck_x_prev"] = res["neck_x"]
+                        args_dict["neck_x_prev"] = res["neck_x"]
+                    if res["shell_line"]:
+                        _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
+                    if res.get("boundary_flux_line"):
+                        _append_line(
+                            boundary_flux_out_path,
+                            header="time  net_outward_flux  psi4_boundary_amp",
+                            line=res["boundary_flux_line"],
+                        )
+                    if res.get("ftl_line"):
+                        _append_line(
+                            ftl_out_path,
+                            header=FTL_TIMESERIES_HEADER,
+                            line=res["ftl_line"],
+                        )
+                        if args.ftl_timeseries:
+                            _append_incremental_score(float(res["t"]))
+                    if res.get("confinement_line"):
+                        _append_line(
+                            confinement_out_path,
+                            header=CONFINEMENT_TIMESERIES_HEADER,
+                            line=res["confinement_line"],
+                        )
+                    if res.get("sector_barycenters_line"):
+                        _append_line(
+                            sector_barycenters_out_path,
+                            header=SECTOR_BARYCENTERS_HEADER,
+                            line=res["sector_barycenters_line"],
+                        )
+                    # NB: this append was previously present only in the
+                    # --jobs>1 branch.  With the default --jobs 1 the worker
+                    # computed the scrutiny stream (~1.6 s per plotfile) and the
+                    # driver then silently discarded it, so sector_dynamics.dat
+                    # was never created -- which is why the Bondi momentum
+                    # balance (Debug.md item B) had no data to read.
+                    if res.get("sector_dynamics_line"):
+                        _append_line(
+                            sector_dynamics_out_path,
+                            header=SECTOR_DYNAMICS_HEADER,
+                            line=res["sector_dynamics_line"],
+                        )
+                    _handle_central_outputs(res)
+                    _handle_mots_outputs(res)
+
+                    state[res["key"]] = True
+                    _save_state(state_path, state)
+                    processed_count += 1
+                    
+                    if args.verbose:
+                        print(f"[ok] {res['key']}  t={res['t']:.6g}  {res['status_str']}  ({res['dt_s']:.2f}s)")
+                else:
+                    print(f"WARNING: failed to process {p}: {res.get('error', 'Unknown error')}")
+
+        return processed_count
+
+    if args.watch:
+        print(f"Watching {data_dir} for plotfiles. Writing {out_path}")
+        while True:
+            n = process_once()
+            if n:
+                if not args.verbose:
+                    print(f"Processed {n} plotfile(s).")
+            time.sleep(float(args.poll_seconds))
+    else:
+        n = process_once()
+        print(f"Processed {n} plotfile(s). Output: {out_path}")

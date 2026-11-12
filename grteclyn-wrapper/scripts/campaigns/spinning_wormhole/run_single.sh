@@ -439,7 +439,7 @@ fi
 # exactly this consumer and these flags.
 swh_consumer_args "${RUN_PARAMS}"
 CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
-CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+CONSUMER_MOD="grteclyn_workflows.postprocessing"
 CONSUMER_PID=""
 
 # The consumer's public name (see "Process table").  Python locates its virtual

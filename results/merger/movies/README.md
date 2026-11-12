@@ -138,7 +138,7 @@ Folder names are the run names, so a movie can always be traced to its line in
 Some sets carry a subfolder of four films drawn for the upload videos
 (`_youtube/`), never for reading off a diagnostic: K, lapse, chi and the wave
 (or the run's nearest substitute), redrawn from the slice cache by
-`grteclyn_wrapper.visualisation.wormhole_merger.zoom_frames` on fixed scales
+`grteclyn_workflows.plotting.wormhole_merger.zoom_frames` on fixed scales
 measured over the subset's own series. `youtube_zoom2/` is cropped x2 about the
 window centre (the head-on csm stitch, the d6 stitch, the p025 fly-by, the p090
 stitch); `youtube/` is unzoomed with better scales (F4's chi on a log scale,

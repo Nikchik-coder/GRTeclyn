@@ -123,7 +123,7 @@ def prepare(name: str, tstop: float) -> Path:
 def start_consumer(d: Path) -> subprocess.Popen:
     cmd = [
         str(VENV_PY), "-m",
-        "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles",
+        "grteclyn_workflows.postprocessing",
         "--data", str(scratch_dir(d.name)), "--out", str(d / "small_data"),
         "--center", "64", "64", "64",
         "--radii", "8", "12", "24", "--n-points", "32",

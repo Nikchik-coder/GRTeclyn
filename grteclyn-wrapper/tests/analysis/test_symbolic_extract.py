@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from grteclyn_wrapper.analysis.symbolic_extract import (
-    SymbolicMetricForm,
-    verify_analytic_form,
-)
+from grteclyn_workflows.analysis.symbolic_extract import SymbolicMetricForm, verify_analytic_form
 
 
 def test_verify_analytic_form_accepts_good_fit():

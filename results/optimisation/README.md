@@ -11,7 +11,7 @@ search, coverage, stationary, evolution and setup.
 `figures/coverage/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
 fixed-spin CMA-ES searches through 2026-10-30, replacing the earlier
 fixed-mass slice overview. Rebuild with the wrapper Python and
-`-m grteclyn_wrapper.visualisation.optimisation.plot_potential_scans`.
+`-m grteclyn_workflows.plotting.optimisation.plot_potential_scans`.
 Its explicit `SEARCHES` list selects the packed TSVs under `opt/`, including
 the latest D30 and D80 traces. Parameter projections show every recorded
 proposal, including failed solves; they are not interpolated response surfaces.
@@ -23,7 +23,7 @@ the Newton solve are absent from these TSVs. Extension trials are excluded.
 
 `figures/search/cma_progress_d21.{png,pdf}` uses
 `opt/fam_a_r1_0000_opt4s_150x30_kink.tsv`. Rebuild with
-`-m grteclyn_wrapper.visualisation.optimisation.plot_cma_progress --tsv`
+`-m grteclyn_workflows.plotting.optimisation.plot_cma_progress --tsv`
 followed by that file path. It shows the same constraint threshold, a running
 minimum, and an inset resolving the second half of the recorded search.
 
@@ -42,12 +42,12 @@ model labels are omitted to keep the single-column figure readable. Its explicit
 `REFINED` source list reads the archived validation and completed searches;
 D21 comes from the article ledger. Rotation is the massless reference's
 value (zero for D0), and each family retains its own static normalization.
-Rebuild with `-m grteclyn_wrapper.visualisation.optimisation.plot_exotic_spin`.
+Rebuild with `-m grteclyn_workflows.plotting.optimisation.plot_exotic_spin`.
 See `article/README.md` for table provenance and the claims checker.
 
 `campaign/` contains the final D21 N96/N128/N192 diagnostic streams and
 numerical settings. Rebuild `figures/evolution/convergence_d21.{png,pdf}` with
-`-m grteclyn_wrapper.visualisation.optimisation.plot_convergence`.
+`-m grteclyn_workflows.plotting.optimisation.plot_convergence`.
 The plot and measured order table use these tracked inputs. Constraint orders
 are measured through t=50; the later diagnostic histories show contraction.
 The classical evolution has different angular momentum and sponge driving;
@@ -61,8 +61,8 @@ N128 evolution, which contracted and terminated with NaN in K at t = 88.4175.
 The pack includes complete small diagnostic streams and the validated D30
 fields. D30 and D40 completed t=100; D46 terminated near t=141.43 with
 a NaN. The article figures include all five evolved potential models.
-Rebuild with `-m grteclyn_wrapper.visualisation.optimisation.plot_contraction_delay`
-and `-m grteclyn_wrapper.visualisation.optimisation.plot_instability_curve`.
+Rebuild with `-m grteclyn_workflows.plotting.optimisation.plot_contraction_delay`
+and `-m grteclyn_workflows.plotting.optimisation.plot_instability_curve`.
 D46 analysis stops at t=100, before its late numerical breakdown. Its
 classical reference briefly crosses 1% contraction and then expands, while
 the optimized run keeps contracting. The figures distinguish first-crossing
@@ -99,7 +99,7 @@ stay under `physics/`. The redundant NEC map and trade-off plot are removed.
 | `fcurve/f_curve.tsv` | one row per solution of both spin families (200 saved solutions + 2 synthesized static anchors): the Ford–Roman compliance factor fhat, its normalizations, gates | `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/quantum_budget/measure_f.py` |
 | `fcurve/measurement.json` | the measurement's configuration and provenance | written by the same script |
 
-Definitions (one place: `grteclyn_wrapper/analysis/quantum_budget/conventions.py`):
+Definitions (one place: `grteclyn_workflows/analysis/quantum_budget/conventions.py`):
 fhat is F with the code length unit read as one Planck length;
 F at a physical throat is `fhat / R_eq^2 * (R_phys / l_p)^2`
 (`log10_F_1m` in the TSV); `max_planck_throat` is the largest throat radius,

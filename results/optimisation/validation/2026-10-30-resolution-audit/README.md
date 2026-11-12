@@ -25,6 +25,6 @@ The e0374 and e0137 seeds are packed in the adjacent
 `2026-10-30-alternatives/d30_audit/e0374_seed.npz` and
 `2026-10-30-alternatives/d30/seed.npz`; e0391's original search NPZ is `e0391_seed.npz` in this directory. Its initial/refined diagnostics are in
 `2026-10-30-d0-d30/d30/`. The reusable checker is
-`python -m grteclyn_wrapper.optimisation.resolution <seed> --out <directory>`.
+`python -m grteclyn_workflows.optimisation.resolution <seed> --out <directory>`.
 It uses 150x30, 180x36 and 210x42 for these seeds; the additional 174x35 row
 in this audit samples a different angular grid.

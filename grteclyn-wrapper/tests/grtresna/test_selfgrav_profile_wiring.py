@@ -6,14 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from grteclyn_wrapper.grtresna.profiles.boson_star import (
-    PROFILE_ODE_BOUND,
-    PROFILE_SELFGRAV_BOUND,
-    grtresna_lump_profile,
-)
+from grteclyn_workflows.grtresna.profiles.boson_star import PROFILE_ODE_BOUND, PROFILE_SELFGRAV_BOUND, grtresna_lump_profile
 from grteclyn_stationary.profiles.boson_star_ode import cached_selfgrav_profile
-from grteclyn_wrapper.grtresna.solver.config import GRTresnaConfig
-from grteclyn_wrapper.grtresna.solver.params import write_grtresna_params
+from grteclyn_workflows.grtresna.solver.config import GRTresnaConfig
+from grteclyn_workflows.grtresna.solver.params import write_grtresna_params
 
 
 @pytest.fixture(autouse=True)
@@ -115,11 +111,8 @@ def test_selfgrav_pump_target_uses_fitted_width() -> None:
     (more compact than the tail-only bound length), not the broad tail-matched
     sech used for plain Q-ball seeds.
     """
-    from grteclyn_wrapper.grtresna.matter.wiring import (
-        GRTresnaMatterMetadata,
-        evolution_overrides_from_config,
-    )
-    from grteclyn_wrapper.grtresna.profiles.boson_star import PROFILE_SECH_BOUND, bound_width
+    from grteclyn_workflows.grtresna.matter.wiring import GRTresnaMatterMetadata, evolution_overrides_from_config
+    from grteclyn_workflows.grtresna.profiles.boson_star import PROFILE_SECH_BOUND, bound_width
     from grteclyn_stationary.profiles.boson_star_ode import (
         selfgrav_pump_target_width,
     )
@@ -174,7 +167,7 @@ def test_selfgrav_lump_repaints_star_profile_not_gaussian() -> None:
     """
     import numpy as np
 
-    from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
+    from grteclyn_workflows.grtresna.profiles.envelope import phi0_at_radius
 
     lump = {
         "amp": 0.1,
@@ -206,8 +199,8 @@ def test_selfgrav_at_omega_params_write_back_amp_and_eigenvalue(tmp_path: Path) 
     from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
-    from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
-    from grteclyn_wrapper.grtresna.solver.params import write_grtresna_params
+    from grteclyn_workflows.grtresna.profiles.envelope import phi0_at_radius
+    from grteclyn_workflows.grtresna.solver.params import write_grtresna_params
 
     cfg = GRTresnaConfig(
         matter_model="grtresna_complex_scalar",
@@ -254,8 +247,8 @@ def test_selfgrav_pair_gets_per_sector_tables(tmp_path: Path) -> None:
     from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
-    from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
-    from grteclyn_wrapper.grtresna.solver.params import write_grtresna_params
+    from grteclyn_workflows.grtresna.profiles.envelope import phi0_at_radius
+    from grteclyn_workflows.grtresna.solver.params import write_grtresna_params
 
     def lump(x: float, exotic: int) -> dict:
         return {
@@ -328,8 +321,8 @@ def test_selfgrav_pair_mixed_frequency_equal_mass(tmp_path: Path) -> None:
     from grteclyn_stationary.profiles.boson_star_ode import (
         cached_selfgrav_at_omega,
     )
-    from grteclyn_wrapper.grtresna.profiles.envelope import phi0_at_radius
-    from grteclyn_wrapper.grtresna.solver.params import write_grtresna_params
+    from grteclyn_workflows.grtresna.profiles.envelope import phi0_at_radius
+    from grteclyn_workflows.grtresna.solver.params import write_grtresna_params
 
     def lump(x: float, exotic: int, omega: float) -> dict:
         return {
@@ -384,7 +377,7 @@ def test_selfgrav_pair_mixed_frequency_equal_mass(tmp_path: Path) -> None:
     )
 
     # The Python bicomplex repaint uses the per-lump phase velocity for Pi_im.
-    from grteclyn_wrapper.grtresna.fields.boson_star import _boosted_lump_fields
+    from grteclyn_workflows.grtresna.fields.boson_star import _boosted_lump_fields
 
     px = np.zeros((1, 1, 1)) - 4.0
     py = np.zeros((1, 1, 1))

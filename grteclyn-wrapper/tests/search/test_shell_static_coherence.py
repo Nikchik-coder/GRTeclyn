@@ -9,16 +9,8 @@ mentioned.  Half a campaign, advertised as static, was flowing.
 
 from __future__ import annotations
 
-from grteclyn_wrapper.search.optimize.config import (
-    SHELL_CURRENT_DEFAULTS,
-    _expand_shell_lumps_from_overrides,
-    resolved_shell_currents,
-    unrecorded_shell_currents,
-)
-from grteclyn_wrapper.search.optimize.spaces import (
-    grtresna_boson_shell_search_space,
-    grtresna_shell_search_space,
-)
+from grteclyn_workflows.search.optimize.config import SHELL_CURRENT_DEFAULTS, _expand_shell_lumps_from_overrides, resolved_shell_currents, unrecorded_shell_currents
+from grteclyn_workflows.search.optimize.spaces import grtresna_boson_shell_search_space, grtresna_shell_search_space
 
 _TOROIDAL = "grtresna_shell_toroidal_velocity"
 _VELOCITY_KEYS = tuple(SHELL_CURRENT_DEFAULTS)

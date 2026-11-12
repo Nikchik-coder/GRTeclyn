@@ -2,21 +2,10 @@
 
 import math
 
-from grteclyn_wrapper.__main__ import build_parser
-from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
-from grteclyn_wrapper.grtresna.fields.sh import (
-    cartesian_to_spherical,
-    eval_sh_modulation,
-    real_sph_harm,
-    sh_ell_m,
-    sh_flat_index,
-)
-from grteclyn_wrapper.search.optimize import (
-    SH_DEFAULT_ELL_MAX,
-    build_grtresna_config,
-    build_search_space,
-    grtresna_sh_search_space,
-)
+from grteclyn_workflows.__main__ import build_parser
+from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
+from grteclyn_workflows.grtresna.fields.sh import cartesian_to_spherical, eval_sh_modulation, real_sph_harm, sh_ell_m, sh_flat_index
+from grteclyn_workflows.search.optimize import SH_DEFAULT_ELL_MAX, build_grtresna_config, build_search_space, grtresna_sh_search_space
 
 
 # ---------------------------------------------------------------------------
@@ -325,7 +314,7 @@ def test_context_injects_sh_lumps() -> None:
 
 def test_sh_lump_lines_include_per_lump_data() -> None:
     """Config from SH produces lump lines with per-lump amp variation."""
-    from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, _lump_lines
+    from grteclyn_workflows.grtresna.solver import GRTresnaConfig, _lump_lines
 
     overrides = _sh_base_overrides(num_lumps=5)
     idx_20 = sh_flat_index(2, 0)

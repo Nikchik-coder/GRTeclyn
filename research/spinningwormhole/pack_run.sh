@@ -2,7 +2,7 @@
 # Pack finished spinning-wormhole runs into results/spinningwormhole/campaign/<group>/<run>/:
 # the evolution's streams (data/*.dat), the consumer's small_data, the params as run
 # (evolution_params.txt), the launch banner, preflight.json, run_manifest.json and the last
-# 200 lines of run.log, every file scrubbed of machine paths (grteclyn_wrapper/packaging/scrub_paths.py).  Frames and movies
+# 200 lines of run.log, every file scrubbed of machine paths (grteclyn_workflows/packaging/scrub_paths.py).  Frames and movies
 # stay in the run directory.  A run whose manifest still says "running" (live, or its consumer
 # still draining) is refused: a partial pack is git pollution.
 #
@@ -38,7 +38,7 @@ for run in "$@"; do
   # (exit 141) and set -e stops the pack before the scrub
   grep -m 40 -E '^\[(swh|preflight|manifest)\]' "${LOGS}/${name}.log" > "${dest}/launch_banner.txt"
   tail -n 200 "${run}/run.log" > "${dest}/run_tail.log"
-  ROOT="${ROOT}" python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "${dest}"/*
+  ROOT="${ROOT}" python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py" "${dest}"/*
   echo "[pack] ${name} (${status}) -> ${dest#"${ROOT}"/} ($(ls "${dest}" | wc -l) files)"
 done
 exit "${rc}"

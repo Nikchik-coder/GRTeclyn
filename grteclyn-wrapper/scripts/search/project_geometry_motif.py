@@ -17,44 +17,18 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from grteclyn_wrapper.core.config import (
-    DEFAULT_RADIAL_RECIPE_TEMPLATE,
-    resolve_example,
-    resolve_executable,
-)
-from grteclyn_wrapper.core.episode import create_episode, update_metadata, write_json
-from grteclyn_wrapper.core.evaluation import evaluate_overrides
-from grteclyn_wrapper.core.params import write_params
-from grteclyn_wrapper.grtresna.fit.motif import (
-    build_grtresna_config_from_fitted,
-    fit_matter_from_motif,
-    fit_momentum_from_motif,
-    read_fitted_matter_json,
-    write_fitted_matter_json,
-    write_momentum_target_json,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, parse_convergence, solve
-from grteclyn_wrapper.initial_data.motif import (
-    extract_motif_from_episode,
-    motif_from_alcubierre,
-    read_motif_json,
-    write_motif_json,
-)
-from grteclyn_wrapper.projection.iterate import IterationConfig, run_iterate
-from grteclyn_wrapper.projection.mismatch import warp_factory_cross_check
-from grteclyn_wrapper.projection.motif_preservation import (
-    compare_motif_preservation,
-    write_preservation_report,
-)
-from grteclyn_wrapper.projection.postload_gate import (
-    PostLoadGateConfig,
-    run_postload_gate,
-    write_gate_result,
-)
-from grteclyn_wrapper.projection.warp_gridinit import (
-    paint_alcubierre_warp_on_gridinit,
-    write_alcubierre_gridinit,
-)
+from grteclyn_workflows.evolution.config import DEFAULT_RADIAL_RECIPE_TEMPLATE, resolve_example, resolve_executable
+from grteclyn_workflows.evolution.episode import create_episode, update_metadata, write_json
+from grteclyn_workflows.evolution.evaluation import evaluate_overrides
+from grteclyn_workflows.evolution.params import write_params
+from grteclyn_workflows.grtresna.fit.motif import build_grtresna_config_from_fitted, fit_matter_from_motif, fit_momentum_from_motif, read_fitted_matter_json, write_fitted_matter_json, write_momentum_target_json
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig, parse_convergence, solve
+from grteclyn_workflows.initial_data.motif import extract_motif_from_episode, motif_from_alcubierre, read_motif_json, write_motif_json
+from grteclyn_workflows.projection.iterate import IterationConfig, run_iterate
+from grteclyn_workflows.projection.mismatch import warp_factory_cross_check
+from grteclyn_workflows.projection.motif_preservation import compare_motif_preservation, write_preservation_report
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig, run_postload_gate, write_gate_result
+from grteclyn_workflows.projection.warp_gridinit import paint_alcubierre_warp_on_gridinit, write_alcubierre_gridinit
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -358,7 +332,7 @@ def run_projection(args: argparse.Namespace) -> int:
         base=_default_grtresna_base(args),
     )
     if args.dry_run:
-        from grteclyn_wrapper.grtresna.solver import write_grtresna_params
+        from grteclyn_workflows.grtresna.solver import write_grtresna_params
 
         write_grtresna_params(cfg, out_dir / "grtresna_params.txt")
         _write_projection_report(

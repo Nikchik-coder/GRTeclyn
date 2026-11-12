@@ -32,7 +32,7 @@ def test_quartic_lowers_potential_at_large_amplitude() -> None:
 def test_grtresna_params_include_scalar_lambda_default() -> None:
     from pathlib import Path
 
-    from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, write_grtresna_params
+    from grteclyn_workflows.grtresna.solver import GRTresnaConfig, write_grtresna_params
 
     cfg = GRTresnaConfig(scalar_lambda=0.0)
     path = Path("/tmp/test_scalar_lambda_params.txt")

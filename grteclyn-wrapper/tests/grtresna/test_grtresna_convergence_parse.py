@@ -1,7 +1,7 @@
 import math
 from pathlib import Path
 
-from grteclyn_wrapper.grtresna.solver import parse_convergence
+from grteclyn_workflows.grtresna.solver import parse_convergence
 
 
 def _write_errors(tmp_path: Path, rows: list[str]) -> Path:

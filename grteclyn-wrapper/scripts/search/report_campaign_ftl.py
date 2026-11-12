@@ -18,13 +18,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from grteclyn_wrapper.search.ftl_campaign_report import (
-    FtlSortKey,
-    format_campaign_report,
-    format_ftl_curve,
-    load_campaign_ftl_summaries,
-    rank_summaries,
-)
+from grteclyn_workflows.search.ftl_campaign_report import FtlSortKey, format_campaign_report, format_ftl_curve, load_campaign_ftl_summaries, rank_summaries
 
 
 def _parse_sort_key(value: str) -> FtlSortKey:

@@ -154,7 +154,7 @@ def test_driver_grid_matches_evolution_level0_dx() -> None:
 @pytest.mark.skipif(not KAPPA_GRIDINIT.is_file(),
                     reason="no solved kappa=1.0 gridinit fixture; run solve_kappa_family.sh")
 def test_solved_gridinit_is_winding_and_constraint_clean() -> None:
-    from grteclyn_wrapper.grtresna.io import read_gridinit
+    from grteclyn_workflows.grtresna.io import read_gridinit
 
     g = read_gridinit(KAPPA_GRIDINIT)
     comp = {n: g.data[..., i] for i, n in enumerate(g.comp_names)}
@@ -201,7 +201,7 @@ def test_solved_gridinit_modulus_is_axisymmetric() -> None:
     independent of azimuth -- no four-lobe pattern (L3). Sample a ring at fixed
     radius in the throat plane and require a small azimuthal coefficient of
     variation."""
-    from grteclyn_wrapper.grtresna.io import read_gridinit
+    from grteclyn_workflows.grtresna.io import read_gridinit
 
     g = read_gridinit(KAPPA_GRIDINIT)
     comp = {n: g.data[..., i] for i, n in enumerate(g.comp_names)}

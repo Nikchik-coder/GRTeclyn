@@ -38,10 +38,7 @@ sys.path.insert(0, str(WRAPPER / "scripts" / "analysis" / "bondi_dipole"))
 
 from t0_constraints import open_gridinit  # noqa: E402
 
-from grteclyn_wrapper.grtresna.io.gridinit import (  # noqa: E402
-    GRTECLYN_STATE_VARS,
-    write_gridinit,
-)
+from grteclyn_workflows.grtresna.io.gridinit import GRTECLYN_STATE_VARS, write_gridinit
 from grteclyn_stationary.profiles.boson_star_ode import (  # noqa: E402
     QBallCouplings,
     solve_selfgrav_at_omega,

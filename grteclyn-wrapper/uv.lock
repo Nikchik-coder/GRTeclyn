@@ -28,7 +28,7 @@ resolution-markers = [
 [manifest]
 members = [
     "grteclyn-stationary",
-    "grteclyn-wrapper",
+    "grteclyn-workflows",
 ]
 
 [[package]]
@@ -883,7 +883,7 @@ dev = [
 ]
 
 [[package]]
-name = "grteclyn-wrapper"
+name = "grteclyn-workflows"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

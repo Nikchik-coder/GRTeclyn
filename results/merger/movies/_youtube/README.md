@@ -4,7 +4,7 @@ Twelve files, 1920x1080 H.264, 10 fps (20 for the half-unit records), ready to u
 Built by
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.make_youtube
 ```
 
 **Layout (2026-10-05, the chosen design): four panels, 2x2, in sync, on the
@@ -300,5 +300,5 @@ numerical relativity, general relativity, wormhole, Einstein-Rosen bridge, exoti
   descriptions is measured from the data files, never from an image.
 
 To rebuild, restyle, or change the field pairing, edit `PANELS` in
-`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/make_youtube.py`
+`grteclyn-wrapper/src/grteclyn_workflows/plotting/wormhole_merger/make_youtube.py`
 and re-run it. `--only <substring>` builds one, `--force` overwrites.

@@ -106,7 +106,7 @@ move. Zero-shortcut runs also die young (mean structure survival ≈ 3 % vs
 
 The scoring component saturates the depth signal:
 `ftl_geo_evolving = min((f_geo − 0.001)/0.199, 1) × structural_persistence`
-(`GEO_FTL_TARGET = 0.2` in `metrics/score/ftl.py`), where
+(`GEO_FTL_TARGET = 0.2` in `search/scoring/ftl.py`), where
 `structural_persistence` = density retention × coherence × final confined
 mass fraction. Every top-10 scorer has depth above 20 %, so its saturated
 depth factor is exactly 1.0 and its score component is *bit-exact equal* to
@@ -280,7 +280,7 @@ matching rows of `trajectory.jsonl` (`overrides` field).
 | Per-eval shortcut summary | `eval_*/small_data/evolving_geodesic.json`, `ftl_timeseries.dat` |
 | Run logs | `../_logs/qball_traj_fgeo_v1.log`, `../qball_traj_fgeo_v1_resume2.log` |
 | Interactive 3D animation of eval 161's lump motion | https://claude.ai/code/artifact/1d2bd619-1cd2-4a70-b32f-3d6a37f60265 |
-| Static trajectory plotter (regenerate figures for any kept eval) | `grteclyn-wrapper/tests/visualisation/plot_lump_trajectories.py` |
+| Static trajectory plotter (regenerate figures for any kept eval) | `grteclyn-wrapper/tests/postprocessing/plot_lump_trajectories.py` |
 
 Note: MAP-Elites prunes non-elite eval dirs automatically; eval 161's
 directory (and its `lump_trajectories.png`) was pruned at campaign end.

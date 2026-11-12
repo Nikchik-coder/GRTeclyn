@@ -44,7 +44,7 @@ against that projection ``P = E . D``::
 Written that way the tests are *stricter* than a blanket identity, not looser:
 they pin which coordinates the projection may move and to exactly what value, so
 a silent contraction cannot hide behind "something got clamped."  ``P`` is
-:func:`grteclyn_wrapper.search.optimize.candidates.project_vector`.
+:func:`grteclyn_workflows.search.optimize.candidates.project_vector`.
 
 These tests were written to FAIL on the pre-fix code.  A fix that makes them
 pass without changing the forward transform is a correct fix.
@@ -56,15 +56,10 @@ import math
 
 import pytest
 
-from grteclyn_wrapper.search.optimize.candidates import (
-    TRAJECTORY_V_MAX_DEFAULT,
-    _overrides_to_vector,
-    _vector_to_overrides,
-    project_vector,
-)
-from grteclyn_wrapper.search.optimize.dimension import SearchDimension
-from grteclyn_wrapper.search.qd_search.archive import Elite
-from grteclyn_wrapper.search.qd_search.sampling import _mutate_elite, _mutate_params
+from grteclyn_workflows.search.optimize.candidates import TRAJECTORY_V_MAX_DEFAULT, _overrides_to_vector, _vector_to_overrides, project_vector
+from grteclyn_workflows.search.optimize.dimension import SearchDimension
+from grteclyn_workflows.search.qd_search.archive import Elite
+from grteclyn_workflows.search.qd_search.sampling import _mutate_elite, _mutate_params
 
 # A representative slice of the qball_trajectory space: two lumps, each with the
 # radius plus the two speed axes that carry the campaign's stated mechanism

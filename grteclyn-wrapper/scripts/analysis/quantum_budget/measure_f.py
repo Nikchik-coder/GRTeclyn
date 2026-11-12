@@ -58,13 +58,9 @@ def main() -> int:
     cap = int(args.rlimit_gb * 2**30)
     resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
 
-    from grteclyn_wrapper.analysis.quantum_budget import conventions as cv
-    from grteclyn_wrapper.analysis.quantum_budget.catalogue import (
-        ROW_FIELDS, measure_catalogue,
-    )
-    from grteclyn_wrapper.analysis.quantum_budget.compliance import (
-        ComplianceEvaluator, CurvatureSampling,
-    )
+    from grteclyn_workflows.analysis.quantum_budget import conventions as cv
+    from grteclyn_workflows.analysis.quantum_budget.catalogue import ROW_FIELDS, measure_catalogue
+    from grteclyn_workflows.analysis.quantum_budget.compliance import ComplianceEvaluator, CurvatureSampling
 
     root = Path(args.solutions_root)
     legs = args.legs or sorted(p.name for p in root.iterdir() if p.is_dir())

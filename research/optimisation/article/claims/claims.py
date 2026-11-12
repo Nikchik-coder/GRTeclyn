@@ -9,10 +9,10 @@ from pathlib import Path
 import numpy as np
 import physics
 import analytic
-from grteclyn_wrapper.visualisation.optimisation.paper_results import REPO, load_models
-from grteclyn_wrapper.visualisation.optimisation.plot_convergence import load, order_rows, PACKED
-from grteclyn_wrapper.visualisation.optimisation.plot_instability_curve import load as load_growth, GROWTH_TABLE
-from grteclyn_wrapper.visualisation.optimisation.plot_contraction_delay import load as load_delay, TABLE as DELAY_TABLE
+from grteclyn_workflows.plotting.optimisation.paper_results import REPO, load_models
+from grteclyn_workflows.plotting.optimisation.plot_convergence import load, order_rows, PACKED
+from grteclyn_workflows.plotting.optimisation.plot_instability_curve import load as load_growth, GROWTH_TABLE
+from grteclyn_workflows.plotting.optimisation.plot_contraction_delay import load as load_delay, TABLE as DELAY_TABLE
 OUT = Path(__file__).resolve().parents[1] / "numbers.tex"
 
 def check(rows):

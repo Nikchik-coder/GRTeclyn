@@ -238,7 +238,7 @@ def test_selfgrav_pump_target_width_more_compact_than_tail_length() -> None:
     The tail-only length ``1/sqrt(m^2 - omega^2)`` overestimates the core width;
     the profile-fitted width should be strictly smaller for a typical star.
     """
-    from grteclyn_wrapper.grtresna.profiles.boson_star import bound_width
+    from grteclyn_workflows.grtresna.profiles.boson_star import bound_width
     from grteclyn_stationary.profiles.boson_star_ode import (
         selfgrav_pump_target_width,
     )

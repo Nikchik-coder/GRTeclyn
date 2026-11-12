@@ -18,7 +18,7 @@ Sources, all tracked:
     needs GWOSC strain (runs/gw_search/strain_cache, untracked, network), so
     those numbers are READ from the committed JSON, not re-run
   * claims/table1_groups.tsv             Table I's run -> group map (committed)
-  * grteclyn_wrapper's figure and search code, imported LAZILY (so a Python
+  * grteclyn_workflows's figure and search code, imported LAZILY (so a Python
     without the package can still load this module and check other areas):
     plot_psi4_ligo (energies, frequency tracks), gw_search.templates (strain
     pedestal, template durations), gw_search.analysis.validation (re-runs the
@@ -46,7 +46,7 @@ import statistics
 import numpy as np
 
 from lib import EXTRACTORS, PACK, extractor, run_dir
-from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import iter_runs
+from grteclyn_workflows.analysis.wormhole_merger.pack.paths import iter_runs
 
 HERE = pathlib.Path(__file__).resolve().parent
 TABLE1 = HERE / "table1_groups.tsv"
@@ -227,7 +227,7 @@ def detector_table1_param(group: str, key: str, stat: str, log10: bool = False) 
 
 # =============================================================== cost (run_tail logs)
 def _gh():
-    from grteclyn_wrapper.analysis.wormhole_merger.pack import gpu_hours
+    from grteclyn_workflows.analysis.wormhole_merger.pack import gpu_hours
     return gpu_hours
 
 
@@ -430,8 +430,8 @@ def detector_bank_param(name: str) -> float:
     (analysis/fitting_factor.py) or the NR bank spacing (templates/bank.py)."""
     import importlib
     # by module path: the analysis package re-exports a FUNCTION called fitting_factor
-    ff = importlib.import_module("grteclyn_wrapper.gw_search.analysis.fitting_factor")
-    bank = importlib.import_module("grteclyn_wrapper.gw_search.templates.bank")
+    ff = importlib.import_module("grteclyn_workflows.gw_search.analysis.fitting_factor")
+    bank = importlib.import_module("grteclyn_workflows.gw_search.templates.bank")
     b = ff.BBH_BANK
     table = {
         "total_mass_min": min(b["total_mass"]), "total_mass_max": max(b["total_mass"]),
@@ -447,7 +447,7 @@ def detector_bank_param(name: str) -> float:
 def _templates() -> dict:
     import warnings
     warnings.filterwarnings("ignore")
-    from grteclyn_wrapper.gw_search.templates.nr import load_all_arms
+    from grteclyn_workflows.gw_search.templates.nr import load_all_arms
     return {wf.name: wf for wf in load_all_arms(pack=PACK)}
 
 
@@ -464,7 +464,7 @@ def detector_bank_duration_ms(stat: str) -> float:
     heaviest) template in the bank, ms.  The ladder's end rungs are
     templates/bank.py's mass_range, which needs no noise curve; only the rungs in
     between (and so the count, 127) depend on the live PSD."""
-    from grteclyn_wrapper.gw_search.templates.bank import mass_range
+    from grteclyn_workflows.gw_search.templates.bank import mass_range
     wfs = _templates().values()
     if stat == "min":
         return 1e3 * min(wf.duration_s(mass_range(wf)[0]) for wf in wfs)
@@ -488,9 +488,9 @@ def detector_template_duration_ms(arm: str, mass: float | None = None, pick: str
 @extractor
 def detector_chisq_bins(arm: str, mass: float | None = None, pick: str | None = None) -> float:
     """Allen chi^2 bin count the search gives one template (pipeline/triggers.py)."""
-    from grteclyn_wrapper.gw_search.pipeline.triggers import chisq_bins
-    from grteclyn_wrapper.gw_search.templates.bank import BankTemplate
-    from grteclyn_wrapper.gw_search.cli import SAMPLE_RATE
+    from grteclyn_workflows.gw_search.pipeline.triggers import chisq_bins
+    from grteclyn_workflows.gw_search.templates.bank import BankTemplate
+    from grteclyn_workflows.gw_search.cli import SAMPLE_RATE
     a = ARM_ALIAS[arm]
     wf = _templates()[a]
     m = mass if mass is not None else _injected_mass(a, pick)
@@ -506,8 +506,8 @@ def _validation():
     import io
     import warnings
     warnings.filterwarnings("ignore")
-    from grteclyn_wrapper.gw_search.analysis.validation import validate_bbh_twin
-    from grteclyn_wrapper.gw_search.strain import DesignNoise
+    from grteclyn_workflows.gw_search.analysis.validation import validate_bbh_twin
+    from grteclyn_workflows.gw_search.strain import DesignNoise
     with contextlib.redirect_stdout(io.StringIO()):
         rows, _ = validate_bbh_twin(DesignNoise(), 4096)
     return rows
@@ -551,9 +551,8 @@ def _ligo() -> dict:
     """plot_psi4_ligo's numbers per arm: energy and sphere spread, the resolved
     Psi_4 band peak, and the gated instantaneous-frequency track (Hz at the
     figure's 30 Msun calibration) -- the figure's own code, not a copy."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_psi4_ligo as L
-    from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (
-        M_SUN_SEC, _burst_psd, _smooth_psd)
+    from grteclyn_workflows.plotting.wormhole_merger import plot_psi4_ligo as L
+    from grteclyn_workflows.plotting.wormhole_merger.psi4_math import M_SUN_SEC, _burst_psd, _smooth_psd
     to_hz = 1.0 / (L.MASS_MSUN * M_SUN_SEC)
     out = {}
     for a in L.prepare(PACK):
@@ -613,7 +612,7 @@ def detector_headon_mms_ratio(quantity: str = "M_MS") -> float:
     the mode-3 chain's round common scan (plot_headon_collapse: leg 1's first
     C MOTS row, leg 3's last).  quantity = 'R' takes the area-based mass R/2
     instead (the ratio of areal radii)."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_headon_collapse as H
+    from grteclyn_workflows.plotting.wormhole_merger import plot_headon_collapse as H
     g = PACK / "campaign" / H.GROUP / H.CHAIN
     c1 = H._live_scan(g / H.LEG1 / "horizon_scan.dat")
     c3 = H._live_scan(g / H.LEG3 / "horizon_scan.dat")
@@ -626,7 +625,7 @@ def detector_headon_mms_ratio(quantity: str = "M_MS") -> float:
 # =============================================================== mouth growth and the no-inspiral budget
 @functools.lru_cache(maxsize=None)
 def _mouth(arm: str) -> tuple[float, float]:
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_mouth_growth as MG
+    from grteclyn_workflows.plotting.wormhole_merger import plot_mouth_growth as MG
     rel = {"merger": MG.MERGER[0], "flyby": MG.FLYBY[0]}[arm]
     tau, seed, _ = MG._tau(MG._scan(PACK / "campaign" / rel / "horizon_scan.dat"))
     return float(tau), float(seed)
@@ -785,7 +784,7 @@ def detector_lum_dist_gpc() -> float:
 
 # =============================================================== the heavy-seed channel
 def _hs():
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_heavy_seeds as H
+    from grteclyn_workflows.plotting.wormhole_merger import plot_heavy_seeds as H
     return H
 
 
@@ -908,7 +907,7 @@ def _lisa():
     """gw_search.lisa and its arms {name: (waveform, spectrum, F99)} on the pack."""
     import warnings
     warnings.filterwarnings("ignore")
-    from grteclyn_wrapper.gw_search import lisa as L
+    from grteclyn_workflows.gw_search import lisa as L
     return L, L.arms(str(PACK))
 
 
@@ -953,7 +952,7 @@ def detector_lisa_input(name: str) -> float:
     """A setting of gw_search.lisa / plot_heavy_seeds: 'f_min_mHz' (the SNR
     integral's lower edge, LISA's band floor), 'track_share_pct' (the share of
     int h_c^2 dln f each track of Fig. heavy_seeds(b) is drawn over)."""
-    from grteclyn_wrapper.gw_search import lisa as L
+    from grteclyn_workflows.gw_search import lisa as L
     H = _hs()
     if name == "f_min_mHz":
         return 1e3 * L.F_MIN
@@ -1020,7 +1019,7 @@ def detector_burst_duration_log10(m: float, arms=("spiral", "fly-by"), z: float 
 def detector_scalar_ratio_spread_pct(t_cut: float = 60.0) -> float:
     """Fly-by: |E_phi|/E_GW to t_cut on the inner sphere (R = 14) over the outer
     (R = 30), minus one, in % (plot_scalar_channel's integrals)."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_scalar_channel as S
+    from grteclyn_workflows.plotting.wormhole_merger import plot_scalar_channel as S
     run = PACK / "campaign" / S.FLYBY[0]
     ratio = {}
     for R in (14, 30):
@@ -1035,7 +1034,7 @@ def detector_ephi_sphere_ratio(run: str, t0: float, radii: list[int] = (10, 14, 
                                t1: float | None = None) -> float:
     """max|E_phi| / min|E_phi| across spheres, E_phi = integral of the physical
     flux -F_kin from t0 (horizon formation) to t1 (default: the record's end)."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_scalar_censorship as C
+    from grteclyn_workflows.plotting.wormhole_merger import plot_scalar_censorship as C
     path = run_dir(run) / "scalar_modes.dat"
     vals = []
     for R in radii:

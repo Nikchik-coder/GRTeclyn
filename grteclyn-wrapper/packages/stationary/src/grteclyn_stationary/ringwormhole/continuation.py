@@ -94,7 +94,7 @@ def run(plan,out):
     from grteclyn_stationary.studies.runner import release_solver, write_json
     from grteclyn_stationary.studies.validation import validate
     from grteclyn_stationary.studies.diagnostics import tidal_envelope
-        state,config,target=initial_state(plan)
+    state,config,target=initial_state(plan)
     out=Path(out);out.mkdir(parents=True,exist_ok=False)
     write_json(out/'plan.json',plan)
     write_json(out/'code.json',dict(commit=source_revision()))

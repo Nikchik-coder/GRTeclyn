@@ -51,7 +51,7 @@ from pathlib import Path
 _WRAPPER_SRC = Path(__file__).resolve().parents[3] / "src"
 if str(_WRAPPER_SRC) not in sys.path:
     sys.path.insert(0, str(_WRAPPER_SRC))
-from grteclyn_wrapper.core.site_paths import grteclyn_root, grtresna_root
+from grteclyn_workflows.evolution.site_paths import grteclyn_root, grtresna_root
 
 GRTECLYN_ROOT = grteclyn_root()
 GRTRESNA_ROOT = grtresna_root()
@@ -230,7 +230,7 @@ def main() -> int:
     if not hdf5.exists():
         raise FileNotFoundError(f"solve produced no {hdf5}")
 
-    from grteclyn_wrapper.grtresna.io.conversion import convert_chombo_to_gridinit
+    from grteclyn_workflows.grtresna.io.conversion import convert_chombo_to_gridinit
 
     gridinit = run_dir / "initial_data.gridinit"
     convert_chombo_to_gridinit(
@@ -248,10 +248,7 @@ def main() -> int:
     # gridinit matches the Python reference for this exact profile spec.  Catches
     # stale-binary empty fields, sign flips, wrong-frequency momentum, and
     # coordinate-center bugs BEFORE a wasted GPU evolution.
-    from grteclyn_wrapper.grtresna.matter.profile_contract import (
-        MatterProfileSpec,
-        check_gridinit_matches_spec,
-    )
+    from grteclyn_workflows.grtresna.matter.profile_contract import MatterProfileSpec, check_gridinit_matches_spec
     from grteclyn_stationary.profiles.qball_torus import read_torus_profile
 
     tor = read_torus_profile(torus_path)

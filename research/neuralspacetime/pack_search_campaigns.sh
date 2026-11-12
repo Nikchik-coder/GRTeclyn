@@ -29,7 +29,7 @@
 # PACK_REFRESH_ANALYSIS=1 to regenerate them from trajectory.jsonl.
 #
 # Machine identity is scrubbed at runtime by the shared scrubber in the wrapper
-# package (grteclyn_wrapper.packaging.scrub_paths), per the no-identity-in-git
+# package (grteclyn_workflows.packaging.scrub_paths), per the no-identity-in-git
 # rule, and the pack is then gated: any surviving host, user or home-path token
 # fails the run.
 #
@@ -59,7 +59,7 @@ if [[ -f "${ROOT}/grteclyn-wrapper/.env" ]]; then
 fi
 
 export ROOT SIM_ROOT GRTRESNA_ENV OPENMPI_ROOT CHOMBO_HOME
-scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
+scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py" "$@"; }
 
 # pack slug | run dir under runs/neuralspacetime/search | launch-log glob
 # Order = lineage order, oldest first; the pack README narrates it.

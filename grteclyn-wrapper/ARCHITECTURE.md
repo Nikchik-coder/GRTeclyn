@@ -3,7 +3,7 @@
 The wrapper is the GRTeclyn application: evolution preparation, launchers,
 consumers, analysis and research reproduction. `packages/stationary/` is an
 independently buildable distribution, imported as `grteclyn_stationary`.
-Its numerical and physical models have no imports from `grteclyn_wrapper`.
+Its numerical and physical models have no imports from `grteclyn_workflows`.
 The wrapper depends on the solver through the uv workspace, with one copy of
 all numerical routines and radial seed solvers.
 
@@ -17,10 +17,26 @@ background tables. `numerics/` remains physics-independent.
 The GRTresna bridge imports radial boson/Q-ball solvers from the standalone
 package's `profiles/`; it retains painting, grid conversion and MPI orchestration.
 Checkout-specific pipeline dispatch, background comparisons and movie orchestration
-live in `src/grteclyn_wrapper/campaigns/stationary/`.
+live in `src/grteclyn_workflows/campaigns/stationary/`.
 
 Build/install/export instructions are in [the package guide](packages/stationary/README.md).
 Research launch recipes are in [STATIONARY_RESEARCH.md](STATIONARY_RESEARCH.md).
+
+## Workflow namespace migration
+
+The application distribution and command are `grteclyn-workflows`; imports use
+`grteclyn_workflows`. The existing project directory and virtual environment stay
+under `grteclyn-wrapper/`. There are no old-namespace shims.
+
+`core` is now `evolution`. Physical `metrics` are now `diagnostics`, with stream
+readers under `measurements`; objectives and incremental scoring live in
+`search/scoring`. The plotfile consumer is `postprocessing`, while research plots
+live in `plotting`. Waveform plotters share `plotting/waveforms`, and slice plotting
+uses `plotting/slices`. Tests and executable references follow the new owners.
+
+Nine generated PNG/PDF/EPS files were deleted from source on request. Plotting
+defaults now write outside source. Existing result data and saved provenance were
+not rewritten; current reproduction instructions point to the new modules.
 
 ## Removed code
 
@@ -54,70 +70,69 @@ and documentation-only folders; generated caches and runtime outputs are exclude
 
 ## Source directories
 
-| Directory | Ownership and disposition |
+| Directory | Purpose |
 |---|---|
-| `src/grteclyn_wrapper/analysis/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/bondi_dipole/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/quantum_budget/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/wormhole_merger/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/wormhole_merger/pack/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/wormhole_merger/single_throat/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/wormhole_merger/two_throats/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/analysis/wormhole_merger/waves/` | Keep: research analysis and symbolic extraction; stationary physics extracted. |
-| `src/grteclyn_wrapper/campaigns/` | Wrapper integration only: requires checkout paths or evolution tooling. |
-| `src/grteclyn_wrapper/campaigns/stationary/` | Wrapper integration only: requires checkout paths or evolution tooling. |
-| `src/grteclyn_wrapper/cli/` | Keep: public evolution/search command dispatch. |
-| `src/grteclyn_wrapper/cli/commands/` | Keep: public evolution/search command dispatch. |
-| `src/grteclyn_wrapper/core/` | Keep: evolution configuration, runners, parameter contracts and scratch policy. |
-| `src/grteclyn_wrapper/grtresna/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/domain/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/fields/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/fit/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/io/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/matter/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/profiles/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/grtresna/solver/` | Keep: MPI solver bridge and grid painting; shared radial solvers extracted. |
-| `src/grteclyn_wrapper/gw_search/` | Keep: waveform templates, strain processing and search/validation tools. |
-| `src/grteclyn_wrapper/gw_search/analysis/` | Keep: waveform templates, strain processing and search/validation tools. |
-| `src/grteclyn_wrapper/gw_search/pipeline/` | Keep: waveform templates, strain processing and search/validation tools. |
-| `src/grteclyn_wrapper/gw_search/strain/` | Keep: waveform templates, strain processing and search/validation tools. |
-| `src/grteclyn_wrapper/gw_search/templates/` | Keep: waveform templates, strain processing and search/validation tools. |
-| `src/grteclyn_wrapper/initial_data/` | Keep: evolution seeds, constraints and metric proposals. |
-| `src/grteclyn_wrapper/metrics/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/aggregation/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/diagnostics/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/io/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/probes/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/probes/ftl/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/score/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/metrics/types/` | Keep: diagnostics, physical probes and search scoring. |
-| `src/grteclyn_wrapper/packaging/` | Keep: source-path scrubbing for portable research artifacts. |
-| `src/grteclyn_wrapper/projection/` | Keep: geometry-to-matter projection and post-load acceptance gates. |
-| `src/grteclyn_wrapper/search/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/atlas/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/geometry_atlas/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/optimize/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/pre_gpu/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/qd_search/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/search/validation_tiers/` | Keep: matter-first CMA/QD/atlas search and validation; dead adapter removed. |
-| `src/grteclyn_wrapper/visualisation/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/bondi_dipole/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/constraints/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/diagnostic/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/extract_wave/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/figures/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/geometry_atlas/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/optimisation/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/process_wave/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/process_wave/consume_plotfiles/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/process_wave/consume_plotfiles/extraction/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/process_wave/consume_plotfiles/frames/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/radial/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/railgun/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/search/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/spinning_wormhole/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/visualize/` | Keep: consumers and research figures; constraint namespace corrected. |
-| `src/grteclyn_wrapper/visualisation/wormhole_merger/` | Keep: consumers and research figures; constraint namespace corrected. |
+| `src/grteclyn_workflows/analysis/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/bondi_dipole/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/quantum_budget/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/wormhole_merger/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/wormhole_merger/pack/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/wormhole_merger/single_throat/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/wormhole_merger/two_throats/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/analysis/wormhole_merger/waves/` | Analysis of saved research results. |
+| `src/grteclyn_workflows/campaigns/` | Checkout-specific campaign integration. |
+| `src/grteclyn_workflows/campaigns/stationary/` | Checkout-specific campaign integration. |
+| `src/grteclyn_workflows/cli/` | Command parsing and dispatch. |
+| `src/grteclyn_workflows/cli/commands/` | Command parsing and dispatch. |
+| `src/grteclyn_workflows/diagnostics/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/aggregation/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/io/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/measurements/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/probes/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/probes/ftl/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/diagnostics/types/` | Physical measurements and diagnostic readers. |
+| `src/grteclyn_workflows/evolution/` | Simulation preparation and execution. |
+| `src/grteclyn_workflows/grtresna/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/domain/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/fields/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/fit/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/io/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/matter/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/profiles/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/grtresna/solver/` | GRTresna bridge and grid conversion. |
+| `src/grteclyn_workflows/gw_search/` | Gravitational-wave searches. |
+| `src/grteclyn_workflows/gw_search/analysis/` | Gravitational-wave searches. |
+| `src/grteclyn_workflows/gw_search/pipeline/` | Gravitational-wave searches. |
+| `src/grteclyn_workflows/gw_search/strain/` | Gravitational-wave searches. |
+| `src/grteclyn_workflows/gw_search/templates/` | Gravitational-wave searches. |
+| `src/grteclyn_workflows/initial_data/` | Evolution seeds and initial constraints. |
+| `src/grteclyn_workflows/packaging/` | Artifact path scrubbing. |
+| `src/grteclyn_workflows/plotting/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/bondi_dipole/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/constraints/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/diagnostics/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/geometry_atlas/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/optimisation/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/radial/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/railgun/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/search/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/slices/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/spinning_wormhole/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/waveforms/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/wormhole_dynamics/` | Research plots and figures. |
+| `src/grteclyn_workflows/plotting/wormhole_merger/` | Research plots and figures. |
+| `src/grteclyn_workflows/postprocessing/` | Plotfile processing, extraction and frame rendering. |
+| `src/grteclyn_workflows/postprocessing/extraction/` | Plotfile processing, extraction and frame rendering. |
+| `src/grteclyn_workflows/postprocessing/frames/` | Plotfile processing, extraction and frame rendering. |
+| `src/grteclyn_workflows/projection/` | Geometry-to-matter projection. |
+| `src/grteclyn_workflows/search/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/atlas/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/geometry_atlas/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/optimize/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/pre_gpu/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/qd_search/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/scoring/` | Candidate search, validation and scoring. |
+| `src/grteclyn_workflows/search/validation_tiers/` | Candidate search, validation and scoring. |
 
 ## Standalone solver directories
 
@@ -193,3 +208,47 @@ and documentation-only folders; generated caches and runtime outputs are exclude
 | `scripts/wormhole/id/` | Keep: published rotating-wormhole initial data, evolution and postprocessing. |
 | `scripts/wormhole/postrun/` | Keep: published rotating-wormhole initial data, evolution and postprocessing. |
 | `scripts/wormhole/run/` | Keep: published rotating-wormhole initial data, evolution and postprocessing. |
+
+## Namespace migration validation — 2026-11-12
+
+The renamed package was installed locally. Both wheels were then built and
+extracted outside the checkout: commands resolve from the installed wheel,
+`grteclyn_wrapper` cannot be imported, and diagnostic imports do not load search
+modules. The installed constraint plotter produced PNG/PDF/EPS files under a
+synthetic checkout's `runs/plots/`, with no figures written into installed source.
+
+All **1,748 tests collect**. Selected checks: **1,137 passed, 13 skipped** (unique tests; reruns not counted).
+This comprises 427 initial CPU regressions, 636 remaining regressions, 33
+stationary packaging checks, 34 stationary integration checks, six workflow wheel
+checks, and the command test rerun with the project Python on PATH. All 152 shell
+scripts pass `bash -n`; internal imports resolve in the source, scripts and tests.
+The lockfile is consistent. All 409 moved Python modules were compared with the
+pre-rename source: 396 have identical ASTs after imports, docstrings and namespace
+strings are normalized. The other 13 change package exports or plotting output
+paths, not numerical or scoring calculations.
+
+The broad CPU suite is **not fully green**. These failures also occur on the
+pre-rename source (`aa3ae7296`):
+
+- Missing rotating-wormhole parameter template in `test_grtresna_integration`.
+- `test_consume_symmetry`: the odd-parity fixture has no `shift1` field.
+- `test_preflight_symmetry`: its launch fixture omits plot cadence and Weyl4 output.
+- `test_run_full_campaign`: HQ frame-default assertion and two-member CMA batch.
+- `test_horizon_finder_guard`: charge-retention columns are not parsed.
+- `test_proposed_extensions`: the dry-run QD archive remains empty.
+
+These are seven failing tests in total. Six were rerun against an extracted
+original checkout and reproduced the same errors; the missing-template failure
+was already established on the original source. A separate command test passes
+when subprocesses use the project Python rather than system Python.
+
+The expensive self-gravitating profile-wiring scan was interrupted after 7.46
+minutes; the remaining files were run separately. The full boson-star ODE suite
+and the remaining stationary physics suite were not rerun for this namespace
+change. No cluster or GPU evolution was launched, and no full old-versus-new
+campaign-output equivalence is claimed.
+
+Collection also exposed two indentation errors already committed in stationary
+profile/continuation entry points. They were corrected, and their tests pass.
+The earlier package extraction's aggregate pass count did not establish that all
+of its entry points could be imported.

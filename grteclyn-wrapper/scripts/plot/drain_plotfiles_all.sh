@@ -64,9 +64,9 @@ echo "Plotfiles on disk: $(find "${RUN_DIR}" -maxdepth 1 -type d -name 'RadialRe
 
 "${PYTHON[@]}" - <<PY
 from pathlib import Path
-from grteclyn_wrapper.core.episode import Episode
-from grteclyn_wrapper.core.plot_consumer import consumer_radii_from_env
-from grteclyn_wrapper.core.runner import drain_plotfile_backlog
+from grteclyn_workflows.evolution.episode import Episode
+from grteclyn_workflows.evolution.plot_consumer import consumer_radii_from_env
+from grteclyn_workflows.evolution.runner import drain_plotfile_backlog
 
 episode = Episode(path=Path("${RUN_DIR}"))
 params = episode.params_path.read_text(encoding="utf-8")

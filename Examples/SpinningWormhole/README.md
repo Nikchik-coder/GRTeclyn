@@ -11,11 +11,11 @@ the angular momentum in the matter, not the geometry.
 tabulated stationary background (`.spinbg`): f, ν̄ = ν/sin²θ, ω (+ exact
 derivatives), φ on a grid in (x, μ) = ((2/π) atan(η/η₀), cos θ). Static,
 O(J²) and full numerical backgrounds all arrive through this file, generated
-by `grteclyn_wrapper.analysis.spinning_wormhole.backgrounds`; the C++ never
+by `grteclyn_workflows.analysis.spinning_wormhole.backgrounds`; the C++ never
 changes with the family.
 
 **Matter backgrounds (optional, backward compatible).** Written by
-`python -m grteclyn_wrapper.optimisation.handoff <npz> --out <table>`. A 7th
+`python -m grteclyn_workflows.optimisation.handoff <npz> --out <table>`. A 7th
 column `B` (header `num_components 7`, `component_names f nu_bar omega
 domega_deta domega_dtheta_over_sintheta phi B`) multiplies the spatial metric
 by B² (lapse and shift unchanged); it enters only through χ (→ χ/B²), since

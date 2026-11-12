@@ -10,8 +10,8 @@ The shared Newton, Jacobian and spectral algorithms live in the standalone packa
 Install the numerical dependencies with `uv sync --extra stationary` from
 `grteclyn-wrapper/`. CPU is the default; selecting a GPU remains explicit.
 
-The former `grteclyn_wrapper.optimisation` and
-`grteclyn_wrapper.analysis.spinning_wormhole` imports have moved here. Commands
+The former `grteclyn_workflows.optimisation` and
+`grteclyn_workflows.analysis.spinning_wormhole` imports have moved here. Commands
 use `python -m grteclyn_stationary.commands.<name>`. Current callers
 use these paths directly. Archived run manifests retain the source revision
 and paths that produced their results; resume checks require the new source
@@ -490,9 +490,9 @@ cap before any solve, while a capped platform-allocator matrix test passed.
   **`derivations/`** contains symbolic derivations and transcription checks.
 - **`validation/radial.py`** is diagnostic radial-stability work under repair.
   **`exports/wormhole.py`** writes evolution background tables.
-- **`src/grteclyn_wrapper/campaigns/stationary/pipeline.toml`** lists the configured campaign stages and their resource caps.
+- **`src/grteclyn_workflows/campaigns/stationary/pipeline.toml`** lists the configured campaign stages and their resource caps.
 
-Plots stay in [the optimisation visualisation package](src/grteclyn_wrapper/visualisation/optimisation).
+Plots stay in [the optimisation visualisation package](src/grteclyn_workflows/plotting/optimisation).
 Tests stay in [tests/stationary](tests/stationary).
 The [spinning-wormhole model](packages/stationary/src/grteclyn_stationary/spinning_wormhole) supplies saved-solution readers
 and the massless reference solver. It depends only on shared numerics and its
@@ -513,8 +513,8 @@ $PY -m grteclyn_stationary.checks.check_matter_pins --help
 $PY -m grteclyn_stationary.derivations.derive_matter_equations --help
 
 # Inspect the configured pipeline and a proposed CPU command.
-$PY -m grteclyn_wrapper.campaigns.stationary.pipeline list
-$PY -m grteclyn_wrapper.campaigns.stationary.pipeline run first-v-0003-150 --dry-run
+$PY -m grteclyn_workflows.campaigns.stationary.pipeline list
+$PY -m grteclyn_workflows.campaigns.stationary.pipeline run first-v-0003-150 --dry-run
 ```
 
 Actual campaign jobs go through `scripts/ops/capped_job.sh`; the pipeline uses it

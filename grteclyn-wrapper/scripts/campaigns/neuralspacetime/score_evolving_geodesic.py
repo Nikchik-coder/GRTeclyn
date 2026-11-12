@@ -53,21 +53,9 @@ for _var, _sub in (
     _p.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault(_var, str(_p))
 
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic import (  # noqa: E402
-    compute_evolving_geodesic_ftl_from_metric_stack_cache,
-    evolving_report_trustworthy,
-    patch_ftl_timeseries_evolving,
-    write_evolving_geodesic_json,
-)
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic_options import (  # noqa: E402
-    evolving_geodesic_options_from_env,
-)
-from grteclyn_wrapper.metrics.probes.ftl.metric_stack_cache import (  # noqa: E402
-    cache_fidelity,
-    list_slice_files,
-    metric_stack_dir,
-    slice_time,
-)
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic import compute_evolving_geodesic_ftl_from_metric_stack_cache, evolving_report_trustworthy, patch_ftl_timeseries_evolving, write_evolving_geodesic_json
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic_options import evolving_geodesic_options_from_env
+from grteclyn_workflows.diagnostics.probes.ftl.metric_stack_cache import cache_fidelity, list_slice_files, metric_stack_dir, slice_time
 
 MIN_SLICES = 3
 FIDELITY_TOL = 1.5

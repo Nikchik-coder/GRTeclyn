@@ -46,13 +46,13 @@ def test_spinning_model_depends_only_on_numerics_and_its_own_model():
 def test_complete_solver_has_no_wrapper_dependency():
     offenders = [(str(p.relative_to(STATIONARY)), name)
                  for p in STATIONARY.rglob('*.py') for name in imports(p)
-                 if within(name, 'grteclyn_wrapper')]
+                 if within(name, 'grteclyn_workflows')]
     assert not offenders
 
 
 def test_active_code_does_not_import_retired_packages():
-    forbidden = ('grteclyn_wrapper.optimisation', 'grteclyn_wrapper.analysis.spinning_wormhole',
-                 'grteclyn_wrapper.rl', 'grteclyn_wrapper.stationary', 'grteclyn_wrapper.numerics')
+    forbidden = ('grteclyn_workflows.optimisation', 'grteclyn_workflows.analysis.spinning_wormhole',
+                 'grteclyn_workflows.rl', 'grteclyn_workflows.stationary', 'grteclyn_workflows.numerics')
     offenders = []
     for root in (WRAPPER/'src', WRAPPER/'scripts', SOURCE):
         for p in root.rglob('*.py'):

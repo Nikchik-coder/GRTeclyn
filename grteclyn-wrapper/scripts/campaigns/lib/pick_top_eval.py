@@ -7,7 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from grteclyn_wrapper.search.campaign_pick import pick_top_eval_ids
+from grteclyn_workflows.search.campaign_pick import pick_top_eval_ids
 
 
 def main(argv: list[str] | None = None) -> int:

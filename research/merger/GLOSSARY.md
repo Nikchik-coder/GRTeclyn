@@ -13,7 +13,7 @@ suffixes, always in this order: `_m<mass>` `_lapse<N>` `_sg<NN>` `_fg` `_tl<N>` 
 `p012` = 0.12, `sg01` = 0.1, `a15` = 1.5, `d65` = 6.5. A knob with no token is at its production value: the run-tree README
 says "everything not named in the suffix is identical" (`runs/wormhole_merger/README.md` §"Reading a run name").
 Machine form: [`results/merger/name_grammar.tsv`](../../results/merger/name_grammar.tsv) (101 rules);
-checker: `grteclyn_wrapper.analysis.wormhole_merger.pack.name_check`, whose verdict per run is the `name_check` column of
+checker: `grteclyn_workflows.analysis.wormhole_merger.pack.name_check`, whose verdict per run is the `name_check` column of
 [`results/merger/runs_index.tsv`](../../results/merger/runs_index.tsv).
 
 | token | meaning | param = value (evolution_params.txt) | example |
@@ -109,8 +109,8 @@ In-code streams go to `<run>/data/` and are written every coarse step (dt₀ = 0
 go to `<run>/small_data/`, one row per plotfile, i.e. every plot_interval × dt₀ (0.1–1.0). Coordinates are relative to `center`
 unless marked **absolute**. Writer paths: `.hpp`/`.cpp` files are in `Examples/BinaryWormholeMerger/` unless a path is given.
 `extraction/…`, `driver.py`, `worker.py` and `state.py` are in
-`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/process_wave/consume_plotfiles/`. `metrics/…` is in
-`grteclyn-wrapper/src/grteclyn_wrapper/`.
+`grteclyn-wrapper/src/grteclyn_workflows/postprocessing/`. `metrics/…` is in
+`grteclyn-wrapper/src/grteclyn_workflows/`.
 
 | file | writer | columns (as in header) → meaning | pitfalls |
 |---|---|---|---|

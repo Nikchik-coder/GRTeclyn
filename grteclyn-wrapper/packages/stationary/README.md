@@ -3,7 +3,7 @@
 Stationary Einstein–scalar solvers with spectral collocation, Newton iteration,
 continuation, parameter search and independent physical validation. This directory
 is a standalone Python project: copy it to another repository or build its wheel.
-It imports no `grteclyn_wrapper` code and needs no GRTeclyn binary, yt, HDF5,
+It imports no `grteclyn_workflows` code and needs no GRTeclyn binary, yt, HDF5,
 research checkout or Git executable to solve a supplied problem.
 
 ## Install and use
@@ -63,4 +63,4 @@ recorded only when the solver itself is in a checkout. Old resume certificates
 must match the relocated source hashes before resuming.
 
 GRTeclyn pipeline dispatch and movie orchestration belong to the wrapper's
-`grteclyn_wrapper.campaigns.stationary`, and are not shipped in this package.
+`grteclyn_workflows.campaigns.stationary`, and are not shipped in this package.

@@ -1,7 +1,4 @@
-from grteclyn_wrapper.search.optimize import (
-    build_grtresna_config,
-    build_search_space,
-)
+from grteclyn_workflows.search.optimize import build_grtresna_config, build_search_space
 
 
 def test_ring_ansatz_search_space_is_low_dimensional() -> None:

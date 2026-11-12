@@ -44,7 +44,7 @@ converge at order 4.4 and 4.2 (the paper's runs did not converge after t 50) and
 every number changes.
 
 Figures (2026-10-26): every article figure is drawn from the reruns by `python -m
-grteclyn_wrapper.visualisation.bondi_dipole` into `results/bondi-dipole-runaway/figures/<group>/` (PDF + PNG, one
+grteclyn_workflows.plotting.bondi_dipole` into `results/bondi-dipole-runaway/figures/<group>/` (PDF + PNG, one
 folder per campaign group, index `FIGURES.md`); the old Fig. 10 is replaced by the two resolution sets,
 `09_convergence/convergence_pair` / `convergence_lone` (constraints by region with the order-2 / order-4 rescaled
 curves, and the motion), now Figs. 8 and 9 of Appendix A on one float page before the appendix text. Decided 10-26:

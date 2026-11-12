@@ -3,7 +3,7 @@ import json
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.campaigns.stationary.ring_movies import completed, validate_cache
+from grteclyn_workflows.campaigns.stationary.ring_movies import completed, validate_cache
 
 
 def test_waits_for_final_drain_and_rejects_short_run(tmp_path):

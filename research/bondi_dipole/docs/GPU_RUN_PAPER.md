@@ -1668,7 +1668,7 @@ internal phase — it is the lump's **initial azimuthal position** on a ring of
 radius `R0`:
 
 ```
-# src/grteclyn_wrapper/search/optimize/config.py:309
+# src/grteclyn_workflows/search/optimize/config.py:309
 phase0 = get_float(f"{pfx}phase0", 2.0 * math.pi * k / num_lumps)
 x_orb  = R0 * math.cos(phase0)
 y_orb  = R0 * math.sin(phase0)
@@ -1684,7 +1684,7 @@ The actual internal phase comes from the matter painter, and for a spherical
 star (no winding) it is zero for **both** lumps:
 
 ```
-# src/grteclyn_wrapper/grtresna/matter/profile_contract.py:179
+# src/grteclyn_workflows/grtresna/matter/profile_contract.py:179
 if spec.winding: ...            # not taken for spherical stars
 else:
     phi1 = modulus              # real, positive

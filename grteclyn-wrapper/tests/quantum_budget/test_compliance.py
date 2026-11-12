@@ -13,14 +13,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.analysis.quantum_budget import conventions as cv
-from grteclyn_wrapper.analysis.quantum_budget import curvature, stress
-from grteclyn_wrapper.analysis.quantum_budget.catalogue import (
-    measure_solution, static_anchor,
-)
-from grteclyn_wrapper.analysis.quantum_budget.compliance import (
-    ComplianceEvaluator,
-)
+from grteclyn_workflows.analysis.quantum_budget import conventions as cv
+from grteclyn_workflows.analysis.quantum_budget import curvature, stress
+from grteclyn_workflows.analysis.quantum_budget.catalogue import measure_solution, static_anchor
+from grteclyn_workflows.analysis.quantum_budget.compliance import ComplianceEvaluator
 
 REPO = Path(__file__).resolve().parents[2].parent
 FAM_A_SOLUTION = (REPO / "results/spinningwormhole/solutions/fam_a_r1"

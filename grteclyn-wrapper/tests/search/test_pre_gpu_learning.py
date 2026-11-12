@@ -8,19 +8,14 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 
-from grteclyn_wrapper.search.grtresna_convergence_gate import GRTresnaConvergenceConfig
-from grteclyn_wrapper.search.grtresna_evaluation_gates import reject_grtresna_convergence
-from grteclyn_wrapper.search.optimize import SearchDimension
-from grteclyn_wrapper.search.optimize.candidates import _load_warm_start_vectors
-from grteclyn_wrapper.search.pre_gpu import (
-    NearMissPool,
-    is_graded_rejection,
-    parse_convergence_from_reason,
-    pre_gpu_descriptor_details,
-)
-from grteclyn_wrapper.search.qd_search.archive import QDArchive
-from grteclyn_wrapper.search.qd_search.pre_gpu_archive import rebuild_pre_gpu_archive_from_trajectory
-from grteclyn_wrapper.search.qd_search.sampling import QdSamplingConfig, sample_next_candidate
+from grteclyn_workflows.search.grtresna_convergence_gate import GRTresnaConvergenceConfig
+from grteclyn_workflows.search.grtresna_evaluation_gates import reject_grtresna_convergence
+from grteclyn_workflows.search.optimize import SearchDimension
+from grteclyn_workflows.search.optimize.candidates import _load_warm_start_vectors
+from grteclyn_workflows.search.pre_gpu import NearMissPool, is_graded_rejection, parse_convergence_from_reason, pre_gpu_descriptor_details
+from grteclyn_workflows.search.qd_search.archive import QDArchive
+from grteclyn_workflows.search.qd_search.pre_gpu_archive import rebuild_pre_gpu_archive_from_trajectory
+from grteclyn_workflows.search.qd_search.sampling import QdSamplingConfig, sample_next_candidate
 
 
 def _dim(key: str = "grtresna_shell_amp") -> list[SearchDimension]:

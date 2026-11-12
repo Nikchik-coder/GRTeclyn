@@ -158,7 +158,7 @@ Call the venv python directly instead of `uv run` (which writes to
 
 ```python
 cmd = [str(WRAPPER / ".venv/bin/python"), "-m",
-       "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles", ...]
+       "grteclyn_workflows.postprocessing", ...]
 env["XDG_CACHE_HOME"]      = f"{SCRATCH}/_cache"
 env["UV_CACHE_DIR"]        = f"{SCRATCH}/_cache/uv"
 env["MPLCONFIGDIR"]        = f"{SCRATCH}/_cache/mpl"

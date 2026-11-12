@@ -296,7 +296,7 @@ def single_ggs_excess(runs: list[str], t_ggs: float | None = None) -> float:
     Gonzalez-Guzman-Sarbach prediction interpolated to m/a = 0.5, T_PREDICTED
     of analysis/wormhole_merger/single_throat/instability.py)."""
     if t_ggs is None:
-        from grteclyn_wrapper.analysis.wormhole_merger.single_throat import instability as sti
+        from grteclyn_workflows.analysis.wormhole_merger.single_throat import instability as sti
         t_ggs = float(sti.T_PREDICTED[1])
     return max(100.0 * abs(single_proper_efold(run=r) / t_ggs - 1.0) for r in runs)
 
@@ -403,7 +403,7 @@ def single_boost_record(what: str, run: str = "single_boost_p045_lbf_t050") -> f
     peak_time, one_pct (first fall 1 % below R(0), interpolated), tau_lo /
     tau_hi (the collapse e-fold, free-offset fits R = c + B e^(t/tau) over
     [t0, t1], t0 = 28, 30, ..., 36, t1 = 42, 44: inside its t = 44.5 trust window)."""
-    wm = __import__("grteclyn_wrapper.visualisation.wormhole_merger.plot_single_throat_row",
+    wm = __import__("grteclyn_workflows.plotting.wormhole_merger.plot_single_throat_row",
                     fromlist=["moving_record"])
     a = wm.moving_record(lib.PACK, run)
     t, r = a[:, 0], a[:, 1]
@@ -425,7 +425,7 @@ def single_boost_record(what: str, run: str = "single_boost_p045_lbf_t050") -> f
 def single_seed_floor_ratio(eps2: float = 0.01) -> float:
     """Fig. 11(b)'s own measure (plot_seed_linearity): rms Re Psi4^{2,0} over its
     WINDOW at R_SHOW for the eps2 kicked arm, over the level-4 spherical control's."""
-    m = __import__("grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_linearity",
+    m = __import__("grteclyn_workflows.plotting.wormhole_merger.plot_seed_linearity",
                    fromlist=["_l2m0"])
     seed = lib.PACK / "campaign" / m.GROUP / m.SEED_DIR
     t, y = m._l2m0(seed / m.ARMS[eps2] / "psi4_mode_l2m0.dat")
@@ -998,7 +998,7 @@ def _f4(run: str = F4) -> dict[str, float]:
     and the ledger cannot drift apart: the record cut where the crash reaches it,
     the onset fit R0 (1 + A e^(t/T)), Shinkai-Hayward's fit in the neck's proper
     time, and the theta_k = 0 track to its first jump."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_single_inflation_L512 as m
+    from grteclyn_workflows.plotting.wormhole_merger import plot_single_inflation_L512 as m
 
     nh = m.record(run_dir(run))["nh"]
     nh = nh[nh[:, 0] <= m.T_WALL + 1e-9]
@@ -1069,7 +1069,7 @@ def single_f4_pop(what: str, run: str = F4) -> float:
             alpha = np.interp(ts, tp, prof[:, pc["lapse_min_r60.25"]])
             chi = np.interp(ts, tp, prof[:, pc["chi_min_r60.25"]])
             flux = flux * alpha ** 2 / np.sqrt(chi)
-        from grteclyn_wrapper.visualisation.wormhole_merger import plot_single_inflation_L512 as m
+        from grteclyn_workflows.plotting.wormhole_merger import plot_single_inflation_L512 as m
         k = ts <= m.T_WALL + 1e-9
         return float(abs(np.trapezoid(-flux[k], ts[k])))
     raise ValueError(f"single_f4_pop: unknown what={what!r}")

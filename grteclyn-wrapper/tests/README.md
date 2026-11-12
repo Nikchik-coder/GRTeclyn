@@ -1,14 +1,14 @@
 # grteclyn-wrapper Tests
 
-Pytest suite organized by domain, mirroring `grteclyn_wrapper/` package layout.
+Pytest suite organized by domain, mirroring `grteclyn_workflows/` package layout.
 
 ## Layout
 
 | Path | Module under test | Example |
 |------|-------------------|---------|
 | `conftest.py` | Shared fixtures (`rng`) | — |
-| `metrics/scoring/` | `metrics.score` — objectives, tiers, stability, horizon guards | `uv run pytest tests/metrics/scoring/ -q` |
-| `metrics/ftl/` | `metrics.probes.ftl`, energy conditions, campaign diagnostics | `uv run pytest tests/metrics/ftl/ -q` |
+| `metrics/scoring/` | `metrics.score` — objectives, tiers, stability, horizon guards | `uv run pytest tests/search/scoring/ -q` |
+| `metrics/ftl/` | `metrics.probes.ftl`, energy conditions, campaign diagnostics | `uv run pytest tests/diagnostics/ftl/ -q` |
 | `search/` | `search.qd_search`, `search.optimize`, retention, trajectory logging | `uv run pytest tests/search/ -q` |
 | `grtresna/` | `grtresna.*` — solver, ansätze, I/O, matter, convergence | `uv run pytest tests/grtresna/ -q` |
 | `projection/` | `projection.*` — geometry-first → GRTresna pipeline | `uv run pytest tests/projection/ -q` |

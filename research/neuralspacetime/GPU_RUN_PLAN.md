@@ -147,7 +147,7 @@ in flight, solves may run freely.
       source, Q-torus work committed.)*
 - [x] Disk: ≥ 150 GB free under `runs/` *(3.5 TB free)*.
 - [x] No orphaned orchestrators or solvers alive from earlier sessions
-      (`pgrep -af "grteclyn_wrapper|grtresna|main3d|gpu_queue"`).
+      (`pgrep -af "grteclyn_workflows|grtresna|main3d|gpu_queue"`).
       *(One caveat found during 0: `main3d...ex.pre_trsfix` no longer exists
       anywhere — the optional Phase 1b A/B is impossible.)*
 

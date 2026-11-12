@@ -32,7 +32,7 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 ## Software validation — 2026-11-12
 
 Source `f17403e01` extracts `grteclyn-stationary` as a standalone package.
-**Complete: 961 tests passed, 12 skipped.** One additional missing-template
+Earlier selected checks recorded **961 tests passed, 12 skipped**. One additional missing-template
 failure (`test_rotating_wormhole_consumer_uses_psi4_profile`) reproduces on the
 original source: `Examples/RotatingWormholeCollapse/params_rotating_grtresna_exotic.txt`
 is absent. Physics equations and acceptance gates are unchanged.
@@ -50,6 +50,18 @@ GPU or checkpoints. Logs remain in `runs/capped_jobs/stationary-packaging-cpu-20
 The unsuffixed attempt exited 127 before pytest because `/usr/bin/time` was
 absent; its log remains. No tests are left running. Scratch absent (0 GB);
 `/tmp` 440 GB free. No data cleanup performed.
+
+### Workflow namespace follow-up — 2026-11-12
+
+The application is now `grteclyn_workflows` (`grteclyn-workflows` distribution and
+command). Evolution, diagnostics, scoring, postprocessing and plotting have
+separate owners. Generated source figures were deleted; saved result data is
+unchanged. Local selected checks: **1,137 passed, 13 skipped**. Seven broad-suite
+failures also occur on the pre-rename source; details and excluded expensive
+checks are in `grteclyn-wrapper/ARCHITECTURE.md`. No cluster run was launched.
+Two previously committed indentation errors in stationary entry points were
+found and fixed. The earlier selected pass count did not establish that every
+entry point imported successfully, or that full campaign outputs were unchanged.
 
 ## Live and queue
 
