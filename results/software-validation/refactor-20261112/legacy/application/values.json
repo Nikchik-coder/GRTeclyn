@@ -1,0 +1,23 @@
+{
+  "metrics": {
+    "constraint_spike_time": null,
+    "final_hamiltonian_l2": 0.00010651750384,
+    "final_momentum_l2": 5.949377343e-05,
+    "final_peak_rho_required": null,
+    "final_time": 100.0,
+    "ham_spike_ratio": 1.0010997318911388,
+    "has_constraint_spike": false,
+    "has_refined_region": false,
+    "initial_peak_rho_required": null,
+    "integral_negative_rho": null,
+    "max_hamiltonian_l2": 0.00020699606876,
+    "max_hamiltonian_l2_amr": null,
+    "max_hamiltonian_l2_amr_ref": null,
+    "max_hamiltonian_linf_amr": null,
+    "max_momentum_l2": 8.6566030019e-05,
+    "max_rho_required": null,
+    "max_step_ham_ratio": 1.0237819306903035,
+    "min_rho_required": null,
+    "mom_spike_ratio": 14.282523318295015
+  }
+}

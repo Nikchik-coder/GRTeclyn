@@ -1,0 +1,20 @@
+{
+  "backend": "cpu",
+  "case": "accepted_ring",
+  "dependencies": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "matplotlib": "3.10.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "inputs": {
+    "results/railgun/studies/spherical-to-ring-first/attempt_005.json": "1f41e4f399be5a614a264d08e4902af2f5eaddb465d1a5a28f0e1a0b9ab45a30",
+    "results/railgun/studies/spherical-to-ring-first/attempt_005.npz": "5e752e7bb09c6ca61b812e8e173818e8c96d74df9cd4685bb6e945afa75e878c"
+  },
+  "python": "3.12.14",
+  "revision": "2f1c450604956cc31d927ae096490e291aa81cef",
+  "seconds": 14.598380119074136,
+  "version": "legacy",
+  "wrapper_imports_blocked": false
+}
