@@ -15,9 +15,10 @@ Builds: BinaryWormholeMerger, SpinningWormhole and RadialRecipe; separate
 executables, with the production pins retained. First comparison: archived
 `place_d8_step1_csm`, unchanged N=128, L=64, three refinement levels,
 mode-3 constraint solve, dt=0.01 and one coarse evolution step.
-State: post-upstream placement job launched on the first node/card 0;
-preflight/start checks pending. Time limit 0.5 h; no speed/ETA yet.
-Pre-upstream build is still compiling. Logs:
+State: placement jobs launched on first-node cards 0 (after) and 1 (before).
+Both merger CUDA builds succeeded. After-job preflight passed all 14 frames;
+one-step evolution finished at t=0.01, consumer draining. Before-job is
+solving initial data. Each job has a 0.5 h limit; comparison pending. Logs:
 `runs/upstream-evolution-20261112/`. Comparisons will report evolved fields
 and derived diagnostics separately. No full-campaign equivalence established.
 
