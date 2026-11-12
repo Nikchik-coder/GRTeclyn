@@ -15,10 +15,14 @@ Builds: BinaryWormholeMerger, SpinningWormhole and RadialRecipe; separate
 executables, with the production pins retained. First comparison: archived
 `place_d8_step1_csm`, unchanged N=128, L=64, three refinement levels,
 mode-3 constraint solve, dt=0.01 and one coarse evolution step.
-State: placement jobs launched on first-node cards 0 (after) and 1 (before).
-Both merger CUDA builds succeeded. After-job preflight passed all 14 frames;
-one-step evolution finished at t=0.01, consumer draining. Before-job is
-solving initial data. Each job has a 0.5 h limit; comparison pending. Logs:
+State: both placement evolutions finished at t=0.01; consumers draining.
+All 20 evolved fields agree within 4.8e-16. Weyl4 differs by up to 0.0371.
+The old callback defaulted the misspelled `G_newton` key to zero; the new
+callback uses `G_Newton`/matter coupling. A third one-step old-binary run
+with **only** `G_newton=1` is launched on first-node card 0 to isolate that
+cause (0.5 h cap; no checkpoints). The updated merger, spin and scalar CUDA
+binaries are built. Production pins remain unchanged.
+Logs:
 `runs/upstream-evolution-20261112/`. Comparisons will report evolved fields
 and derived diagnostics separately. No full-campaign equivalence established.
 
