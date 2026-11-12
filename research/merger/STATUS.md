@@ -6,6 +6,21 @@ What is live, what is planned, the main results — nothing else. Run-by-run out
 `git show f2c4caa9:research/merger/STATUS.md`. **When a run ends, its row leaves Live and its result goes into
 Main results in a line or two; the details go to the registry.**
 
+## Upstream rebuild validation — 2026-11-12
+
+Authorized: rebuild the C++ research binaries and compare pre-upstream
+`66ed1a658` with `ef14909fc` on the first GPU node. Checkpoints disabled.
+Both revisions use the same CUDA/MPI toolchain and AMReX `d7da50458966`.
+Builds: BinaryWormholeMerger, SpinningWormhole and RadialRecipe; separate
+executables, with the production pins retained. First comparison: archived
+`place_d8_step1_csm`, unchanged N=128, L=64, three refinement levels,
+mode-3 constraint solve, dt=0.01 and one coarse evolution step.
+State: post-upstream placement job launched on the first node/card 0;
+preflight/start checks pending. Time limit 0.5 h; no speed/ETA yet.
+Pre-upstream build is still compiling. Logs:
+`runs/upstream-evolution-20261112/`. Comparisons will report evolved fields
+and derived diagnostics separately. No full-campaign equivalence established.
+
 ## Live
 
 No run is live. Both nodes are idle: the first node's two H100s since 03:10 UTC 10-08 (scratch empty, 1.1T free),
