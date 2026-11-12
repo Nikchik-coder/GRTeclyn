@@ -58,37 +58,37 @@ command). Evolution, diagnostics, scoring, postprocessing and plotting have
 separate owners. Generated source figures were deleted; saved result data is
 unchanged. Local selected checks: **1,137 passed, 13 skipped**. Seven broad-suite
 failures also occur on the pre-rename source; details and excluded expensive
-checks are in `grteclyn-wrapper/ARCHITECTURE.md`. No cluster run was launched.
+checks are in `grteclyn-wrapper/ARCHITECTURE.md`. Those checks were local;
+the subsequent cluster comparison is recorded below.
 Two previously committed indentation errors in stationary entry points were
 found and fixed. The earlier selected pass count did not establish that every
 entry point imported successfully, or that full campaign outputs were unchanged.
 
+### Cluster before/after reproduction — 2026-11-12
+
+**Six workflows PASS**, first node CPU, `refactor-e2e-20261112-r2`,
+**12:16:29–12:19:27 MSK (0.0494 h)**, exit 0. Source `bf4e3b2e6`
+versus pre-extraction `2f1c4506`, using identical dependencies and inputs.
+Fresh wheels ran outside the checkout with wrapper imports blocked for the
+solver. Two spinning solves and table exports agree to **3.20e-14** in their
+arrays. Perturbed spherical recovery, accepted/rejected ring validation,
+boson-star ODE profiles, constraint metrics and plot pixels match exactly.
+Both versions pass the unchanged physical gates; the area minimizer's throat
+coordinate differs by **6.25e-9**, within its float64 localization precision.
+[Saved fields, figures and comparison](../../results/software-validation/refactor-20261112/).
+
+Four pinned CPU cores, 64 GiB address-space cap, 0.5 h limit. No GPU,
+time evolution or AMReX checkpoints; this is bounded solver/export/analysis
+reproduction, not a rerun of every campaign. The first attempt, source
+`8a894f30a`, ran **12:10:33–12:13:37 MSK (0.0511 h)** and exited 1 at
+the legacy plot import because the harness omitted `GRTECLYN_ROOT`; all
+five solver cases had passed. Its logs remain alongside the successful retry
+under `runs/capped_jobs/` and `runs/refactor-e2e-20261112*/`.
+No tests remain running. Scratch absent (0 GB), 440 GB free; no cleanup.
+The cluster venv now installs both renamed packages; both CLI help checks pass.
+The obsolete wrapper distribution was removed without changing dependencies.
+
 ## Live and queue
-
-**Full software reproduction retry running**, first node CPU,
-`refactor-e2e-20261112-r2`, source `bf4e3b2e6`, started **12:16:29 MSK**.
-Fresh wheels and all six cases rerun after the checkout-root harness fix.
-Same four CPU cores and 64 GiB cap; **0.5 h hard limit (12:46:29 MSK)**.
-Previous timings suggest approximately **0.06 h (12:20 MSK)** to completion.
-No GPU, evolution or AMReX checkpoints. Scratch absent (0 GB), 440 GB free.
-
-**First software reproduction attempt stopped**, first node CPU,
-`refactor-e2e-20261112`, source `8a894f30a`, started **12:10:33 MSK,
-2026-11-12**. Pre-extraction source `2f1c4506` versus installed stationary
-and workflows wheels: two spinning solves and background-table exports,
-perturbed spherical recovery, accepted/rejected ring validation, boson-star
-ODE solve, constraint metrics and plot regeneration. Identical inputs and
-dependencies; wrapper imports blocked during standalone wheel solves.
-Four pinned CPU cores, 64 GiB address-space cap, **1 h hard limit
-(13:10:33 MSK)**; no GPU, evolution or AMReX checkpoints. Stopped at
-**12:13:37 MSK (0.051 h), exit 1**: both versions passed all five solver
-cases, then the legacy plot import required an explicit `GRTECLYN_ROOT`.
-No scientific solve failed. Spinning fields differ by at most 3.20e-14;
-the throat minimizer shifts by 6.25e-9, with both versions inside every
-original physical gate. The comparator now distinguishes physical fields,
-gate residuals and sqrt(eps)-limited minimum locations; no solver acceptance
-limit changes. Logs and outputs: `runs/refactor-e2e-20261112/` and
-`runs/capped_jobs/refactor-e2e-20261112/`. Scratch absent (0 GB), 440 GB free.
 
 **Full-coefficient recovery COMPLETE; source qualified for evolution.**
 `railgun-ergo372-full-spectral-20261104`, first two-GPU node/card 0,

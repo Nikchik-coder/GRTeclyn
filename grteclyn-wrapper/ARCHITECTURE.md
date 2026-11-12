@@ -252,3 +252,48 @@ Collection also exposed two indentation errors already committed in stationary
 profile/continuation entry points. They were corrected, and their tests pass.
 The earlier package extraction's aggregate pass count did not establish that all
 of its entry points could be imported.
+
+## Cluster reproduction — 2026-11-12
+
+Six bounded before/after workflows passed on the first node's CPU in 178 seconds
+(12:16:29–12:19:27 MSK), job `refactor-e2e-20261112-r2`. The baseline is
+pre-extraction commit `2f1c4506`; new wheels were built from `bf4e3b2e6`, installed
+outside the checkout and used with wrapper imports blocked during solver cases.
+Both sides used Python 3.12.14, JAX/JAXlib 0.11.2, NumPy 2.4.6 and SciPy 1.17.1.
+The cluster venv was also refreshed with both editable packages and the old
+wrapper distribution removed; both CLI help checks pass, with dependencies unchanged.
+
+- Spinning solves at J=0.25 (48x12) and J=1 (64x16), save/load, and SPINBG export:
+  maximum field/table difference 3.20e-14; both pass the existing identity gates.
+- A perturbed 96x12 spherical solution recovered with two Newton corrections,
+  saved and reloaded, then checked with independent equations: identical outputs.
+- Accepted and rejected two-field ring archives retain their validation verdicts
+  and diagnostics, including independent Einstein/Klein–Gordon checks.
+- A self-gravitating boson star solved from central amplitude 0.1: identical
+  radial fields, frequency, mass and compactness.
+- Archived evolution constraints parsed and plotted: identical metrics and PNG
+  pixels. The generated plot was also inspected visually.
+
+Fields, tables and ordinary observables use rtol=1e-10 and atol=1e-12. Residual
+diagnostics must pass the original physical gates on both sides. The throat
+area minimizer resolves positions only to approximately sqrt(float64 epsilon):
+its coordinate differs by 6.25e-9, while the areas and field arrays agree under
+the strict comparison. These differences are retained explicitly in the report;
+no solver acceptance limit was changed. The first harness attempt omitted the
+legacy plotter's checkout-root environment variable; the complete retry passed.
+
+[Evidence](../results/software-validation/refactor-20261112/comparison.json)
+includes input hashes, source revisions, dependencies, raw arrays and figures.
+Recheck the archived comparison without a solve:
+
+```bash
+grteclyn-wrapper/.venv/bin/python \
+  grteclyn-wrapper/scripts/validation/refactor_reproduction.py compare \
+  --out results/software-validation/refactor-20261112
+```
+
+For a fresh run, use `scripts/validation/run_refactor_reproduction.sh` through
+`scripts/ops/capped_job.sh`, with four CPU cores, 64 GiB address space and a
+bounded timeout. The script builds both wheels, selects the original source
+through Git, and exports `GRTECLYN_ROOT` for the application checks. This does
+not rerun GPU solves, C++ time evolution, or every research campaign.
