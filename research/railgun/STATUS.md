@@ -65,6 +65,18 @@ entry point imported successfully, or that full campaign outputs were unchanged.
 
 ## Live and queue
 
+**Software reproduction check running**, first node CPU,
+`refactor-e2e-20261112`, source `8a894f30a`, started **12:10:33 MSK,
+2026-11-12**. Pre-extraction source `2f1c4506` versus installed stationary
+and workflows wheels: two spinning solves and background-table exports,
+perturbed spherical recovery, accepted/rejected ring validation, boson-star
+ODE solve, constraint metrics and plot regeneration. Identical inputs and
+dependencies; wrapper imports blocked during standalone wheel solves.
+Four pinned CPU cores, 64 GiB address-space cap, **1 h hard limit
+(13:10:33 MSK)**; no GPU, evolution or AMReX checkpoints. Runtime ETA not
+yet measured. Logs and outputs: `runs/refactor-e2e-20261112/` and
+`runs/capped_jobs/refactor-e2e-20261112/`. Scratch absent (0 GB), 440 GB free.
+
 **Full-coefficient recovery COMPLETE; source qualified for evolution.**
 `railgun-ergo372-full-spectral-20261104`, first two-GPU node/card 0,
 source `178c15ba8`, **11:01:42-11:18:01 MSK**, exit 0.
