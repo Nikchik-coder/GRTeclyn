@@ -1,0 +1,8 @@
+{
+  "start_msk": "2026-11-01 12:41:00",
+  "end_msk": "2026-11-01 12:53:33",
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "checkpoints": false
+}

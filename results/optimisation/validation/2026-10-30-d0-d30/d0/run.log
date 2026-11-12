@@ -1,0 +1,15 @@
+[capped_job] start 2026-10-30T18:42:38Z threads=4 mem=220G timeout=7200s
+Solving 150x30: J=0, R_e=3.88954939871
+{"nx": 150, "ny": 30, "newton": 3.2181475063136573e-13, "iters": 2, "X": 1.8387274407998062, "X_A": 1.838727440799795, "VIQ": -7.1518212117566735, "R_e": 3.889549398711202, "R_A": 3.8895493987112255, "R_pol": 3.889549398711273, "sigma": 2.3738917163311983, "E19": 7.944819190485151e-05, "E_c": 2.429123961145604e-10, "J_error": 0.0, "pin_error": 1.1468603844377867e-13, "tails": 6.940927133604588e-09, "lapse_min": 0.20787957635076193, "stability": "not_assessed", "scalar_in_vacuum_interval": true, "verdict": "ABOVE_GATE", "seconds": 12.486968598794192}
+Solving 180x36: J=0, R_e=3.88954939871
+Traceback (most recent call last):
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 86, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "grteclyn-wrapper/scripts/optimisation/validate_candidate.py", line 57, in main
+    state, row = solve_trial(state, config, nx, ny, pin, d2, max_iter=24)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/exploration.py", line 158, in solve_trial
+    raise RuntimeError(f"Newton residual {residual:.3e}: {info.get('reason', 'iteration cap')}")
+RuntimeError: Newton residual 1.055e-09: line search stalled
+[capped_job] end 2026-10-30T18:43:06Z exit=1

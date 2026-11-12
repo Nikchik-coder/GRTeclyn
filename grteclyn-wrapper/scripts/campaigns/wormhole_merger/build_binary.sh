@@ -44,10 +44,17 @@ set -euo pipefail
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
-EXAMPLE="${REPO}/Examples/BinaryWormholeMerger"
-BIN_DIR="${REPO}/runs/wormhole_merger/bin"
-LOG_DIR="${REPO}/runs/wormhole_merger/logs"
-MANIFEST="${REPO}/results/merger/binaries.tsv"
+# Reuse the provenance-preserving build for canonical ring evolutions too.
+# Default campaign behaviour is unchanged; the ring wrapper sets these paths.
+EXAMPLE_NAME="${WHM_BUILD_EXAMPLE:-BinaryWormholeMerger}"
+case "${EXAMPLE_NAME}" in
+  BinaryWormholeMerger|RadialRecipe) ;;
+  *) echo "unsupported WHM_BUILD_EXAMPLE: ${EXAMPLE_NAME}" >&2; exit 2 ;;
+esac
+EXAMPLE="${REPO}/Examples/${EXAMPLE_NAME}"
+BIN_DIR="${WHM_BINARY_DIR:-${REPO}/runs/wormhole_merger/bin}"
+LOG_DIR="${WHM_BUILD_LOG_DIR:-${REPO}/runs/wormhole_merger/logs}"
+MANIFEST="${WHM_BINARY_MANIFEST:-${REPO}/results/merger/binaries.tsv}"
 AMREX="$(cd -- "${REPO}/../amrex" 2>/dev/null && pwd || true)"
 FLAGS="${WHM_BUILD_FLAGS:-USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90}"
 BUILD_SUB="tmp_build_dir/pin"          # relative to the example; gitignored
@@ -68,7 +75,7 @@ done
 [[ "${TAG}" =~ ^[A-Za-z0-9]+$ ]] || { echo "--tag must be letters and digits only" >&2; exit 2; }
 
 # --- what goes into the binary, and is it committed? -------------------------
-SRC_PATHS=(Source Examples/BinaryWormholeMerger Tools/GNUMake)
+SRC_PATHS=(Source "Examples/${EXAMPLE_NAME}" Tools/GNUMake)
 dirty_list="$(git -C "${REPO}" status --porcelain --untracked-files=no -- "${SRC_PATHS[@]}")"
 commit="$(git -C "${REPO}" rev-parse --short=8 HEAD)"
 version="${commit}"
@@ -92,8 +99,8 @@ DEST="${BIN_DIR}/${NAME}"
 echo "[build] source   : ${commit}$( [[ -n "${dirty_list}" ]] && echo " + uncommitted changes (-dirty)")"
 echo "[build] amrex    : ${amrex_version}"
 echo "[build] flags    : ${FLAGS}"
-echo "[build] objects  : Examples/BinaryWormholeMerger/${BUILD_SUB}$( (( CLEAN )) && echo " (wiped first)")"
-echo "[build] output   : runs/wormhole_merger/bin/${NAME}"
+echo "[build] objects  : Examples/${EXAMPLE_NAME}/${BUILD_SUB}$( (( CLEAN )) && echo " (wiped first)")"
+echo "[build] output   : ${DEST#"${REPO}"/}"
 [[ -e "${DEST}" ]] && { echo "[build] ${NAME} already exists -- nothing to do (delete it to rebuild)" >&2; exit 1; }
 (( DRYRUN )) && { echo "[build] dry run -- nothing built."; exit 0; }
 
@@ -118,12 +125,12 @@ fi
 command -v nvcc >/dev/null 2>&1 || { echo "[build] nvcc not found" >&2; exit 1; }
 nvcc_version="$(nvcc --version | tail -n 1)"
 
-mkdir -p "${BIN_DIR}" "${LOG_DIR}"
+mkdir -p "${BIN_DIR}" "${LOG_DIR}" "$(dirname "${MANIFEST}")"
 LOG="${LOG_DIR}/build_${NAME%.ex}.log"
 (( CLEAN )) && rm -rf "${EXAMPLE:?}/${BUILD_SUB}"
-# The version string is compiled into Main_BinaryWormhole.o only (SetupFunctions.hpp),
+# The version string is compiled into Main_*.o only (SetupFunctions.hpp),
 # and make does not track -D flags, so that one object is always rebuilt.
-find "${EXAMPLE}/${BUILD_SUB}" -name 'Main_BinaryWormhole.o' -delete 2>/dev/null || true
+find "${EXAMPLE}/${BUILD_SUB}" -name 'Main_*.o' -delete 2>/dev/null || true
 rm -f "${EXAMPLE}"/pin3d.*.ex
 
 echo "[build] building (log: ${LOG#"${REPO}"/}) ..."
@@ -159,9 +166,9 @@ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
   "${NAME}" "${sha:0:16}" "${version}" "${amrex_version}" "$(date -u +%FT%TZ)" \
   "${FLAGS}" "${nvcc_version}" "build_binary.sh" "${NOTE}" >> "${MANIFEST}"
 
-echo "[build] done in ~${minutes} min: runs/wormhole_merger/bin/${NAME}"
+echo "[build] done in ~${minutes} min: ${DEST#"${REPO}"/}"
 echo "[build] sha256   : ${sha}"
-echo "[build] manifest : results/merger/binaries.tsv (commit it)"
-echo "[build] launch with: --binary runs/wormhole_merger/bin/${NAME}"
+echo "[build] manifest : ${MANIFEST#"${REPO}"/} (commit it)"
+echo "[build] launch with: --binary ${DEST#"${REPO}"/}"
 exit
 }

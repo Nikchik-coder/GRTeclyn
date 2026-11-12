@@ -303,7 +303,7 @@ the whole matter energy into the elliptic `ψ`-solve (the standard
 York/Lichnerowicz CMC construction, valid for either sign of `ρ`).
 
 **The bug is the rule that chooses between them**
-(`grteclyn-wrapper/src/grteclyn_wrapper/grtresna/fit/motif.py`):
+(`grteclyn-wrapper/src/grteclyn_workflows/grtresna/fit/motif.py`):
 
 ```python
 maximal_slicing=has_exotic or motif.exotic_needed,

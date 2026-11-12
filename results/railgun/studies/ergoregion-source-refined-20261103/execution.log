@@ -1,0 +1,44 @@
+[capped_job] start 2026-11-03T14:49:49Z threads=4 mem=160G timeout=3600s
+Tue Nov  3 14:49:49 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   1  NVIDIA H100 80GB HBM3          On  |   00000000:AE:00.0 Off |                    0 |
+| N/A   32C    P0             76W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         879G  505G  329G  61% /
+4.0K	<scratch>/_cache
+..........................                                               [100%]
+26 passed in 23.09s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.607e-06 -> 1.702e-10 (t = 1)
+[newton] iter 1: |R| 1.702e-10 -> 5.365e-14 (t = 1)
+[newton] iter 2: |R| 5.365e-14 -> 2.989e-14 (t = 0.5)
+[newton] iter 3: |R| 2.989e-14 -> 1.595e-14 (t = 0.125)
+[newton] converged at iter 4: |R|_inf,scaled = 1.335e-15
+{"event": "grid", "grid": [224, 28], "verdict": "PASS", "reasons": [], "seconds": 54.904741929029115}
+[newton] iter 0: |R| 3.159e-06 -> 1.490e-10 (t = 1)
+[newton] iter 1: |R| 1.490e-10 -> 1.775e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.590e-15
+{"event": "grid", "grid": [256, 32], "verdict": "REJECT", "reasons": ["constraint_c"], "seconds": 72.49392867204733}
+{
+  "stationary_accepted": false,
+  "evolution_qualified": false,
+  "source_sha256": "918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f",
+  "checkpoints": false
+}
+[capped_job] end 2026-11-03T14:52:26Z exit=2

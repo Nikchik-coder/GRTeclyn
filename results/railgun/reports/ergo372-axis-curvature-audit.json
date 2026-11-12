@@ -1,0 +1,79 @@
+{
+  "source": "results/railgun/studies/ergo372-smooth-cubic-r2-20261104/accepted.npz",
+  "source_sha256": "1140a0d9c2f08d00de3feedf8d399aab5e9589bed637d502b60c2f081d833357",
+  "method": "Analytic Cartesian derivatives on the rotation axis, evaluated in long double from the unchanged saved polynomial. Compare against the same degree-12 Cartesian core; no filtering or solve.",
+  "rows": [
+    {
+      "radius": 0.004,
+      "maximum": 7.104592071366291e-08,
+      "component": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "parent": -1.1531054173675817,
+      "core": -1.153105346321661
+    },
+    {
+      "radius": 0.016,
+      "maximum": 1.201758096465097e-09,
+      "component": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "parent": -1.1624860918852542,
+      "core": -1.1624860930870122
+    },
+    {
+      "radius": 0.0392,
+      "maximum": 5.996436624154666e-10,
+      "component": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "parent": -1.208573103688444,
+      "core": -1.2085731042880876
+    },
+    {
+      "radius": 0.0408,
+      "maximum": 4.367198246915324e-10,
+      "component": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "parent": -1.2128285508255556,
+      "core": -1.2128285512622754
+    },
+    {
+      "radius": 0.056,
+      "maximum": 6.524521699823038e-10,
+      "component": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "parent": -1.257515285668092,
+      "core": -1.257515286320544
+    },
+    {
+      "radius": 0.0792,
+      "maximum": 1.7349705005997862e-10,
+      "component": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "parent": 243.48872064038846,
+      "core": 243.48872064056195
+    }
+  ]
+}

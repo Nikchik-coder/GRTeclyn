@@ -1,0 +1,166 @@
+{
+  "config": {
+    "source_sha256": "bf92fd0c8a9be3bb75481e693f6927ea82757e30f843d06305e053a77280d82e",
+    "length": 2.5,
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "amplitude_factors": [
+      1.0,
+      1.06,
+      1.1236,
+      1.191016,
+      1.26247696,
+      1.3382255776,
+      1.418519112256,
+      1.50363025899136,
+      1.5938480745308417
+    ],
+    "max_solves": 27,
+    "max_iter": 30,
+    "newton_tol": 1e-14,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06
+  },
+  "source": "results/railgun/studies/frequency-deep/frequency_01/accepted.npz",
+  "plan": {
+    "metadata": {
+      "schema": 1,
+      "model": "canonical_regular_centre",
+      "nx": 160,
+      "ny": 20,
+      "length": 5.0,
+      "target_j": null,
+      "fields": [
+        {
+          "winding": 1,
+          "mass": 1.0,
+          "amplitude": 0.095,
+          "parity": "even",
+          "anchor_radius": 5.0,
+          "quartic": 0.0,
+          "sextic": 0.0
+        }
+      ],
+      "validated": true,
+      "stability": "not_assessed",
+      "frequency_targets": [
+        0.7
+      ],
+      "measured_amplitude_pins": [
+        0.015689536135570097
+      ]
+    },
+    "anchor_radius": 1.2028929844078005,
+    "initial_pin": 0.3073986678634803,
+    "source_frequency": 0.7,
+    "amplitudes": [
+      0.3073986678634803,
+      0.32584258793528914,
+      0.34539314321140646,
+      0.3661167318040909,
+      0.38808373571233634,
+      0.4113687598550765,
+      0.43605088544638104,
+      0.4622139385731639,
+      0.4899467748875538
+    ],
+    "max_solves": 27,
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "numerical_execution": false
+  },
+  "commit": "ec9b26998b0f8cff538a874e6aa889de0494d2e4",
+  "minimum_charge": 0.001306322429243766,
+  "stability": "not_assessed",
+  "bootstrap_reuse": {
+    "directory": "runs/railgun/single-ring/scans/ergoregion-amplitude-20261102",
+    "solves_spent": 3,
+    "solves_remaining": 24,
+    "checks": {
+      "passed": true,
+      "drifts": {
+        "lapse_min": 1.176836406102666e-14,
+        "gtt_max": 1.0297318553398327e-14,
+        "shift_norm_over_lapse_max": 7.360778653264788e-14,
+        "frequency": 3.752553823233029e-14
+      },
+      "ergoregion_resolved": false,
+      "gtt_three_grid_spread": 7.76601005725297e-14,
+      "frequencies": [
+        0.7000000000006971,
+        0.7000000000006763,
+        0.7000000000006388
+      ],
+      "common_point_extrema": [
+        {
+          "lapse_min": 0.4214597982860629,
+          "gtt_max": -0.13670195741647334,
+          "shift_norm_over_lapse_max": 0.510390464182026,
+          "gtt_max_point": {
+            "rho": 1.0688645906387535,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        },
+        {
+          "lapse_min": 0.42145979828597474,
+          "gtt_max": -0.13670195741640598,
+          "shift_norm_over_lapse_max": 0.5103904641821418,
+          "gtt_max_point": {
+            "rho": 1.0688645906387535,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        },
+        {
+          "lapse_min": 0.4214597982859865,
+          "gtt_max": -0.13670195741639568,
+          "shift_norm_over_lapse_max": 0.5103904641822155,
+          "gtt_max_point": {
+            "rho": 1.0688645906387535,
+            "z": 0.0
+          },
+          "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+        }
+      ],
+      "reparameterisation_drift": 2.8793717792319335e-12
+    },
+    "hashes": {
+      "manifest.json": "3582ddfb04c0b5772082ddc57a9ef32d5ba09200f3b9afd32be7a7cc8e832b44",
+      "outcome.json": "1649cb41e9b5a15bb156964147d5929c55b7cbe5b8979ee7e73fd939f1ae87e6",
+      "amplitude_00/manifest.json": "c476e85738d03bb26b3e68b17fd574cb84cd4081b190e4ec1842fb102aade4a1",
+      "amplitude_00/outcome.json": "87e5b3dfe9ca8304c30c1dd86dbd6d2515040eafa43b4ff5750c8288740fbc12",
+      "amplitude_00/grid_128x16.npz": "63a067317e02aa02bb60890631dc43a973517cbd447221e07c21e36cc7ad17aa",
+      "amplitude_00/grid_128x16.json": "e9daaf66c178bf142342f73f7a7e574fdc19170dd9853e213ae0f19b19740638",
+      "amplitude_00/grid_160x20.npz": "7fd30855d283373296740bba08394632189508b7a82b829c90b8ca4866371e8a",
+      "amplitude_00/grid_160x20.json": "a67342bc5be482d602c277436e5a3f4add1b8deeae543cab9f45bd6e0f08dedd",
+      "amplitude_00/grid_192x24.npz": "0b4a515f217bb48609cb872d1b25cba83f5d5c91deb4d5b43cb045a249f8d81b",
+      "amplitude_00/grid_192x24.json": "1398d7e83c7b173de9014d7e04ceb5b5049c2880d875fbd555509deb7323e76e"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+# GENERATED ROWS by build_binary.sh; hand-written rows for binaries built before it.
+main3d_ring070r2_3e6466ed_2026-11-02.ex	14c6dadf61899ad2	3e6466ed	26.02-12-gd7da5045	2026-11-02T05:51:40Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	Canonical ring initial data and complex scalar diagnostics
+main3d_ergo523amr_86d1e98b_2026-11-03.ex	647a00124aa1eaa2	86d1e98b	26.02-12-gd7da5045	2026-11-03T14:44:20Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	Aligned level data, phase-correct background boundaries, level constraints

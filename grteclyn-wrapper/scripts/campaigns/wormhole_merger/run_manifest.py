@@ -13,7 +13,7 @@ four arms named q1e2 ran without their quadrupole, two arms described as
 the exact params, the binary and the commit it carries, the source commit of
 the launcher, the node and card, the preflight verdict and the t = 0
 diagnostics -- and the run's end state at exit.  The analysis package's
-pack.run_index (grteclyn_wrapper.analysis.wormhole_merger) turns the packed
+pack.run_index (grteclyn_workflows.analysis.wormhole_merger) turns the packed
 manifests into runs_index.tsv and checks every name against its params.
 
 `backfill` reconstructs a manifest for a run launched before this existed, from

@@ -35,11 +35,8 @@ import math
 import numpy as np
 from numpy.typing import NDArray
 
-from grteclyn_wrapper.metrics.probes.ftl.geodesic import (
-    integrate_null_ray,
-    partial_inverse_metric,
-)
-from grteclyn_wrapper.metrics.probes.warpfactory import stress_energy
+from grteclyn_workflows.diagnostics.probes.ftl.geodesic import integrate_null_ray, partial_inverse_metric
+from grteclyn_workflows.diagnostics.probes.warpfactory import stress_energy
 
 
 def alcubierre_shape(r: NDArray, *, radius: float, sigma: float) -> NDArray:

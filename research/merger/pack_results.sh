@@ -30,7 +30,7 @@
 # both trees until closeout.sh and file_run.sh move it.  Each group's NOTES.md
 # is copied beside its runs; the generated notes (INSTABILITY.md, BRANCHES.md,
 # CLOCK_COMPARISON.md, WAVE_GATES.md) are written into their group by the
-# wrapper's analysis package (grteclyn_wrapper.analysis.wormhole_merger), which
+# wrapper's analysis package (grteclyn_workflows.analysis.wormhole_merger), which
 # resolves runs by name through its pack.paths.
 # 00_archive/ and 90_probes/ (build smoke tests, the initial-data check E) are
 # not packed: they are plan material, not results.
@@ -46,7 +46,7 @@
 # with a note.
 #
 # Machine identity is never hard-coded: absolute paths are scrubbed at runtime
-# by grteclyn_wrapper.packaging.scrub_paths using tokens derived from the
+# by grteclyn_workflows.packaging.scrub_paths using tokens derived from the
 # environment.
 #
 # Usage: bash research/merger/pack_results.sh
@@ -68,7 +68,7 @@ export ROOT SIM_ROOT
 PY_BIN="${ROOT}/grteclyn-wrapper/.venv/bin/python"
 [[ -x "${PY_BIN}" ]] || PY_BIN="${ROOT}/.venv/bin/python"
 [[ -x "${PY_BIN}" ]] || PY_BIN="$(command -v python3)"
-scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
+scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py" "$@"; }
 
 if [[ ! -d "${RUNS}" ]]; then
   echo "[pack-merger] no run tree at ${RUNS#"${ROOT}"/} -- nothing to do"
@@ -423,11 +423,11 @@ fi
 # ---------------------------------------------------------------------------
 # 4. Reductions: the generated notes and the small tables beside them
 # ---------------------------------------------------------------------------
-# The wrapper's analysis package (grteclyn-wrapper/src/grteclyn_wrapper/
+# The wrapper's analysis package (grteclyn-wrapper/src/grteclyn_workflows/
 # analysis/wormhole_merger, numpy only) writes markdown and .dat only, reading
 # nothing outside the pack.  Figures are step 5.
 export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
-ANA="grteclyn_wrapper.analysis.wormhole_merger"
+ANA="grteclyn_workflows.analysis.wormhole_merger"
 "${PY_BIN}" -m "${ANA}.pack.summary" "${DEST}"
 "${PY_BIN}" -m "${ANA}.pack.name_check" "${DEST}" || echo "[pack-merger] name check failed -- continuing"
 "${PY_BIN}" -m "${ANA}.pack.run_index" "${DEST}" || echo "[pack-merger] run index failed -- continuing"
@@ -439,10 +439,10 @@ ANA="grteclyn_wrapper.analysis.wormhole_merger"
 # 5. The figure package's one pack note (no figures)
 # ---------------------------------------------------------------------------
 # Every merger figure script lives in
-# grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/ so that
+# grteclyn-wrapper/src/grteclyn_workflows/plotting/wormhole_merger/ so that
 # all of them share one house style; they resolve runs by NAME and write into
 # results/merger/figures/<group>/.
-VIS="grteclyn_wrapper.visualisation.wormhole_merger"
+VIS="grteclyn_workflows.plotting.wormhole_merger"
 # No figure is drawn here any more (2026-09-26): figures/ is the paper's, and
 # the three modules this loop ran (plot_branches, plot_placement_curve,
 # plot_bbh_ringdown) drew figures the paper does not use -- a pack that

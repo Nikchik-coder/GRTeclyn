@@ -1,0 +1,147 @@
+{
+  "screen_completed": true,
+  "eigenproblems": 6,
+  "branches": [
+    {
+      "name": "mixed_inner_m2p5",
+      "resolved_linear_seed": true,
+      "frequency_relative_drift": 5.2693397193001745e-15
+    },
+    {
+      "name": "mixed_inner_m3",
+      "resolved_linear_seed": true,
+      "frequency_relative_drift": 2.61621061484002e-14
+    },
+    {
+      "name": "stacked_odd",
+      "resolved_linear_seed": true,
+      "frequency_relative_drift": 6.513499798636047e-15
+    }
+  ],
+  "records": [
+    {
+      "branch": "mixed_inner_m2p5",
+      "grid": [
+        96,
+        12
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 2.2755049597645125,
+        "relative_linear_residual": 1.6369823151464602e-12,
+        "printed_pde_relative_residual": 1.4414264207091318e-12,
+        "winding": 2,
+        "angular_dimensions": 13,
+        "radial_dimensions": 95,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "mixed_inner_m2p5_96x12.npz"
+    },
+    {
+      "branch": "mixed_inner_m2p5",
+      "grid": [
+        128,
+        16
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 2.2755049597645005,
+        "relative_linear_residual": 7.0627123836820405e-12,
+        "printed_pde_relative_residual": 6.7573688375430655e-12,
+        "winding": 2,
+        "angular_dimensions": 17,
+        "radial_dimensions": 127,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "mixed_inner_m2p5_128x16.npz"
+    },
+    {
+      "branch": "mixed_inner_m3",
+      "grid": [
+        96,
+        12
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 2.715923296578823,
+        "relative_linear_residual": 8.393022685944998e-13,
+        "printed_pde_relative_residual": 8.300608007597086e-13,
+        "winding": 2,
+        "angular_dimensions": 13,
+        "radial_dimensions": 95,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "mixed_inner_m3_96x12.npz"
+    },
+    {
+      "branch": "mixed_inner_m3",
+      "grid": [
+        128,
+        16
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 2.715923296578894,
+        "relative_linear_residual": 3.916246483579611e-12,
+        "printed_pde_relative_residual": 3.977299042020775e-12,
+        "winding": 2,
+        "angular_dimensions": 17,
+        "radial_dimensions": 127,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "mixed_inner_m3_128x16.npz"
+    },
+    {
+      "branch": "stacked_odd",
+      "grid": [
+        96,
+        12
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 0.9545174069403969,
+        "relative_linear_residual": 2.153643261080815e-11,
+        "printed_pde_relative_residual": 2.14756768245292e-11,
+        "winding": 1,
+        "angular_dimensions": 13,
+        "radial_dimensions": 95,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "stacked_odd_96x12.npz"
+    },
+    {
+      "branch": "stacked_odd",
+      "grid": [
+        128,
+        16
+      ],
+      "linear_mode_found": true,
+      "self_consistent": false,
+      "mode": {
+        "frequency": 0.9545174069403907,
+        "relative_linear_residual": 9.287363170656848e-11,
+        "printed_pde_relative_residual": 9.236632800535659e-11,
+        "winding": 1,
+        "angular_dimensions": 17,
+        "radial_dimensions": 127,
+        "eigensolver": "cusolver",
+        "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+      },
+      "seed": "stacked_odd_128x16.npz"
+    }
+  ],
+  "accepted_background": false,
+  "seconds": 8.531586440978572,
+  "next": "Continue the new field up and original field down; validate the pure new branch before adding any outer field.",
+  "scope": "No fractional winding, relabelled source, final two-ring state or demonstrated annular gap."
+}

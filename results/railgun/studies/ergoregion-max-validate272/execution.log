@@ -1,0 +1,35 @@
+[capped_job] start 2026-11-02T16:40:02Z threads=4 mem=160G timeout=1800s
+Mon Nov  2 16:40:03 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   1  NVIDIA H100 80GB HBM3          On  |   00000000:5D:00.0 Off |                    0 |
+| N/A   36C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         1.8T  1.1T  544G  68% /
+47M	<scratch>/_cache
+1.7G	<scratch>/ring070-n128-t2-20261102
+5.6G	<scratch>/ring070-n192-t2-20261102
+5.6G	<scratch>/ring070-n192-t50-20261102
+709M	<scratch>/ring070-n96-t2-r2-20261102
+.....................................................                    [100%]
+53 passed in 69.37s (0:01:09)
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 5.043e-06 -> 2.380e-10 (t = 1)
+[newton] iter 1: |R| 2.380e-10 -> 2.147e-14 (t = 1)
+{"event": "grid", "grid": [160, 20], "verdict": "REJECT", "reasons": ["newton"], "seconds": 43.274213440017775}
+[capped_job] end 2026-11-02T16:42:03Z exit=2

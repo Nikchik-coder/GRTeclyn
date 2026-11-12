@@ -1,0 +1,20 @@
+{
+  "branch": "mixed_inner_m2p5",
+  "grid": [
+    128,
+    16
+  ],
+  "linear_mode_found": true,
+  "self_consistent": false,
+  "mode": {
+    "frequency": 2.2755049597645005,
+    "relative_linear_residual": 7.0627123836820405e-12,
+    "printed_pde_relative_residual": 6.7573688375430655e-12,
+    "winding": 2,
+    "angular_dimensions": 17,
+    "radial_dimensions": 127,
+    "eigensolver": "cusolver",
+    "initialization": "nodeless full 2D quadratic KG bound mode on the rotating metric"
+  },
+  "seed": "mixed_inner_m2p5_128x16.npz"
+}

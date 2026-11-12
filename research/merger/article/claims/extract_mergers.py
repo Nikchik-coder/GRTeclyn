@@ -242,11 +242,11 @@ def mergers_restart_time(run: str) -> float:
 @extractor
 def mergers_figure_constant(module: str, name: str, index: int | None = None) -> float:
     """A constant a figure script fixes and its caption prints (a fit window, a
-    threshold): grteclyn_wrapper.visualisation.wormhole_merger.<module>.<name>[index]."""
+    threshold): grteclyn_workflows.plotting.wormhole_merger.<module>.<name>[index]."""
     import importlib
 
     value = getattr(importlib.import_module(
-        f"grteclyn_wrapper.visualisation.wormhole_merger.{module}"), name)
+        f"grteclyn_workflows.plotting.wormhole_merger.{module}"), name)
     return float(value if index is None else value[index])
 
 
@@ -501,7 +501,7 @@ def mergers_pit_revolutions(run: str, what: str = "rev", raw: bool = False) -> f
     Unlike mergers_revolutions (throat_track), the plunges are not stopped where the
     tracker fuses the two centres (separation ~2).  what = 'rev', 't' (time of closest
     approach), 'sep' (the separation there)."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_momentum_orbits as pmo
+    from grteclyn_workflows.plotting.wormhole_merger import plot_momentum_orbits as pmo
 
     merges = next((a[5] for a in pmo.ARMS if a[1] == run), True)
     t, one, two, _ = pmo.pit_tracks(run, None, merges)
@@ -545,7 +545,7 @@ def mergers_mouth(run: str, what: str) -> float:
     't_split', 'sep0', 'sep_split', 'tau' (e-fold of R/R0 - 1 fitted over t = 8-25),
     'seed', 'asym' (max |R_A - R_B|), 'min_sep', 't_end' (the scan's last time),
     'rms' (of ln(R/R0 - 1) about the tau fit)."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_mouth_growth as pmg
+    from grteclyn_workflows.plotting.wormhole_merger import plot_mouth_growth as pmg
 
     s = pmg._scan(run_dir(run) / "horizon_scan.dat")
     i = pmg._split(s)
@@ -570,7 +570,7 @@ def mergers_profile(run: str, what: str) -> float:
     """plot_spiral_collapse's reading of core_radial_profile.dat.gz: 'chi_floor' (first
     time min chi over the shells reaches the 1e-8 floor), 'spike_start' (first time after
     t = 45 the |K| peak stands 2x above the r = 0.4 background), 'first' / 'last' time."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import plot_spiral_collapse as psc
+    from grteclyn_workflows.plotting.wormhole_merger import plot_spiral_collapse as psc
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
@@ -610,7 +610,7 @@ _RADII_L128 = [20.0, 28.0, 36.0, 44.0]
 
 @functools.lru_cache(maxsize=64)
 def _mode(run: str, file: str, radii: tuple) -> tuple[np.ndarray, dict]:
-    from grteclyn_wrapper.visualisation.wormhole_merger import streams
+    from grteclyn_workflows.plotting.wormhole_merger import streams
 
     t, s = streams.load_mode(run_dir(run) / file, list(radii))
     order = np.argsort(t, kind="stable")
@@ -689,7 +689,7 @@ def mergers_energy_diff(a: str, b: str, radii: list, file: str = "Weyl4_mode_20.
                         m: int = 0, agg: str = "max") -> float:
     """100 |E_a - E_b| / E_a of psi4_math._compute_radiated_energy (the paper's energy
     function) on each arm's whole record, per sphere, aggregated over the spheres."""
-    from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import _compute_radiated_energy
+    from grteclyn_workflows.plotting.wormhole_merger.psi4_math import _compute_radiated_energy
 
     rr = tuple(_RADII_L128 if max(radii) > 18 else _RADII_L64)
     ta, sa = _mode(a, file, rr)
@@ -719,7 +719,7 @@ def mergers_psi4_level(run: str, radius: float, file: str = "psi4_mode_l2m0.dat"
 @extractor
 def mergers_stream_radius(run: str, file: str, index: int) -> float:
     """The index-th extraction sphere a mode stream's own header names."""
-    from grteclyn_wrapper.visualisation.wormhole_merger import streams
+    from grteclyn_workflows.plotting.wormhole_merger import streams
 
     _, s = streams.load_mode(run_dir(run) / file)
     return float(sorted(s)[index])
@@ -878,7 +878,7 @@ def mergers_solved_madm(run: str, col: str = "M_ADM") -> float:
     its binary prints one, else from analysis/boosted_adm_mass.tsv."""
     path = run_dir(run) / "constraint_solve.dat"
     if col == "M_ADM_boost" and "M_ADM_boost" not in path.read_text(encoding="utf-8"):
-        from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import boosted_adm_mass
+        from grteclyn_workflows.plotting.wormhole_merger.run_tree import boosted_adm_mass
         return float(boosted_adm_mass(run, pack_root=PACK))
     names = None
     for line in path.read_text(encoding="utf-8").splitlines():

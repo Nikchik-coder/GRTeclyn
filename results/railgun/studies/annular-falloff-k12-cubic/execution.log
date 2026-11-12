@@ -1,0 +1,7 @@
+[capped_job] start 2026-11-01T15:42:49Z threads=4 mem=160G timeout=1800s
+[falloff] solve 192x16, unknowns=19689
+[newton] iter 0: |R| 5.725e-08 -> 5.173e-16 (t = 1)
+[newton] iter 1: |R| 5.173e-16 -> 5.109e-16 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 7.453e-17
+[falloff] 192x16: REJECT, reasons=['asymptotic_dragging_modes']
+[capped_job] end 2026-11-01T15:44:10Z exit=2

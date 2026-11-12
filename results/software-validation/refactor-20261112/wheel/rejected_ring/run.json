@@ -1,0 +1,20 @@
+{
+  "backend": "cpu",
+  "case": "rejected_ring",
+  "dependencies": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "matplotlib": "3.10.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "inputs": {
+    "results/railgun/studies/spherical-to-ring-resumed/attempt_017.json": "c7bd3115b8715726e2298fc605ede4621696aeffdc47f336e24f80adff6ac760",
+    "results/railgun/studies/spherical-to-ring-resumed/attempt_017.npz": "ac2c7190b271677773a1305df026a99578bf7b19de807fe610e2fecad088a387"
+  },
+  "python": "3.12.14",
+  "revision": "bf4e3b2e6085122073fdd0b4401c1acfda9ff1cb",
+  "seconds": 14.467685970943421,
+  "version": "wheel",
+  "wrapper_imports_blocked": true
+}

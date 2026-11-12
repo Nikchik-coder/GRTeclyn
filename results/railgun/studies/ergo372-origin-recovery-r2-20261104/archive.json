@@ -1,0 +1,13 @@
+{
+  "original_files_sha256": {
+    "grid_224x28.json": "dc56a35f947ec622feb86f6ef1e0ba424b6e30b9cab46ffd94286093565a8b87",
+    "grid_224x28.npz": "64f19e5e9f27e1b5cb7b31d476bf7f8d5a43baf8924eb14cb2dde4007ab10e99",
+    "grid_256x32.json": "243aee85c1a838dfb66e4cada9cd502045ccbbed51278115112d41d6fc1c1735",
+    "grid_256x32.npz": "7d691da4a344c6f3eb3c54dffa0360d2f129164d624e98c8a01b73d8c9694291",
+    "interruption.json": "19bec27202e219c279e439d7a5ec4f0c8f884fff41f93dbefa0619dc0aeeca6f",
+    "manifest.json": "8d113fe10446c8ce5c741ac56cb72d6c592e84a02debd3e9d7a7bfbaf43106af",
+    "outcome.json": "78dc9e72da0f49a3615f091356c927fc876cf14f6ba33aa811bdeb11dd8de699"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/evolution/ergo372-origin-recovery-r2-20261104"
+}

@@ -1,0 +1,78 @@
+{
+  "config": {
+    "source_sha256": "2a417e307822456e07ccd14f9d4ed09796c61032458ea444656c3deeb8b4dc43",
+    "outer_winding": -12,
+    "target_j": 0.0,
+    "length": 50.0,
+    "grids": [
+      [
+        192,
+        16
+      ],
+      [
+        224,
+        18
+      ],
+      [
+        256,
+        20
+      ]
+    ],
+    "max_solves": 3,
+    "max_iter": 30,
+    "newton_tol": 1e-12,
+    "perturbation": 1e-05,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "edge_tol": 1e-06,
+    "relative_density_cutoff": 1e-06,
+    "channel_half_height": 10.0
+  },
+  "source_sha256": "2a417e307822456e07ccd14f9d4ed09796c61032458ea444656c3deeb8b4dc43",
+  "screen_commit": "928bde263fc7e2c15fed14d64b2650267e4c00f4",
+  "configuration_sha256": "cacfbc7a45eeca39a8c26281ea58280563f5c7c7fb867f3ed633b97f2d7a428e",
+  "commit": "8946f146d35b928978ec4af4b05be4b1e714ed4c",
+  "platform": "gpu",
+  "device_kind": "NVIDIA H100 80GB HBM3",
+  "jax": "0.11.2",
+  "float64": true,
+  "stage": "annular_finest_grid_correction",
+  "correction": {
+    "max_additional_solves": 1,
+    "prior_solves": 3,
+    "cumulative_solve_cap": 4,
+    "corrected_grid": [
+      256,
+      20
+    ],
+    "source_state": "grid_256x20.npz",
+    "prior_outcome_sha256": "f8d43aff8f471032c283c401d136b20862f21bc62183e2ecf8998d1476c3a706",
+    "source_state_sha256": "0e77cfb4b5d9b4a1e0faf5295d89ef5d44ba761efa5574e356ab861d884c01b7",
+    "reused_grids": [
+      [
+        192,
+        16
+      ],
+      [
+        224,
+        18
+      ]
+    ],
+    "perturbation": 0.0,
+    "minimum_new_updates": 2
+  },
+  "storage_plan": {
+    "unknowns": [
+      19689,
+      25653,
+      32385
+    ],
+    "eight_dense_buffers_GiB": [
+      23.10614114999771,
+      39.224410593509674,
+      62.51264959573746
+    ]
+  },
+  "stability": "not_assessed"
+}

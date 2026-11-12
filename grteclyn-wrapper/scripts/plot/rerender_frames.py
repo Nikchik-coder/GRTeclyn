@@ -112,9 +112,7 @@ def main(argv: list[str] | None = None) -> int:
     sys.path.insert(
         0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src")
     )
-    from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles.frames import (
-        slice_cache,
-    )
+    from grteclyn_workflows.postprocessing.frames import slice_cache
 
     frames_dir = os.path.abspath(args.frames_dir)
     cache_root = os.path.join(frames_dir, slice_cache.CACHE_DIR_NAME)

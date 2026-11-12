@@ -1,0 +1,4 @@
+[capped_job] start 2026-11-01T16:06:19Z threads=4 mem=160G timeout=1800s
+[precision] requested_offset/zero: stop=target_z, strict=True
+[precision] above_all/negative: stop=target_z, strict=True
+[capped_job] end 2026-11-01T16:10:14Z exit=2

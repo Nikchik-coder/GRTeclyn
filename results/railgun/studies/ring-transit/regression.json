@@ -1,0 +1,97 @@
+{
+  "commit": "96c81edc7df31503f41630ab6a617026e3867d2c",
+  "platform": "cuda",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "16",
+      "time": "48.286",
+      "timestamp": "2026-11-01T09:39:57.176389+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_transit",
+      "name": "test_exact_flat_transit_event_and_dense_samples",
+      "time": "2.608"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transit",
+      "name": "test_strict_transport_gate_rejects_small_relative_spin_drift",
+      "time": "0.009"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_flat_spinning_trajectory_and_spin_condition",
+      "time": "0.497"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_zero_spin_and_matched_launch_energy",
+      "time": "0.381"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inner_stop_is_explicit_and_does_not_cross_origin",
+      "time": "0.682"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_rotating_background_spin_force_and_killing_integrals",
+      "time": "2.472"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_inward_controls_retain_the_inward_velocity_branch",
+      "time": "0.375"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_transport",
+      "name": "test_certified_cartesian_corridor_crosses_the_origin_with_spin",
+      "time": "29.546"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.050"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.0]",
+      "time": "0.546"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.4]",
+      "time": "0.631"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.0]",
+      "time": "0.493"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.4]",
+      "time": "0.579"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_cartesian_interpolant_is_flat_and_finite_on_axis",
+      "time": "2.554"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_metric_interpolation_retains_coordinate_derivatives",
+      "time": "2.236"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_intrinsic_and_cartesian_kg_agree_with_winding_and_odd_parity",
+      "time": "3.965"
+    }
+  ]
+}

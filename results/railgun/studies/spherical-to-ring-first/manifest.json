@@ -1,0 +1,33 @@
+{
+  "config": {
+    "ring_field": {
+      "winding": 1,
+      "mass": 1.0,
+      "amplitude": 0.05,
+      "anchor_radius": 5.0
+    },
+    "initial_amplitude": 0.001,
+    "old_amplitude_floor": 0.001,
+    "steps": 8,
+    "max_solves": 24,
+    "max_splits": 6,
+    "max_iter": 30,
+    "grids": [
+      [
+        56,
+        8
+      ],
+      [
+        72,
+        10
+      ],
+      [
+        96,
+        12
+      ]
+    ]
+  },
+  "source_sha256": "0657d72339b9877a3b60299628335179f2ab8b3cec783a9fdac3dba290e70f33",
+  "stability": "not_assessed",
+  "winding_interpolation": false
+}

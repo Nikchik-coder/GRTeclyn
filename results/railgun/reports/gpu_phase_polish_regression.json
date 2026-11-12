@@ -1,0 +1,58 @@
+{
+  "commit": "f898960d",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "6",
+      "time": "3.734",
+      "timestamp": "2026-11-01T16:56:42.913198+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_axial_phase_polish",
+      "name": "test_only_the_two_failed_coarse_phase_controls_can_be_polished",
+      "time": "0.061",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_flat_phase_and_spin_corrected_energy_match_exact_transit",
+      "time": "0.036",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_first_turning_height_and_regular_phase_have_independent_precision",
+      "time": "0.021",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_axial_reduction",
+      "name": "test_substitution_into_full_cartesian_mpd_in_a_smooth_dragging_metric",
+      "time": "2.599",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill_precision",
+      "name": "test_two_failed_controls_are_the_only_eligible_tighter_integrations",
+      "time": "0.217",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.032",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T16:56:40Z threads=4 mem=160G timeout=1800s\n......                                                                   [100%]\n6 passed in 3.74s\n[capped_job] end 2026-11-01T16:56:47Z exit=0\n"
+}

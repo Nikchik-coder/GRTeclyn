@@ -1,0 +1,208 @@
+{
+  "commit": "fcb5ce624676915b5b4a231bc643beaa30e03f3e",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "31",
+      "time": "24.628",
+      "timestamp": "2026-11-02T07:03:52.154548+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_flat_harmonic_scalar_has_positive_normal_momentum_and_correct_normalization",
+      "time": "1.494",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_differential_rotation_gives_nonzero_extrinsic_curvature_and_J_minus_k_Q",
+      "time": "0.627",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_nonconformally_flat_geometry_keeps_contracted_connections",
+      "time": "0.447",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_time_dependent_metric_uses_minus_time_derivative_in_extrinsic_curvature",
+      "time": "0.465",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_ghost_padding_matches_loader_cell_centres_without_a_second_interpolation",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_unarchived_field_is_rejected_before_device_start",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_pilot_requires_a_certified_matching_export_and_explicit_checkpoint_choice",
+      "time": "0.801",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_malformed_grid_layout_is_rejected",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_evolution_join_has_six_continuous_derivatives_and_stays_convex",
+      "time": "5.853",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution",
+      "name": "test_batched_core_metric_derivatives_stay_finite_at_origin_and_far_from_patch",
+      "time": "2.884",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.029",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.0]",
+      "time": "0.701",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.4]",
+      "time": "0.609",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.0]",
+      "time": "0.489",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.4]",
+      "time": "0.579",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_cartesian_interpolant_is_flat_and_finite_on_axis",
+      "time": "2.593",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_metric_interpolation_retains_coordinate_derivatives",
+      "time": "2.222",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_intrinsic_and_cartesian_kg_agree_with_winding_and_odd_parity",
+      "time": "3.985",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_generalized_richardson_recovers_order_and_continuum_with_unequal_ratios[2.0]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_generalized_richardson_recovers_order_and_continuum_with_unequal_ratios[3.4]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_generalized_richardson_recovers_order_and_continuum_with_unequal_ratios[4.0]",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_generalized_richardson_recovers_order_and_continuum_with_unequal_ratios[6.0]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_unresolved_oscillatory_and_divergent_triplets_are_not_given_an_order",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_matched_times_require_real_samples_and_never_interpolate",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_end_to_end_order_report_and_honest_t0_floor",
+      "time": "0.041",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_corruption_or_changed_gauge_or_binary_blocks_comparison",
+      "time": "0.036",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_evolution_convergence",
+      "name": "test_third_grid_preparation_changes_only_resolution_knobs",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.scripts.test_shared_preflight",
+      "name": "test_matter_table_is_refused_on_a_legacy_binary[7-False]",
+      "time": "0.006",
+      "failed": false
+    },
+    {
+      "classname": "tests.scripts.test_shared_preflight",
+      "name": "test_matter_table_is_refused_on_a_legacy_binary[6-True]",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.scripts.test_shared_preflight",
+      "name": "test_six_column_table_remains_backward_compatible",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.scripts.test_shared_preflight",
+      "name": "test_matter_binary_accepts_the_extended_table",
+      "time": "0.003",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-02T07:03:50Z threads=4 mem=160G timeout=1800s\n...............................                                          [100%]\n31 passed in 24.63s\n[capped_job] end 2026-11-02T07:04:17Z exit=0\n"
+}

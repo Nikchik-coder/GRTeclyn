@@ -1,0 +1,7 @@
+{
+  "frequency": 0.965619785804399,
+  "relative_linear_residual": 2.5281085034829917e-10,
+  "radial_nodes": 0,
+  "winding": 1,
+  "initialization": "bound KG eigenmode on the spherical background"
+}

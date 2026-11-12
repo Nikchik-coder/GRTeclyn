@@ -1,0 +1,76 @@
+[capped_job] start 2026-11-04T06:12:01Z threads=4 mem=160G timeout=3431s
+Wed Nov  4 06:12:01 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:9B:00.0 Off |                    0 |
+| N/A   30C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         879G  505G  329G  61% /
+4.0K	<scratch>/_cache
+........................................................................ [ 79%]
+...................                                                      [100%]
+91 passed in 76.08s (0:01:16)
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+W1104 06:13:25.699360   39198 cuda_timer.cc:88] Delay kernel timed out: measured time has sub-optimal accuracy. There may be a missing warmup execution, please investigate in Nsight Systems.
+[newton] iter 0: |R| 3.142e-02 -> 2.003e-06 (t = 1)
+[newton] iter 1: |R| 2.003e-06 -> 1.533e-10 (t = 1)
+[newton] iter 2: |R| 1.533e-10 -> 2.021e-14 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 1.508e-15
+{"event": "grid", "grid": [224, 28], "verdict": "PASS", "reasons": [], "seconds": 79.58990061399527}
+[newton] iter 0: |R| 2.972e-06 -> 1.802e-11 (t = 1)
+[newton] iter 1: |R| 1.802e-11 -> 2.651e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.227e-15
+{"event": "grid", "grid": [256, 32], "verdict": "PASS", "reasons": [], "seconds": 106.31121096597053}
+W1104 06:16:36.662148   35832 hlo_rematerialization.cc:3363] Can't reduce memory use below 61.24GiB (65756433597 bytes) by rematerialization; only reduced to 63.92GiB (68639223072 bytes), down from 63.92GiB (68639223072 bytes) originally
+E1104 06:16:39.290411   39188 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 06:16:39.290679   39188 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 06:16:39.599359   39149 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 06:16:39.599638   39149 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+W1104 06:16:39.639195   35832 hlo_rematerialization.cc:3363] Can't reduce memory use below 61.24GiB (65756850633 bytes) by rematerialization; only reduced to 63.89GiB (68607143516 bytes), down from 63.89GiB (68607143516 bytes) originally
+[newton] iter 0: |R| 2.644e-06 -> 1.603e-11 (t = 1)
+[newton] iter 1: |R| 1.603e-11 -> 2.719e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.078e-15
+{"event": "grid", "grid": [288, 36], "verdict": "PASS", "reasons": [], "seconds": 123.60270708898315}
+{
+  "stationary_accepted": true,
+  "evolution_qualified": false,
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "checkpoints": false,
+  "refined_source_sha256": "1140a0d9c2f08d00de3feedf8d399aab5e9589bed637d502b60c2f081d833357"
+}
+[capped_job] end 2026-11-04T06:27:42Z exit=2

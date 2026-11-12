@@ -1,0 +1,153 @@
+\section{Physics of the optimized solutions}
+\label{sec:physics}
+
+The potential lowers the volume-integrated exoticity by concentrating the
+scalar variation into a narrower region near the throat. It does not weaken
+the NEC violation everywhere. We examine this redistribution in three
+selected $210\times42$ drainholes, denoted D0$^\star$, D21$^\star$ and
+D30$^\star$. These are finer-grid selections, distinct from the search minima
+in Tables~\ref{tab:models} and \ref{tab:X}. Table~\ref{tab:selected}
+lists their potential parameters and residuals. Selection requires the
+background constraints at the target size and spin on the finer grids;
+a smaller search-grid $X$ alone does not establish that accuracy.
+D0$^\star$ is a rescaled alternative candidate, D21$^\star$ is a separate
+selection from its original search, and D30$^\star$ comes from a fresh
+search with finer-grid screening of each new minimum. Each has its own massless reference at the same $R_e$, $J$
+and asymmetry. In particular, both members of the stationary D21 comparison
+have $J=\clmPhysicsDtwentyoneJ$.
+
+\begin{table*}[t]
+\caption{Selected $210\times42$ backgrounds used for the stationary physics
+comparison. Parameters are in the same convention as Table~\ref{tab:models};
+residuals test the two unused Einstein equations. All three meet the
+$10^{-8}$ background threshold at their matched reference size and spin.}
+\label{tab:selected}
+\small
+\begin{ruledtabular}
+\begin{tabular}{lrrrrrrr}
+model & $m$ & $q_1$ & $q_2$ & $q_3$ & $X$ & $|E_{19}|$ & $|E_c|$ \\
+\hline
+\clmSelectedRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.94\textwidth]{stationary/mechanism_d21.pdf}
+\caption{Stationary profiles of D21$^\star$ and its massless reference at the same
+$R_e$ and $J$. The signed equatorial proper distance $\ell$ is zero at the
+minimum-area throat. Panels show the equatorial scalar gradient, the angularly
+integrated contribution to $X$, the area radius of constant-$\eta$ surfaces,
+and the energy of a zero-angular-momentum photon measured by a local observer
+relative to its conserved energy at positive infinity. The potential
+concentrates the scalar gradient and exoticity near the throat while
+sharpening the interior redshift profile.}
+\label{fig:mechanism}
+\end{figure*}
+
+\subsection{Matter distribution and throat geometry}
+
+Figure~\ref{fig:mechanism} compares profiles against physical proper distance,
+rather than the radial coordinates of different numerical solutions. The
+local radial NEC deficit is the squared radial orthonormal scalar gradient $(\nabla_{\hat\eta}\psi)^2$ divided
+by $4\pi$. Here the radial null vector has unit energy in the local
+zero-angular-momentum observer's frame. The potential cancels from its direct
+null contraction, but changes the scalar and metric through the field equations.
+
+In D21$^\star$, the scalar excursion between the two ends falls from
+$\clmPhysicsExcursionClassical$ to $\clmPhysicsExcursionPotential$. Its remaining
+variation occurs over a much shorter distance, so the peak radial NEC
+violation is $\clmPhysicsPeakRatio$ times stronger. The proper width between
+the 5\% and 95\% cumulative contributions to $X$ decreases from
+$\clmPhysicsWidthClassical R_e$ to $\clmPhysicsWidthPotential R_e$. This measure
+includes the long classical tails beyond the plotted interval; it describes
+the matter distribution, not a change in throat radius. Angular scalar
+gradients remain small, giving a narrow radial layer rather than an
+equatorial ring.
+
+The same pattern occurs in the other two solutions
+(Table~\ref{tab:physics}). Their narrower distributions outweigh the higher
+peaks, reducing $X$ by $\clmPhysicsReductionRange\%$ across the three models.
+The equatorial throat radius is fixed, and the throat area changes by at most
+$\clmPhysicsAreaChange\%$. The rotating throats become slightly less oblate.
+Thus the reduction mainly reflects a changed scalar distribution, while the
+overall throat dimensions remain similar.
+
+A simple variational bound helps separate localization from a reduced
+field excursion. In a spherical radial model, let $A(\ell)$ be the area
+of a proper-distance sphere. Cauchy--Schwarz gives
+\begin{equation}
+\int A(\ell)\left(\frac{d\psi}{d\ell}\right)^2d\ell
+\ge \frac{(\Delta\psi)^2}{\displaystyle\int A(\ell)^{-1}d\ell}.
+\label{eq:cs}
+\end{equation}
+At fixed geometry and excursion, narrowing the scalar transition cannot
+lower this integral without limit. Here the excursion itself decreases,
+and the geometry responds. The support also moves toward smaller-area
+surfaces, removing the large-area weighting of the classical tails.
+These changes allow a lower volume integral together with a higher peak.
+
+Equality in Eq.~\eqref{eq:cs} requires $A\,d\psi/d\ell$ to be constant.
+A static massless scalar instead obeys
+$\partial_\ell(\alpha A\,d\psi/d\ell)=0$. The bound is therefore saturated
+by the symmetric ultrastatic Ellis solution, but not generally by a
+redshifted drainhole. For the rotating solutions it supplies radial
+intuition; the measurements use the full axisymmetric volume element
+in Eq.~\eqref{eq:nec-volume}.
+
+\begin{table*}[t]
+\caption{Stationary quantities for each massless reference ($V=0$) and its
+optimized counterpart at the same $R_e$, $J$ and asymmetry. Lengths are
+normalized by the common $R_e$ within each pair; the displayed quantities
+are dimensionless. Optimized columns use the selected finer-grid solutions
+D0$^\star$, D21$^\star$ and D30$^\star$.
+The width includes the complete radial distribution; the null NEC
+integral follows the complete equatorial ray with unit Killing energy at
+positive infinity. Peak tides and light transit use equatorial proper
+distances $-10R_e$ to $+10R_e$. A smaller volume integral accompanies stronger
+local violation, stronger peak tides and longer transit.}
+\label{tab:physics}
+\small
+\begin{ruledtabular}
+\begin{tabular}{lrrrrrr}
+ & \multicolumn{2}{c}{D0} & \multicolumn{2}{c}{D21} & \multicolumn{2}{c}{D30} \\
+Quantity & $V=0$ & Optimized & $V=0$ & Optimized & $V=0$ & Optimized \\
+\hline
+\clmPhysicsRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+\subsection{Tides, redshift and light propagation}
+
+A smaller volume integral does not imply a gentler passage through the
+throat. We measure tides by the largest absolute eigenvalue of the electric
+Riemann tensor in a radially moving observer's frame. At the same local
+speed $v=0.5$, its peak over the matched interval increases in all three
+solutions. This compares local forces along a fixed-speed scan; a freely
+falling traveller's accumulated tidal exposure also depends on its trajectory.
+The stronger peak is consistent with the sharper scalar and metric variation
+visible in Fig.~\ref{fig:mechanism}.
+
+The asymptotic redshift remains fixed by the common asymmetry $\gamma$,
+while the interior profile changes. For a zero-angular-momentum photon,
+the local energy is $E_{\mathrm{local}}/E_{+\infty}=1/\alpha$, where
+$\alpha=e^{f/2}$ is the lapse and $E_{+\infty}$ is the conserved energy
+normalized at positive infinity. The optimized profile makes the transition
+between the two ends more abrupt.
+
+We compute a finite light-crossing time along the equatorial null geodesic
+by integrating $dt/d\ell=1/\alpha$ between endpoints at equal proper
+distances from each throat. The same positive-infinity clock normalizes
+$t$ in both solutions. Transit is longer for the optimized solutions
+(Table~\ref{tab:physics}); the increase also occurs when the endpoint
+distances are halved or doubled, although the ratio changes. These are
+wormhole-to-wormhole comparisons at specified endpoints.
+
+The magnitude of the NEC integral along the complete equatorial null ray
+also increases. Its affine parameter is normalized by unit Killing energy
+at positive infinity, unlike the local normalization used for the peak NEC
+deficit. The ray and volume integrals therefore measure different aspects
+of the same distribution. Minimizing $X$ reduces the volume-weighted matter
+requirement while concentrating the violation encountered near the throat.

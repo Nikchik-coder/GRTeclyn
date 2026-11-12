@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from grteclyn_wrapper.grtresna.profiles.boson_star import solve_mini_boson_star
+from grteclyn_workflows.grtresna.profiles.boson_star import solve_mini_boson_star
 
 
 def test_profile_decays_at_infinity() -> None:

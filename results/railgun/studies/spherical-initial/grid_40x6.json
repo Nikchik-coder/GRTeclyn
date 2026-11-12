@@ -1,0 +1,85 @@
+{
+  "grid": [
+    40,
+    6
+  ],
+  "newton": {
+    "converged": true,
+    "iters": 1,
+    "res_scaled_inf": 3.211684567393886e-14,
+    "res_history": [
+      1.3901500706433144e-07,
+      3.211684567393886e-14
+    ],
+    "jacobian_evals": 1,
+    "newton_steps": [
+      1.0
+    ]
+  },
+  "stability": "not_assessed",
+  "raw_residual_max": 5.2261389660301916e-12,
+  "constraint_c": 4.1798150690502535e-14,
+  "constraint_19": 5.117597282470591e-10,
+  "equation_max": 4.133922453040052e-14,
+  "boundary_max": 2.2901007745520645e-14,
+  "border_max": 4.163336342344337e-17,
+  "spectral_tail": 0.1159149534604877,
+  "charges": [
+    0.5426418720064904
+  ],
+  "matter_J": [
+    0.0
+  ],
+  "J_volume": 0.0,
+  "M_Komar_volume": 0.5325632890898111,
+  "M_ADM_estimate": 0.5325632892760556,
+  "M_lapse_estimate": 0.5325632893670369,
+  "M_fit_drift": 7.404865609572653e-10,
+  "J_asymptotic_estimate": 0.0,
+  "J_fit_drift": 0.0,
+  "density_peaks": [
+    {
+      "radius": 0.0011156922692325936,
+      "mu": 0.8240468259684878,
+      "cylindrical_radius": 0.0006320638732047691,
+      "axial_position": 0.0009193826732186983,
+      "density": 0.000855728497174846
+    }
+  ],
+  "lapse_min": 0.8731736384963736,
+  "B_min": 0.9908052109359955,
+  "dragging_max": 0.0,
+  "gtt_max": -0.7624322029649957,
+  "ergoregion_sampled": false,
+  "low_density_threshold_relative": 1e-06,
+  "low_density_ergoregion_sampled": false,
+  "tail_shells": [
+    60.0,
+    80.0,
+    110.0,
+    150.0,
+    210.0,
+    300.0
+  ],
+  "scalar_tail_ratios": [
+    [
+      3.931394005244165e-09,
+      5.917629311508857e-10,
+      1.9921729335026445e-10,
+      8.751614176566792e-11,
+      7.691234411132151e-11,
+      2.2247153761149292e-10
+    ]
+  ],
+  "quadrature_drift": 2.9198155004905857e-09,
+  "offgrid_einstein_max": 9.95869002935116e-10,
+  "offgrid_kg_max": 5.228577563964887e-08,
+  "verdict": "REJECT",
+  "reasons": [
+    "spectral_tail",
+    "scalar_localization",
+    "independent_equations"
+  ],
+  "solve_seconds": 4.747289727907628,
+  "total_seconds": 9.583654667949304
+}

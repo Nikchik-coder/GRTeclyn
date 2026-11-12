@@ -1,0 +1,33 @@
+{
+  "source_sha256": "fca80f859eee840bbbbaa625fa347e178c38d45538fc6f40d6543058e515fa87",
+  "profile_manifest": {
+    "source_sha256": "fca80f859eee840bbbbaa625fa347e178c38d45538fc6f40d6543058e515fa87",
+    "commit": "4c1e208531626e4ec421da0dca715cabf785cd63",
+    "platform": "gpu",
+    "float64": true,
+    "z_min": -15.0,
+    "z_max": 15.0,
+    "samples": 301,
+    "certify_core": true,
+    "corridor_radius": 0.4,
+    "corridor_degree": 6,
+    "stability": "not_assessed"
+  },
+  "spin": 0.001,
+  "z0": 10.0,
+  "speed": -0.5,
+  "duration": 120.0,
+  "rtols": [
+    2e-11,
+    2e-12
+  ],
+  "max_step": 0.4,
+  "energy_offsets": [
+    -2e-05,
+    0.0,
+    2e-05
+  ],
+  "commit": "96c81edc7df31503f41630ab6a617026e3867d2c",
+  "platform": "gpu",
+  "float64": true
+}

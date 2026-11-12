@@ -1,0 +1,20 @@
+{
+  "status": "stopped_for_stricter_newton_target",
+  "attempts": 55,
+  "last_artifact": "step_0052.npz",
+  "last_config": {
+    "m": 0.3049703111409635,
+    "q": [
+      2.4326849506,
+      -0.0456837549,
+      1.196847691
+    ],
+    "gamma": -0.8835729338221292,
+    "J": 1.0137999916840896,
+    "matter": "winding",
+    "matter_mass": 0.7635865174258745,
+    "quartic": 0.0,
+    "winding_k": -1,
+    "amplitude": 0.02
+  }
+}

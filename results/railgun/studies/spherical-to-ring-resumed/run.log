@@ -1,0 +1,18 @@
+[capped_job] start 2026-11-01T07:56:58Z threads=4 mem=160G timeout=1500s
+{"event": "device", "platform": "gpu", "float64": true}
+[newton] iter 0: |R| 8.685e-03 -> 7.621e-05 (t = 1)
+[newton] iter 1: |R| 7.621e-05 -> 1.046e-05 (t = 1)
+[newton] iter 2: |R| 1.047e-05 -> 1.691e-08 (t = 1)
+[newton] iter 3: |R| 1.691e-08 -> 3.168e-11 (t = 1)
+[newton] iter 4: |R| 3.168e-11 -> 6.149e-14 (t = 1)
+[newton] converged at iter 5: |R|_inf,scaled = 1.098e-14
+[homotopy] attempt=16 t=0.5 verdict=PASS
+[newton] iter 0: |R| 1.207e-02 -> 1.886e-04 (t = 1)
+[newton] iter 1: |R| 1.886e-04 -> 5.711e-05 (t = 1)
+[newton] iter 2: |R| 5.712e-05 -> 3.913e-07 (t = 1)
+[newton] iter 3: |R| 3.913e-07 -> 6.182e-09 (t = 1)
+[newton] iter 4: |R| 6.182e-09 -> 6.670e-11 (t = 1)
+[newton] iter 5: |R| 6.670e-11 -> 5.331e-13 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 9.535e-14
+[homotopy] attempt=17 t=0.625 verdict=REJECT
+[capped_job] end 2026-11-01T07:57:42Z exit=2

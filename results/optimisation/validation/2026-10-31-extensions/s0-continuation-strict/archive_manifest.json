@@ -1,0 +1,107 @@
+[
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/manifest.json",
+    "archive": "manifest.json",
+    "source_sha256": "df9833ea79a23e43764ad42d52afaf718b6f989e778d62124fb698e4cbb4f196",
+    "archive_sha256": "443b0c496094e7e0b618436f8999883bb52e6fdbae824d47549542c69b1aa4fd",
+    "source_mtime": 1793452472.6902435
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/steps.jsonl",
+    "archive": "steps.jsonl.gz",
+    "source_sha256": "cab73fa8f63ede7c234e8e9d158c0f0a4200a876a23276f28dd019f3e6baeef5",
+    "archive_sha256": "4436103de87b696f4ba829559daab39a08e774e99cc97f4e83e6c7699c06bb52",
+    "source_mtime": 1793452599.8962293
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0000.npz",
+    "archive": "step_0000.npz",
+    "source_sha256": "ae1aa77a0e9907ebd322d5aad4be51f257e013c79190f7253155025744f45348",
+    "archive_sha256": "ae1aa77a0e9907ebd322d5aad4be51f257e013c79190f7253155025744f45348",
+    "source_mtime": 1793452483.9791973
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/outcome.json",
+    "archive": "outcome.json",
+    "source_sha256": "579cf992bf5382af4fdbef0cf314e18262c9c7764fae2163e77c32ea736788b7",
+    "archive_sha256": "579cf992bf5382af4fdbef0cf314e18262c9c7764fae2163e77c32ea736788b7",
+    "source_mtime": 1793452600.0652282
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0001.npz",
+    "archive": "step_0001.npz",
+    "source_sha256": "d42e11abe51364930e1d25c7be319aa6f3412972204c1df2aefc4f3ae8b91bfc",
+    "archive_sha256": "d42e11abe51364930e1d25c7be319aa6f3412972204c1df2aefc4f3ae8b91bfc",
+    "source_mtime": 1793452489.202176
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0002.npz",
+    "archive": "step_0002.npz",
+    "source_sha256": "ce07850500adf18586a752ba07d33d54a1a4509c356a28129e6772799704a567",
+    "archive_sha256": "ce07850500adf18586a752ba07d33d54a1a4509c356a28129e6772799704a567",
+    "source_mtime": 1793452494.2671554
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0003.npz",
+    "archive": "step_0003.npz",
+    "source_sha256": "990334ddf6095542ca7e22637cccdaa40ecbf80c3951edf73886a7f148ca45af",
+    "archive_sha256": "990334ddf6095542ca7e22637cccdaa40ecbf80c3951edf73886a7f148ca45af",
+    "source_mtime": 1793452499.370135
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0004.npz",
+    "archive": "step_0004.npz",
+    "source_sha256": "ba98910881c6d96b34b32457077e47f34916596ea88acbb1990b0f56b0f4d684",
+    "archive_sha256": "ba98910881c6d96b34b32457077e47f34916596ea88acbb1990b0f56b0f4d684",
+    "source_mtime": 1793452504.3021152
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0009.npz",
+    "archive": "step_0009.npz",
+    "source_sha256": "578292b5975f45b00ec2b3b313073fc777402deecab6ef8bc080d85761045cf1",
+    "archive_sha256": "578292b5975f45b00ec2b3b313073fc777402deecab6ef8bc080d85761045cf1",
+    "source_mtime": 1793452545.9369466
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0010.npz",
+    "archive": "step_0010.npz",
+    "source_sha256": "991b5065e00647fa104373ce7e36d54c5b6245e8c8fec92548c508f8967bc8e6",
+    "archive_sha256": "991b5065e00647fa104373ce7e36d54c5b6245e8c8fec92548c508f8967bc8e6",
+    "source_mtime": 1793452553.0639193
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0013.npz",
+    "archive": "step_0013.npz",
+    "source_sha256": "416f07ba7e78a5a36f20a7ecd515b793fee0a51af8f3885749b12c90293d6c49",
+    "archive_sha256": "416f07ba7e78a5a36f20a7ecd515b793fee0a51af8f3885749b12c90293d6c49",
+    "source_mtime": 1793452580.3843088
+  },
+  {
+    "source": "runs/optimisation/fixed_area/continuation_strict_20261031/step_0015.npz",
+    "archive": "step_0015.npz",
+    "source_sha256": "98c0d3c3756826f2d03b11f0c5ccbd65141dd863579c2625aab0a597e80263fa",
+    "archive_sha256": "98c0d3c3756826f2d03b11f0c5ccbd65141dd863579c2625aab0a597e80263fa",
+    "source_mtime": 1793452592.8642595
+  },
+  {
+    "source": "runs/capped_jobs/opt-boson-cont-strict-20261031/cmd",
+    "archive": "job/cmd",
+    "source_sha256": "87e9c118e4a09964bcb485fa83b537a0a57e46534916e93ae31332da2889f80d",
+    "archive_sha256": "87e9c118e4a09964bcb485fa83b537a0a57e46534916e93ae31332da2889f80d",
+    "source_mtime": 1793452471.21485
+  },
+  {
+    "source": "runs/capped_jobs/opt-boson-cont-strict-20261031/exit_code",
+    "archive": "job/exit_code",
+    "source_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+    "archive_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+    "source_mtime": 1793452600.6257782
+  },
+  {
+    "source": "runs/capped_jobs/opt-boson-cont-strict-20261031/log",
+    "archive": "job/log.gz",
+    "source_sha256": "59222f66a3c9c5b2c56e187257450e84a9ceb4a6ecf3f09c6b126a0b98887b9c",
+    "archive_sha256": "0a831f9fa30c34010f1adbe4ceaeb3f4d6e6247028bdc14ff4d48522adcf4757",
+    "source_mtime": 1793452600.6257782
+  }
+]

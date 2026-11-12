@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from grteclyn_wrapper.search.qd_search.descriptors import _descriptor_details
+from grteclyn_workflows.search.qd_search.descriptors import _descriptor_details
 
 
 def test_ftl_lifetime_ignores_frozen_peak_when_4d_ran_zero() -> None:

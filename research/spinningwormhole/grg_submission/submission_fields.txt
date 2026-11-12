@@ -1,0 +1,52 @@
+GRG SUBMISSION FIELDS
+Prepared: 6 November 2026
+
+TITLE
+Rotation slows the instability of Ellis-Bronnikov wormholes
+
+ARTICLE TYPE
+Original research article (select the corresponding research-paper option).
+
+CORRESPONDING AUTHOR
+Nikita M. Shirokov
+Email: shirokov.nm@phystech.edu
+Affiliation: Moscow Institute of Physics and Technology, Moscow, Russia
+
+CO-AUTHOR
+Ilya Nachevsky
+Email: ommnammashivaya@gmail.com
+Affiliation: Higher School of Economics, Moscow, Russia
+
+ABSTRACT
+Rotation weakens the radial instability of Ellis-Bronnikov wormholes in slow-rotation perturbation theory. We investigate its nonlinear effect by evolving stationary rotating drainholes supported by a phantom scalar field. We construct the backgrounds with an independent spectral solver, validate them against published symmetric solutions, and identify a misprint in a published field equation that did not affect the original authors' numerical results. Evolutions perturbed only by discretization error show that rotation slows the collapse. At intermediate spins some throats expand, with the direction of departure depending on the effective perturbation. At the fastest evolved spin, the throat's areal radius shows no growing departure through evolution time t = 150 in code units, about 28 e-folding times of the static instability, at three resolutions. Two other rapidly rotating models also show no growth over their reliable evolution intervals. Collapsing rotating throats emit an axisymmetric quadrupolar gravitational-wave burst whose energy increases between the two spins compared. Second-order initial data excite the instability through their background truncation error. The results establish slower collapse and prolonged absence of detected radial growth for the sampled asymmetric backgrounds, over finite times from initially axisymmetric data.
+
+KEYWORDS
+Wormholes; Numerical relativity; Rotating spacetimes; Phantom scalar fields; Instability; Gravitational waves
+
+FUNDING
+This work was supported by Gravity Frontiers (https://www.gravityfrontiers.org/en), which funded the research and the development of the numerical-simulation software.
+
+COMPETING INTERESTS
+The authors declare that they have no competing interests.
+
+AUTHOR CONTRIBUTIONS
+Nikita M. Shirokov designed and carried out the numerical study, developed the software, analyzed the results, prepared the figures and wrote the manuscript. Ilya Nachevsky provided resources.
+
+CRediT selections, if the interface uses them:
+Nikita M. Shirokov: Conceptualization; Methodology; Software; Investigation; Formal analysis; Visualization; Writing - original draft.
+Ilya Nachevsky: Resources.
+
+DATA AVAILABILITY
+The code and data supporting this study are available in the public GRTeclyn research fork (https://github.com/Nikchik-coder/GRTeclyn, release v1.0-spinning-wormhole), archived on Zenodo at https://doi.org/10.5281/zenodo.23245933. The directory results/spinningwormhole contains the stationary solutions, background-table headers, evolution parameters and diagnostic time series used in the analysis. Figure scripts are included in the release.
+
+PREPRINT DISCLOSURE
+A preprint is available as arXiv:2610.29941, https://arxiv.org/abs/2610.29941, under the arXiv non-exclusive distribution license. An updated version incorporating the revised wording and references has been submitted to arXiv and is awaiting announcement.
+
+SUGGESTED REVIEWERS
+No names supplied. Complete only if requested by the journal.
+
+COVER LETTER
+Upload cover_letter.pdf or paste the text from cover_letter.txt.
+
+FINAL SUBMISSION DECLARATIONS
+Submitted to General Relativity and Gravitation on 6 November 2026. Receipt confirmed at Technical Check. The field text above records the prepared submission statements.

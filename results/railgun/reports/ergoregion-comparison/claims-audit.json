@@ -1,0 +1,501 @@
+{
+  "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "units": "G=c=scalar mass=1; rho is coordinate radius; density is Eulerian matter energy density.",
+  "independent_equations_not_recomputed": true,
+  "gpu_started": false,
+  "new_tracks": 0,
+  "claims": {
+    "ergoregion_extent": {
+      "status": "SUPPORTED",
+      "equatorial_interval": [
+        0.05825049159058579,
+        0.8525499813860229
+      ],
+      "half_peak_matter_edges": [
+        0.0915603295644962,
+        0.38626003369234735
+      ],
+      "density_peak": {
+        "radius": 0.2335923253045938,
+        "value": 0.08987235462392199
+      },
+      "interpretation": "Ergoregion extends beyond the half-peak contour, which is not a material surface."
+    },
+    "near_empty_halo_or_hole": {
+      "status": "REJECTED",
+      "intervals": [
+        {
+          "side": "inner",
+          "interval": [
+            0.05825049159058579,
+            0.0915603295644962
+          ],
+          "minimum_relative_density": 0.41215904696888006,
+          "maximum_relative_density": 0.49999999999982975,
+          "cutoff": 1e-06,
+          "negligible_tails": false
+        },
+        {
+          "side": "outer",
+          "interval": [
+            0.38626003369234735,
+            0.8525499813860229
+          ],
+          "minimum_relative_density": 0.03729123537167546,
+          "maximum_relative_density": 0.4999999999999097,
+          "cutoff": 1e-06,
+          "negligible_tails": false
+        }
+      ],
+      "centre_energy_fraction": 0.3542377431164094
+    },
+    "local_speeds_3p72_4p72_2p72_c": {
+      "status": "REJECTED",
+      "interpretation": "Shift/lapse and grid-coordinate rates are not locally measured velocities; both photons have local speed c."
+    },
+    "boomerang_ray": {
+      "status": "NOT_DEMONSTRATED",
+      "interpretation": "All future causal directions corotate in coordinate angle inside the ergoregion. No integrated path or escaping ray is established; light never stops locally."
+    },
+    "negative_killing_energy": {
+      "status": "SUPPORTED_LOCALLY",
+      "equation": "E_inf = alpha * E_local * (1 + drag_ratio * v_parallel)",
+      "interpretation": "v_parallel is local velocity along the dragging direction in units of c. Negative Killing energy is not negative local energy and cannot arrive from infinity on one conserved-energy geodesic."
+    },
+    "penrose_35_percent_gain": {
+      "status": "UNSUPPORTED",
+      "local_single_decay_gain_bound": 0.058300887122063716,
+      "assumptions": "Neutral unpowered two-body decay; incoming massive parent from infinity, E0/m0>=1. Photon limit gives an upper bound before escape tests.",
+      "interpretation": "Need four-momentum conservation, allowed fragment masses, negative-energy confinement and positive-energy escape. Energy and speed gains are distinct; fuel/rest-mass conversion must be counted."
+    },
+    "frequency_turning_point_confirmed_100_percent": {
+      "status": "OVERSTATED",
+      "accepted_endpoint_frequencies": [
+        0.6550650865941262,
+        0.6741001877002323
+      ],
+      "interpretation": "Rise from 0.6551 to 0.6741 supports a turn along the continued branch, but endpoints alone neither locate a minimum nor exclude a branch jump."
+    },
+    "twelve_decimal_places_physical_accuracy": {
+      "status": "OVERSTATED",
+      "sampled_ratio_spread": 9.78372938220673e-12,
+      "sampled_finest_ratio": 3.7207895366018127,
+      "refined_equatorial_ratio": 3.721835773892663,
+      "interpretation": "Close inter-grid agreement at common sample points is not a twelve-digit error bound on the continuum peak or every physical quantity."
+    },
+    "5p21_roundoff_and_ceiling": {
+      "status": "UNPROVEN",
+      "rejection_reasons": [
+        "newton"
+      ],
+      "newton": {
+        "converged": false,
+        "iters": 2,
+        "res_scaled_inf": 1.865174681370263e-14,
+        "res_history": [
+          3.2326504298036226e-07,
+          1.7747417797302188e-11,
+          1.865174681370263e-14
+        ],
+        "jacobian_evals": 3,
+        "newton_steps": [
+          1.0,
+          1.0
+        ],
+        "reason": "line search stalled"
+      },
+      "interpretation": "Roundoff-scale Newton stalling is observed; a universal precision wall or maximum physical spin is not established by one failed correction."
+    }
+  },
+  "ratio_maximum_point": {
+    "radius": 0.2590152826228451,
+    "lapse": 0.1270145872410212,
+    "shift_norm": 0.4727274345998432,
+    "drag_ratio": 3.7218357738926624,
+    "gtt": 0.20733852205134204,
+    "matter_energy_relative_to_peak": 0.9718548365256419,
+    "photons": [
+      {
+        "local_direction": "against dragging",
+        "local_speed_c": 1.0000000000000002,
+        "null_norm": -8.881784197001252e-16,
+        "E_infinity_per_E_local": -0.3457128473588221,
+        "angular_coordinate_rate_with_dragging": 0.2797341148352332,
+        "projected_grid_rate_per_asymptotic_t": 0.3457128473588219
+      },
+      {
+        "local_direction": "with dragging",
+        "local_speed_c": 1.0000000000000002,
+        "null_norm": 1.7763568394002505e-15,
+        "E_infinity_per_E_local": 0.5997420218408641,
+        "angular_coordinate_rate_with_dragging": 0.4852822360836864,
+        "projected_grid_rate_per_asymptotic_t": 0.5997420218408643
+      }
+    ],
+    "negative_energy_condition_v_parallel_less_than": -0.2686846117753609
+  },
+  "gtt_maximum_point": {
+    "radius": 0.3590850295316683,
+    "lapse": 0.16517395735937013,
+    "shift_norm": 0.5235283740494762,
+    "drag_ratio": 3.1695576131922047,
+    "gtt": 0.24679952224513324,
+    "matter_energy_relative_to_peak": 0.5969010252108055,
+    "photons": [
+      {
+        "local_direction": "against dragging",
+        "local_speed_c": 0.9999999999999998,
+        "null_norm": 1.3322676295501878e-15,
+        "E_infinity_per_E_local": -0.35835441669010626,
+        "angular_coordinate_rate_with_dragging": 0.23604365178827105,
+        "projected_grid_rate_per_asymptotic_t": 0.35835441669010604
+      },
+      {
+        "local_direction": "with dragging",
+        "local_speed_c": 0.9999999999999997,
+        "null_norm": -8.881784197001252e-16,
+        "E_infinity_per_E_local": 0.6887023314088461,
+        "angular_coordinate_rate_with_dragging": 0.4536397647958121,
+        "projected_grid_rate_per_asymptotic_t": 0.6887023314088463
+      }
+    ],
+    "negative_energy_condition_v_parallel_less_than": -0.3155014428000426
+  },
+  "maximum_retrograde_projected_grid_rate": {
+    "radius": 0.3188103607024556,
+    "value": 0.36521014458188067,
+    "physical_local_speed": false
+  },
+  "samples": [
+    {
+      "radius": 0.06,
+      "lapse": 0.12751685043499397,
+      "shift_norm": 0.131431666339152,
+      "drag_ratio": 1.030700381093193,
+      "gtt": 0.001013735771825553,
+      "matter_energy_relative_to_peak": 0.41574903177479094,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0,
+          "null_norm": -1.214306433183765e-16,
+          "E_infinity_per_E_local": -0.003914815904158,
+          "angular_coordinate_rate_with_dragging": 0.012894367111944395,
+          "projected_grid_rate_per_asymptotic_t": 0.003914815904158014
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": -4.440892098500626e-16,
+          "E_infinity_per_E_local": 0.25894851677414604,
+          "angular_coordinate_rate_with_dragging": 0.8529078557264791,
+          "projected_grid_rate_per_asymptotic_t": 0.258948516774146
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.9702140586572489
+    },
+    {
+      "radius": 0.08,
+      "lapse": 0.12580383201583623,
+      "shift_norm": 0.17429338260436564,
+      "drag_ratio": 1.3854377868428167,
+      "gtt": 0.014551579069803047,
+      "matter_energy_relative_to_peak": 0.4648343677217345,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999998,
+          "null_norm": -1.6653345369377348e-16,
+          "E_infinity_per_E_local": -0.0484895505885294,
+          "angular_coordinate_rate_with_dragging": 0.11975029633946441,
+          "projected_grid_rate_per_asymptotic_t": 0.048489550588529426
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 0.0,
+          "E_infinity_per_E_local": 0.30009721462020184,
+          "angular_coordinate_rate_with_dragging": 0.7411231893313965,
+          "projected_grid_rate_per_asymptotic_t": 0.3000972146202019
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.7217935077971522
+    },
+    {
+      "radius": 0.12,
+      "lapse": 0.12177352714468742,
+      "shift_norm": 0.25705430446083494,
+      "drag_ratio": 2.1109210719946643,
+      "gtt": 0.05124812352858571,
+      "matter_energy_relative_to_peak": 0.6066914881769676,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 1.7763568394002505e-15,
+          "E_infinity_per_E_local": -0.13528077731614774,
+          "angular_coordinate_rate_with_dragging": 0.2228677494750398,
+          "projected_grid_rate_per_asymptotic_t": 0.13528077731614746
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 0.9999999999999999,
+          "null_norm": 8.881784197001252e-16,
+          "E_infinity_per_E_local": 0.3788278316055221,
+          "angular_coordinate_rate_with_dragging": 0.6240983230834415,
+          "projected_grid_rate_per_asymptotic_t": 0.3788278316055223
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.47372685472085124
+    },
+    {
+      "radius": 0.23,
+      "lapse": 0.12111185658820135,
+      "shift_norm": 0.44118515364080935,
+      "drag_ratio": 3.6427907726731137,
+      "gtt": 0.1799762579868235,
+      "matter_energy_relative_to_peak": 0.9994068670866771,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999998,
+          "null_norm": 2.220446049250313e-15,
+          "E_infinity_per_E_local": -0.320073297052608,
+          "angular_coordinate_rate_with_dragging": 0.28486248497465344,
+          "projected_grid_rate_per_asymptotic_t": 0.320073297052608
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 0.9999999999999993,
+          "null_norm": 4.440892098500626e-15,
+          "E_infinity_per_E_local": 0.5622970102290105,
+          "angular_coordinate_rate_with_dragging": 0.5004395090207321,
+          "projected_grid_rate_per_asymptotic_t": 0.5622970102290107
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.2745148053798848
+    },
+    {
+      "radius": 0.4,
+      "lapse": 0.18498661838192493,
+      "shift_norm": 0.5254634338377476,
+      "drag_ratio": 2.8405483511940925,
+      "gtt": 0.24189177132017706,
+      "matter_energy_relative_to_peak": 0.45650434039793364,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999999,
+          "null_norm": 1.1102230246251565e-15,
+          "E_infinity_per_E_local": -0.34047681545582287,
+          "angular_coordinate_rate_with_dragging": 0.21326878561209078,
+          "projected_grid_rate_per_asymptotic_t": 0.3404768154558227
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 3.1086244689504383e-15,
+          "E_infinity_per_E_local": 0.7104500522196723,
+          "angular_coordinate_rate_with_dragging": 0.4450136191273075,
+          "projected_grid_rate_per_asymptotic_t": 0.7104500522196725
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.35204470277002187
+    },
+    {
+      "radius": 0.45,
+      "lapse": 0.21005772975379242,
+      "shift_norm": 0.5193672340517949,
+      "drag_ratio": 2.4724976065415087,
+      "gtt": 0.22561807397729455,
+      "matter_energy_relative_to_peak": 0.32815558245799326,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0,
+          "null_norm": -1.5543122344752192e-15,
+          "E_infinity_per_E_local": -0.30930950429800214,
+          "angular_coordinate_rate_with_dragging": 0.1847810564676705,
+          "projected_grid_rate_per_asymptotic_t": 0.30930950429800247
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000004,
+          "null_norm": -1.7763568394002505e-15,
+          "E_infinity_per_E_local": 0.7294249638055875,
+          "angular_coordinate_rate_with_dragging": 0.4357574324519688,
+          "projected_grid_rate_per_asymptotic_t": 0.7294249638055874
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.4044493298413277
+    },
+    {
+      "radius": 0.5,
+      "lapse": 0.23508219513913736,
+      "shift_norm": 0.5074918155544216,
+      "drag_ratio": 2.158784570026896,
+      "gtt": 0.2022843043832876,
+      "matter_energy_relative_to_peak": 0.23843006478992912,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999999,
+          "null_norm": 8.881784197001252e-16,
+          "E_infinity_per_E_local": -0.2724096204152844,
+          "angular_coordinate_rate_with_dragging": 0.15674214977148276,
+          "projected_grid_rate_per_asymptotic_t": 0.2724096204152842
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 0.9999999999999999,
+          "null_norm": 8.881784197001252e-16,
+          "E_infinity_per_E_local": 0.7425740106935588,
+          "angular_coordinate_rate_with_dragging": 0.4272706911859489,
+          "projected_grid_rate_per_asymptotic_t": 0.7425740106935589
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.46322361845839066
+    },
+    {
+      "radius": 0.55,
+      "lapse": 0.25951022747315483,
+      "shift_norm": 0.492310311217585,
+      "drag_ratio": 1.897074793587903,
+      "gtt": 0.17502388436798685,
+      "matter_energy_relative_to_peak": 0.1758933289130795,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0,
+          "null_norm": 0.0,
+          "E_infinity_per_E_local": -0.23280008374443012,
+          "angular_coordinate_rate_with_dragging": 0.12981495032338222,
+          "projected_grid_rate_per_asymptotic_t": 0.2328000837444302
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 8.881784197001252e-16,
+          "E_infinity_per_E_local": 0.7518205386907397,
+          "angular_coordinate_rate_with_dragging": 0.4192332937018194,
+          "projected_grid_rate_per_asymptotic_t": 0.7518205386907398
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.5271273454162121
+    },
+    {
+      "radius": 0.6,
+      "lapse": 0.283082777859684,
+      "shift_norm": 0.4753750678375295,
+      "drag_ratio": 1.679279366380809,
+      "gtt": 0.14584559600078056,
+      "matter_energy_relative_to_peak": 0.13180233546441913,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999998,
+          "null_norm": 2.220446049250313e-16,
+          "E_infinity_per_E_local": -0.1922922899778455,
+          "angular_coordinate_rate_with_dragging": 0.10432856159701452,
+          "projected_grid_rate_per_asymptotic_t": 0.19229228997784548
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 0.9999999999999998,
+          "null_norm": -4.440892098500626e-16,
+          "E_infinity_per_E_local": 0.7584578456972134,
+          "angular_coordinate_rate_with_dragging": 0.4115028017123168,
+          "projected_grid_rate_per_asymptotic_t": 0.7584578456972134
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.5954935313444628
+    },
+    {
+      "radius": 0.7,
+      "lapse": 0.32730150067886893,
+      "shift_norm": 0.43975564069252454,
+      "drag_ratio": 1.3435796651723566,
+      "gtt": 0.08625875117425309,
+      "matter_energy_relative_to_peak": 0.07721418078344286,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0,
+          "null_norm": -2.7755575615628914e-16,
+          "E_infinity_per_E_local": -0.11245414001365556,
+          "angular_coordinate_rate_with_dragging": 0.058164409258933535,
+          "projected_grid_rate_per_asymptotic_t": 0.11245414001365561
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 0.0,
+          "E_infinity_per_E_local": 0.7670571413713935,
+          "angular_coordinate_rate_with_dragging": 0.3967432901118233,
+          "projected_grid_rate_per_asymptotic_t": 0.7670571413713936
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.7442803920910178
+    },
+    {
+      "radius": 0.8,
+      "lapse": 0.36758123109109053,
+      "shift_norm": 0.4047825505619513,
+      "drag_ratio": 1.1012057099880648,
+      "gtt": 0.028732951788996958,
+      "matter_energy_relative_to_peak": 0.04742806777143361,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 3.7470027081099033e-16,
+          "E_infinity_per_E_local": -0.03720131947086084,
+          "angular_coordinate_rate_with_dragging": 0.018437624591612804,
+          "projected_grid_rate_per_asymptotic_t": 0.037201319470860694
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": 4.440892098500626e-16,
+          "E_infinity_per_E_local": 0.7723637816530418,
+          "angular_coordinate_rate_with_dragging": 0.3827969990535315,
+          "projected_grid_rate_per_asymptotic_t": 0.7723637816530419
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.9080955455732592
+    },
+    {
+      "radius": 0.85,
+      "lapse": 0.38631511278657044,
+      "shift_norm": 0.38808133277717927,
+      "drag_ratio": 1.0045719671122073,
+      "gtt": 0.0013677544828110955,
+      "matter_energy_relative_to_peak": 0.03772050922139783,
+      "photons": [
+        {
+          "local_direction": "against dragging",
+          "local_speed_c": 0.9999999999999999,
+          "null_norm": -1.6479873021779667e-16,
+          "E_infinity_per_E_local": -0.00176621999060877,
+          "angular_coordinate_rate_with_dragging": 0.0008578256832011828,
+          "projected_grid_rate_per_asymptotic_t": 0.0017662199906088335
+        },
+        {
+          "local_direction": "with dragging",
+          "local_speed_c": 1.0000000000000002,
+          "null_norm": -4.440892098500626e-16,
+          "E_infinity_per_E_local": 0.7743964455637498,
+          "angular_coordinate_rate_with_dragging": 0.3761123549254481,
+          "projected_grid_rate_per_asymptotic_t": 0.7743964455637496
+        }
+      ],
+      "negative_energy_condition_v_parallel_less_than": -0.995448840638715
+    }
+  ],
+  "sources": {
+    "local_velocity": "https://luth2.obspm.fr/~luthier/gourgoulhon/pdf/form3p1.pdf",
+    "horizonless_penrose": "https://arxiv.org/abs/2608.08711",
+    "original_energy_bounds": "https://doi.org/10.1086/152959"
+  }
+}

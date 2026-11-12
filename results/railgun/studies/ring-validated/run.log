@@ -1,0 +1,56 @@
+[capped_job] start 2026-11-01T09:03:19Z threads=4 mem=160G timeout=1800s
+{"event": "device", "platform": "gpu", "float64": true}
+[newton] iter 0: |R| 1.031e-05 -> 1.286e-09 (t = 1)
+[newton] iter 1: |R| 1.286e-09 -> 1.238e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.686e-15
+[homotopy] refinement attempt=18 t=0.5 verdict=PASS
+[newton] iter 0: |R| 1.230e-02 -> 1.458e-04 (t = 1)
+[newton] iter 1: |R| 1.458e-04 -> 4.460e-05 (t = 1)
+[newton] iter 2: |R| 4.461e-05 -> 3.059e-07 (t = 1)
+[newton] iter 3: |R| 3.059e-07 -> 5.031e-09 (t = 1)
+[newton] iter 4: |R| 5.031e-09 -> 5.286e-11 (t = 1)
+[newton] iter 5: |R| 5.286e-11 -> 4.214e-13 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 5.844e-14
+[homotopy] attempt=19 t=0.625 verdict=PASS
+[newton] iter 0: |R| 1.358e-02 -> 3.267e-04 (t = 1)
+[newton] iter 1: |R| 3.267e-04 -> 8.736e-05 (t = 1)
+[newton] iter 2: |R| 8.594e-05 -> 2.184e-06 (t = 1)
+[newton] iter 3: |R| 2.184e-06 -> 3.404e-08 (t = 1)
+[newton] iter 4: |R| 3.404e-08 -> 1.203e-09 (t = 1)
+[newton] iter 5: |R| 1.203e-09 -> 2.561e-11 (t = 1)
+[newton] iter 6: |R| 2.561e-11 -> 5.144e-13 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 1.284e-13
+[homotopy] attempt=20 t=0.75 verdict=PASS
+[newton] iter 0: |R| 1.650e-02 -> 6.376e-04 (t = 1)
+[newton] iter 1: |R| 6.376e-04 -> 2.874e-04 (t = 1)
+[newton] iter 2: |R| 2.834e-04 -> 9.031e-06 (t = 1)
+[newton] iter 3: |R| 9.031e-06 -> 6.272e-07 (t = 1)
+[newton] iter 4: |R| 6.272e-07 -> 1.797e-08 (t = 1)
+[newton] iter 5: |R| 1.797e-08 -> 4.954e-10 (t = 1)
+[newton] iter 6: |R| 4.954e-10 -> 1.957e-11 (t = 1)
+[newton] iter 7: |R| 1.957e-11 -> 1.657e-12 (t = 1)
+[newton] converged at iter 8: |R|_inf,scaled = 2.896e-13
+[homotopy] attempt=21 t=0.875 verdict=PASS
+[newton] iter 0: |R| 2.244e-02 -> 1.116e-03 (t = 1)
+[newton] iter 1: |R| 1.116e-03 -> 5.854e-04 (t = 1)
+[newton] iter 2: |R| 5.731e-04 -> 2.255e-05 (t = 1)
+[newton] iter 3: |R| 2.255e-05 -> 3.441e-06 (t = 1)
+[newton] iter 4: |R| 3.438e-06 -> 4.526e-08 (t = 1)
+[newton] iter 5: |R| 4.526e-08 -> 5.267e-09 (t = 1)
+[newton] iter 6: |R| 5.273e-09 -> 1.410e-12 (t = 1)
+[newton] converged at iter 7: |R|_inf,scaled = 1.722e-13
+[homotopy] attempt=22 t=1 verdict=PASS
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 1.032e-05 -> 1.467e-09 (t = 1)
+[newton] iter 1: |R| 1.467e-09 -> 1.387e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.116e-15
+{"event": "grid", "grid": [72, 10], "verdict": "PASS", "reasons": [], "seconds": 18.861237704986706}
+[newton] iter 0: |R| 8.191e-06 -> 1.158e-09 (t = 1)
+[newton] iter 1: |R| 1.158e-09 -> 1.078e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.247e-15
+{"event": "grid", "grid": [96, 12], "verdict": "PASS", "reasons": [], "seconds": 21.498325870838016}
+[newton] iter 0: |R| 6.193e-06 -> 8.728e-10 (t = 1)
+[newton] iter 1: |R| 8.728e-10 -> 8.133e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 7.026e-16
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 32.53086970211007}
+[capped_job] end 2026-11-01T09:06:14Z exit=0

@@ -1,0 +1,24 @@
+{
+  "status": "continuation_failed",
+  "last_config": {
+    "m": 0.3049703111409633,
+    "q": [
+      2.4326849506,
+      -0.0456837549,
+      1.196847691
+    ],
+    "gamma": -0.9159143621000514,
+    "J": 1.0137999916840896,
+    "matter": "winding",
+    "matter_mass": 0.7635865174258739,
+    "quartic": 0.0,
+    "winding_k": -1,
+    "amplitude": 0.02
+  },
+  "target": {
+    "J": 1.0137999916840896,
+    "gamma": -3.141592653589793
+  },
+  "error": "stationary or bound-state gate failed: {\"nx\": 150, \"ny\": 30, \"newton\": 8.922807935676606e-16, \"iters\": 6, \"newton_updates\": 5, \"newton_converged\": true, \"newton_reason\": \"converged\", \"newton_history\": [0.00232672580711908, 1.0400683435704024e-06, 1.0407973035895787e-06, 9.158148990297184e-08, 2.3112575583999058e-10, 2.3061565239864944e-13, 8.922807935676606e-16], \"newton_steps\": [1.0, 1.0, 1.0, 1.0, 1.0], \"jacobian_evals\": 3, \"X\": 1.6283622548777827, \"X_A\": 1.6408639845790625, \"VIQ\": -6.611671402780589, \"R_e\": 4.060319728117784, \"R_A\": 4.029384156562621, \"R_pol\": 4.014049613530815, \"sigma\": 3.400044285549197, \"E19\": 1.007340332977641e-08, \"E_c\": 1.5919027281270648e-09, \"J_error\": 8.988279386386164e-09, \"pin_error\": 0.0, \"tails\": 6.817804056033213e-10, \"lapse_min\": 0.5284488665955157, \"stability\": \"not_assessed\", \"scalar_in_vacuum_interval\": true, \"frequency\": 0.5468524866903477, \"cloud_peak\": 0.02217254086086538, \"amplitude_error\": 0.0, \"bound\": true, \"J_matter_positive_half\": 0.006036844991186161, \"verdict\": \"ABOVE_GATE\"}",
+  "stability": "not_assessed"
+}

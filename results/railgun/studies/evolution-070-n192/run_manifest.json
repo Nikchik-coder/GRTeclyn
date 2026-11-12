@@ -1,0 +1,442 @@
+{
+  "schema": 1,
+  "run": "ring070-n192-t2-20261102",
+  "reconstructed": false,
+  "launched_utc": "2026-11-02T07:18:19Z",
+  "what": "Unperturbed omega=0.70 regular-centre canonical ring, t<=2; no stability claim",
+  "template": "runs/railgun/evolution/templates/ring070-n192-t2-20261102.txt",
+  "template_sha256": "a54064ee92dd0a1e29ec4e9f54162585a1b981dedaeeca142517d276e3caebfb",
+  "params_sha256": "151de101d442dc64492a2cf867badc0291c31d94c2355a26c639b0fbd65a5529",
+  "params": {
+    "verbosity": "1",
+    "output_path": "\"runs/railgun/evolution/pilot/ring070-n192-t2-20261102\"",
+    "amr.plot_file": "\"<scratch>/ring070-n192-t2-20261102/SpinningWormholePlt\"",
+    "amr.check_file": "\"<scratch>/ring070-n192-t2-20261102/SpinningWormholeChk\"",
+    "amr.plot_files_output": "1",
+    "amr.checkpoint_files_output": "0",
+    "checkpoint_interval": "-1",
+    "plot_interval": "25",
+    "amr.plot_vars": "chi h11 h12 h13 h22 h23 h33 K A11 A12 A13 A22 A23 A33 Theta Gamma1 Gamma2 Gamma3 lapse shift1 shift2 shift3 B1 B2 B3 phi Pi phi_lump0 Pi_lump0",
+    "amr.derive_plot_vars": "Weyl4 constraints",
+    "pout_subpath": "pout",
+    "data_subpath": "data",
+    "print_progress_only_to_rank_0": "1",
+    "recipe_initial_data_file": "\"runs/railgun/evolution/initial-070-n192-20261102/initial.gridinit\"",
+    "recipe_matter_model": "grtresna_complex_scalar",
+    "recipe_scalar_mass": "1",
+    "recipe_scalar_sign": "1",
+    "recipe_scalar_lambda": "0",
+    "recipe_scalar_mu": "0",
+    "recipe_exotic_matter": "0",
+    "rl_enabled": "0",
+    "trajectory_mode": "0",
+    "controller_reservoir_mode": "0",
+    "rl_pump_stop_time": "0",
+    "L_full": "32",
+    "N_full": "192",
+    "center": "16 16 16",
+    "max_level": "0",
+    "regrid_interval": "16",
+    "regrid_threshold": "0.01",
+    "max_box_size": "32",
+    "min_box_size": "16",
+    "isPeriodic": "0 0 0",
+    "hi_boundary": "1 1 1",
+    "lo_boundary": "1 1 1",
+    "dt_multiplier": "0.02",
+    "stop_time": "2",
+    "max_steps": "600",
+    "max_spatial_derivative_order": "4",
+    "nan_check": "1",
+    "min_chi": "1e-8",
+    "min_lapse": "1e-10",
+    "lapse_advec_coeff": "1",
+    "lapse_coeff": "2",
+    "lapse_power": "1",
+    "shift_advec_coeff": "0",
+    "shift_Gamma_coeff": "0.75",
+    "eta": "1",
+    "formulation": "1",
+    "kappa1": "0.1",
+    "kappa2": "0",
+    "kappa3": "1",
+    "covariantZ4": "1",
+    "sigma": "0.1",
+    "G_Newton": "1",
+    "calculate_constraint_norms": "1",
+    "calculate_complex_scalar_diagnostics": "1",
+    "constraint_norms_interior_radius": "8",
+    "calculate_energy_conditions": "0",
+    "calculate_curvature_invariants": "0"
+  },
+  "overrides": {
+    "SWH_KEEP_LAST": "3",
+    "SWH_CONSUME_ARGS": "--frames-fields  chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi phi_lump0 Pi_lump0 Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed  --frames-axis z --frames-coord 16 --frames-zoom 16 --frames-center 16 16 16 --frames-cache-slices --frames-auto-zlim --frames-blank-edge 2 --no-psi4",
+    "SWH_PREFLIGHT": "full"
+  },
+  "restart_from": null,
+  "binary": {
+    "file": "main3d_ring070r2_3e6466ed_2026-11-02.ex",
+    "path": "runs/railgun/evolution/bin/main3d_ring070r2_3e6466ed_2026-11-02.ex",
+    "sha256": "14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc",
+    "grteclyn_version": "3e6466ed",
+    "binaries_tsv": null
+  },
+  "launcher": {
+    "commit": "9def7915",
+    "dirty": false
+  },
+  "node": "the second GPU node",
+  "gpu": "0",
+  "paths": {
+    "run_dir": "runs/railgun/evolution/pilot/ring070-n192-t2-20261102",
+    "scratch": "$GRTECLYN_SCRATCH/ring070-n192-t2-20261102"
+  },
+  "preflight": {
+    "schema": 1,
+    "campaign": "canonical scalar ring evolution",
+    "mode": "full",
+    "restart": false,
+    "exe": "main3d_ring070r2_3e6466ed_2026-11-02.ex",
+    "exe_sha256": "14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc",
+    "params_sha256": "151de101d442dc64492a2cf867badc0291c31d94c2355a26c639b0fbd65a5529",
+    "verdict": "pass",
+    "reasons": [],
+    "frames": {
+      "fields": [
+        "chi",
+        "chi_minus_1",
+        "K",
+        "lapse",
+        "shift1",
+        "shift2",
+        "shift3",
+        "phi",
+        "Pi",
+        "phi_lump0",
+        "Pi_lump0",
+        "Weyl4_Re",
+        "Weyl4_Im",
+        "Weyl4_Mag",
+        "scalar_activity",
+        "local_speed"
+      ],
+      "required": [
+        "chi",
+        "chi_minus_1",
+        "K",
+        "lapse",
+        "shift1",
+        "shift2",
+        "shift3",
+        "phi",
+        "Pi",
+        "phi_lump0",
+        "Pi_lump0",
+        "Weyl4_Re",
+        "Weyl4_Im",
+        "Weyl4_Mag",
+        "scalar_activity",
+        "local_speed"
+      ],
+      "missing": [],
+      "subset": null,
+      "source": "--frames-fields in SWH_CONSUME_ARGS",
+      "axis": "z",
+      "errors": [],
+      "warnings": [],
+      "render": {
+        "plotfile": "plt00000",
+        "frame": 0,
+        "status": "ok",
+        "seconds": 15.4,
+        "frames_out": "preflight_frames",
+        "log": "preflight_frames/render.log",
+        "fields": {
+          "chi": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 0.24756456911563873,
+            "max": 0.8028149604797363,
+            "verdict": "ok"
+          },
+          "chi_minus_1": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.7524354457855225,
+            "max": -0.19718505442142487,
+            "verdict": "ok"
+          },
+          "K": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -2.3272624625527967e-16,
+            "max": 2.350007944164535e-16,
+            "verdict": "ok"
+          },
+          "lapse": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 0.4222281873226166,
+            "max": 0.892960786819458,
+            "verdict": "ok"
+          },
+          "shift1": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.11982312798500061,
+            "max": 0.11982312798500061,
+            "verdict": "ok"
+          },
+          "shift2": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.11982312798500061,
+            "max": 0.11982312798500061,
+            "verdict": "ok"
+          },
+          "shift3": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "verdict": "flat",
+            "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+          },
+          "phi": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.08596548438072205,
+            "max": 0.08596548438072205,
+            "verdict": "ok"
+          },
+          "Pi": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.11934158205986023,
+            "max": 0.11934158205986023,
+            "verdict": "ok"
+          },
+          "phi_lump0": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.08596548438072205,
+            "max": 0.08596548438072205,
+            "verdict": "ok"
+          },
+          "Pi_lump0": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -0.11934158205986023,
+            "max": 0.11934158205986023,
+            "verdict": "ok"
+          },
+          "Weyl4_Re": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 1.0355065569456201e-05,
+            "max": 0.0369986928999424,
+            "verdict": "ok"
+          },
+          "Weyl4_Im": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": -9.867574590316508e-06,
+            "max": 0.0028178715147078037,
+            "verdict": "ok"
+          },
+          "Weyl4_Mag": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 1.0355094673286658e-05,
+            "max": 0.03707952797412872,
+            "verdict": "ok"
+          },
+          "scalar_activity": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 3.312642365926877e-05,
+            "max": 0.14816203713417053,
+            "verdict": "ok"
+          },
+          "local_speed": {
+            "pixels": 9216,
+            "nan": 0,
+            "min": 0.22787238657474518,
+            "max": 0.8105006217956543,
+            "verdict": "ok"
+          }
+        },
+        "log_tail": []
+      }
+    },
+    "intent": {
+      "errors": [],
+      "warnings": [
+        "this run writes no checkpoints: if it dies, it cannot be restarted"
+      ]
+    },
+    "required_files": {
+      "files": {
+        "recipe_initial_data_file": "runs/railgun/evolution/initial-070-n192-20261102/initial.gridinit"
+      },
+      "errors": []
+    },
+    "header_binary_requirements": {
+      "checks": [],
+      "errors": []
+    },
+    "symmetry": {
+      "reflect": [],
+      "errors": [],
+      "warnings": []
+    },
+    "consumer": {
+      "consume": true,
+      "areal_radius": "off",
+      "neck_horizons": false,
+      "reflect": [],
+      "errors": [],
+      "warnings": []
+    },
+    "paths": {
+      "name": "ring070-n192-t2-20261102",
+      "errors": [],
+      "warnings": []
+    },
+    "static": {
+      "keys": 60,
+      "absent_from_binary": [],
+      "allowed_absent": []
+    },
+    "probe": {
+      "status": "ok",
+      "exit_code": 0,
+      "unused": [],
+      "version": "3e6466ed",
+      "seconds": 4.5,
+      "log_tail": [],
+      "allowed_unused": []
+    },
+    "t0": {
+      "collapse_diagnostics.dat": {
+        "time": 0.0,
+        "min_lapse": 0.42222818973,
+        "min_chi": 0.2475645657,
+        "max_abs_K": 3.4047271788e-16,
+        "min_lapse_x": 16.0,
+        "min_lapse_y": 16.0,
+        "min_lapse_z": 16.0,
+        "max_ah_r": 0.0,
+        "min_theta_plus": 0.10508600128,
+        "r_at_min_theta_plus": 16.330764757,
+        "min_phi": -0.085965487576,
+        "max_phi": 0.085965487576,
+        "min_Pi": -0.11934158286,
+        "max_Pi": 0.11934158286,
+        "pump_work": 0.0
+      },
+      "complex_scalar_diagnostics.dat": {
+        "time": 0.0,
+        "Q_box": 1.3063224292,
+        "Jz_matter_box": -1.3062584679,
+        "integral_abs_Phi_sq": 1.0731022456,
+        "m2_re": -1.9398600458e-17,
+        "m2_im": -4.4076247134e-18,
+        "max_abs_Phi_sq": 0.0074462749357
+      },
+      "constraint_norms.dat": {
+        "time": 0.0,
+        "L2_Ham": 0.011627913614,
+        "L2_Mom": 4.76588857e-06,
+        "min_rho_req": -0.0022792606884,
+        "max_rho_req": 0.011702813343,
+        "integral_neg_rho": 1.2527359352,
+        "L2_Ham_rel": 0.4811021716,
+        "L2_Mom_rel": 0.00052702317537,
+        "pump_force_L2": 0.0,
+        "governor": 0.99999982896,
+        "pump_fi_L2": 0.0,
+        "L2_Ham_amr": 1.9626990328e-06,
+        "L2_Mom_amr": 1.7956925388e-06,
+        "L2_Ham_amr_rel": 8.6902200583e-05,
+        "L2_Mom_amr_rel": 0.0001862913899,
+        "Linf_Ham_amr": 0.00019242981306,
+        "L2_Ham_amr_ref": 0.0,
+        "L2_Ham_int": 7.1961866221e-06,
+        "L2_Mom_int": 6.5838615315e-06
+      }
+    },
+    "grteclyn_version": "3e6466ed",
+    "seed": {
+      "requested": {}
+    }
+  },
+  "t0": {
+    "time": 0.0,
+    "L2_Ham": 0.011627913614,
+    "L2_Mom": 4.76588857e-06,
+    "min_rho_req": -0.0022792606884,
+    "max_rho_req": 0.011702813343,
+    "integral_neg_rho": 1.2527359352,
+    "L2_Ham_rel": 0.4811021716,
+    "L2_Mom_rel": 0.00052702317537,
+    "pump_force_L2": 0.0,
+    "governor": 0.99999982896,
+    "pump_fi_L2": 0.0,
+    "L2_Ham_amr": 1.9626990328e-06,
+    "L2_Mom_amr": 1.7956925388e-06,
+    "L2_Ham_amr_rel": 8.6902200583e-05,
+    "L2_Mom_amr_rel": 0.0001862913899,
+    "Linf_Ham_amr": 0.00019242981306,
+    "L2_Ham_amr_ref": 0.0,
+    "L2_Ham_int": 7.1961866221e-06,
+    "L2_Mom_int": 6.5838615315e-06
+  },
+  "seed": null,
+  "frames": {
+    "fields": [
+      "chi",
+      "chi_minus_1",
+      "K",
+      "lapse",
+      "shift1",
+      "shift2",
+      "shift3",
+      "phi",
+      "Pi",
+      "phi_lump0",
+      "Pi_lump0",
+      "Weyl4_Re",
+      "Weyl4_Im",
+      "Weyl4_Mag",
+      "scalar_activity",
+      "local_speed"
+    ],
+    "missing_from_default": [],
+    "subset": null,
+    "source": "--frames-fields in SWH_CONSUME_ARGS",
+    "t0_render": {
+      "chi": "ok",
+      "chi_minus_1": "ok",
+      "K": "ok",
+      "lapse": "ok",
+      "shift1": "ok",
+      "shift2": "ok",
+      "shift3": "flat",
+      "phi": "ok",
+      "Pi": "ok",
+      "phi_lump0": "ok",
+      "Pi_lump0": "ok",
+      "Weyl4_Re": "ok",
+      "Weyl4_Im": "ok",
+      "Weyl4_Mag": "ok",
+      "scalar_activity": "ok",
+      "local_speed": "ok"
+    }
+  },
+  "status": "finished",
+  "exit_status": 0,
+  "finished_utc": "2026-11-02T07:24:52Z",
+  "t_end": 2.0
+}

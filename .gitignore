@@ -27,9 +27,12 @@ pout.*
 *.out
 *.dat
 *.old.*
-*.h5
 Weyl_integral*
 *ExtractionOut_*
+parameters_and_version.txt
+
+# Test output
+*.h5
 
 # Job schedulers
 jobscript*
@@ -105,19 +108,21 @@ __pycache__/
 # absolute output/plotfile paths of whoever ran it -- home dirs and scratch
 # paths that must never enter git.  It is a run artefact, not configuration.
 parameters_and_version.txt
+# Completed ring packs contain the packer's portable, path-sanitized copy.
+!results/railgun/studies/evolution-*/parameters_and_version.txt
 
 # Frames belong to the run that produced them, under runs/<campaign>/<run>/frames.
 # consume_plotfiles once defaulted --frames-out into this source directory, so
 # PNGs from unrelated runs accumulated here and 16 of them got committed.  The
 # default now points at the working directory; this keeps any stragglers out.
-grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/*/
+grteclyn-wrapper/src/grteclyn_workflows/plotting/slices/*/
 
 # Downloaded GWOSC strain: bulk detector data, re-fetchable from gwosc.org by
 # (ifo, gps_start, gps_end, rate) and never edited by hand.  The default cache
 # now lives outside the source tree (runs/gw_search/strain_cache); the second
 # line retires the one that was briefly written into the package itself.
 runs/gw_search/strain_cache/
-grteclyn-wrapper/src/grteclyn_wrapper/gw_search/data_cache/
+grteclyn-wrapper/src/grteclyn_workflows/gw_search/data_cache/
 
 # Superseded pack copies (policy: archived, never tracked)
 results/merger/campaign/00_archive/

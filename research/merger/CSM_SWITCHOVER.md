@@ -74,7 +74,7 @@ readers select spheres by name or header value (one exception below).
   t0 = 21.5 (old MOTS), fly-by trust 70 / u 50 cuts. Re-derive from the new runs.
 - Cost rows: clmDetCostSpiralChain ≈ 46 h at 2.17 u/h (was 23.5), clmDetCostHeadonLevelFive ≈ 48 h (was 28.2).
 
-## Figure modules (grteclyn-wrapper/.../visualisation/wormhole_merger)
+## Figure modules (grteclyn-wrapper/.../plotting/wormhole_merger)
 
 - M = 2.0: ligo:100-106 (M_CODE), gw_search nr.py:209, headon_collapse:122.
 - headon_collapse: offline diamonds (:216-217) and the late track from DOWN/FILL/SEAMED (:214-266) go;

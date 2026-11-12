@@ -1,0 +1,14 @@
+{
+  "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "core": {
+    "radius": 0.08,
+    "degree": 12,
+    "comparison_degree": 14,
+    "tolerance": 1e-08,
+    "join": "C6 Bernstein"
+  },
+  "configuration_sha256": "a87d2218d3771abfa68c4a31e42c484245bc1c0e9453d261ed6fc53e6b76b969",
+  "commit": "29d4201bf203421e276843dd0bf7e5c74704769f",
+  "checkpoints": false
+}

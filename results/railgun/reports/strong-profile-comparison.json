@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "study": "ring-profile",
+      "axis_sha256": "962a8bb725e9cea4b14f60feac88a4f01850b6d228b8446c7c9272a63aea0f38",
+      "max_abs_linear_force_per_spin": 0.0004541221314317907,
+      "signed_force": 0.0004541221314317907,
+      "z_at_max": -4.6,
+      "force_at_z1": -0.00016520863071545216,
+      "central_coordinate_dragging": -0.004355778523944102
+    },
+    {
+      "study": "strong-profile-073",
+      "axis_sha256": "c7e0b42f12e6a650b84cd85f6b79c2573497979a18b86db54ffd27f3e1d0f645",
+      "max_abs_linear_force_per_spin": 0.03555739986900573,
+      "signed_force": 0.03555739986900573,
+      "z_at_max": -1.1999999999999993,
+      "force_at_z1": -0.03482755222514724,
+      "central_coordinate_dragging": -0.09649098077513776
+    }
+  ],
+  "peak_linear_force_ratio": 78.29920060688887,
+  "scope": "Eulerian orthonormal, instantaneously comoving, linear-in-spin, unit test mass. This is not an actual moving-particle timing ratio."
+}

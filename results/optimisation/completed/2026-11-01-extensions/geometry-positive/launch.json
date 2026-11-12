@@ -1,0 +1,10 @@
+{
+  "start_utc": "2026-10-31T18:21:32.067400+00:00",
+  "source_commit": "69e9590a4c4a7fc35a2f590e09a18c73947e8f21",
+  "allocation": "first node / GPU 0",
+  "threads": 4,
+  "virtual_memory_gib": 220,
+  "timeout_seconds": 14400,
+  "job": "opt-d21-geometry-freej-20261031",
+  "stationary_only": true
+}

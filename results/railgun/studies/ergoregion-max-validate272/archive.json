@@ -1,0 +1,17 @@
+{
+  "original_files_sha256": {
+    "accepted_ergoregion.npz": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+    "best_validated.npz": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+    "finalists/01/grid_160x20.json": "4832d9425f286866f405716a220565fae03138df02f999a2689ab379e714e5b1",
+    "finalists/01/grid_160x20.npz": "fdc04bcf68976df5deaed7a95f7f017f0e1804d18a31d88c1133c0025f6a5afa",
+    "finalists/01/manifest.json": "c46a8d536b7366feb7ad35eb1f12e31be98037d477b4bc3a2b1ec5cd1513d73c",
+    "finalists/01/outcome.json": "9428211d1410e36f1d8c0f4fdea9e8c431420c663f4e2f5db71a088dc8aeee26",
+    "incumbent.json": "237e8026ac1c0b04fb2db342a19d9dec95a05fa4bf1cbf5937851d03bec9a623",
+    "incumbent.npz": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+    "manifest.json": "5030a6dafc2c7d789d98c0f4471e52b2faca5da3e23d31b6bfcb89d1db844cce",
+    "outcome.json": "7ff2cd99efdd05f5cc0635f268ea21c19b824e3ba730b4e0ec061f30c23c1a54",
+    "progress.json": "04c47198dcee6b8ef86376bd25f7b920cd2016c98a5100593b35f3ccbb8ccdf1"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/single-ring/scans/ergoregion-max-validate272-20261102"
+}

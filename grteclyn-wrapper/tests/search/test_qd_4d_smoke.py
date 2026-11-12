@@ -6,11 +6,11 @@ import json
 
 import pytest
 
-from grteclyn_wrapper.core.evaluation import Evaluation
-from grteclyn_wrapper.search import qd_search as qd_module
-from grteclyn_wrapper.search.ftl_retention import FTL_CHAMPIONS_FILE
-from grteclyn_wrapper.search.optimize import SearchDimension
-from grteclyn_wrapper.search.qd_search import QDArchive, run_qd_search
+from grteclyn_workflows.evolution.evaluation import Evaluation
+from grteclyn_workflows.search import qd_search as qd_module
+from grteclyn_workflows.search.ftl_retention import FTL_CHAMPIONS_FILE
+from grteclyn_workflows.search.optimize import SearchDimension
+from grteclyn_workflows.search.qd_search import QDArchive, run_qd_search
 
 
 def _base_components(**extra: float) -> dict[str, float]:

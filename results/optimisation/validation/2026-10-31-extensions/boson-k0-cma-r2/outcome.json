@@ -1,0 +1,102 @@
+{
+  "status": "no_validated_improvement",
+  "reference": {
+    "nx": 210,
+    "ny": 42,
+    "newton": 1.4371362333925261e-15,
+    "iters": 2,
+    "newton_updates": 2,
+    "newton_converged": true,
+    "newton_reason": "converged",
+    "newton_history": [
+      8.509195410946639e-07,
+      3.6790166467194307e-13,
+      1.4371362333925261e-15
+    ],
+    "newton_steps": [
+      1.0,
+      1.0
+    ],
+    "jacobian_evals": 1,
+    "X": 4.644533144529978,
+    "X_A": 4.684238259991632,
+    "VIQ": -18.87459544235289,
+    "R_e": 4.063830534906223,
+    "R_A": 4.029384156562621,
+    "R_pol": 4.012329147814772,
+    "sigma": 2.0000000000000915,
+    "E19": 1.5602527070711908e-11,
+    "E_c": 1.5974486579582245e-10,
+    "J_error": 5.277392297007478e-10,
+    "pin_error": 0.0,
+    "tails": 0.4386247665211756,
+    "lapse_min": 0.20787957635076193,
+    "stability": "not_assessed",
+    "scalar_in_vacuum_interval": true,
+    "verdict": "PASS",
+    "seed_perturbation": 1e-06,
+    "X_full": 4.684238262964385,
+    "X_radial": 4.684238262964385,
+    "X_angular": 7.691133502823543e-23,
+    "area": 204.02679760669835,
+    "E_b": 0.0,
+    "E_b_over_R_A": 0.0,
+    "Q_b": 0.0,
+    "J_b": 0.0,
+    "B_min": 0.9999999999999979,
+    "local_nec_peak": 0.005373735062488512,
+    "phantom_ray_axis": -0.07568380473647796,
+    "phantom_ray_equator": -0.0765857251963128,
+    "volume_relative_drift": 6.067520018167808e-15,
+    "surface_verified": true,
+    "surface_minima": 1,
+    "surface_unresolved": false,
+    "surface_area_drift": 0.0,
+    "surface_gradient": 9.9674113974033e-15,
+    "surface_hessian_min": 4.504182264822541,
+    "offgrid_einstein": 3.743323878220167e-12,
+    "offgrid_scalar": 1.1566736880825745e-12,
+    "offgrid_points": 1092,
+    "offgrid_pass": true,
+    "tidal_peak": 0.03212295133051491,
+    "tidal_location": [
+      0.04087680075759993,
+      1.9612684263847764e-07,
+      -0.5
+    ],
+    "tidal_converged": true,
+    "tidal_drift": 0.0,
+    "tidal_tail": [
+      [
+        5.013982037002504e-09,
+        3.975785544158711e-11,
+        3.96781668089409e-14
+      ],
+      [
+        1.3326288508624405e-07,
+        1.0774021689925062e-09,
+        1.0799538699290138e-12
+      ]
+    ],
+    "tidal_axis_error": 8.391345344276667e-14,
+    "tidal_samples": 3972,
+    "tidal_speeds": [
+      0.0,
+      -0.5,
+      0.5
+    ],
+    "transit_axis": 198.2420911422487,
+    "transit_equator": 198.47695092815502,
+    "M_ADM_plus_estimate": 1.1148954663038277,
+    "M_ADM_plus_fit_drift": 0.00010811661687193386,
+    "M_ADM_minus_estimate": -4.557565454200489,
+    "M_ADM_minus_fit_drift": 0.00040550152125806704,
+    "rejection_reasons": [],
+    "seconds": 20.68342492589727
+  },
+  "winner": null,
+  "validated_fractional_improvement": null,
+  "elapsed_seconds": 1464.69055349892,
+  "search_evaluations": 96,
+  "stability": "not_assessed"
+}

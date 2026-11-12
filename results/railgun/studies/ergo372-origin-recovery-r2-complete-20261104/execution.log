@@ -1,0 +1,65 @@
+[capped_job] start 2026-11-04T05:47:13Z threads=4 mem=160G timeout=3098s
+Wed Nov  4 05:47:13 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:9B:00.0 Off |                    0 |
+| N/A   30C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         879G  505G  329G  61% /
+4.0K	<scratch>/_cache
+........................................................................ [ 94%]
+....                                                                     [100%]
+76 passed in 67.00s (0:01:06)
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+W1104 05:48:30.143150   28205 hlo_rematerialization.cc:3363] Can't reduce memory use below 61.24GiB (65756433597 bytes) by rematerialization; only reduced to 63.92GiB (68639223072 bytes), down from 63.92GiB (68639223072 bytes) originally
+E1104 05:48:32.297150   31251 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:48:32.297395   31251 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:48:32.583835   31161 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:48:32.584118   31161 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+W1104 05:48:32.611291   28205 hlo_rematerialization.cc:3363] Can't reduce memory use below 61.24GiB (65756850633 bytes) by rematerialization; only reduced to 63.89GiB (68607143516 bytes), down from 63.89GiB (68607143516 bytes) originally
+[newton] iter 0: |R| 2.817e-06 -> 1.412e-10 (t = 1)
+[newton] iter 1: |R| 1.412e-10 -> 2.735e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.905e-15
+{"event": "grid", "grid": [288, 36], "verdict": "REJECT", "reasons": ["angular_momentum_balance", "canonical_angular_momentum_balance"], "seconds": 81.72994307795307}
+{
+  "stationary_accepted": false,
+  "evolution_qualified": false,
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "checkpoints": false
+}
+[capped_job] end 2026-11-04T05:49:48Z exit=2

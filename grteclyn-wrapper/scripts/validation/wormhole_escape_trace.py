@@ -54,22 +54,9 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic import _hamiltonian_rhs
-from grteclyn_wrapper.metrics.probes.ftl.geodesic import (
-    H_REL_TOL,
-    _null_relative_drift,
-    build_metric_3d_from_plotfile,
-    future_null_cov,
-    null_hamiltonian,
-    project_null,
-    ray_is_captured,
-)
-from grteclyn_wrapper.metrics.probes.ftl.metric_field import (
-    EvolvingMetricField,
-    MetricField,
-    StaticMetricField,
-    evolving_field_from_plotfiles,
-)
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic import _hamiltonian_rhs
+from grteclyn_workflows.diagnostics.probes.ftl.geodesic import H_REL_TOL, _null_relative_drift, build_metric_3d_from_plotfile, future_null_cov, null_hamiltonian, project_null, ray_is_captured
+from grteclyn_workflows.diagnostics.probes.ftl.metric_field import EvolvingMetricField, MetricField, StaticMetricField, evolving_field_from_plotfiles
 
 _DIRS: tuple[tuple[str, NDArray[np.float64]], ...] = tuple(
     (f"{s}{a}", np.array([sign if i == ax else 0.0 for i in range(3)]))

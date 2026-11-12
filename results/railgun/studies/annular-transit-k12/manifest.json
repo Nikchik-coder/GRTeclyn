@@ -1,0 +1,36 @@
+{
+  "config": {
+    "max_tracks": 8,
+    "launch_z": 10.0,
+    "target_z": -10.0,
+    "speed": -0.5,
+    "spin": 0.001,
+    "duration": 100.0,
+    "rtols": [
+      2e-11,
+      2e-12
+    ],
+    "max_step": 0.4,
+    "samples": 1001,
+    "conservation_tol": 1e-09,
+    "timing_tol": 1e-07,
+    "position_tol": 1e-07,
+    "relative_density_cutoff": 1e-06
+  },
+  "plan": {
+    "numerical_execution": false,
+    "max_tracks": 8,
+    "source_sha256": "3952db5925d4903217f75156e14ff3ba57c05379ae2b01b6bcfba01f97a3c1ee",
+    "rho_min": 35.20001202622833,
+    "rho_max": 39.00535380077333,
+    "launch_rho": 37.10268291350083,
+    "peak_densities": [
+      0.0002324873893634992,
+      1.4542840682178225e-08
+    ]
+  },
+  "commit": "7b00be9449dd6067e4d43822bf491ffd6d615ea3",
+  "platform": "gpu",
+  "float64": true,
+  "scope": "Finite matched-energy off-axis annular transit; no escape, trapping, acceleration or stability claim."
+}

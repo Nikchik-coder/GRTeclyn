@@ -1,0 +1,13 @@
+{
+  "source_sha256": "42250669262ae8f41d5d29a7c235ed239d66918763da3374a7fc3995c9b45405",
+  "commit": "078ee51fdd6f3094f7124eea7bad7c5357a0aabd",
+  "platform": "gpu",
+  "float64": true,
+  "z_min": -15.0,
+  "z_max": 15.0,
+  "samples": 301,
+  "certify_core": true,
+  "corridor_radius": 0.4,
+  "corridor_degree": 6,
+  "stability": "not_assessed"
+}

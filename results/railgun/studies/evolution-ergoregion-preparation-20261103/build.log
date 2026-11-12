@@ -1,0 +1,12 @@
+[capped_job] start 2026-11-03T14:41:45Z threads=4 mem=64G timeout=3600s
+[build] source   : 86d1e98b
+[build] amrex    : 26.02-12-gd7da5045
+[build] flags    : USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90
+[build] objects  : Examples/RadialRecipe/tmp_build_dir/pin
+[build] output   : runs/railgun/evolution/bin/main3d_ergo523amr_86d1e98b_2026-11-03.ex
+[build] building (log: runs/railgun/evolution/logs/build_main3d_ergo523amr_86d1e98b_2026-11-03.log) ...
+[build] done in ~3 min: runs/railgun/evolution/bin/main3d_ergo523amr_86d1e98b_2026-11-03.ex
+[build] sha256   : 647a00124aa1eaa24a64e17a65c5ace1d754b15621c5f565b8d01a0e565502f7
+[build] manifest : results/railgun/reports/evolution_binaries.tsv (commit it)
+[build] launch with: --binary runs/railgun/evolution/bin/main3d_ergo523amr_86d1e98b_2026-11-03.ex
+[capped_job] end 2026-11-03T14:44:20Z exit=0

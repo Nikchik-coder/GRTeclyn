@@ -11,7 +11,8 @@
  *     mu = cos(theta)                in [0, 1]           (equatorial
  *                                      reflection symmetry).
  *
- * Components, by name (the header must list exactly these six):
+ * Components, by name (the header must list exactly these six, or these six
+ * and B):
  *     f        metric function: alpha = e^{f/2}, g_tt sector
  *     nu_bar   nu / sin^2(theta)  -- regular on the axis, exactly 0 when
  *              static; nu is the Kleihaus-Kunz quasi-isotropic function
@@ -20,10 +21,16 @@
  *     domega_dtheta_over_sintheta      d(omega)/d(theta) / sin(theta)
  *     phi      the phantom scalar, with its eta -> +infinity asymptote
  *              already subtracted
+ *     B        optional 7th: gamma_ij carries an overall B^2 (> 0); a
+ *              6-component table means B = 1
  *
  * Derivatives are stored, not recomputed here, so a spectral generator hands
  * over exact ones.  Under mu -> -mu every component is even except
  * domega_dtheta_over_sintheta, which is odd; sample() applies the parity.
+ *
+ * Optional header line "potential_coeffs a_0 ... a_n" (n <= 11): the scalar
+ * potential sum_k a_k phi^k in the evolution's units (G = 1, the phi column's
+ * phi), added to the phantom_mass term (PhantomDecayPotential.hpp).
  *
  * Interpolation: a C2 tensor-product cubic spline by default.  The bilinear
  * sample is continuous but kinked at every table line, so finite-difference
@@ -49,6 +56,7 @@
 
 #include <array>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <memory>
 #include <sstream>
@@ -59,7 +67,9 @@
 class RotatingBackgroundTable
 {
   public:
-    static constexpr int NCOMP = 6;
+    static constexpr int NCOMP_BASE = 6;
+    static constexpr int MAX_NCOMP  = 7;
+    static constexpr int max_potential_coeffs = 12;
 
     //! One sampled point of the background.
     struct Sample
@@ -70,6 +80,19 @@ class RotatingBackgroundTable
         double domega_deta{};
         double domega_dtheta_over_sintheta{};
         double phi{};
+        double B{1.0};
+    };
+
+    //! The parsed and validated header.
+    struct Header
+    {
+        double eta0{1.0};
+        int n_x{0};
+        int n_mu{0};
+        double x_min{0.0};
+        double x_max{1.0};
+        int ncomp{0};
+        std::vector<double> potential_coeffs;
     };
 
     //! Trivially copyable view captured by GPU kernels.
@@ -82,6 +105,7 @@ class RotatingBackgroundTable
         const double *d2x{nullptr};
         const double *d2m{nullptr};
         const double *d4xm{nullptr};
+        int ncomp{NCOMP_BASE};
         int n_x{0};
         int n_mu{0};
         double x_min{0.0};
@@ -108,10 +132,10 @@ class RotatingBackgroundTable
             const double wx = amrex::max(0.0, amrex::min(1.0, fx - i0));
             const double wm = amrex::max(0.0, amrex::min(1.0, fm - j0));
 
-            double vals[NCOMP];
+            double vals[MAX_NCOMP]{};
             if (interp == 0)
             {
-                for (int c = 0; c < NCOMP; ++c)
+                for (int c = 0; c < ncomp; ++c)
                 {
                     const double v00 = data[flat(j0, i0, c)];
                     const double v10 = data[flat(j0, i0 + 1, c)];
@@ -138,7 +162,7 @@ class RotatingBackgroundTable
                 const double bm = wm;
                 const double cm = (am * am * am - am) * hm * hm / 6.0;
                 const double dm = (bm * bm * bm - bm) * hm * hm / 6.0;
-                for (int c = 0; c < NCOMP; ++c)
+                for (int c = 0; c < ncomp; ++c)
                 {
                     const long k00 = flat(j0, i0, c);
                     const long k10 = flat(j0, i0 + 1, c);
@@ -164,12 +188,13 @@ class RotatingBackgroundTable
             // sin(theta) does not).
             out.domega_dtheta_over_sintheta = mu_sign * vals[4];
             out.phi                         = vals[5];
+            out.B = (ncomp > NCOMP_BASE) ? vals[NCOMP_BASE] : 1.0;
         }
 
         AMREX_GPU_DEVICE AMREX_FORCE_INLINE long flat(int j, int i,
                                                       int c) const
         {
-            return (static_cast<long>(j) * n_x + i) * NCOMP + c;
+            return (static_cast<long>(j) * n_x + i) * ncomp + c;
         }
     };
 
@@ -182,6 +207,158 @@ class RotatingBackgroundTable
 
     [[nodiscard]] const View &view() const { return m_view; }
     [[nodiscard]] double eta0() const { return m_view.eta0; }
+
+    //! The validated header of the table at a_path; the body is not read.
+    static Header read_header(const std::string &a_path)
+    {
+        std::ifstream fin(a_path, std::ios::binary);
+        if (!fin.is_open())
+        {
+            throw std::runtime_error("RotatingBackgroundTable: cannot open " +
+                                     a_path);
+        }
+        return read_header(fin, a_path);
+    }
+
+    //! Parses and validates the header from a_in, positioned at the start of
+    //! the file, and leaves a_in at the first body byte.
+    static Header read_header(std::istream &a_in, const std::string &a_path)
+    {
+        std::string line;
+        std::getline(a_in, line);
+        if (line != "SPINBG_V1")
+        {
+            throw std::runtime_error(
+                "RotatingBackgroundTable: " + a_path +
+                " does not start with SPINBG_V1 (got '" + line + "')");
+        }
+
+        Header hdr;
+        std::vector<std::string> comp_names;
+        bool have_eta0   = false;
+        bool have_coeffs = false;
+        bool have_end    = false;
+        while (std::getline(a_in, line))
+        {
+            if (line == "END_HEADER")
+            {
+                have_end = true;
+                break;
+            }
+            std::istringstream iss(line);
+            std::string key;
+            iss >> key;
+            if (key == "eta0")
+            {
+                iss >> hdr.eta0;
+                have_eta0 = true;
+            }
+            else if (key == "n_x")
+            {
+                iss >> hdr.n_x;
+            }
+            else if (key == "n_mu")
+            {
+                iss >> hdr.n_mu;
+            }
+            else if (key == "x_min")
+            {
+                iss >> hdr.x_min;
+            }
+            else if (key == "x_max")
+            {
+                iss >> hdr.x_max;
+            }
+            else if (key == "num_components")
+            {
+                iss >> hdr.ncomp;
+            }
+            else if (key == "component_names")
+            {
+                std::string name;
+                while (iss >> name)
+                {
+                    comp_names.push_back(name);
+                }
+            }
+            else if (key == "potential_coeffs")
+            {
+                if (have_coeffs)
+                {
+                    throw std::runtime_error("RotatingBackgroundTable: " +
+                                             a_path +
+                                             " has two potential_coeffs lines");
+                }
+                have_coeffs = true;
+                std::string tok;
+                while (iss >> tok)
+                {
+                    char *end      = nullptr;
+                    const double a = std::strtod(tok.c_str(), &end);
+                    if (end == tok.c_str() || *end != '\0' || !std::isfinite(a))
+                    {
+                        throw std::runtime_error(
+                            "RotatingBackgroundTable: " + a_path +
+                            " potential_coeffs entry '" + tok +
+                            "' is not a finite number");
+                    }
+                    hdr.potential_coeffs.push_back(a);
+                }
+                if (hdr.potential_coeffs.empty() ||
+                    hdr.potential_coeffs.size() >
+                        static_cast<std::size_t>(max_potential_coeffs))
+                {
+                    throw std::runtime_error(
+                        "RotatingBackgroundTable: " + a_path + " lists " +
+                        std::to_string(hdr.potential_coeffs.size()) +
+                        " potential_coeffs; 1 to 12 (a_0 ... a_n, n <= 11) "
+                        "are allowed");
+                }
+            }
+            // "meta ..." and unknown keys are documentation; skip them.
+        }
+        if (!have_end)
+        {
+            throw std::runtime_error("RotatingBackgroundTable: " + a_path +
+                                     " has no END_HEADER line");
+        }
+
+        // The component layout is a fixed contract: refuse anything else
+        // rather than guess a remap (a silently permuted table would evolve
+        // plausibly and wrongly).
+        const std::array<std::string, MAX_NCOMP> expected = {
+            "f",           "nu_bar",
+            "omega",       "domega_deta",
+            "domega_dtheta_over_sintheta", "phi",
+            "B"};
+        if ((hdr.ncomp != NCOMP_BASE && hdr.ncomp != MAX_NCOMP) ||
+            comp_names.size() != static_cast<std::size_t>(hdr.ncomp))
+        {
+            throw std::runtime_error(
+                "RotatingBackgroundTable: " + a_path + " declares " +
+                std::to_string(hdr.ncomp) + " components with " +
+                std::to_string(comp_names.size()) +
+                " names; exactly 6 named components, or 7 with B last, are "
+                "required");
+        }
+        for (int c = 0; c < hdr.ncomp; ++c)
+        {
+            if (comp_names[c] != expected[c])
+            {
+                throw std::runtime_error(
+                    "RotatingBackgroundTable: " + a_path + " component " +
+                    std::to_string(c) + " is '" + comp_names[c] +
+                    "', expected '" + expected[c] + "'");
+            }
+        }
+        if (!have_eta0 || hdr.eta0 <= 0.0 || hdr.n_x < 2 || hdr.n_mu < 2 ||
+            !(hdr.x_max > hdr.x_min))
+        {
+            throw std::runtime_error(
+                "RotatingBackgroundTable: invalid header in " + a_path);
+        }
+        return hdr;
+    }
 
   private:
     View m_view{};
@@ -196,95 +373,13 @@ class RotatingBackgroundTable
                                      path);
         }
 
-        std::string line;
-        std::getline(fin, line);
-        if (line != "SPINBG_V1")
-        {
-            throw std::runtime_error(
-                "RotatingBackgroundTable: " + path +
-                " does not start with SPINBG_V1 (got '" + line + "')");
-        }
-
-        int ncomp = 0;
-        std::vector<std::string> comp_names;
-        bool have_eta0 = false;
-        while (std::getline(fin, line))
-        {
-            if (line == "END_HEADER")
-            {
-                break;
-            }
-            std::istringstream iss(line);
-            std::string key;
-            iss >> key;
-            if (key == "eta0")
-            {
-                iss >> m_view.eta0;
-                have_eta0 = true;
-            }
-            else if (key == "n_x")
-            {
-                iss >> m_view.n_x;
-            }
-            else if (key == "n_mu")
-            {
-                iss >> m_view.n_mu;
-            }
-            else if (key == "x_min")
-            {
-                iss >> m_view.x_min;
-            }
-            else if (key == "x_max")
-            {
-                iss >> m_view.x_max;
-            }
-            else if (key == "num_components")
-            {
-                iss >> ncomp;
-            }
-            else if (key == "component_names")
-            {
-                std::string name;
-                while (iss >> name)
-                {
-                    comp_names.push_back(name);
-                }
-            }
-            // "meta ..." and unknown keys are documentation; skip them.
-        }
-
-        // The component layout is a fixed contract: refuse anything else
-        // rather than guess a remap (a silently permuted table would evolve
-        // plausibly and wrongly).
-        const std::array<std::string, NCOMP> expected = {
-            "f",           "nu_bar",
-            "omega",       "domega_deta",
-            "domega_dtheta_over_sintheta", "phi"};
-        if (ncomp != NCOMP ||
-            comp_names.size() != static_cast<std::size_t>(NCOMP))
-        {
-            throw std::runtime_error(
-                "RotatingBackgroundTable: " + path + " declares " +
-                std::to_string(ncomp) + " components with " +
-                std::to_string(comp_names.size()) +
-                " names; exactly 6 named components are required");
-        }
-        for (int c = 0; c < NCOMP; ++c)
-        {
-            if (comp_names[c] != expected[c])
-            {
-                throw std::runtime_error(
-                    "RotatingBackgroundTable: " + path + " component " +
-                    std::to_string(c) + " is '" + comp_names[c] +
-                    "', expected '" + expected[c] + "'");
-            }
-        }
-        if (!have_eta0 || m_view.eta0 <= 0.0 || m_view.n_x < 2 ||
-            m_view.n_mu < 2 || !(m_view.x_max > m_view.x_min))
-        {
-            throw std::runtime_error(
-                "RotatingBackgroundTable: invalid header in " + path);
-        }
+        const Header hdr = read_header(fin, path);
+        m_view.eta0      = hdr.eta0;
+        m_view.n_x       = hdr.n_x;
+        m_view.n_mu      = hdr.n_mu;
+        m_view.x_min     = hdr.x_min;
+        m_view.x_max     = hdr.x_max;
+        m_view.ncomp     = hdr.ncomp;
 
         if (m_view.interp != 0 && (m_view.n_x < 4 || m_view.n_mu < 3))
         {
@@ -295,7 +390,7 @@ class RotatingBackgroundTable
         }
 
         const long total =
-            static_cast<long>(m_view.n_mu) * m_view.n_x * NCOMP;
+            static_cast<long>(m_view.n_mu) * m_view.n_x * m_view.ncomp;
         // spline mode: data, d2x, d2m, d4xm back to back
         const long n_arrays = (m_view.interp != 0) ? 4 : 1;
         double *raw = static_cast<double *>(amrex::The_Managed_Arena()->alloc(
@@ -313,6 +408,18 @@ class RotatingBackgroundTable
                 std::to_string(total) + " float64 values from " + path);
         }
 
+        // B is a factor of the metric: every node must be finite and > 0.
+        for (long n = NCOMP_BASE; m_view.ncomp > NCOMP_BASE && n < total;
+             n += m_view.ncomp)
+        {
+            if (!(raw[n] > 0.0 && std::isfinite(raw[n])))
+            {
+                throw std::runtime_error("RotatingBackgroundTable: " + path +
+                                         " has B <= 0 or non-finite at node " +
+                                         std::to_string(n / m_view.ncomp));
+            }
+        }
+
         if (m_view.interp != 0)
         {
             m_view.d2x  = raw + total;
@@ -325,7 +432,9 @@ class RotatingBackgroundTable
                        << " (eta0 " << m_view.eta0 << ", " << m_view.n_x
                        << " x-points in [" << m_view.x_min << ", "
                        << m_view.x_max << "], " << m_view.n_mu
-                       << " mu-points), "
+                       << " mu-points"
+                       << ((m_view.ncomp > NCOMP_BASE) ? ", with B" : "")
+                       << "), "
                        << ((m_view.interp != 0) ? "C2 cubic-spline"
                                                 : "bilinear")
                        << " interpolation\n";
@@ -384,19 +493,20 @@ class RotatingBackgroundTable
     void build_spline(const double *data, double *d2x, double *d2m,
                       double *d4xm) const
     {
-        const int nx  = m_view.n_x;
-        const int nmu = m_view.n_mu;
+        const int nx    = m_view.n_x;
+        const int nmu   = m_view.n_mu;
+        const int ncomp = m_view.ncomp;
         const double hx = (m_view.x_max - m_view.x_min) / (nx - 1);
         const double hm = 1.0 / (nmu - 1);
         auto flat = [&](int j, int i, int c)
-        { return (static_cast<long>(j) * nx + i) * NCOMP + c; };
+        { return (static_cast<long>(j) * nx + i) * ncomp + c; };
         std::vector<double> y;
         std::vector<double> m;
         std::vector<double> work;
 
         // along x, every mu row
         y.resize(nx);
-        for (int c = 0; c < NCOMP; ++c)
+        for (int c = 0; c < ncomp; ++c)
         {
             for (int j = 0; j < nmu; ++j)
             {
@@ -417,7 +527,7 @@ class RotatingBackgroundTable
         // the 2 nmu - 1 mirrored nodes sits at mu = (k - (nmu - 1)) hm
         const int nm = 2 * nmu - 1;
         y.resize(nm);
-        for (int c = 0; c < NCOMP; ++c)
+        for (int c = 0; c < ncomp; ++c)
         {
             const double parity = (c == 4) ? -1.0 : 1.0;
             for (int pass = 0; pass < 2; ++pass)

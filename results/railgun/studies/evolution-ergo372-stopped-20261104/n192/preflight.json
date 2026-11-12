@@ -1,0 +1,399 @@
+{
+ "schema": 1,
+ "campaign": "canonical scalar ring evolution",
+ "mode": "full",
+ "restart": false,
+ "exe": "main3d_ergo523amr_86d1e98b_2026-11-03.ex",
+ "exe_sha256": "647a00124aa1eaa24a64e17a65c5ace1d754b15621c5f565b8d01a0e565502f7",
+ "params_sha256": "0506371975524d1b190fce22a0c0c1bd606d969d480c7b082df6193bf96cd5c2",
+ "verdict": "pass",
+ "reasons": [],
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "required": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing": [],
+  "subset": null,
+  "source": "--frames-fields in SWH_CONSUME_ARGS",
+  "axis": "z",
+  "errors": [],
+  "warnings": [],
+  "render": {
+   "plotfile": "plt00000",
+   "frame": 0,
+   "status": "ok",
+   "seconds": 14.1,
+   "frames_out": "preflight_frames",
+   "log": "preflight_frames/render.log",
+   "fields": {
+    "chi": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.039086341857910156,
+     "max": 0.3451772630214691,
+     "verdict": "ok"
+    },
+    "chi_minus_1": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.9609136581420898,
+     "max": -0.6548227667808533,
+     "verdict": "ok"
+    },
+    "K": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -7.4256913619908e-15,
+     "max": 7.565728778061512e-15,
+     "verdict": "ok"
+    },
+    "lapse": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.11775923520326614,
+     "max": 0.543158233165741,
+     "verdict": "ok"
+    },
+    "shift1": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.16048592329025269,
+     "max": 0.16048592329025269,
+     "verdict": "ok"
+    },
+    "shift2": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.16048592329025269,
+     "max": 0.16048592329025269,
+     "verdict": "ok"
+    },
+    "shift3": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "phi": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.15894441306591034,
+     "max": 0.15894441306591034,
+     "verdict": "ok"
+    },
+    "Pi": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.3679529130458832,
+     "max": 0.3679529130458832,
+     "verdict": "ok"
+    },
+    "phi_lump0": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.15894441306591034,
+     "max": 0.15894441306591034,
+     "verdict": "ok"
+    },
+    "Pi_lump0": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -0.3679529130458832,
+     "max": 0.3679529130458832,
+     "verdict": "ok"
+    },
+    "Weyl4_Re": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.004298688843846321,
+     "max": 0.4395175278186798,
+     "verdict": "ok"
+    },
+    "Weyl4_Im": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": -5.139725544722751e-05,
+     "max": 0.00531364930793643,
+     "verdict": "ok"
+    },
+    "Weyl4_Mag": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.00429879454895854,
+     "max": 0.43954944610595703,
+     "verdict": "ok"
+    },
+    "scalar_activity": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.006934082135558128,
+     "max": 0.4007648825645447,
+     "verdict": "ok"
+    },
+    "local_speed": {
+     "pixels": 147456,
+     "nan": 0,
+     "min": 0.02683221362531185,
+     "max": 0.41159722208976746,
+     "verdict": "ok"
+    }
+   },
+   "log_tail": []
+  }
+ },
+ "intent": {
+  "errors": [],
+  "warnings": [
+   "this run writes no checkpoints: if it dies, it cannot be restarted"
+  ]
+ },
+ "required_files": {
+  "files": {
+   "recipe_initial_data_file": "runs/railgun/evolution/exports/railgun-ergo372-t50-full-spectral-20261104-n192/level_00.gridinit"
+  },
+  "errors": []
+ },
+ "header_binary_requirements": {
+  "checks": [],
+  "errors": []
+ },
+ "symmetry": {
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "consumer": {
+  "consume": true,
+  "areal_radius": "off",
+  "neck_horizons": false,
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "paths": {
+  "name": "railgun-ergo372-t50-full-spectral-20261104-n192",
+  "errors": [],
+  "warnings": []
+ },
+ "static": {
+  "keys": 74,
+  "absent_from_binary": [],
+  "allowed_absent": []
+ },
+ "probe": {
+  "status": "ok",
+  "exit_code": 0,
+  "unused": [],
+  "version": "86d1e98b",
+  "seconds": 25.5,
+  "log_tail": [],
+  "allowed_unused": []
+ },
+ "t0": {
+  "collapse_diagnostics.dat": {
+   "time": 0.0,
+   "min_lapse": 0.11775923512,
+   "min_chi": 0.039086341137,
+   "max_abs_K": 1.0220686771e-14,
+   "min_lapse_x": 32.0,
+   "min_lapse_y": 32.0,
+   "min_lapse_z": 32.0,
+   "max_ah_r": 0.0,
+   "min_theta_plus": 0.5768168091,
+   "r_at_min_theta_plus": 0.41754796254,
+   "min_phi": -0.15894440682,
+   "max_phi": 0.15894440682,
+   "min_Pi": -0.36795291778,
+   "max_Pi": 0.36795291778,
+   "pump_work": 0.0
+  },
+  "complex_scalar_diagnostics.dat": {
+   "time": 0.0,
+   "Q_box": 0.71677221953,
+   "Jz_matter_box": -0.7167721816,
+   "integral_abs_Phi_sq": 0.41149848968,
+   "m2_re": 2.1744557496e-18,
+   "m2_im": -5.1641909734e-18,
+   "max_abs_Phi_sq": 0.025271158706
+  },
+  "constraint_norms.dat": {
+   "time": 0.0,
+   "L2_Ham": 0.0013100631773,
+   "L2_Mom": 0.00086623302418,
+   "min_rho_req": -0.00022404098121,
+   "max_rho_req": 0.038069054748,
+   "integral_neg_rho": 0.96325550824,
+   "L2_Ham_rel": 0.2340250707,
+   "L2_Mom_rel": 0.085121086718,
+   "pump_force_L2": 0.0,
+   "governor": 0.99999999982,
+   "pump_fi_L2": 0.0,
+   "L2_Ham_amr": 6.2660605147e-07,
+   "L2_Mom_amr": 4.6114050306e-09,
+   "L2_Ham_amr_rel": 9.4025657313e-05,
+   "L2_Mom_amr_rel": 3.6857085672e-07,
+   "Linf_Ham_amr": 0.002079553079,
+   "L2_Ham_amr_ref": 2.185678789e-06,
+   "L2_Ham_int": 5.0949401441e-05,
+   "L2_Mom_int": 1.8522339023e-06
+  },
+  "constraint_norms_levels.dat": {
+   "time": 0.0,
+   "Ham_L0": 1.1036188899e-10,
+   "Mom_L0": 3.9805616953e-11,
+   "Ham_L1": 7.673952945e-07,
+   "Mom_L1": 2.6937056738e-10,
+   "Ham_L2": 2.7847735403e-06,
+   "Mom_L2": 3.8628735234e-09,
+   "Ham_L3": 9.2586312103e-06,
+   "Mom_L3": 4.1561826806e-08,
+   "Ham_L4": 2.6373666273e-05,
+   "Mom_L4": 2.2307372213e-07,
+   "Ham_L5": 5.9379996356e-05,
+   "Mom_L5": 7.4347194315e-07,
+   "Ham_L6": 9.9111176579e-05,
+   "Mom_L6": 9.9632956833e-07
+  },
+  "constraint_shells.dat": {
+   "time": 0.0,
+   "Ham_r0": 0.15381880446,
+   "Ham_r1": 0.0046403598049,
+   "Ham_r2": 0.00019380637339,
+   "Ham_r3": 1.9644583412e-05,
+   "Ham_r4": 3.3851480011e-06,
+   "Ham_r5": 7.6825458266e-07,
+   "Ham_r6": 2.3012236826e-07,
+   "Ham_r7": 8.2068950201e-08,
+   "Ham_r8": 3.3781885048e-08,
+   "Ham_r9": 1.4896691594e-08,
+   "Ham_r10": 7.2307248575e-09,
+   "Ham_r11": 3.7680328453e-09,
+   "Ham_r12": 2.0998178072e-09,
+   "Ham_r13": 1.2102600397e-09,
+   "Ham_r14": 7.2312129757e-10,
+   "Ham_r15": 4.5119550691e-10,
+   "Ham_r16": 2.9126658999e-10,
+   "Ham_r17": 1.9251683331e-10,
+   "Ham_r18": 1.2959386991e-10,
+   "Ham_r19": 8.931957789e-11,
+   "Ham_r20": 6.3040078168e-11,
+   "Ham_r21": 4.512660732e-11,
+   "Ham_r22": 3.2750736134e-11,
+   "Ham_r23": 2.4123270549e-11,
+   "Ham_r24": 1.8044574326e-11,
+   "Ham_r25": 1.3667839376e-11,
+   "Ham_r26": 1.0404273215e-11,
+   "Ham_r27": 8.0206229124e-12,
+   "Ham_r28": 6.263870307e-12,
+   "Ham_r29": 4.937539698e-12,
+   "Ham_r30": 3.9075606806e-12,
+   "Ham_r31": 3.2051271807e-12,
+   "Ham_r32": 1.6271790963e-12,
+   "Mom_r0": 0.19648272864,
+   "Mom_r1": 0.0088299329918,
+   "Mom_r2": 0.00022787976467,
+   "Mom_r3": 1.7109484166e-05,
+   "Mom_r4": 2.5197793277e-06,
+   "Mom_r5": 5.2842059837e-07,
+   "Mom_r6": 1.4816471306e-07,
+   "Mom_r7": 4.9538548079e-08,
+   "Mom_r8": 1.9070925879e-08,
+   "Mom_r9": 8.0380021861e-09,
+   "Mom_r10": 3.7117674143e-09,
+   "Mom_r11": 1.834691241e-09,
+   "Mom_r12": 9.654158089e-10,
+   "Mom_r13": 5.3229435943e-10,
+   "Mom_r14": 3.048128272e-10,
+   "Mom_r15": 1.8116369733e-10,
+   "Mom_r16": 1.1149775651e-10,
+   "Mom_r17": 7.0599451295e-11,
+   "Mom_r18": 4.5736401882e-11,
+   "Mom_r19": 3.0260069006e-11,
+   "Mom_r20": 2.0497292201e-11,
+   "Mom_r21": 1.4110959373e-11,
+   "Mom_r22": 9.8885867241e-12,
+   "Mom_r23": 7.033506182e-12,
+   "Mom_r24": 5.0732201517e-12,
+   "Mom_r25": 3.7062906561e-12,
+   "Mom_r26": 2.7376054525e-12,
+   "Mom_r27": 2.0462705543e-12,
+   "Mom_r28": 1.5473848043e-12,
+   "Mom_r29": 1.1805290314e-12,
+   "Mom_r30": 9.0903499504e-13,
+   "Mom_r31": 7.2372887687e-13,
+   "Mom_r32": 3.3330194986e-13,
+   "Hmean_r0": 0.061472298039,
+   "Hmean_r1": 0.0001055049523,
+   "Hmean_r2": -1.6945250782e-05,
+   "Hmean_r3": -2.6782663007e-06,
+   "Hmean_r4": -5.3491402838e-07,
+   "Hmean_r5": -1.1600385563e-07,
+   "Hmean_r6": -3.1599402356e-08,
+   "Hmean_r7": -1.08263641e-08,
+   "Hmean_r8": -4.5050845696e-09,
+   "Hmean_r9": -1.8701869801e-09,
+   "Hmean_r10": -8.3786818816e-10,
+   "Hmean_r11": -4.0909081361e-10,
+   "Hmean_r12": -2.2737117813e-10,
+   "Hmean_r13": -1.2497480756e-10,
+   "Hmean_r14": -6.7655403448e-11,
+   "Hmean_r15": -4.0171997987e-11,
+   "Hmean_r16": -2.6551912608e-11,
+   "Hmean_r17": -1.6194076139e-11,
+   "Hmean_r18": -9.9755281781e-12,
+   "Hmean_r19": -6.805635581e-12,
+   "Hmean_r20": -4.6671230137e-12,
+   "Hmean_r21": -3.2210276069e-12,
+   "Hmean_r22": -2.3419208257e-12,
+   "Hmean_r23": -1.490223105e-12,
+   "Hmean_r24": -1.114199092e-12,
+   "Hmean_r25": -8.9042360072e-13,
+   "Hmean_r26": -6.0835062956e-13,
+   "Hmean_r27": -4.7307800338e-13,
+   "Hmean_r28": -3.3037294609e-13,
+   "Hmean_r29": -2.7451366082e-13,
+   "Hmean_r30": -2.2087920999e-13,
+   "Hmean_r31": -2.9953725456e-13,
+   "Hmean_r32": -4.159219058e-14
+  }
+ },
+ "grteclyn_version": "86d1e98b",
+ "seed": {
+  "requested": {}
+ }
+}

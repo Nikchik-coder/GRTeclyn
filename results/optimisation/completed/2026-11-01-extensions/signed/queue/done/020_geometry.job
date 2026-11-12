@@ -1,0 +1,2 @@
+set -euo pipefail
+exec bash research/optimisation/studies/run_signed_potential.sh geometry "$QUEUE_GPU" runs/optimisation/signchanging_20261031/geometry

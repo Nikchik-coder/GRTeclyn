@@ -1,0 +1,15 @@
+{
+  "node": "second GPU node",
+  "card": 0,
+  "code": "4445ce44",
+  "start_utc": "2026-11-01T14:15:58Z",
+  "end_utc": "2026-11-01T14:19:40Z",
+  "exit_code": 2,
+  "solves": 10,
+  "accepted_points": 3,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "jacobian_chunk": 128,
+  "amr_checkpoints": false
+}

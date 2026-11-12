@@ -1,0 +1,149 @@
+{
+  "search_solves": 11,
+  "refinement_solves": 3,
+  "evaluations": [
+    {
+      "central_lapse": 0.33978558674276027,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.32545272409447146,
+        "gtt_max": -0.03232811319121619,
+        "shift_norm_over_lapse_max": 0.8476750395280435,
+        "gtt_max_point": {
+          "rho": 0.8425447506381962,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.5412207117629476,
+      "path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/005/state.npz"
+    },
+    {
+      "central_lapse": 0.3163235606287353,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.3017799857460295,
+        "gtt_max": -0.006360714558537751,
+        "shift_norm_over_lapse_max": 0.9677730665953665,
+        "gtt_max_point": {
+          "rho": 0.7959763598223818,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.5081886813961715,
+      "path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/007/state.npz"
+    },
+    {
+      "central_lapse": 0.3616621478213086,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.34758449191874063,
+        "gtt_max": -0.056360091703261825,
+        "shift_norm_over_lapse_max": 0.7514723035519321,
+        "gtt_max_point": {
+          "rho": 0.8911329701164076,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.5709482233730049,
+      "path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/008/state.npz"
+    },
+    {
+      "central_lapse": 0.31714944367341263,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.302610339031412,
+        "gtt_max": -0.007275965781087606,
+        "shift_norm_over_lapse_max": 0.9631682693904315,
+        "gtt_max_point": {
+          "rho": 0.7959763598223818,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.5093806861041527,
+      "path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/009/state.npz"
+    },
+    {
+      "central_lapse": 0.29729052487253343,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.2826249746332093,
+        "gtt_max": 0.015011009064832135,
+        "shift_norm_over_lapse_max": 1.0809707039974938,
+        "gtt_max_point": {
+          "rho": 0.7513443025567917,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.4805449678263247,
+      "path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/attempts/011/state.npz"
+    }
+  ],
+  "finalists": [
+    {
+      "log_lapse": -1.213045420079527,
+      "accepted": true,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/finalists/01",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 7.099876242477876e-14,
+          "gtt_max": 7.72715225139109e-14,
+          "shift_norm_over_lapse_max": 4.071270436232894e-13,
+          "frequency": 9.048317650695026e-14
+        },
+        "ergoregion_resolved": true,
+        "gtt_three_grid_spread": 2.8828155140825373e-13,
+        "frequencies": [
+          0.6550650865941979,
+          0.6550650865942167,
+          0.6550650865941262
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.28262497463321146,
+            "gtt_max": 0.015011009064830539,
+            "shift_norm_over_lapse_max": 1.0809707039974845,
+            "gtt_max_point": {
+              "rho": 0.7513443025567917,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.28262497463332065,
+            "gtt_max": 0.015011009064619529,
+            "shift_norm_over_lapse_max": 1.0809707039963308,
+            "gtt_max_point": {
+              "rho": 0.7513443025567917,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.28262497463339165,
+            "gtt_max": 0.015011009064542257,
+            "shift_norm_over_lapse_max": 1.0809707039958907,
+            "gtt_max_point": {
+              "rho": 0.7513443025567917,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      }
+    }
+  ],
+  "ergoregion_resolved": true,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-cma-20261102/finalists/01/accepted.npz",
+  "seconds": 325.4286086370703
+}

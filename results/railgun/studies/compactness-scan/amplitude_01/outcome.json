@@ -1,0 +1,477 @@
+{
+  "accepted": true,
+  "observable_relative_drift": 4.2513665573187465e-10,
+  "grids_attempted": 3,
+  "stability": "not_assessed",
+  "reasons": [],
+  "records": [
+    {
+      "grid": [
+        72,
+        10
+      ],
+      "newton": {
+        "converged": true,
+        "iters": 5,
+        "res_scaled_inf": 5.467954474285824e-14,
+        "res_history": [
+          0.009999999999999993,
+          2.6906288309648744e-05,
+          5.070264361377161e-06,
+          1.2300653690311496e-08,
+          2.2412817667727527e-11,
+          5.467954474285824e-14
+        ],
+        "jacobian_evals": 2,
+        "newton_steps": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "length_scale": 5.0,
+      "stability": "not_assessed",
+      "raw_residual_max": 2.3360976347808204e-11,
+      "constraint_c": 4.1862331466414826e-12,
+      "constraint_19": 8.915645735616706e-13,
+      "equation_max": 1.3892763907199695e-13,
+      "boundary_max": 1.0784554768655046e-13,
+      "border_max": 0.0,
+      "field_spectra": {
+        "f": {
+          "peak": 0.2854513678111899,
+          "relative_tail": 1.0583033699073509e-09,
+          "absolute_tail": 2.9478320617837286e-10,
+          "roundoff_field": false,
+          "tested_tail": 1.0326417336301951e-09
+        },
+        "w": {
+          "peak": 0.005847766848860798,
+          "relative_tail": 3.1951280608083053e-11,
+          "absolute_tail": 1.8684363951859685e-13,
+          "roundoff_field": false,
+          "tested_tail": 2.952114700623288e-11
+        },
+        "N": {
+          "peak": 0.0007947823068930104,
+          "relative_tail": 1.0576000605358596e-09,
+          "absolute_tail": 7.330714269122851e-13,
+          "roundoff_field": false,
+          "tested_tail": 9.044748051919738e-10
+        },
+        "b": {
+          "peak": 0.007136547383420188,
+          "relative_tail": 1.2814818978354526e-08,
+          "absolute_tail": 7.681524409608454e-11,
+          "roundoff_field": false,
+          "tested_tail": 1.0761651133963672e-08
+        },
+        "q0": {
+          "peak": 0.060914779842080255,
+          "relative_tail": 1.3026688805436283e-09,
+          "absolute_tail": 6.953522826980141e-11,
+          "roundoff_field": false,
+          "tested_tail": 1.1412832418555458e-09
+        }
+      },
+      "spectral_tail": 1.0761651133963672e-08,
+      "charges": [
+        1.0493098920462198
+      ],
+      "matter_J": [
+        -1.0493098920462198
+      ],
+      "J_volume": -1.0493098920462198,
+      "M_Komar_volume": 1.0246024788267165,
+      "M_ADM_estimate": 1.024602478860452,
+      "M_lapse_estimate": 1.024602478860068,
+      "mass_extraction": "compactified_endpoint_first_derivatives",
+      "M_ADM_fit_estimate": 1.0246031742461328,
+      "M_lapse_fit_estimate": 1.0246024594837269,
+      "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+      "M_fit_drift": 2.6243178177232096e-06,
+      "J_asymptotic_estimate": -1.0493243082853951,
+      "J_fit_drift": 7.123444955103864e-05,
+      "density_peaks": [
+        {
+          "radius": 5.574465572636782,
+          "mu": 0.0024063900014893447,
+          "cylindrical_radius": 5.574449432548735,
+          "axial_position": 0.013414338217639727,
+          "density": 0.0003168508394846742
+        }
+      ],
+      "J_surface_radii": [
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "J_surfaces": [
+        -1.04930989208697,
+        -1.0493098920900705,
+        -1.0493098920812514,
+        -1.0493098920971815
+      ],
+      "J_surface_estimate": -1.0493098920971815,
+      "J_surface_quadrature_drift": 2.220446049250313e-15,
+      "lapse_min": 0.8669800981338341,
+      "B_min": 0.992862272709758,
+      "dragging_max": 0.005847766837372721,
+      "gtt_max": -0.7512536157175623,
+      "gtt_min": -0.9999716208740104,
+      "shift_norm_over_lapse_max": 0.02602251704039739,
+      "ergoregion_sampled": false,
+      "low_density_threshold_relative": 1e-06,
+      "low_density_ergoregion_sampled": false,
+      "tail_shells": [
+        60.0,
+        80.0,
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "scalar_tail_ratios": [
+        [
+          2.2166671082573606e-08,
+          1.1875589135614123e-11,
+          9.053625355085645e-13,
+          4.745755289975558e-13,
+          2.1210661899059996e-14,
+          7.16053579003358e-14
+        ]
+      ],
+      "quadrature_drift": 2.7089116207695375e-14,
+      "angular_momentum_surface_error": 5.096167932094886e-11,
+      "offgrid_einstein_max": 3.621205230277158e-12,
+      "offgrid_kg_max": 3.724889407336063e-11,
+      "worst_kg_point": {
+        "radius": 0.1,
+        "theta": 1.3,
+        "kg_max": 3.724889407336063e-11
+      },
+      "worst_einstein_point": {
+        "radius": 0.1,
+        "theta": 0.25,
+        "einstein_max": 3.621205230277158e-12
+      },
+      "offgrid_intrinsic_kg_max": 3.7248787387866855e-11,
+      "kg_coordinate_difference": 2.468186245663251e-16,
+      "verdict": "PASS",
+      "reasons": [],
+      "solve_seconds": 4.659891397925094,
+      "total_seconds": 18.957472634967417
+    },
+    {
+      "grid": [
+        96,
+        12
+      ],
+      "newton": {
+        "converged": true,
+        "iters": 2,
+        "res_scaled_inf": 1.4734939160663203e-15,
+        "res_history": [
+          8.638815565922731e-07,
+          1.693861668259927e-10,
+          1.4734939160663203e-15
+        ],
+        "jacobian_evals": 1,
+        "newton_steps": [
+          1.0,
+          1.0
+        ]
+      },
+      "length_scale": 5.0,
+      "stability": "not_assessed",
+      "raw_residual_max": 1.4054590824486013e-12,
+      "constraint_c": 1.1789867287934759e-12,
+      "constraint_19": 7.414828637882952e-14,
+      "equation_max": 5.1515317199081824e-14,
+      "boundary_max": 1.5111285424209892e-13,
+      "border_max": 0.0,
+      "field_spectra": {
+        "f": {
+          "peak": 0.28546483683347834,
+          "relative_tail": 5.9389380760095306e-12,
+          "absolute_tail": 1.6542508104085603e-12,
+          "roundoff_field": false,
+          "tested_tail": 5.745155774299625e-12
+        },
+        "w": {
+          "peak": 0.005847766848809899,
+          "relative_tail": 1.0517378142457558e-13,
+          "absolute_tail": 6.150317523786104e-16,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "N": {
+          "peak": 0.0007951739347849406,
+          "relative_tail": 5.0777825595796535e-12,
+          "absolute_tail": 3.519645512539693e-15,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "b": {
+          "peak": 0.0071356036434102234,
+          "relative_tail": 7.88023821476439e-11,
+          "absolute_tail": 4.72377923813975e-13,
+          "roundoff_field": false,
+          "tested_tail": 6.420859285281258e-11
+        },
+        "q0": {
+          "peak": 0.061033855787905406,
+          "relative_tail": 6.8646471632973405e-12,
+          "absolute_tail": 3.6683156512395954e-13,
+          "roundoff_field": false,
+          "tested_tail": 5.777460818371458e-12
+        }
+      },
+      "spectral_tail": 6.420859285281258e-11,
+      "charges": [
+        1.0493098920549568
+      ],
+      "matter_J": [
+        -1.0493098920549568
+      ],
+      "J_volume": -1.0493098920549568,
+      "M_Komar_volume": 1.024602478834781,
+      "M_ADM_estimate": 1.0246024788365975,
+      "M_lapse_estimate": 1.0246024788365964,
+      "mass_extraction": "compactified_endpoint_first_derivatives",
+      "M_ADM_fit_estimate": 1.0246031742234274,
+      "M_lapse_fit_estimate": 1.024602459460988,
+      "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+      "M_fit_drift": 2.6243175614837355e-06,
+      "J_asymptotic_estimate": -1.0493243061280688,
+      "J_fit_drift": 7.123492040128632e-05,
+      "density_peaks": [
+        {
+          "radius": 5.6054505163366635,
+          "mu": 0.0024063900014893447,
+          "cylindrical_radius": 5.60543428653603,
+          "axial_position": 0.013488900076355831,
+          "density": 0.00031691203194975423
+        }
+      ],
+      "J_surface_radii": [
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "J_surfaces": [
+        -1.049309891566359,
+        -1.0493098914025527,
+        -1.0493098912014827,
+        -1.0493098909681295
+      ],
+      "J_surface_estimate": -1.0493098909681295,
+      "J_surface_quadrature_drift": 1.9984014443252818e-15,
+      "lapse_min": 0.8669791048190048,
+      "B_min": 0.9928624964420111,
+      "dragging_max": 0.005847766845162528,
+      "gtt_max": -0.7512548333511622,
+      "gtt_min": -0.9999840092829363,
+      "shift_norm_over_lapse_max": 0.026022449050069466,
+      "ergoregion_sampled": false,
+      "low_density_threshold_relative": 1e-06,
+      "low_density_ergoregion_sampled": false,
+      "tail_shells": [
+        60.0,
+        80.0,
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "scalar_tail_ratios": [
+        [
+          2.2122736427532317e-08,
+          1.2878619460022031e-11,
+          1.3286067722903246e-15,
+          2.34618935489305e-16,
+          1.3646549215983721e-15,
+          5.330056905943689e-16
+        ]
+      ],
+      "quadrature_drift": 2.45467753295077e-14,
+      "angular_momentum_surface_error": 1.0868272948272306e-09,
+      "offgrid_einstein_max": 4.134375347103909e-12,
+      "offgrid_kg_max": 1.876982510390368e-12,
+      "worst_kg_point": {
+        "radius": 0.1,
+        "theta": 1.3,
+        "kg_max": 1.876982510390368e-12
+      },
+      "worst_einstein_point": {
+        "radius": 0.1,
+        "theta": 1.3,
+        "einstein_max": 4.134375347103909e-12
+      },
+      "offgrid_intrinsic_kg_max": 1.877054067733752e-12,
+      "kg_coordinate_difference": 1.3053794156725473e-16,
+      "verdict": "PASS",
+      "reasons": [],
+      "solve_seconds": 4.497937829932198,
+      "total_seconds": 20.638890953967348
+    },
+    {
+      "grid": [
+        128,
+        16
+      ],
+      "newton": {
+        "converged": true,
+        "iters": 2,
+        "res_scaled_inf": 8.299705370051829e-16,
+        "res_history": [
+          4.926294852931078e-07,
+          9.197813193506717e-11,
+          8.299705370051829e-16
+        ],
+        "jacobian_evals": 1,
+        "newton_steps": [
+          1.0,
+          1.0
+        ]
+      },
+      "length_scale": 5.0,
+      "stability": "not_assessed",
+      "raw_residual_max": 1.406597061048842e-12,
+      "constraint_c": 3.9609374952198776e-12,
+      "constraint_19": 7.559449731873368e-14,
+      "equation_max": 8.197678802720233e-14,
+      "boundary_max": 3.752553823233029e-13,
+      "border_max": 0.0,
+      "field_spectra": {
+        "f": {
+          "peak": 0.2854842065612664,
+          "relative_tail": 4.749719872048e-15,
+          "absolute_tail": 9.150666335777657e-16,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "w": {
+          "peak": 0.005847766848808508,
+          "relative_tail": 5.324731912714459e-15,
+          "absolute_tail": 1.862117231243854e-17,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "N": {
+          "peak": 0.0007962638425610926,
+          "relative_tail": 4.184694072771003e-14,
+          "absolute_tail": 2.899921643759371e-17,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "b": {
+          "peak": 0.0071375785081473865,
+          "relative_tail": 4.977407582257834e-15,
+          "absolute_tail": 1.979346591143849e-17,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        },
+        "q0": {
+          "peak": 0.06101333690970079,
+          "relative_tail": 1.4842638358056915e-15,
+          "absolute_tail": 3.839121246892953e-17,
+          "roundoff_field": false,
+          "tested_tail": 0.0
+        }
+      },
+      "spectral_tail": 0.0,
+      "charges": [
+        1.0493098920552475
+      ],
+      "matter_J": [
+        -1.0493098920552475
+      ],
+      "J_volume": -1.0493098920552475,
+      "M_Komar_volume": 1.0246024788350512,
+      "M_ADM_estimate": 1.0246024788366501,
+      "M_lapse_estimate": 1.024602478836649,
+      "mass_extraction": "compactified_endpoint_first_derivatives",
+      "M_ADM_fit_estimate": 1.0246031742235988,
+      "M_lapse_fit_estimate": 1.0246024594611594,
+      "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+      "M_fit_drift": 2.6243175244022865e-06,
+      "J_asymptotic_estimate": -1.0493243061317379,
+      "J_fit_drift": 7.123491727867304e-05,
+      "density_peaks": [
+        {
+          "radius": 5.582992232312624,
+          "mu": 0.001368069075259215,
+          "cylindrical_radius": 5.582987007709774,
+          "axial_position": 0.0076379190204393125,
+          "density": 0.0003168737607384444
+        }
+      ],
+      "J_surface_radii": [
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "J_surfaces": [
+        -1.0493098915683936,
+        -1.0493098914036356,
+        -1.049309891202002,
+        -1.0493098909693526
+      ],
+      "J_surface_estimate": -1.0493098909693526,
+      "J_surface_quadrature_drift": 2.220446049250313e-15,
+      "lapse_min": 0.8669782393823993,
+      "B_min": 0.9928622985120862,
+      "dragging_max": 0.005847766847651471,
+      "gtt_max": -0.7512536390609191,
+      "gtt_min": -0.9999909935907478,
+      "shift_norm_over_lapse_max": 0.02602272007203055,
+      "ergoregion_sampled": false,
+      "low_density_threshold_relative": 1e-06,
+      "low_density_ergoregion_sampled": false,
+      "tail_shells": [
+        60.0,
+        80.0,
+        110.0,
+        150.0,
+        210.0,
+        300.0
+      ],
+      "scalar_tail_ratios": [
+        [
+          2.2130177640995386e-08,
+          1.2882700601375537e-11,
+          1.6432340349011358e-16,
+          4.091824205870276e-18,
+          4.559248813024608e-18,
+          2.8037125261859454e-18
+        ]
+      ],
+      "quadrature_drift": 3.2506939448969247e-15,
+      "angular_momentum_surface_error": 1.0858949295311504e-09,
+      "offgrid_einstein_max": 1.5301653707345108e-11,
+      "offgrid_kg_max": 4.405201247184576e-12,
+      "worst_kg_point": {
+        "radius": 0.1,
+        "theta": 1.3,
+        "kg_max": 4.405201247184576e-12
+      },
+      "worst_einstein_point": {
+        "radius": 0.1,
+        "theta": 0.8,
+        "einstein_max": 1.5301653707345108e-11
+      },
+      "offgrid_intrinsic_kg_max": 4.405142917107696e-12,
+      "kg_coordinate_difference": 1.227316859253591e-16,
+      "verdict": "PASS",
+      "reasons": [],
+      "solve_seconds": 4.572611751966178,
+      "total_seconds": 30.83297070604749
+    }
+  ]
+}

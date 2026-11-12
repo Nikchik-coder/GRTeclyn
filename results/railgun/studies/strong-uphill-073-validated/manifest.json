@@ -1,0 +1,21 @@
+{
+  "config": {
+    "max_new_quadratures": 2,
+    "order": 32,
+    "segments": 256,
+    "timing_tol": 1e-07,
+    "height_tol": 1e-08,
+    "conservation_tol": 1e-09
+  },
+  "source_sha256": "42250669262ae8f41d5d29a7c235ed239d66918763da3374a7fc3995c9b45405",
+  "physical_config": {
+    "launch_z": 1.0,
+    "target_z": -10.0,
+    "spin": 0.001
+  },
+  "commit": "4e0af89aaa1405f4aaabe73d91b6906d03c63657",
+  "platform": "gpu",
+  "float64": true,
+  "prior_outcome_sha256": "b5f968c33b37f964b66b6a7f929a82ec6fa821db60b6f29c1a255b705ae266a7",
+  "scope": "Two order-32 scalar phase integrals; reuse all hash-checked full MPD substitution and invariant checks."
+}

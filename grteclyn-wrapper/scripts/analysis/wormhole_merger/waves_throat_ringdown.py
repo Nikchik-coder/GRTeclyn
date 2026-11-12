@@ -15,8 +15,8 @@ from __future__ import annotations
 import numpy as np
 from scipy.optimize import curve_fit
 
-from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT
-from grteclyn_wrapper.analysis.wormhole_merger.waves import single_throat_gates as Q
+from grteclyn_workflows.analysis.wormhole_merger.pack.paths import PACK_ROOT
+from grteclyn_workflows.analysis.wormhole_merger.waves import single_throat_gates as Q
 
 OMEGA_SCHW = 0.3737     # M omega_R of the Schwarzschild l = 2, n = 0 mode (ledger uses 0.374)
 

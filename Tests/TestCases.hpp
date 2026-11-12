@@ -8,12 +8,14 @@
 
 // doctest header
 #include "doctest.h"
+#include "MatterDispatchTest.hpp"
 
 // AMReX includes
 #include <AMReX.H>
 
 // Test cases
 #include "BSSNMatterTest.hpp"
+#include "BackgroundBoundaryTest.hpp"
 #include "CCZ4GeometryUnitTest.hpp"
 #include "CCZ4RHSTest.hpp"
 #include "ConstraintsTest.hpp"
@@ -27,6 +29,7 @@
 #include "SmallDataIOTest.hpp"
 #include "SphericalExtractionTest.hpp"
 #include "SphericalHarmonicTest.hpp"
+#include "TensorAlgebraTest.hpp"
 #include "Weyl4Test.hpp"
 #include "Weyl4WithMatterTest.hpp"
 
@@ -40,6 +43,8 @@ TEST_CASE("BSSNMatter"
 }
 
 TEST_CASE("CCZ4 Geometry") { run_ccz4_geometry_unit_tests(); }
+
+TEST_CASE("BackgroundBoundary") { run_background_boundary_test(); }
 
 TEST_CASE("ParticleInterpolator") { run_particle_interpolator_test(); }
 
@@ -82,6 +87,8 @@ TEST_CASE("SphericalExtraction") { run_spherical_extraction_test(); }
 
 TEST_CASE("SphericalHarmonics") { run_spherical_harmonic_test(); }
 
+TEST_CASE("TensorAlgebra") { run_tensor_algebra_test(); }
+
 TEST_CASE("Weyl4"
 #ifndef AMREX_USE_HDF5
           * doctest::skip()
@@ -99,5 +106,7 @@ TEST_CASE("Weyl4WithMatter"
 {
     run_matter_weyl4_test();
 }
+
+TEST_CASE("MatterDispatch") { run_matter_dispatch_test(); }
 
 #endif /* TESTCASES_HPP_ */

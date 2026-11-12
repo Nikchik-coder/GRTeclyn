@@ -1,0 +1,131 @@
+[capped_job] start 2026-11-04T05:38:51Z threads=4 mem=160G timeout=3600s
+Wed Nov  4 05:38:51 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:9B:00.0 Off |                    0 |
+| N/A   30C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         879G  505G  329G  61% /
+4.0K	<scratch>/_cache
+.....................................................................    [100%]
+69 passed in 69.19s (0:01:09)
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 3.618e-06 -> 1.814e-10 (t = 1)
+[newton] iter 1: |R| 1.814e-10 -> 2.048e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 1.277e-15
+{"event": "grid", "grid": [224, 28], "verdict": "PASS", "reasons": [], "seconds": 49.74649854202289}
+[newton] iter 0: |R| 3.169e-06 -> 1.588e-10 (t = 1)
+[newton] iter 1: |R| 1.588e-10 -> 2.676e-14 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 2.545e-15
+{"event": "grid", "grid": [256, 32], "verdict": "PASS", "reasons": [], "seconds": 69.07376734400168}
+W1104 05:42:11.761906   23728 hlo_rematerialization.cc:3363] Can't reduce memory use below 61.24GiB (65756433597 bytes) by rematerialization; only reduced to 63.92GiB (68639223072 bytes), down from 63.92GiB (68639223072 bytes) originally
+E1104 05:42:13.915055   26753 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:13.915306   26753 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:13.915529   26753 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:14.029809   26804 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:14.030059   26804 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:14.030263   26804 cuda_executor.cc:1365] [0] Failed to allocate device memory of 21.31GiB (22885682464 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E1104 05:42:14.084294   23728 config_assigner.cc:536] Could not get config for HLO: %input_transpose_fusion = f64[53466,53466]{1,0} fusion(%lu.16.0, %loop_compare_fusion), kind=kInput, calls=
+(param_0.4: f64[53466,53466], param_1.10: pred[]) -> f64[53466,53466] {
+  %param_1.10 = pred[] parameter(1)
+  %broadcast.1.1 = pred[53466,53466]{1,0} broadcast(%param_1.10), dimensions={}, metadata={op_name="jit(lu_factor)/lu" stack_frame_id=7}
+  %param_0.4 = f64[53466,53466]{0,1} parameter(0)
+  %bitcast.3.3 = f64[53466,53466]{1,0} bitcast(%param_0.4)
+  %constant.3.1 = f64[] constant(nan)
+  %broadcast.2.1 = f64[53466,53466]{1,0} broadcast(%constant.3.1), dimensions={}, metadata={op_name="jit(lu_factor)/lu" stack_frame_id=7}
+  %select.4 = f64[53466,53466]{1,0} select(%broadcast.1.1, %bitcast.3.3, %broadcast.2.1), metadata={op_name="jit(lu_factor)/lu" stack_frame_id=7}
+  ROOT %transpose.2.1 = f64[53466,53466]{1,0} transpose(%select.4), dimensions={1,0}
+}. Status: NOT_FOUND: All configs failed during profiling or were excluded from selection.
+Failures (3):
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+=== Source Location Trace: ===
+external/xla+/xla/backends/autotuner/config_selector.cc:71
+external/xla+/xla/backends/autotuner/autotuner.cc:242
+
+E1104 05:42:14.084555   23728 config_assigner.cc:536] Could not get config for HLO: %wrapped_transpose = f64[53466,53466]{1,0} fusion(%a.1), kind=kInput, calls=
+(param_0.7: f64[53466,53466]) -> f64[53466,53466] {
+  %param_0.7 = f64[53466,53466]{1,0} parameter(0)
+  ROOT %transpose.1.1 = f64[53466,53466]{1,0} transpose(%param_0.7), dimensions={1,0}, metadata={op_name="a"}
+}, metadata={op_name="a"}. Status: NOT_FOUND: All configs failed during profiling or were excluded from selection.
+Failures (3):
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+=== Source Location Trace: ===
+external/xla+/xla/backends/autotuner/config_selector.cc:71
+external/xla+/xla/backends/autotuner/autotuner.cc:242
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/smooth_origin_recovery.py", line 69, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/smooth_origin_recovery.py", line 62, in main
+    result = refinement_run(args.config,args.out,problem_factory=SmoothOriginProblem,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/evolution_source_refinement.py", line 74, in run
+    result = run_study(numerical, directory, seed_path=cfg['source'],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/workflow.py", line 129, in run_study
+    u, info = newton(p.residual, p.jacobian, u0, tol=config.get('newton_tol', 1e-12),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/solver/newton.py", line 95, in newton
+    lu, piv = factor(scale[:, None] * jac)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.JaxRuntimeError: NOT_FOUND: Failed to get configs for: 2 out of 4 instructions. See logs for all failures. Example failure: 
+All configs failed during profiling or were excluded from selection.
+Failures (3):
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+EXECUTION FAILED: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 21.31GiB with allocator SE_0_space_0 on device 0. [tf-allocator-allocation-error='']
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+[capped_job] end 2026-11-04T05:42:14Z exit=1

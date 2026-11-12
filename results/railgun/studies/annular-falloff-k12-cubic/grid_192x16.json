@@ -1,0 +1,241 @@
+{
+  "grid": [
+    192,
+    16
+  ],
+  "newton": {
+    "converged": true,
+    "iters": 2,
+    "res_scaled_inf": 7.45300421925605e-17,
+    "res_history": [
+      2.3394405820926116e-08,
+      1.0387699272580305e-16,
+      7.45300421925605e-17
+    ],
+    "jacobian_evals": 2,
+    "newton_steps": [
+      1.0,
+      1.0
+    ]
+  },
+  "length_scale": 50.0,
+  "stability": "not_assessed",
+  "raw_residual_max": 6.397909470938001e-13,
+  "constraint_c": 8.475974959679558e-13,
+  "constraint_19": 6.080508105283778e-14,
+  "equation_max": 8.049851857097872e-14,
+  "boundary_max": 6.397909470938001e-13,
+  "border_max": 6.938893903907228e-18,
+  "field_spectra": {
+    "f": {
+      "peak": 0.2454180138513515,
+      "relative_tail": 5.364626556027958e-11,
+      "absolute_tail": 1.2850751712756292e-11,
+      "roundoff_field": false,
+      "tested_tail": 5.230480296289954e-11
+    },
+    "w": {
+      "peak": 0.004351610964629691,
+      "relative_tail": 1.5478818109490082e-12,
+      "absolute_tail": 6.735779460476552e-15,
+      "roundoff_field": false,
+      "tested_tail": 0.0
+    },
+    "N": {
+      "peak": 0.0006133315135572198,
+      "relative_tail": 1.0926065470564301e-10,
+      "absolute_tail": 5.866050382363911e-14,
+      "roundoff_field": false,
+      "tested_tail": 7.247246900886701e-11
+    },
+    "b": {
+      "peak": 0.005301244093873338,
+      "relative_tail": 2.6092275517943818e-11,
+      "absolute_tail": 1.1625541272400108e-13,
+      "roundoff_field": false,
+      "tested_tail": 1.9249171741918516e-11
+    },
+    "q0": {
+      "peak": 0.052512224493043214,
+      "relative_tail": 3.113263158297951e-15,
+      "absolute_tail": 4.3372039719840695e-17,
+      "roundoff_field": false,
+      "tested_tail": 0.0
+    },
+    "q1": {
+      "peak": 0.00042593963241763607,
+      "relative_tail": 1.3165159042396855e-09,
+      "absolute_tail": 4.704842099950441e-13,
+      "roundoff_field": false,
+      "tested_tail": 1.0712160140863896e-09
+    }
+  },
+  "spectral_tail": 1.0712160140863896e-09,
+  "charges": [
+    0.9919609854798731,
+    0.08266341545665606
+  ],
+  "matter_J": [
+    -0.9919609854798731,
+    0.9919609854798728
+  ],
+  "J_volume": -3.3306690738754696e-16,
+  "M_Komar_volume": 1.0538081108339683,
+  "M_ADM_estimate": 1.0538081108344703,
+  "M_lapse_estimate": 1.0538081108344624,
+  "mass_extraction": "compactified_endpoint_first_derivatives",
+  "M_ADM_fit_estimate": 1.0538086148449237,
+  "M_lapse_fit_estimate": 1.0538085997622637,
+  "M_endpoint_quadrature_drift": 2.220446049250313e-16,
+  "M_fit_drift": 2.9964286243355787e-06,
+  "J_asymptotic_estimate": 0.00010288922454632455,
+  "J_fit_drift": 0.0009239316903680475,
+  "density_peaks": [
+    {
+      "radius": 6.179519290151313,
+      "mu": 0.001368069075259215,
+      "cylindrical_radius": 6.179513507314305,
+      "axial_position": 0.008454009240823788,
+      "density": 0.0002324560188747706
+    },
+    {
+      "radius": 151.1849714416494,
+      "mu": 0.001368069075259215,
+      "cylindrical_radius": 151.18482996170462,
+      "axial_position": 0.20683148407326812,
+      "density": 1.45415470745166e-08
+    }
+  ],
+  "J_surface_radii": [
+    1100.0,
+    1500.0,
+    2100.0,
+    3000.0
+  ],
+  "J_surfaces": [
+    8.694506998835211e-11,
+    3.3762877500212583e-10,
+    -3.832484918722081e-10,
+    7.010845365835104e-10
+  ],
+  "J_surface_estimate": 7.010845365835104e-10,
+  "J_surface_quadrature_drift": 7.081135509810571e-17,
+  "lapse_min": 0.8845225666627109,
+  "B_min": 0.9946979981703179,
+  "dragging_max": 0.004351610950476256,
+  "gtt_max": -0.78212223965359,
+  "gtt_min": -0.9999995877710356,
+  "shift_norm_over_lapse_max": 0.020472173707225684,
+  "ergoregion_sampled": false,
+  "low_density_threshold_relative": 1e-06,
+  "low_density_ergoregion_sampled": false,
+  "tail_shells": [
+    600.0,
+    800.0,
+    1100.0,
+    1500.0,
+    2100.0,
+    3000.0
+  ],
+  "scalar_tail_ratios": [
+    [
+      4.1618147475232354e-18,
+      5.135969038091127e-19,
+      2.942418154768656e-18,
+      6.95995735500409e-19,
+      1.7131617033233724e-18,
+      1.247980248272532e-18
+    ],
+    [
+      1.2241980158950035e-09,
+      2.6497225149440366e-15,
+      1.4862678988329702e-17,
+      3.2828180451603617e-18,
+      9.42436289383491e-18,
+      8.510337064491701e-18
+    ]
+  ],
+  "quadrature_drift": 6.321205994969247e-15,
+  "angular_momentum_surface_error": 7.010848696504178e-10,
+  "verdict": "REJECT",
+  "reasons": [
+    "asymptotic_dragging_modes"
+  ],
+  "physical_nodal_interpolation_J_surfaces": [
+    1.3433193214834874e-10,
+    3.9454902114682003e-10,
+    -4.112575628571189e-10,
+    6.846307059659954e-10
+  ],
+  "Cartesian_J_surfaces": [
+    8.691959135807659e-11,
+    3.376060792635711e-10,
+    -3.8325866824777684e-10,
+    7.010705044268697e-10
+  ],
+  "Cartesian_J_surface_crosscheck": 2.5478630275527344e-14,
+  "representation": "dragging_cubic_frobenius_tau_v1",
+  "omitted_outer_w_equation_max": 1.145647081497967e-28,
+  "factored_tau_residual_max": 6.397909470938001e-13,
+  "J_infinity_factored": 0.0002329637491730425,
+  "J_infinity_anisotropy": 0.00016093565127505753,
+  "offgrid_einstein_max": 4.793410031061493e-13,
+  "offgrid_kg_max": 9.081971286128976e-14,
+  "offgrid_intrinsic_kg_max": 9.081277396738585e-14,
+  "kg_coordinate_difference": 9.107298248878237e-18,
+  "annular_gap": {
+    "accepted": true,
+    "reasons": [],
+    "relative_density_cutoff": 1e-06,
+    "edges": [
+      {
+        "inner_radius": null,
+        "outer_radius": 33.29734113894012,
+        "peak_radius": 6.2208756,
+        "peak_density": 0.00023248738936349842,
+        "inner_edge_resolved": false,
+        "outer_edge_resolved": true
+      },
+      {
+        "inner_radius": 40.90802468809234,
+        "outer_radius": 362.7386133420043,
+        "peak_radius": 150.8380858911014,
+        "peak_density": 1.454284068243343e-08,
+        "inner_edge_resolved": true,
+        "outer_edge_resolved": true
+      }
+    ],
+    "inner_ring_outer_radius": 33.29734113894012,
+    "outer_ring_inner_radius": 40.90802468809234,
+    "gap_width": 7.6106835491522205,
+    "minimum_width": 0.0,
+    "corridor": {
+      "midpoint_radius": 37.10268291351623,
+      "sampled_relative_density_max": [
+        9.980470960238406e-07,
+        9.967333867422597e-07
+      ],
+      "interior_samples": 381
+    },
+    "scope": "Equatorial matter-gap screen only. Finite-height corridor and particle transit require separate checks.",
+    "exact_vacuum_claim": false
+  },
+  "finite_height_channel": {
+    "accepted": true,
+    "rho_min": 35.20001202622817,
+    "rho_max": 39.005353800804286,
+    "z_min": -10.0,
+    "z_max": 10.0,
+    "relative_density_max": [
+      2.892442390893441e-07,
+      4.416704688480002e-07
+    ],
+    "samples": [
+      21,
+      81
+    ],
+    "normalisation": "Each component own equatorial peak; threshold 1e-6.",
+    "scope": "Sampled finite-height matter channel; no particle trajectory certified."
+  },
+  "seconds": 77.8010003499221
+}

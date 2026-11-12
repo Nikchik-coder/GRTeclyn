@@ -55,8 +55,8 @@ Weyl4::operator()(int ix, int iy, int iz,
     weyl_scalar_t out = compute_Weyl4(ebfields, vars, h_UU, coords);
 
     // store the result
-    weyl_scalars(ix, iy, iz, m_out_comp)     = out.Real;
-    weyl_scalars(ix, iy, iz, m_out_comp + 1) = out.Im;
+    weyl_scalars(ix, iy, iz, m_dcomp)     = out.Real;
+    weyl_scalars(ix, iy, iz, m_dcomp + 1) = out.Im;
 }
 
 AMREX_GPU_DEVICE
@@ -237,8 +237,8 @@ Weyl4::compute_Weyl4(const EBFields_t &ebfields, const CCZ4Vars &vars,
                                                tetrad.v(i) * tetrad.v(j)) -
                            2.0 * ebfields.B(i, j) * tetrad.w(i) * tetrad.v(j));
         out.Im   += 0.5 * (ebfields.B(i, j) * (-tetrad.w(i) * tetrad.w(j) +
-                                             tetrad.v(i) * tetrad.v(j)) -
-                         2.0 * ebfields.E(i, j) * tetrad.w(i) * tetrad.v(j));
+                                               tetrad.v(i) * tetrad.v(j)) -
+                           2.0 * ebfields.E(i, j) * tetrad.w(i) * tetrad.v(j));
     }
 
     return out;

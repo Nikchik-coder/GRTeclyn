@@ -10,43 +10,11 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.fit.motif import (
-    FittedMatter,
-    fit_matter_from_motif,
-    fit_momentum_from_motif,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.initial_data.motif import (
-    GeometryMotif,
-    MomentumTarget,
-    SupportRegion,
-    extract_motif_from_episode,
-)
-from grteclyn_wrapper.projection.iterate import (
-    IterationConfig,
-    SPARSITY_AMP_THRESHOLD,
-    _clip_vector,
-    _compute_tight_bounds,
-    _lumps_from_vector,
-    _scale_lump_amplitudes,
-    _sparsity_penalty,
-    _vector_from_lumps,
-    amplitude_precondition,
-    run_iterate,
-)
-from grteclyn_wrapper.projection.mismatch import (
-    GATE_FITNESS,
-    MismatchReport,
-    FEASIBILITY_RHO_SAFE,
-    FEASIBILITY_RHO_HARD,
-    _exotic_mass_proxy,
-    _l2_norm,
-    _resample,
-    _target_profiles,
-    _target_2d_slice,
-    compute_mismatch,
-    feasibility_precheck,
-)
+from grteclyn_workflows.grtresna.fit.motif import FittedMatter, fit_matter_from_motif, fit_momentum_from_motif
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.initial_data.motif import GeometryMotif, MomentumTarget, SupportRegion, extract_motif_from_episode
+from grteclyn_workflows.projection.iterate import IterationConfig, SPARSITY_AMP_THRESHOLD, _clip_vector, _compute_tight_bounds, _lumps_from_vector, _scale_lump_amplitudes, _sparsity_penalty, _vector_from_lumps, amplitude_precondition, run_iterate
+from grteclyn_workflows.projection.mismatch import GATE_FITNESS, MismatchReport, FEASIBILITY_RHO_SAFE, FEASIBILITY_RHO_HARD, _exotic_mass_proxy, _l2_norm, _resample, _target_profiles, _target_2d_slice, compute_mismatch, feasibility_precheck
 
 
 def _make_episode(root: Path) -> Path:
@@ -272,7 +240,7 @@ class TestVectorEncoding:
         vec = _vector_from_lumps(lumps)
         clipped = _clip_vector(vec, 1)
         recovered = _lumps_from_vector(clipped, template_lumps=lumps)
-        from grteclyn_wrapper.grtresna.fit.motif import MAX_LUMP_AMP, MAX_VELOCITY, MIN_LUMP_WIDTH
+        from grteclyn_workflows.grtresna.fit.motif import MAX_LUMP_AMP, MAX_VELOCITY, MIN_LUMP_WIDTH
 
         assert recovered[0]["amp"] <= MAX_LUMP_AMP
         assert recovered[0]["width"] >= MIN_LUMP_WIDTH
@@ -331,7 +299,7 @@ class TestRunIterate:
 
         def mock_preservation(motif, gridinit_path, **kwargs):
             """Always pass preservation."""
-            from grteclyn_wrapper.projection.motif_preservation import PreservationReport
+            from grteclyn_workflows.projection.motif_preservation import PreservationReport
             return PreservationReport(
                 passed=True,
                 retention_score=0.8,
@@ -366,12 +334,12 @@ class TestRunIterate:
             )
 
             with patch(
-                "grteclyn_wrapper.projection.iterate.solve", side_effect=mock_solve
+                "grteclyn_workflows.projection.iterate.solve", side_effect=mock_solve
             ), patch(
-                "grteclyn_wrapper.projection.iterate.compute_mismatch",
+                "grteclyn_workflows.projection.iterate.compute_mismatch",
                 side_effect=mock_mismatch,
             ), patch(
-                "grteclyn_wrapper.projection.iterate.compare_motif_preservation",
+                "grteclyn_workflows.projection.iterate.compare_motif_preservation",
                 side_effect=mock_preservation,
             ):
                 result = run_iterate(
@@ -442,9 +410,9 @@ class TestAmplitudePrecondition:
 
         with TemporaryDirectory() as tmp:
             with patch(
-                "grteclyn_wrapper.projection.iterate.solve", side_effect=mock_solve
+                "grteclyn_workflows.projection.iterate.solve", side_effect=mock_solve
             ), patch(
-                "grteclyn_wrapper.projection.iterate.parse_convergence",
+                "grteclyn_workflows.projection.iterate.parse_convergence",
                 side_effect=mock_parse_convergence,
             ):
                 result_fitted, scale, notes = amplitude_precondition(
@@ -479,9 +447,9 @@ class TestAmplitudePrecondition:
 
         with TemporaryDirectory() as tmp:
             with patch(
-                "grteclyn_wrapper.projection.iterate.solve", side_effect=mock_solve
+                "grteclyn_workflows.projection.iterate.solve", side_effect=mock_solve
             ), patch(
-                "grteclyn_wrapper.projection.iterate.parse_convergence",
+                "grteclyn_workflows.projection.iterate.parse_convergence",
                 side_effect=mock_parse_convergence,
             ):
                 result_fitted, scale, notes = amplitude_precondition(
@@ -504,7 +472,7 @@ class TestTightBounds:
         assert lower[2] > -64.0  # cx lower
         assert upper[2] < 64.0   # cx upper
         # Amplitude/width bounds unchanged
-        from grteclyn_wrapper.grtresna.fit.motif import MAX_LUMP_AMP
+        from grteclyn_workflows.grtresna.fit.motif import MAX_LUMP_AMP
         assert upper[0] == MAX_LUMP_AMP
 
     def test_bounds_fallback_without_support(self):
@@ -545,11 +513,7 @@ class TestTwoPhaseFitness:
             gridinit.write_bytes(b"")
             # We can't easily test the full compute_mismatch without a real gridinit,
             # but we can verify the constants are sensible
-            from grteclyn_wrapper.projection.mismatch import (
-                FEASIBILITY_THRESHOLD,
-                FEASIBILITY_WEIGHT,
-                CONV_TANH_SCALE,
-            )
+            from grteclyn_workflows.projection.mismatch import FEASIBILITY_THRESHOLD, FEASIBILITY_WEIGHT, CONV_TANH_SCALE
             assert FEASIBILITY_THRESHOLD == 5.0
             assert FEASIBILITY_WEIGHT == 50.0
             assert CONV_TANH_SCALE == 20.0
@@ -612,13 +576,13 @@ class Test2DSliceMismatch:
 class TestKijMatching:
     def test_kij_weights_are_set(self):
         """K_ij and A_ij weights should be positive and non-zero by default."""
-        from grteclyn_wrapper.projection.mismatch import W_KIJ, W_AIJ
+        from grteclyn_workflows.projection.mismatch import W_KIJ, W_AIJ
         assert W_KIJ > 0.0
         assert W_AIJ > 0.0
 
     def test_2d_weights_higher_than_1d(self):
         """2D slice weights should be ≥ 1D weights (2D captures more info)."""
-        from grteclyn_wrapper.projection.mismatch import W_CHI, W_CHI_2D, W_BETA, W_BETA_2D
+        from grteclyn_workflows.projection.mismatch import W_CHI, W_CHI_2D, W_BETA, W_BETA_2D
         assert W_CHI_2D >= W_CHI
         assert W_BETA_2D >= W_BETA
 
@@ -751,7 +715,7 @@ class TestSparsityPenalty:
 
     def test_amp_lower_bound_is_zero(self):
         """The amplitude lower bound should be 0.0 so lumps can be turned off."""
-        from grteclyn_wrapper.projection.iterate import _LOWER
+        from grteclyn_workflows.projection.iterate import _LOWER
         assert _LOWER[0] == 0.0
 
     def test_sparsity_weight_in_config(self):

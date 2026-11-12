@@ -13,6 +13,7 @@
 #include <AMReX.H>
 
 #include <array>
+#include <cmath>
 #include <sstream>
 #include <string>
 
@@ -29,6 +30,9 @@ class SimulationParameters : public SimulationParametersBase
     void read_shared_params(GRParmParse &pp)
     {
         pp.load("calculate_constraint_norms", calculate_constraint_norms, false);
+        pp.load("constraint_norms_levels", constraint_norms_levels, false);
+        pp.load("calculate_complex_scalar_diagnostics",
+                calculate_complex_scalar_diagnostics, false);
         pp.load("calculate_energy_conditions", calculate_energy_conditions,
                 false);
         pp.load("calculate_curvature_invariants",
@@ -57,6 +61,29 @@ class SimulationParameters : public SimulationParametersBase
         {
             external_grid_params.gridinit_file = recipe_initial_data_file;
             external_grid_params.grid_center = center;
+            pp.load("recipe_initial_data_aligned",
+                    external_grid_params.require_aligned, false);
+            if (pp.contains("recipe_initial_data_level_files"))
+            {
+                if (pp.countval("recipe_initial_data_level_files") != max_level + 1)
+                    amrex::Abort("One initial-data file per AMR level is required");
+                pp.load("recipe_initial_data_level_files",
+                        external_grid_params.level_files, max_level + 1);
+            }
+        }
+
+        if (pp.contains("recipe_refinement_radii"))
+        {
+            if (max_level < 1 || pp.countval("recipe_refinement_radii") != max_level)
+                amrex::Abort("One fixed refinement radius per parent level is required");
+            pp.load("recipe_refinement_radii", recipe_refinement_radii, max_level);
+            double previous = 0.5 * L;
+            for (double radius : recipe_refinement_radii)
+            {
+                if (!std::isfinite(radius) || radius <= 0.0 || radius >= previous)
+                    amrex::Abort("Fixed refinement radii must be positive, decreasing and inside the box");
+                previous = radius;
+            }
         }
 
         pp.load("rl_enabled", rl_enabled, false);
@@ -184,6 +211,23 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("sponge_strength", sponge_params.strength, 4.0);
         pp.load("sponge_ramp_power", sponge_params.ramp_power, 4);
         pp.load("sponge_center", sponge_params.center, center);
+        pp.load("sponge_drive_strength", sponge_drive_strength, 0.0);
+        pp.load("sommerfeld_relative_to_background",
+                sommerfeld_relative_to_background, false);
+        pp.load("recipe_background_frequency", recipe_background_frequency, 0.0);
+        if ((sponge_params.enabled || sponge_drive_strength > 0.0) &&
+            (!std::isfinite(sponge_params.inner_radius) ||
+             !std::isfinite(sponge_params.outer_radius) ||
+             sponge_params.inner_radius <= 0.0 ||
+             sponge_params.outer_radius <= sponge_params.inner_radius ||
+             !std::isfinite(sponge_params.strength) || sponge_params.strength < 0.0 ||
+             sponge_params.ramp_power < 1))
+            amrex::Abort("Outer damping requires ordered positive radii and finite nonnegative strength");
+        if (sponge_drive_strength < 0.0 || !std::isfinite(sponge_drive_strength) ||
+            !std::isfinite(recipe_background_frequency) ||
+            ((sponge_drive_strength > 0.0 || sommerfeld_relative_to_background) &&
+             (recipe_initial_data_file.empty() || recipe_matter_model != "grtresna_complex_scalar")))
+            amrex::Abort("Background boundary treatment requires imported single-complex-scalar data and finite nonnegative damping");
 
         // Interior constraint norms (constraint_norms.dat, *_int columns):
         // only cells within this radius of the sponge's centre, so neither
@@ -262,6 +306,11 @@ class SimulationParameters : public SimulationParametersBase
 
     void check_params()
     {
+        check_parameter("calculate_complex_scalar_diagnostics",
+                        calculate_complex_scalar_diagnostics,
+                        !calculate_complex_scalar_diagnostics ||
+                            recipe_matter_model == "grtresna_complex_scalar",
+                        "requires the single complex scalar model");
         check_parameter("recipe_num_bases", recipe_params.num_bases,
                         recipe_params.num_bases > 0 &&
                             recipe_params.num_bases <=
@@ -307,6 +356,8 @@ class SimulationParameters : public SimulationParametersBase
     }
 
     bool calculate_constraint_norms{};
+    bool calculate_complex_scalar_diagnostics{};
+    bool constraint_norms_levels{};
     bool calculate_energy_conditions{};
     bool calculate_curvature_invariants{};
     bool recipe_exotic_matter{};
@@ -322,6 +373,7 @@ class SimulationParameters : public SimulationParametersBase
 
     std::string recipe_initial_data_file;
     ExternalGridInitialData::params_t external_grid_params{};
+    std::vector<double> recipe_refinement_radii;
 
     RadialRecipeInitialData::params_t recipe_params{};
 
@@ -362,6 +414,9 @@ class SimulationParameters : public SimulationParametersBase
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).
     SpongeZoneParams sponge_params{};
+    double sponge_drive_strength{0.0};
+    bool sommerfeld_relative_to_background{false};
+    double recipe_background_frequency{0.0};
     double constraint_norms_interior_radius{24.0};
     double constraint_shells_dt{0.0};
 

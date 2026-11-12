@@ -70,7 +70,7 @@ EXTRA_ARGS+=(--cma-sigma0 "${CMA_SIGMA0}")
 [[ -n "${SEED_GENOME}" ]] && EXTRA_ARGS+=(--seed-genome "${SEED_GENOME}")
 
 # shellcheck disable=SC2086
-exec ${PYTHON_BIN} -m grteclyn_wrapper \
+exec ${PYTHON_BIN} -m grteclyn_workflows \
   --runs-dir "${RUNS_DIR}" \
   --name "${NAME}" \
   geometry_atlas \

@@ -14,6 +14,27 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | wormhole dynamics | [`research/wormholedynamics/`](research/wormholedynamics/) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) | — | published |
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
+| optimisation: quantum budget (F), minimal exotic search (M) | [`research/optimisation/`](research/optimisation/) | [`results/optimisation/`](results/optimisation/) | `runs/optimisation/` (`evolution/` for GRTeclyn runs) | paused: [`STATUS.md`](research/optimisation/STATUS.md) |
+| ring–wormhole coupling | [`research/ringwormhole/`](research/ringwormhole/) | — | `runs/ringwormhole/` | [`STATUS.md`](research/ringwormhole/STATUS.md) |
+| ring spacetimes and spin transport | [`research/railgun/`](research/railgun/) | [`results/railgun/`](results/railgun/README.md) | `runs/railgun/` | spherical, rotating and counter-rotating states validated: [`STATUS.md`](research/railgun/STATUS.md) |
+
+Stationary spinning wormholes, interacting matter and scalar rings live in
+[`grteclyn_stationary`](grteclyn-wrapper/packages/stationary/README.md).
+Shared spectral grids, maps, Jacobians and Newton iteration live in
+`grteclyn_stationary.numerics`. The standalone package builds without the wrapper.
+Its README explains installation and export; `grteclyn-wrapper/STATIONARY_RESEARCH.md`
+explains campaign workflows and outputs. Plots remain in
+`visualisation/optimisation/`; tests remain in `grteclyn-wrapper/tests/stationary/`.
+Scalar-ring launch, packing and run-organisation scripts are in
+[`grteclyn-wrapper/scripts/campaigns/railgun/`](grteclyn-wrapper/scripts/campaigns/railgun/README.md).
+JSON study definitions live in the campaign's `configs/`; `research/railgun/`
+contains research writing. Optimisation launchers and configurations likewise
+live in `grteclyn-wrapper/scripts/campaigns/optimisation/` and its `configs/` directory.
+The matter-first pump queues and scoring tools live in
+`grteclyn-wrapper/scripts/campaigns/neuralspacetime/`; the Python RL training package is retired.
+Ring–wormhole launchers, workers and run configurations live in
+[`grteclyn-wrapper/scripts/campaigns/ringwormhole/`](grteclyn-wrapper/scripts/campaigns/ringwormhole/README.md).
+`research/ringwormhole/` holds STATUS and research writing.
 
 ## The merger campaign: where to look
 
@@ -31,15 +52,15 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | find a template | `runs/wormhole_merger/templates_scan/params_*.txt` (untracked; each packed run keeps its own copy as `evolution_params.txt`) |
 | find raw output | `runs/wormhole_merger/<NN_group>/[<sub>/]<run>/` — `params.txt`, `run.log`, `run_manifest.json`, `data/*.dat`, `small_data/`, `frames/` |
 | find plotfiles / checkpoints | `/tmp/grteclyn_scratch/<run>/` on the GPU node that ran it — node-local, pruned by hand (`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md`) |
-| find packed results | `results/merger/campaign/<group>/[<sub>/]<run>/` — thinned streams, `evolution_params.txt`, `run_manifest.json`; resolve runs by name with `grteclyn_wrapper.analysis.wormhole_merger.pack.paths` |
-| run an analysis | [`grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`](grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/README.md) (numpy only; read the pack); the one-off checks behind the paper's hand-entered numbers: [`grteclyn-wrapper/scripts/analysis/wormhole_merger/`](grteclyn-wrapper/scripts/analysis/wormhole_merger/README.md) |
-| find a figure / its script | [`results/merger/figures/FIGURES.md`](results/merger/figures/FIGURES.md); scripts in `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/plot_*.py` |
+| find packed results | `results/merger/campaign/<group>/[<sub>/]<run>/` — thinned streams, `evolution_params.txt`, `run_manifest.json`; resolve runs by name with `grteclyn_workflows.analysis.wormhole_merger.pack.paths` |
+| run an analysis | [`grteclyn-wrapper/src/grteclyn_workflows/analysis/wormhole_merger/`](grteclyn-wrapper/src/grteclyn_workflows/analysis/wormhole_merger/README.md) (numpy only; read the pack); the one-off checks behind the paper's hand-entered numbers: [`grteclyn-wrapper/scripts/analysis/wormhole_merger/`](grteclyn-wrapper/scripts/analysis/wormhole_merger/README.md) |
+| find a figure / its script | [`results/merger/figures/FIGURES.md`](results/merger/figures/FIGURES.md); scripts in `grteclyn-wrapper/src/grteclyn_workflows/plotting/wormhole_merger/plot_*.py` |
 | close out a finished run | `research/merger/closeout.sh <run>` → `file_run.sh` → `research/merger/pack_results.sh` |
 | movies, GW search | `results/merger/movies/`, `results/merger/gw_search/` (strain cache in `runs/gw_search/`) |
 
 The campaign's code lives in four places by design: the launcher in
 `grteclyn-wrapper/scripts/campaigns/wormhole_merger/`, figures in the wrapper's
-`visualisation/wormhole_merger/`, pack analysis in the wrapper's
+`plotting/wormhole_merger/`, pack analysis in the wrapper's
 `analysis/wormhole_merger/` (with its one-off checks in `scripts/analysis/wormhole_merger/`),
 closeout and packing in `research/merger/`.
 
@@ -50,7 +71,7 @@ closeout and packing in `research/merger/`.
 PY=grteclyn-wrapper/.venv/bin/python
 
 # redraw a figure (reads the pack, writes results/merger/figures/<group>/)
-$PY -m grteclyn_wrapper.visualisation.wormhole_merger.plot_horizon_regrowth
+$PY -m grteclyn_workflows.plotting.wormhole_merger.plot_horizon_regrowth
 
 # check every number the paper quotes against the pack; regenerate numbers.tex
 (cd research/merger/article && ../../../$PY claims/claims.py check && ../../../$PY claims/claims.py tex)
@@ -63,7 +84,7 @@ bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh --template <pa
 bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/build_binary.sh --tag <word>
 
 # rebuild the run index (also part of pack_results.sh)
-$PY -m grteclyn_wrapper.analysis.wormhole_merger.pack.run_index results/merger
+$PY -m grteclyn_workflows.analysis.wormhole_merger.pack.run_index results/merger
 ```
 
 ## Not here

@@ -1,0 +1,20 @@
+{
+  "stage": "completed",
+  "local_tests": {
+    "passed": 9,
+    "module": "grteclyn-wrapper/tests/optimisation/test_railgun_evolution_convergence.py",
+    "command": "grteclyn-wrapper/.venv/bin/python -m pytest -q grteclyn-wrapper/tests/optimisation/test_railgun_evolution_convergence.py",
+    "elapsed_seconds": 0.09,
+    "device": "CPU; NumPy-only manufactured and identity checks"
+  },
+  "completed_resolutions": [
+    96,
+    128,
+    192
+  ],
+  "pending_resolution": null,
+  "new_gpu_jobs_started": 4,
+  "figure_QA": "Actual three-grid PNG and PDF rendered from portable archives; PNG visually inspected. All 16 fields retain 25 original frames including t=2. Workstation Richardson rebuild agrees with the cluster report.",
+  "plan": "research/railgun/studies/evolution_richardson_070.json",
+  "interpretation": "Three-grid results are in evolution-richardson-070.json; no long-time stability result."
+}

@@ -1,0 +1,32 @@
+{
+  "commit": "73b2aa301f6c7bd429eabd136bbd9594195d71a5",
+  "platform": "cuda",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "3",
+      "time": "1.707",
+      "timestamp": "2026-11-01T09:55:18.213489+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_counter_rotation",
+      "name": "test_constant_dragging_shifts_the_full_two_dimensional_bound_frequency",
+      "time": "0.979"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_counter_rotation",
+      "name": "test_quadratic_seed_refuses_an_unbound_flat_background",
+      "time": "0.065"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.016"
+    }
+  ]
+}

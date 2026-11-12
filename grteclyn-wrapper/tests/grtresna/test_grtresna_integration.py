@@ -10,31 +10,18 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.io import _reflect_half_z_to_full
-from grteclyn_wrapper.grtresna.domain import GRTresnaDomainConfig
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, write_grtresna_params
-from grteclyn_wrapper.core.config import resolve_example
-from grteclyn_wrapper.core.episode import create_episode
-from grteclyn_wrapper.core.plot_consumer import build_consume_command
-from grteclyn_wrapper.core.params import write_params
-from grteclyn_wrapper.metrics import (
-    ComovingMetrics,
-    CurvatureInvariantMetrics,
-    EpisodeMetrics,
-)
-from grteclyn_wrapper.metrics.probes.ftl.general import GeneralFtlReport
-from grteclyn_wrapper.metrics.probes.ftl.geodesic import GeodesicFtlReport
-from grteclyn_wrapper.metrics.score import score_episode
-from grteclyn_wrapper.search.optimize import (
-    _force_exotic_template,
-    _grtresna_convergence_rejection_reason,
-    _grtresna_rejection_fitness,
-    _load_warm_start_vectors,
-    build_search_space,
-    build_grtresna_config,
-    GRTRESNA_REJECTION_BASE_FITNESS,
-    GRTRESNA_REJECTION_MAX_EXTRA_FITNESS,
-)
+from grteclyn_workflows.grtresna.io import _reflect_half_z_to_full
+from grteclyn_workflows.grtresna.domain import GRTresnaDomainConfig
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig, write_grtresna_params
+from grteclyn_workflows.evolution.config import resolve_example
+from grteclyn_workflows.evolution.episode import create_episode
+from grteclyn_workflows.evolution.plot_consumer import build_consume_command
+from grteclyn_workflows.evolution.params import write_params
+from grteclyn_workflows.diagnostics import ComovingMetrics, CurvatureInvariantMetrics, EpisodeMetrics
+from grteclyn_workflows.diagnostics.probes.ftl.general import GeneralFtlReport
+from grteclyn_workflows.diagnostics.probes.ftl.geodesic import GeodesicFtlReport
+from grteclyn_workflows.search.scoring import score_episode
+from grteclyn_workflows.search.optimize import _force_exotic_template, _grtresna_convergence_rejection_reason, _grtresna_rejection_fitness, _load_warm_start_vectors, build_search_space, build_grtresna_config, GRTRESNA_REJECTION_BASE_FITNESS, GRTRESNA_REJECTION_MAX_EXTRA_FITNESS
 
 
 
@@ -625,7 +612,7 @@ def test_strong_evolved_shortcut_gets_operational_ftl_reward() -> None:
     # shortcut still earns a large positive score, just below the old
     # coordinate-only weighting (the channel/solved shaping weights were trimmed
     # so a t=0/coordinate signal cannot outrank a validated gauge-invariant
-    # shortcut -- see the shaping-vs-validated balance in metrics/score/objectives.py).
+    # shortcut -- see the shaping-vs-validated balance in search/scoring/objectives.py).
     assert score.total > 250.0
 
 

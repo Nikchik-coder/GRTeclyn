@@ -25,14 +25,36 @@ session start goes stale within hours.
   the order between the members, N₁→N₂ / N₂→N₃ (from `constraint_norms_levels.dat`, p = ln(e₁/e₂) / ln(N₂/N₁)),
   then two lines on what it shows. Not the norms' magnitudes, not prose.
 
+## Research layout
+
+- Every research study has `research/<study>/STATUS.md`, following the existing
+  status layout: live and queued work, next steps, verified findings and saved evidence.
+  Update it after each launch, stop and completed result.
+- `research/<study>/` holds STATUS, research notes and article sources. Keep
+  operational code and run configuration out of this directory.
+- Campaign launchers, workers, queues, packing helpers and run JSON/YAML files
+  belong in `grteclyn-wrapper/scripts/campaigns/<study>/`; use its `configs/`
+  subdirectory for run configurations. Link to those canonical paths from STATUS;
+  do not leave copies or compatibility launchers under `research/`.
+- Reusable physics and analysis code belongs in the wrapper package, with its
+  tests under the wrapper tests. Live outputs and logs stay in untracked `runs/`;
+  curated reproducible evidence belongs in tracked `results/`.
+- Reorganize an active campaign on the cluster only after its worker exits.
+  Update imports, script paths, tests and documentation together, using Git
+  push/pull to transport the change.
+
 ## Environment
 
+- For cluster access, capped CUDA/JAX solves, allocator startup failures and
+  evolution launch checks, read [CLUSTER_GPU.local.md](CLUSTER_GPU.local.md)
+  when present. This local runbook is intentionally Git-ignored and may be
+  absent in other checkouts; it does not grant launch approval.
 - **LaTeX: the workstation only.** It has TeX Live (`latexmk`, `lualatex`, `pdflatex`);
   the GPU nodes have none. The editor rebuilds the article with `latexmk -lualatex` on
   save, so build test copies with `-outdir` elsewhere, and check that both engines build.
 - **Python** is the wrapper's venv: `grteclyn-wrapper/.venv/bin/python` (setup:
   `cd grteclyn-wrapper && uv sync --extra plots --extra visualization --extra gw-search`). System `python3` and the root
-  `.venv` do not have `grteclyn_wrapper` installed.
+  `.venv` do not have `grteclyn_workflows` installed.
 - **Building**: use `grteclyn-wrapper/scripts/campaigns/wormhole_merger/build_binary.sh`.
   By hand you need `/usr/local/cuda/bin` on PATH (it is not by default), the
   campaign OpenMPI on PATH, and the *system* g++ 11 — `scripts/lib/env.sh` puts the
@@ -98,7 +120,7 @@ after session because it lived only in one machine's agent memory.
    - `-j N > 1` fails through the run dir's `post.py`: it runs the module as `__main__` without a guard, so every
      spawned worker dies ("... before the current process has finished its bootstrapping phase"); so does
      `CONSUMER_JOBS > 1` at launch, which goes through the same `post.py`. Start the watcher as `test_post -m
-     grteclyn_wrapper.visualisation.process_wave.consume_plotfiles <args> -j 3 --keep-existing-frames` (the guarded
+     grteclyn_workflows.postprocessing <args> -j 3 --keep-existing-frames` (the guarded
      `__main__.py`). A failed batch loses nothing: its plotfiles stay on scratch, unmarked. Never put `-j > 1` in
      `consumer_args.extra`: the end-of-run drain runs through `post.py`.
    - Size it at launch: one N 192 plotfile with the full frame set takes ~2.7 min per worker on the second node
@@ -292,7 +314,8 @@ Learned on the spinning paper's submission (2026-10-21):
 - **Commit subjects at most 72 characters**, blank line, then the body; detail goes
   in the body and the state in `research/merger/STATUS.md` (the `commit-msg` hook enforces it;
   install with `python3 grteclyn-wrapper/scripts/ops/check_commit_msg.py --install-hook`).
-- No `Co-Authored-By: Claude` trailers.
+- No agent co-author trailers (`Co-authored-by: Claude`, `Co-authored-by: Cursor`,
+  anthropic.com, cursoragent@cursor.com). The `commit-msg` hook strips them.
 - No machine identity in tracked files (user, host, home paths): the `pre-commit`
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.

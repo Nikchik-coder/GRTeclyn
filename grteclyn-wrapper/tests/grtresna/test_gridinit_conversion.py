@@ -8,8 +8,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna import io
-from grteclyn_wrapper.grtresna.io import chombo_to_uniform, convert_chombo_to_gridinit
+from grteclyn_workflows.grtresna import io
+from grteclyn_workflows.grtresna.io import chombo_to_uniform, convert_chombo_to_gridinit
 
 
 def _paint_box_reference(
@@ -90,9 +90,9 @@ def test_stationarity_reads_seeded_gridinit_shift_magnitude(
     """A GRTresna candidate has no ``recipe_beta_*`` profile, so stationarity must
     be read from the *real* seeded shift magnitude in the gridinit: a strongly
     sheared geometry is non-stationary, a near-zero one is stationary."""
-    from grteclyn_wrapper.grtresna.io import write_gridinit
-    from grteclyn_wrapper.metrics import STATIONARY_BETA_EPS
-    from grteclyn_wrapper.metrics.diagnostics.comoving import read_comoving_metrics
+    from grteclyn_workflows.grtresna.io import write_gridinit
+    from grteclyn_workflows.diagnostics import STATIONARY_BETA_EPS
+    from grteclyn_workflows.diagnostics.measurements.comoving import read_comoving_metrics
 
     n = 16
     comp_names = ["chi", "shift1", "shift2", "shift3"]
@@ -148,7 +148,7 @@ def test_parallel_matches_serial(tmp_path: Path) -> None:
 @pytest.mark.skipif(_find_hdf5() is None, reason="no GRTresna HDF5 fixture available")
 def test_cropped_export_matches_evolution_dx(tmp_path: Path) -> None:
     """Export the central evolution window at dx=0.5 (L=64, N=128)."""
-    from grteclyn_wrapper.grtresna.io import read_gridinit
+    from grteclyn_workflows.grtresna.io import read_gridinit
 
     hdf5 = _find_hdf5()
     assert hdf5 is not None

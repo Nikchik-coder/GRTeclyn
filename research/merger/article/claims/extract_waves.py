@@ -19,7 +19,7 @@ draws the figure it belongs to, so the ledger cannot drift from the page:
   plot_fill_insensitivity    the fill-window twin;
   single_throat_gates        (analysis.wormhole_merger.waves) the five gates of the lone throat's wave.
 
-The grteclyn_wrapper modules are imported INSIDE the extractors, so claims.py
+The grteclyn_workflows modules are imported INSIDE the extractors, so claims.py
 still loads with a numpy-only Python for the other areas.
 
 Runs are resolved by NAME in the tracked pack (lib.run_dir), with a fallback
@@ -45,7 +45,7 @@ import numpy as np
 
 from lib import PACK, evaluate, extractor, params, run_dir
 
-WM = "grteclyn_wrapper.visualisation.wormhole_merger"
+WM = "grteclyn_workflows.plotting.wormhole_merger"
 
 
 # ---------------------------------------------------------------- plumbing
@@ -68,7 +68,7 @@ def _mass(M) -> float:
 
 def _q2e():
     """The lone throat's wave gates (analysis.wormhole_merger.waves.single_throat_gates)."""
-    return importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.single_throat_gates")
+    return importlib.import_module("grteclyn_workflows.analysis.wormhole_merger.waves.single_throat_gates")
 
 
 @functools.lru_cache(maxsize=None)
@@ -738,7 +738,7 @@ def waves_memory_ratio(run: str, R: int, t0: float, t1: float, estimator: str = 
     scalar_memory_angmom.budget: estimator 'W' (the wave-zone angular pattern),
     'kin' (that pattern rescaled to the kinematic energy) or 'rad' (the radiative
     l = 1 dipole).  Positive: the negative-energy flux ADDS to the GW memory."""
-    S = importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.scalar_memory_angmom")
+    S = importlib.import_module("grteclyn_workflows.analysis.wormhole_merger.waves.scalar_memory_angmom")
     b = S.budget(run, int(R), float(t0), float(t1), "z")
     h = {"W": b["h_W"][0].real, "kin": b["h_kin"], "rad": b["h_rad"]}[estimator]
     return float(h / b["h_GW"][0].real)
@@ -917,7 +917,7 @@ def waves_axis_ratio_dev() -> float:
     (waves/headon_axis_modes.py, burst-body rms): how closely the z-based
     modes split as a quadrupole axisymmetric about the collision axis x must.
     A sphere the record stops short of (nan) is left out."""
-    H = importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.headon_axis_modes")
+    H = importlib.import_module("grteclyn_workflows.analysis.wormhole_merger.waves.headon_axis_modes")
     devs = []
     for run, f20, f22 in H.STREAMS:
         d = PACK / "campaign" / run

@@ -1,0 +1,92 @@
+[
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/data/collapse_diagnostics.dat.gz",
+    "sha256_raw": "61a2fd786273e59ff0c4adfe3ae5d249eabe1d212990f48113d211193c0ac182",
+    "bytes_raw": 1398771
+  },
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/data/constraint_norms_levels.dat.gz",
+    "sha256_raw": "c6f40bf8c209ec3cc4110e9313e7d861cde415a7ef8d326dfb6cf4cde034f502",
+    "bytes_raw": 1398771
+  },
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/data/throat_geometry.dat.gz",
+    "sha256_raw": "e7d4ba8da6a57db63407194736b2e3df7dea628cb75d03519a4c2761edeb4d1d",
+    "bytes_raw": 479391
+  },
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/small_data/mots_spectral.dat.gz",
+    "sha256_raw": "047220f98d9852fd6c44efe152031c1e383ca798bbb82606a26c0346c3ff45e2",
+    "bytes_raw": 33435
+  },
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/small_data/psi4_mode_l2_all.dat.gz",
+    "sha256_raw": "f6f10bca386398821a9406f0e0d56957327b27c29c97fb99d1073cf107cff3e6",
+    "bytes_raw": 67023
+  },
+  {
+    "path": "D21_X1p829_L64_N096_ml3_spdrv0_t150/small_data/throat_spheres.dat.gz",
+    "sha256_raw": "7fbfa6773f424bfdea62c6529e2db9e4bef007968696618ef40ca07563e1640e",
+    "bytes_raw": 13919
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/data/collapse_diagnostics.dat.gz",
+    "sha256_raw": "4669d8ab767d93889681ca0f6eefbead52ab390f43740811785114687bef7779",
+    "bytes_raw": 2081436
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/data/constraint_norms_levels.dat.gz",
+    "sha256_raw": "29d767ec378c4234a7d318f2ead865960cd49c5ffe7ab575cbaae5d065146881",
+    "bytes_raw": 2081436
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/data/throat_geometry.dat.gz",
+    "sha256_raw": "976eb1cfa30239f3a639abf4afc2a64178653aef030a2a648d3996330a709ff8",
+    "bytes_raw": 713356
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/small_data/mots_spectral.dat.gz",
+    "sha256_raw": "566f9c44320968f1bc5822089e3bf14fde2807c219d66a307533c6378369891c",
+    "bytes_raw": 37193
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/small_data/psi4_mode_l2_all.dat.gz",
+    "sha256_raw": "c031aa9780454e0e472bc1887c9b96461e5bfa4b8831d5be3a2f1280b877febc",
+    "bytes_raw": 74551
+  },
+  {
+    "path": "D21_X1p829_L64_N128_ml3_spdrv0_t150/small_data/throat_spheres.dat.gz",
+    "sha256_raw": "ab766129fdd39f0e6ce582c1823a965bdaeeb41fdeb6ebd29f0a6fd96d9b0d64",
+    "bytes_raw": 14773
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/data/collapse_diagnostics.dat.gz",
+    "sha256_raw": "d9d548b1b6549845c5ca76d61a1acdc1710fe173a4a7ea83499b6e6e6bd5f89e",
+    "bytes_raw": 3583938
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/data/constraint_norms_levels.dat.gz",
+    "sha256_raw": "fe19d0c98187b0c03e295a338f10b1dcb9dacdbf8e9e58427d40a84ceb9a1428",
+    "bytes_raw": 3583938
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/data/throat_geometry.dat.gz",
+    "sha256_raw": "b126baebe88be215b7452eb661197b8163e7339aa8aa9d169e9a13a8a6c8a04c",
+    "bytes_raw": 1228298
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/small_data/mots_spectral.dat.gz",
+    "sha256_raw": "55c2c96a14e4bfd6168f5f3eea09ec52909ba66bb0afb6d35d9f4c149050f260",
+    "bytes_raw": 42707
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/small_data/psi4_mode_l2_all.dat.gz",
+    "sha256_raw": "e3dce597412c4854ea6473df31dfb4d3e997f9f58bbe87223a99f4d2faab3c13",
+    "bytes_raw": 85764
+  },
+  {
+    "path": "D21_X1p829_L64_N192_ml3_spdrv0_t150/small_data/throat_spheres.dat.gz",
+    "sha256_raw": "176c7d266ee844a36ec0a63f128ad6332512fe1fb2722544b4ce50297cfcc93a",
+    "bytes_raw": 17864
+  }
+]

@@ -7,15 +7,9 @@ FTL mechanism the search is designed to discover.
 
 import math
 
-from grteclyn_wrapper.__main__ import build_parser
-from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
-from grteclyn_wrapper.search.optimize import (
-    TRAJECTORY_DEFAULT_NUM_LUMPS,
-    TRAJECTORY_PROFILE_CHOICES,
-    build_grtresna_config,
-    build_search_space,
-    grtresna_trajectory_search_space,
-)
+from grteclyn_workflows.__main__ import build_parser
+from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
+from grteclyn_workflows.search.optimize import TRAJECTORY_DEFAULT_NUM_LUMPS, TRAJECTORY_PROFILE_CHOICES, build_grtresna_config, build_search_space, grtresna_trajectory_search_space
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+{
+  "commit": "389c87624a1a47186fae7efd537401c286043185",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "jacobian_chunk": 128,
+  "start_msk": "2026-11-01 10:46:17",
+  "end_msk": "2026-11-01 10:49:52",
+  "exit_code": 2
+}

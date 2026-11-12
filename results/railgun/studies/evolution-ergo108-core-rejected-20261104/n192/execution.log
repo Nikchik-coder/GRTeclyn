@@ -1,0 +1,114 @@
+[capped_job] start 2026-11-04T09:46:35Z threads=4 mem=160G timeout=12600s
+{
+  "source_sha256": "a173848c072ce0e618a6995b8b13154570a2a94f2fc58fd1845795ad853cbb52",
+  "mass": 1.0,
+  "winding": 1,
+  "source_grid": [
+    192,
+    24
+  ],
+  "source_stability": "not_assessed",
+  "base_n": 96,
+  "world_length": 64.0,
+  "max_level": 6,
+  "levels": [
+    {
+      "level": 0,
+      "n": 96,
+      "length": 64.0,
+      "dx": 0.6666666666666666,
+      "origin": -2.6666666666666665,
+      "bytes": 260968448
+    },
+    {
+      "level": 1,
+      "n": 144,
+      "length": 48.0,
+      "dx": 0.3333333333333333,
+      "origin": 6.666666666666667,
+      "bytes": 814739456
+    },
+    {
+      "level": 2,
+      "n": 144,
+      "length": 24.0,
+      "dx": 0.16666666666666666,
+      "origin": 19.333333333333332,
+      "bytes": 814739456
+    },
+    {
+      "level": 3,
+      "n": 144,
+      "length": 12.0,
+      "dx": 0.08333333333333333,
+      "origin": 25.666666666666668,
+      "bytes": 814739456
+    },
+    {
+      "level": 4,
+      "n": 144,
+      "length": 6.0,
+      "dx": 0.041666666666666664,
+      "origin": 28.833333333333332,
+      "bytes": 814739456
+    },
+    {
+      "level": 5,
+      "n": 144,
+      "length": 3.0,
+      "dx": 0.020833333333333332,
+      "origin": 30.416666666666668,
+      "bytes": 814739456
+    },
+    {
+      "level": 6,
+      "n": 144,
+      "length": 1.5,
+      "dx": 0.010416666666666666,
+      "origin": 31.208333333333332,
+      "bytes": 814739456
+    }
+  ],
+  "total_bytes": 5149405184,
+  "finest_dx": 0.010416666666666666,
+  "stop_time": 2.0,
+  "checkpoints": false
+}
+Wed Nov  4 09:46:37 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   1  NVIDIA H100 80GB HBM3          On  |   00000000:AE:00.0 Off |                    0 |
+| N/A   32C    P0             76W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         879G  505G  330G  61% /
+4.0K	<scratch>/_cache
+.............................................                            [100%]
+45 passed in 32.56s
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/evolution_amr.py", line 247, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/evolution_amr.py", line 243, in main
+    result = export(args.config,args.out,args.n)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "grteclyn-wrapper/src/grteclyn_wrapper/optimisation/railgun/evolution_amr.py", line 82, in export
+    raise ValueError('origin certificate rejected; no cube exported')
+ValueError: origin certificate rejected; no cube exported
+[capped_job] end 2026-11-04T09:52:14Z exit=1

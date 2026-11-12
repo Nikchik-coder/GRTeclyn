@@ -1,0 +1,98 @@
+[
+  {
+    "model": "D0",
+    "kind": "classical",
+    "comparisons": [
+      {
+        "ell_over_Re": -0.5,
+        "speed": 0.0,
+        "spectral": 0.0259586568354108,
+        "finite_difference": 0.025958656712767633,
+        "scaled_error": 1.8554187365745092e-09
+      },
+      {
+        "ell_over_Re": -0.5,
+        "speed": 0.5,
+        "spectral": 0.03465524938033762,
+        "finite_difference": 0.03465524941630607,
+        "scaled_error": 5.441521024044098e-10
+      },
+      {
+        "ell_over_Re": 0.0,
+        "speed": 0.0,
+        "spectral": 1.6344718408898808e-14,
+        "finite_difference": 5.318812666898284e-12,
+        "scaled_error": 8.021888757460055e-11
+      },
+      {
+        "ell_over_Re": 0.0,
+        "speed": 0.5,
+        "spectral": 0.0220333311718043,
+        "finite_difference": 0.022033331173274787,
+        "scaled_error": 2.2246400467916375e-11
+      },
+      {
+        "ell_over_Re": 0.5,
+        "speed": 0.0,
+        "spectral": 0.014713246144160095,
+        "finite_difference": 0.014713246952066364,
+        "scaled_error": 1.2222486367936105e-08
+      },
+      {
+        "ell_over_Re": 0.5,
+        "speed": 0.5,
+        "spectral": 0.014713246144160103,
+        "finite_difference": 0.014713246952066364,
+        "scaled_error": 1.2222486236716466e-08
+      }
+    ]
+  },
+  {
+    "model": "D0",
+    "kind": "potential",
+    "comparisons": [
+      {
+        "ell_over_Re": -0.5,
+        "speed": 0.0,
+        "spectral": 0.029393807025295766,
+        "finite_difference": 0.02939380629285079,
+        "scaled_error": 1.1080863056787105e-08
+      },
+      {
+        "ell_over_Re": -0.5,
+        "speed": 0.5,
+        "spectral": 0.02939380702529578,
+        "finite_difference": 0.02939380629285079,
+        "scaled_error": 1.108086326673853e-08
+      },
+      {
+        "ell_over_Re": 0.0,
+        "speed": 0.0,
+        "spectral": 0.12102982411807697,
+        "finite_difference": 0.12102982806934909,
+        "scaled_error": 3.264709458058767e-08
+      },
+      {
+        "ell_over_Re": 0.0,
+        "speed": 0.5,
+        "spectral": 0.12102982411807708,
+        "finite_difference": 0.12102982806934909,
+        "scaled_error": 3.264709366327405e-08
+      },
+      {
+        "ell_over_Re": 0.5,
+        "speed": 0.0,
+        "spectral": 0.03420274888840112,
+        "finite_difference": 0.03420274925862391,
+        "scaled_error": 5.600950472695308e-09
+      },
+      {
+        "ell_over_Re": 0.5,
+        "speed": 0.5,
+        "spectral": 0.03420274888840113,
+        "finite_difference": 0.03420274925862391,
+        "scaled_error": 5.600950367719595e-09
+      }
+    ]
+  }
+]

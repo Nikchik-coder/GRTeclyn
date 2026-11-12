@@ -2,7 +2,7 @@
 
 Everything here runs offline.  The network-facing parts (``GwoscStrainSource``)
 are exercised through the protocol, with a fake source, which is the whole
-point of :mod:`grteclyn_wrapper.gw_search.interfaces`: the pipeline must be
+point of :mod:`grteclyn_workflows.gw_search.interfaces`: the pipeline must be
 testable without the observatory.
 """
 
@@ -13,16 +13,10 @@ import pytest
 
 pytest.importorskip("pycbc")
 
-from grteclyn_wrapper.gw_search import interfaces                    # noqa: E402
-from grteclyn_wrapper.gw_search.pipeline import (                    # noqa: E402
-    CoincidenceEngine, NewSNR, TimeSlideBackground, Trigger, TriggerGenerator,
-)
-from grteclyn_wrapper.gw_search.strain import (                      # noqa: E402
-    DesignNoise, GwoscStrainSource, StandardConditioner, WelchNoise,
-)
-from grteclyn_wrapper.gw_search.templates import (                   # noqa: E402
-    ARM_NAMES, MassLadderBank, load_arm, template_timeseries,
-)
+from grteclyn_workflows.gw_search import interfaces                    # noqa: E402
+from grteclyn_workflows.gw_search.pipeline import CoincidenceEngine, NewSNR, TimeSlideBackground, Trigger, TriggerGenerator
+from grteclyn_workflows.gw_search.strain import DesignNoise, GwoscStrainSource, StandardConditioner, WelchNoise
+from grteclyn_workflows.gw_search.templates import ARM_NAMES, MassLadderBank, load_arm, template_timeseries
 
 SR = 4096
 
@@ -78,7 +72,7 @@ def test_template_scales_as_mass_over_distance():
 
 
 def test_template_never_filtered_below_its_own_corner():
-    from grteclyn_wrapper.gw_search.templates import BankTemplate
+    from grteclyn_workflows.gw_search.templates import BankTemplate
     wf = load_arm("fly-by")
     bt = BankTemplate(arm=wf.name, mode=wf.mode, mass_msun=125.0, waveform=wf)
     corner_hz = wf.hz(1.0 / wf.duration_M, 125.0)
@@ -136,7 +130,7 @@ def test_time_slides_destroy_a_real_coincidence():
 def test_far_cannot_be_reported_below_one_per_background_livetime():
     """The '+1' in (N_louder + 1)/T.  Without it an event louder than every
     slide is reported at infinite significance from a finite experiment."""
-    from grteclyn_wrapper.gw_search.pipeline.background import Background, YEAR_S
+    from grteclyn_workflows.gw_search.pipeline.background import Background, YEAR_S
     bg = Background(ranks=np.array([1.0, 2.0, 3.0]), livetime_s=1000.0,
                     n_slides=10)
     assert bg.far_of(99.0) == pytest.approx(YEAR_S / 1000.0)
@@ -147,7 +141,7 @@ def test_far_cannot_be_reported_below_one_per_background_livetime():
 def test_chisq_bins_track_template_length():
     """A 5 ms template has fewer independent cells than a 125 ms one, and
     asking for more bins than it can fill does not strengthen the veto."""
-    from grteclyn_wrapper.gw_search.pipeline.triggers import chisq_bins
+    from grteclyn_workflows.gw_search.pipeline.triggers import chisq_bins
     short = template_timeseries(load_arm("fly-by"), 20.0, 1.0, SR)
     long_ = template_timeseries(load_arm("vacuum BBH twin"), 330.0, 1.0, SR)
     assert 4 <= chisq_bins(short, 20.0, SR) <= chisq_bins(long_, 20.0, SR) <= 16
@@ -167,8 +161,8 @@ def _sigma_mpc(bt, psd):
 def test_injection_is_recovered_in_coloured_noise():
     from pycbc.noise import noise_from_psd
     from pycbc.types import TimeSeries
-    from grteclyn_wrapper.gw_search.analysis import inject
-    from grteclyn_wrapper.gw_search.templates import BankTemplate
+    from grteclyn_workflows.gw_search.analysis import inject
+    from grteclyn_workflows.gw_search.templates import BankTemplate
 
     dur, f_low = 64, 20.0
     psd = DesignNoise(15.0).for_length(dur * SR, 1.0 / SR)
@@ -213,8 +207,7 @@ def test_proxy_is_removed_from_the_environment():
     exported proxy, this catches it.
     """
     import os
-    from grteclyn_wrapper.gw_search.strain.gwosc import (
-        use_cluster_network_directly)
+    from grteclyn_workflows.gw_search.strain.gwosc import use_cluster_network_directly
 
     keep = {k: os.environ.get(k) for k in
             ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY",

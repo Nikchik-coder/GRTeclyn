@@ -1,0 +1,140 @@
+{
+  "solves": 7,
+  "records": [
+    {
+      "index": 0,
+      "pin": 0.3073986678634803,
+      "directory": "amplitude_00",
+      "accepted": true,
+      "predictor": "reused_bootstrap",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 1.176836406102666e-14,
+          "gtt_max": 1.0297318553398327e-14,
+          "shift_norm_over_lapse_max": 7.360778653264788e-14,
+          "frequency": 3.752553823233029e-14
+        },
+        "ergoregion_resolved": false,
+        "gtt_three_grid_spread": 7.76601005725297e-14,
+        "frequencies": [
+          0.7000000000006971,
+          0.7000000000006763,
+          0.7000000000006388
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.4214597982860629,
+            "gtt_max": -0.13670195741647334,
+            "shift_norm_over_lapse_max": 0.510390464182026,
+            "gtt_max_point": {
+              "rho": 1.0688645906387535,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.42145979828597474,
+            "gtt_max": -0.13670195741640598,
+            "shift_norm_over_lapse_max": 0.5103904641821418,
+            "gtt_max_point": {
+              "rho": 1.0688645906387535,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.4214597982859865,
+            "gtt_max": -0.13670195741639568,
+            "shift_norm_over_lapse_max": 0.5103904641822155,
+            "gtt_max_point": {
+              "rho": 1.0688645906387535,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ],
+        "reparameterisation_drift": 2.8793717792319335e-12
+      }
+    },
+    {
+      "index": 1,
+      "pin": 0.32584258793528914,
+      "predictor": "previous_solution",
+      "directory": "amplitude_01",
+      "accepted": true,
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 6.755707104844078e-14,
+          "gtt_max": 5.3915205633359164e-14,
+          "shift_norm_over_lapse_max": 1.247890679678676e-13,
+          "frequency": 4.8405723873656825e-14
+        },
+        "ergoregion_resolved": false,
+        "gtt_three_grid_spread": 2.5618396293225487e-13,
+        "frequencies": [
+          0.6859558202633929,
+          0.6859558202632989,
+          0.6859558202632505
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.3845752423800172,
+            "gtt_max": -0.09641220712323303,
+            "shift_norm_over_lapse_max": 0.6177811747995353,
+            "gtt_max_point": {
+              "rho": 0.9768455413424929,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.38457524237974294,
+            "gtt_max": -0.09641220712297685,
+            "shift_norm_over_lapse_max": 0.6177811748002503,
+            "gtt_max_point": {
+              "rho": 0.9768455413424929,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.3845752423798105,
+            "gtt_max": -0.09641220712303077,
+            "shift_norm_over_lapse_max": 0.6177811748001255,
+            "gtt_max_point": {
+              "rho": 0.9768455413424929,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      },
+      "frequencies": [
+        0.6859558202633929,
+        0.6859558202632989,
+        0.6859558202632505
+      ]
+    },
+    {
+      "index": 2,
+      "pin": 0.34539314321140646,
+      "predictor": "secant",
+      "directory": "amplitude_02",
+      "accepted": false,
+      "checks": {
+        "passed": false,
+        "ergoregion_resolved": false,
+        "drifts": {},
+        "frequencies": [
+          0.6750507773862835
+        ],
+        "common_point_extrema": []
+      },
+      "frequencies": [
+        0.6750507773862835
+      ]
+    }
+  ]
+}

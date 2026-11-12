@@ -1,20 +1,35 @@
-# grteclyn-wrapper
+# GRTeclyn workflows
 
-A Python orchestration layer for numerical-relativity experiments built on
-**GRTeclyn** (GPU evolution, AMReX + CCZ4) and **GRTresna** (elliptic constraint
-solver, Chombo). It turns *"here is a candidate spacetime"* into a finished,
-constraint-satisfying, artefact-checked result.
+The Python application and standalone solver workspace for the studies in [`research/`](../research/):
+wormhole dynamics and mergers, Bondi dipoles, matter-first searches, spinning
+wormholes, exotic-matter optimisation, scalar rings and ring--wormhole coupling.
 
-For each candidate it asks GRTresna for constraint-satisfying initial data,
-hands that data to GRTeclyn for time evolution, streams plotfiles into
-`small_data/` + `frames/` **while the GPU run is still going**, deletes the heavy
-HDF5 directories afterwards, and scores what is left with a pluggable objective.
-On top of that episode loop sit quality-diversity (MAP-Elites) and CMA-ES search
-campaigns over matter and geometry configurations.
+- [`grteclyn-stationary`](packages/stationary/README.md) solves rotating
+  wormholes and scalar rings, searches their parameters and independently
+  validates stationary solutions. The spinning-wormhole model is part of it.
+- Its `numerics/` package owns shared spectral grids, maps, exact Jacobians and Newton
+  iteration on CPU or an explicitly selected GPU. Install with
+  `uv sync --extra stationary`.
+- `evolution/`, `grtresna/` and `scripts/campaigns/` prepare and run GRTeclyn
+  evolutions. Campaign definitions live in `scripts/campaigns/<study>/configs/`.
+- `analysis/`, `diagnostics/`, `plotting/` and `gw_search/` measure, check and
+  present the saved results. `search/`, `initial_data/` and `projection/` retain
+  the matter-first discovery and reproducibility workflows.
+
+The solver builds and installs independently from `packages/stationary/`; the
+wrapper consumes it as a workspace dependency. See [ARCHITECTURE.md](ARCHITECTURE.md)
+for the folder audit and [STATIONARY_RESEARCH.md](STATIONARY_RESEARCH.md) for campaign recipes.
+
+The application installs as `grteclyn-workflows` and imports as `grteclyn_workflows`.
+Use `python -m grteclyn_workflows` or `grteclyn-workflows`; reinstall with `uv sync`
+after pulling the namespace migration. The project directory remains `grteclyn-wrapper/`.
+
+Python RL training has been retired. The pump queues and geodesic/confinement
+scoring tools now live in `scripts/campaigns/neuralspacetime/`. The simulation's
+existing pump parameters remain part of those reproducible experiments.
 
 > **This is research code, not a released library.** It is a fork of
-> [GRTeclyn](https://github.com/GRTLCollaboration/GRTeclyn) with a research tree
-> with a research tree added under `grteclyn-wrapper/` and
+> [GRTeclyn](https://github.com/GRTLCollaboration/GRTeclyn) with a research tree added under `grteclyn-wrapper/` and
 > [`results/`](../results/). Interfaces change without notice. What is published
 > under `results/` is packed, scrubbed and reproducible from the data shipped
 > with it.
@@ -112,7 +127,7 @@ not read the shell variable). Build recipes for both codes: [Operations](#operat
 | Environment | Created by | Holds | Used by |
 |---|---|---|---|
 | `GRTeclyn/.venv` | `uv sync` in the repository root | numpy, scipy, matplotlib, yt, h5py, pycbc, gwpy | `research/merger/pack_results.sh`, the figure scripts, the gravitational-wave analysis |
-| `grteclyn-wrapper/.venv` | `uv sync` in `grteclyn-wrapper/` | the `grteclyn_wrapper` package itself, numpy, scipy, h5py, yt, matplotlib, cma, pytest | the plotfile consumer every run launches, `closeout.sh`, the search campaigns, the test suite |
+| `grteclyn-wrapper/.venv` | `uv sync` in `grteclyn-wrapper/` | the `grteclyn_workflows` package itself, numpy, scipy, h5py, yt, matplotlib, cma, pytest | the plotfile consumer every run launches, `closeout.sh`, the search campaigns, the test suite |
 
 The wrapper package is **not** installed in the root environment; scripts that
 need it there set `PYTHONPATH=grteclyn-wrapper/src`.
@@ -272,7 +287,7 @@ numbers on a laptop, with no GPU and no solver:
 
 ```bash
 # from the repository root
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.analysis.bondi_dipole.fit_mass_law
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.analysis.bondi_dipole.fit_mass_law
 ```
 
 That refits the mass law from the packed cells and prints the exponent, the
@@ -365,7 +380,7 @@ confinement by construction tripped it while being perfectly stable. Compare
 against the run's own `t = 0`, not against a constant.
 
 **The scorer does this itself since 2026-08-26**: `confinement_retention` in
-`metrics/score/survival.py` is now `final_confined_frac / initial_confined_frac`
+`search/scoring/survival.py` is now `final_confined_frac / initial_confined_frac`
 (the run's own t = 0), falling back to the absolute fraction only when t = 0 is
 unavailable. `SCORE_CONFINEMENT_BASELINE=absolute` restores the old behaviour
 for A/B. Because this factor multiplies the dominant `f_geo` terms through
@@ -787,25 +802,25 @@ The corrected campaign and its data are in
 
 | Capability | Where | Notes |
 |------------|-------|-------|
-| **GRTresna bridge** — `params.txt` → MPI solve → Chombo HDF5 → `.gridinit` | `src/grteclyn_wrapper/grtresna/` | Ham + Mom constraint solve; exotic (`rho<0`) auto-switches to K=0 maximal slicing. Deep docs: [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapper/grtresna/README.md) |
+| **GRTresna bridge** — `params.txt` → MPI solve → Chombo HDF5 → `.gridinit` | `src/grteclyn_workflows/grtresna/` | Ham + Mom constraint solve; exotic (`rho<0`) auto-switches to K=0 maximal slicing. Deep docs: [`src/grteclyn_workflows/grtresna/README.md`](src/grteclyn_workflows/grtresna/README.md) |
 | **Matter sectors** — real scalar, complex scalar / U(1) boson star, Q-ball, shell, trajectory, rotating Q-torus eigenstate | `grtresna/matter/`, `grtresna/fields/`, `grtresna/profiles/` | Per-lump signed scalars (`GRTresnaIndependentScalars` C++); exotic wedge; self-gravitating boson-star ODE solver (isotropic coords); 2D spinning Q-ball (`qball_torus.py`, `profile==4`) |
 | **Matter-profile contract (rail)** — single source of truth + t=0 cross-code consistency gate | `grtresna/matter/profile_contract.py`, `tests/grtresna/test_profile_contract.py` | Catches stale-binary empty fields / sign flips / wrong-ω / center bugs before evolution; see [Matter-profile contract](#matter-profile-contract--the-rail-for-adding-new-profiles-safely) |
-| **Plotfile consumer** — streaming `small_data/` + PNG `frames/` + HDF5 deletion | `scripts/lib/`, `src/.../visualisation/` | `consume_plotfiles` sidecar; **required** for every production run |
-| **Ψ₄ / GW extraction** — in-code C++ `WeylExtraction` (spherical-harmonic modes) | `Examples/RotatingWormholeCollapse/`, `src/.../visualisation/process_wave/` | **Primary: in-code GRTeclyn `SphericalExtraction`** → `data/Weyl4_mode_2{0,1,2}.dat`, dense (every coarse step), multi-radius, decoupled from plotfiles. Python `process_wave` sidecar still extracts a coarse cross-check + drives frames |
+| **Plotfile consumer** — streaming `small_data/` + PNG `frames/` + HDF5 deletion | `scripts/lib/`, `src/.../postprocessing/` | `postprocessing` sidecar; **required** for every production run |
+| **Ψ₄ / GW extraction** — in-code C++ `WeylExtraction` (spherical-harmonic modes) | `Examples/RotatingWormholeCollapse/`, `src/.../plotting/waveforms/` | **Primary: in-code GRTeclyn `SphericalExtraction`** → `data/Weyl4_mode_2{0,1,2}.dat`, dense (every coarse step), multi-radius, decoupled from plotfiles. Python `process_wave` sidecar still extracts a coarse cross-check + drives frames |
 | **Scalar-field mode extraction** — s=0 harmonics of `phi`/`Pi` on the Ψ₄ spheres + kinematic flux | `src/.../consume_plotfiles/extraction/scalar_modes.py` | Own stream `small_data/scalar_modes.dat`; **off by default**, enable with `--scalar-modes` in `WHM_CONSUME_ARGS`; see [Scalar-field mode extraction](#scalar-field-mode-extraction---scalar-modes-own-stream-off-by-default) |
 | **Search algorithms** — MAP-Elites (QD) archive, CMA-ES hill-climb | `src/.../search/qd_search/`, `src/.../search/optimize/` | Shared pre-evolution gates; warm-start from any trajectory |
-| **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `f_geo_max`, `f_geo_depth`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../metrics/score/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
+| **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `f_geo_max`, `f_geo_depth`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../search/scoring/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
 | **Descriptors** — `ftl_lifetime`, `speed_horizon`, `wave_focusing`, `spacetime_shear`, `gw_beam` | `src/.../search/qd_search/descriptors.py` | Behavior axes for the MAP-Elites archive |
-| **4D null-geodesic probe** — gauge-invariant FTL shortcut measurement | `src/.../metrics/probes/ftl/` | `search` (cheap) and `hq` (full verify) profiles; continuous emission sweep |
+| **4D null-geodesic probe** — gauge-invariant FTL shortcut measurement | `src/.../diagnostics/probes/ftl/` | `search` (cheap) and `hq` (full verify) profiles; continuous emission sweep |
 | **Falsification tiers** — T0 constructed → T6 analytic | `scripts/search/validate_tiers.py` | Offline ladder; no rerun needed |
 | **Geometry-first projection** — motif scout → GRTresna solve | `src/.../initial_data/motif.py`, `grtresna/fit/motif.py`, `projection/` | Additive second stage; never push fitted matter directly into GRTeclyn |
 | **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost |
 | **Iterative matter adjustment** — CMA-ES loop over lump params (GRTresna-only) | `projection/iterate.py`, `projection/mismatch.py` | `--iterate N` on `project_geometry_motif.py`; L2 geometry-mismatch fitness; closes the fit→solve→compare loop |
 | **Post-load constraint gate** — short GPU load check of `.gridinit` | `projection/postload_gate.py` | Rejects bad loads before the expensive main evolution |
 | **Solved-FTL gate** — cheap t=0 filter on `.gridinit` | `search/solved_ftl_gate.py` | ~1 s/candidate; rejects flat/degenerate slices |
-| **Visualization** — constraint plots, GW panels, frame movies | `src/.../visualisation/`, `scripts/plot/` | Article-style 6-panel Ψ₄ figures; `make_movies.sh` |
-| **LIGO matched-filter search** — methodology + reference script | `src/.../gw_search/` | Intermediate-mass collapse templates vs GWOSC; see [`src/.../gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) |
-| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5 |
+| **Visualization** — constraint plots, GW panels, frame movies | `src/.../plotting/`, `scripts/plot/` | Article-style 6-panel Ψ₄ figures; `make_movies.sh` |
+| **LIGO matched-filter search** — methodology + reference script | `src/.../gw_search/` | Intermediate-mass collapse templates vs GWOSC; see [`src/.../gw_search/README.md`](src/grteclyn_workflows/gw_search/README.md) |
+| **Matter-first pump studies** — queues and scoring | `scripts/campaigns/neuralspacetime/` | Reproducibility tools |
 | **Self-gravitating boson star seed** — stationary single-star confinement | `grtresna/profiles/boson_star_ode.py`, GRTresna C++ | Four-bug fix; see [Self-gravitating boson star](#self-gravitating-boson-star) |
 
 ---
@@ -903,7 +918,7 @@ Binaries (GRTresna MPI solver + GRTeclyn GPU binary) — see [Operations](#opera
 
 Machine-specific paths stay out of git. Copy the template, edit values, and
 either source `scripts/lib/env.sh` (shell campaigns) or rely on automatic load
-from Python (`grteclyn_wrapper.core.site_paths`).
+from Python (`grteclyn_workflows.evolution.site_paths`).
 
 ```bash
 cd grteclyn-wrapper
@@ -935,7 +950,7 @@ Rules:
   `GRTRESNA_ENV` is **not** guessed — set it in `.env` for GRTresna MPI work.
 
 Quick check: `source scripts/lib/env.sh && echo $GRTECLYN_ROOT`, or from
-Python `from grteclyn_wrapper.core.site_paths import grteclyn_root`.
+Python `from grteclyn_workflows.evolution.site_paths import grteclyn_root`.
 
 ### Stage 0 — MAP-Elites (QD)
 
@@ -1122,7 +1137,7 @@ comparison and full env-var reference.
 3. **HQ `CANDIDATES` is eval/gpu pairs** — e.g. `"46 0 39 1"` not a bare eval list.
 4. **Search turns frames off, HQ turns them on** — by design (`search_common.sh` vs `promote_common.sh`).
 5. **Promotion must use `N > L`** (or same `L` with larger `N`) to refine the grid. `L=N` only enlarges the domain at `dx=1` — no fidelity gain.
-6. **Plotfiles go to node-local scratch, never NFS** — automatic since `core/scratch.py`; `output_path` stays on NFS. Only override it (`GRTECLYN_SCRATCH`) if `/tmp` is not node-local on your machine. See [Plotfile scratch MUST be node-local](#plotfile-scratch-must-be-node-local-required).
+6. **Plotfiles go to node-local scratch, never NFS** — automatic since `evolution/scratch.py`; `output_path` stays on NFS. Only override it (`GRTECLYN_SCRATCH`) if `/tmp` is not node-local on your machine. See [Plotfile scratch MUST be node-local](#plotfile-scratch-must-be-node-local-required).
 7. **The pump runs for the ENTIRE simulation** — never stopped mid-run. Enforced at launch, not by checklist; see [Pump convention](#pump-convention-enforced-at-launch) below.
 
 ### Pump convention (enforced at launch)
@@ -1143,7 +1158,7 @@ GEODESIC_EMIT_MIN_TIME=4 # required whenever the pump value is negative
 ```
 
 The floor pairing is also enforced: a negative pump value erases the scorer's
-fallback emission floor (`metrics/score/ftl.py` skips negatives), so `-1`
+fallback emission floor (`search/scoring/ftl.py` skips negatives), so `-1`
 without an explicit `GEODESIC_EMIT_MIN_TIME` refuses to launch — otherwise
 `f_geo` silently changes meaning between runs.
 
@@ -1255,9 +1270,9 @@ amr.check_file = "/tmp/<scratch>/<run>/RadialRecipeChk"
 
 Consumer: `--data /tmp/<scratch>/<run>` (local) `--out <NFS>/.../small_data`.
 
-Enforced in code for every stage: `core/scratch.py` maps episode dir to
+Enforced in code for every stage: `evolution/scratch.py` maps episode dir to
 `/tmp/grteclyn_scratch/<campaign>_<eval>_<hash>/`, applied in
-`core/params.py::episode_path_overrides`; the consumer's `--data`, the
+`evolution/params.py::episode_path_overrides`; the consumer's `--data`, the
 scoring plotfile lookup and every cleanup path use the same mapping. An
 unwritable root falls back to the episode dir with a warning; launchers that
 set `amr.plot_file` themselves keep their explicit value.
@@ -1580,7 +1595,7 @@ against the independent slice-cache ring harmonic at the same instant.
 
 ```python
 from pathlib import Path
-from grteclyn_wrapper.grtresna import GRTresnaConfig, solve
+from grteclyn_workflows.grtresna import GRTresnaConfig, solve
 
 cfg = GRTresnaConfig(
     mpi_ranks=1, bh1_bare_mass=0.0,
@@ -1591,7 +1606,7 @@ gridinit = solve(cfg, work_dir=Path("/tmp/grtresna_run"))
 # GRTeclyn: recipe_initial_data_file = <gridinit>
 ```
 
-Deep bridge docs: [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapper/grtresna/README.md).
+Deep bridge docs: [`src/grteclyn_workflows/grtresna/README.md`](src/grteclyn_workflows/grtresna/README.md).
 
 ### Self-gravitating boson star
 
@@ -1607,9 +1622,9 @@ open numerical-stability issue, not seed/pump physics.
 
 Each episode is measured into an `EpisodeMetrics` dataclass, then mapped to a
 scalar `Score` by `score_episode()`. Deep docs:
-[`src/grteclyn_wrapper/metrics/README.md`](src/grteclyn_wrapper/metrics/README.md)
+[`src/grteclyn_workflows/diagnostics/README.md`](src/grteclyn_workflows/diagnostics/README.md)
 (metric groups, FTL stack precedence) and
-[`src/grteclyn_wrapper/metrics/score/README.md`](src/grteclyn_wrapper/metrics/score/README.md)
+[`src/grteclyn_workflows/search/scoring/README.md`](src/grteclyn_workflows/search/scoring/README.md)
 (scoring pipeline).
 
 ### Metric groups (`EpisodeMetrics`)
@@ -1643,7 +1658,7 @@ plotfiles / recipe overrides / `.gridinit`. The `diagnostics/` package holds the
 | boundary_flux | `boundary_flux.dat` / plotfile | `boundary_penalty` |
 | effective_ec | ≥3 plotfile stack (`warpfactory.py`) | `exotic_penalty` |
 
-Use `from grteclyn_wrapper.metrics.catalog import list_metrics, get_metric` for
+Use `from grteclyn_workflows.diagnostics.catalog import list_metrics, get_metric` for
 programmatic lookup.
 
 ### FTL stack precedence
@@ -1688,7 +1703,7 @@ export GRTECLYN_EVOLVING_GEODESIC_MODE=hq GEODESIC_EMIT_MIN_TIME=0 \
        TMPDIR=$S/tmp PYTHONPYCACHEPREFIX=$S/pyc
 for k in 0 4 8 16 24 30; do
   nohup grteclyn-wrapper/.venv/bin/python -u \
-    grteclyn-wrapper/scripts/campaigns/rl/score_evolving_geodesic.py \
+    grteclyn-wrapper/scripts/campaigns/neuralspacetime/score_evolving_geodesic.py \
     runs/pump/pump_ladder_m0/lad_m0_tp$k --ftl-l 8 \
     > $S/score_tp$k.log 2>&1 &
 done
@@ -1740,7 +1755,7 @@ The total is then assembled by the chosen [objective mode](#objective-modes).
 
 ### Score components and survival
 
-Exact per-component weights live in `metrics/score/objectives.py` (validated
+Exact per-component weights live in `search/scoring/objectives.py` (validated
 FTL terms 1000x/400x/300x dominate; shaping gradients ~20-100x; health terms
 gated by `nontriviality_gate`; penalties: exotic 40x graded 0..-1.6,
 stationary 8x, horizon 500x). `survival = numerical_survival x
@@ -1754,8 +1769,9 @@ descriptor (only cells genuinely past c=1.05 count).
 ### Public API
 
 ```python
-from grteclyn_wrapper.metrics import read_episode_metrics, score_episode, EpisodeMetrics
-from grteclyn_wrapper.metrics.score import Score, DEFAULT_WEIGHTS
+from grteclyn_workflows.diagnostics import read_episode_metrics, EpisodeMetrics
+from grteclyn_workflows.search.scoring import score_episode
+from grteclyn_workflows.search.scoring import Score, DEFAULT_WEIGHTS
 ```
 
 ---
@@ -1768,7 +1784,7 @@ Run-by-run results live outside this README:
 |-------|------|
 | [`results/bondi-dipole-runaway/`](../results/bondi-dipole-runaway/) | The published campaign — packed extracts, every cell, every gate verdict |
 | [`results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | How to read a cell name and every column in the data files |
-| [`src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py) | Refits the mass law from the packed data — no GPU needed |
+| [`src/grteclyn_workflows/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_workflows/analysis/bondi_dipole/fit_mass_law.py) | Refits the mass law from the packed data — no GPU needed |
 
 Three takeaways that shape current work: (1) genuine gauge-invariant FTL
 shortcuts exist with exotic matter but are transient -- no configuration yet
@@ -2149,7 +2165,7 @@ Mass/distance configs for the GW panels are baked into `plot_diagnostic.sh`
 > is still In-progress and carries an O(1) spurious `m=0` imaginary part; it
 > is retained for debugging only.
 
-Full module reference: [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md).
+Full module reference: [`src/grteclyn_workflows/plotting/README.md`](src/grteclyn_workflows/plotting/README.md).
 
 ### Falsification tiers
 
@@ -2190,11 +2206,11 @@ Each run emits under `data/` (parsed by `read_episode_metrics`):
 
 | Goal | Edit here | Rebuild? | Validate with |
 |------|-----------|----------|---------------|
-| CMA-ES dimensions, ansätze, warm starts | `search/optimize.py`, `__main__.py` | No | `uv run pytest tests/grtresna/test_grtresna_ring_ansatz.py tests/metrics/ftl/test_solved_geometry_ftl.py -q` |
+| CMA-ES dimensions, ansätze, warm starts | `search/optimize.py`, `__main__.py` | No | `uv run pytest tests/grtresna/test_grtresna_ring_ansatz.py tests/diagnostics/ftl/test_solved_geometry_ftl.py -q` |
 | Launcher defaults / env knobs | `scripts/campaigns/*/run*.sh` | No | `DRY_RUN=1 ... bash scripts/campaigns/cmaes/run.sh` |
 | GRTresna invoke / `.gridinit` conversion | `grtresna/solver.py`, `grtresna/io.py` | Usually no | `uv run pytest tests/grtresna/test_grtresna_integration.py -q` |
-| Solved-geometry FTL filter | `metrics/ftl_solved_geometry.py`, `search/solved_ftl_gate.py` | No | `uv run pytest tests/metrics/ftl/test_solved_geometry_ftl.py -q` |
-| Scoring weights / objectives | `metrics/score/`, `episode_metrics.py` | No | Re-score campaign or metric tests |
+| Solved-geometry FTL filter | `metrics/ftl_solved_geometry.py`, `search/solved_ftl_gate.py` | No | `uv run pytest tests/diagnostics/ftl/test_solved_geometry_ftl.py -q` |
+| Scoring weights / objectives | `search/scoring/`, `episode_metrics.py` | No | Re-score campaign or metric tests |
 | GRTeclyn evolution, plotfiles, gridinit load | `Examples/RadialRecipe/*`, `Source/Matter/*` | Yes (GRTeclyn) | `BUILD=1 bash scripts/radial/run_radialrecipe_gpu_smoke.sh` |
 | GRTresna elliptic solver | `../GRTresna/Examples/ScalarFieldBH/*` | Yes (MPI binary) | AMR smoke tests above |
 | **New matter profile** (painter + reference + gate) | `../GRTresna/Source/Matter/BosonStarParams.hpp`, `grtresna/matter/profile_contract.py` | Yes (GRTresna) | `uv run pytest tests/grtresna/test_profile_contract.py -q` — see [Matter-profile contract](#matter-profile-contract--the-rail-for-adding-new-profiles-safely) |
@@ -2207,7 +2223,7 @@ cd grteclyn-wrapper
 uv run pytest tests/grtresna/ -q          # bridge, matter, profiles (258 tests)
 uv run pytest tests/grtresna/test_profile_contract.py -q  # matter-profile rail (cross-code t=0 gate)
 uv run pytest tests/ -q                    # full suite
-ruff check src/grteclyn_wrapper            # lint
+ruff check src/grteclyn_workflows            # lint
 ```
 
 ### Campaign triage
@@ -2258,9 +2274,9 @@ nvidia-smi   # your cards should now be free
 |-----|---------|
 | [`.env.example`](.env.example) | Site-path template (`SIM_ROOT`, `GRTRESNA_ENV`, …) — copy to gitignored `.env` |
 | [`scripts/campaigns/README.md`](scripts/campaigns/README.md) | Three-stage pipeline detail, env-var reference |
-| [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapper/grtresna/README.md) | GRTresna bridge deep docs |
-| [`src/grteclyn_wrapper/gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) | LIGO matched-filter methodology |
-| [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md) | Plotting module reference |
+| [`src/grteclyn_workflows/grtresna/README.md`](src/grteclyn_workflows/grtresna/README.md) | GRTresna bridge deep docs |
+| [`src/grteclyn_workflows/gw_search/README.md`](src/grteclyn_workflows/gw_search/README.md) | LIGO matched-filter methodology |
+| [`src/grteclyn_workflows/plotting/README.md`](src/grteclyn_workflows/plotting/README.md) | Plotting module reference |
 | [`../results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | Bondi dipole: packed data and how to read it |
-| [`src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py) | Bondi dipole: refit the mass law from the packed data |
+| [`src/grteclyn_workflows/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_workflows/analysis/bondi_dipole/fit_mass_law.py) | Bondi dipole: refit the mass law from the packed data |
 

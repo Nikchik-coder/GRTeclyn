@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "sources": {
+    "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.json": "f9cbcfac924c54e7b3413ea3f61da3b4afe3c03db88078a40a4d21aba6b4e81b",
+    "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.npz": "0e95b0216753527155d31102c762c47226d91afb52e34cd051b9f15a5e29fa86",
+    "results/optimisation/article/d21_e140_210x42.npz": "41d21ef1b2a561595a5b082bed95c0c98d59bada2850897278a764df658803f9",
+    "results/optimisation/validation/2026-10-31-extensions/boson-k0-local/candidate_00053.npz": "1cd2c68de3f399c3df9b1a2c963b3ef6ea4c757b384166787014f8edfa19cfe3"
+  },
+  "code": {
+    "analysis/spinning_wormhole/__init__.py": "fa297b22bcc8d52d79b673550f9000b5d326a94d981826acd541b7b400e7d07d",
+    "analysis/spinning_wormhole/adm.py": "fca9634e54274e7056ad50f6a6806df915604a53887d90a76c6815502d1125e8",
+    "analysis/spinning_wormhole/backgrounds.py": "d62154e08191e06e69f21f0e29d8928298dd79b580fb4f03568826334da82375",
+    "analysis/spinning_wormhole/continuation.py": "1cb84dd78e6e193e37a2767362749477e11f783693974568215fa0ccfdb74abb",
+    "analysis/spinning_wormhole/conventions.py": "4fb2a66c459511ccfe03779180a47b52fc9cecd0aca17fb18f5fb353d1053580",
+    "analysis/spinning_wormhole/equations.py": "6957e3981c208c6d97d7f80288083ee29ac15cb031a640defa1c76459e535c03",
+    "analysis/spinning_wormhole/newton.py": "d1e236b53c9db8fc79948ad5667907121789cf4680be414caac2f05645973e5b",
+    "analysis/spinning_wormhole/observables.py": "7cbdc5ab94f6b6443a2b7f9f4d5dcfdd71cd8c93a5ada2326d6aeb6e22f11e90",
+    "analysis/spinning_wormhole/solution.py": "ede361c8eaf21c61ab8e1cb4047822a7fdec7c246242227d306e5a2c899dd364",
+    "analysis/spinning_wormhole/spectral.py": "6edc24c446560a3fff7d9a192597127be21d212da1df33f72f99be7eea3fab63",
+    "grtresna/profiles/boson_star_ode.py": "1cfa4b38b88df2bc9c2b0d260066355045f6c4d189513398d19cf5736de63dc8",
+    "grtresna/profiles/qball_couplings.py": "b2bd2e415b0063b3b27d82fbc28619690dfaab3d69daa7223e36797e9350bc8c",
+    "optimisation/__init__.py": "6c6b5b6e37bc94c0af471325865cdfb17e10643a9ad8dffa700db44f9e0a15b3",
+    "optimisation/boson_continuation.py": "3acca653743ed213d8e1def7473a5fc9d3a21181643e55e96761b95625cff67c",
+    "optimisation/boson_seeds.py": "6d6c25b00c9f4afea9328c19e401bda3de0886aa91f6ca69e9422114a3c15c82",
+    "optimisation/checks/__init__.py": "50b2a57f43720ecdf73c76488f388ddbcb0044668d1e7910d538f7bc299fa153",
+    "optimisation/checks/check_chi_star.py": "5b3bead6eb5132a9f84e65392fb62f938fc700b3f17cb54c6c5009890a8dc028",
+    "optimisation/checks/check_growth_rate.py": "56e38b5fceb1bc86954d853a485443f6d0ba7106f21cd255d21c56d01b5e1a95",
+    "optimisation/checks/check_matter_n_row.py": "f07fe1cfee04edd3be2677ef4aed45c8ce393a35aba2cecb6c52fd70cdf0e1e1",
+    "optimisation/checks/check_matter_pins.py": "d0cfaa71ee98f16bf6af189092df272890a65ec6fc1db16bac0ec7ee0d7c8ccb",
+    "optimisation/checks/check_tidal.py": "078892803ac0855d3f439a6c1a9bcb6b20af6bc2277efa00d37cbe334657c3d3",
+    "optimisation/checks/diagnose_matter_v0.py": "87d275808d184c6c2e4f799626d7f0f04323fd55650bc58a3c9779a066eff2c9",
+    "optimisation/checks/validate_matter_v0.py": "32ee71ebadecfcca14000af536f2c2dd910815d0e09a4da22fb80b165b0e34c1",
+    "optimisation/commands/__init__.py": "281ea0e1443be40c0893968557ee7d7e4f8b1d7c943d26e7c0fc402e7600b916",
+    "optimisation/commands/cloud_solve.py": "f064279d9c126a47f7a2d5d15690f017bc304120d79303c61e9406c7a9c889bc",
+    "optimisation/commands/compare_backgrounds.py": "e439dec0d8c0dfa88cd93b00dcfa1c7db0365af51f14372a877103492e1b338b",
+    "optimisation/commands/continue_boson.py": "aec108da8805ced25e839e08e552b5f6be323f9e60ddcbf13ae332536039ec81",
+    "optimisation/commands/diagnose_refinement.py": "5c838e9dacc04d8dcacd2e0f9b692331431b150b6ed1fd57f80575f6e4684e9a",
+    "optimisation/commands/explore_extensions.py": "944515fde3c36cc80781d14d4790b2e2bf60334aa9b0912b18919bed2c4ecb24",
+    "optimisation/commands/first_matter_solve.py": "acf0ded017ce6498b82ffe1b0ef6222964cf74ba030b285f76823df3b5fb3114",
+    "optimisation/commands/grid_check.py": "0ad3fe39a63f486f019016f6285971682953bf54c812fb664f7423202e9e71f1",
+    "optimisation/commands/inspect_newton_step.py": "880dce3d6c08a472476d8a208ab767f855b7500570230dfaa4ac01274565368c",
+    "optimisation/commands/optimize_potential.py": "29c29433c5e63484f46d088231b05c537f01671076effe30871a898cec6606a7",
+    "optimisation/commands/pipeline.py": "19c40f821005a671fe04b7e8dccfc556c1114b5bd4c0a1d8f4ca659f5a208b4f",
+    "optimisation/commands/refine_study.py": "f8f7354928d632b7a1f0a7ab4c894938eb110db01d67a0a740354359aa51dd64",
+    "optimisation/commands/scan_potential.py": "63df7c309de7f848215e44c5b80aa9b4370558d134752b2aa16b0967e38db966",
+    "optimisation/commands/select_validated_candidate.py": "b9267e0eec91e0eb8ce26c83e388b8c80c3f4fad0f8fb79d9bbb672b71409df3",
+    "optimisation/commands/stability_screen.py": "6c9ad36fe651df90ea6399337efa702c3a9aea402e7ad6ebf48b73521a05d40b",
+    "optimisation/commands/validate_candidate.py": "a793b5dd797f2aab43460dddf2140f75e9e8413436e20b04ea64ef9a032b679e",
+    "optimisation/commands/winding_solve.py": "e589f19cce49abab58b10277ae234741c4d008ce94be2128f368aaeaaa337f9f",
+    "optimisation/derivations/__init__.py": "3e059210774e6c915a3b099377d94c4f5fdaa2e7f4e885182562de5bc760aea8",
+    "optimisation/derivations/derive_matter_equations.py": "b115e40f6c0a3afca9927d970269d4ed1bca3d4b58d8899aa308ff1d0c247c36",
+    "optimisation/derivations/derive_radial_perturbation.py": "61fc0c13d029c7a1e548bee6b8436a94b035394f0e2f5dd097b7b6746a3fc2b9",
+    "optimisation/diagnostics.py": "bea84edef8c9458302cc03e45d13e8e53b2996bb91e962b8fdc8f08e7f7c3fa6",
+    "optimisation/exoticity.py": "8bf9612716d7ad17509860b9a7875527ed6529747e9c0e1a660b2c3c10ac659b",
+    "optimisation/exploration.py": "df3202722fce8b0dff280aab6a2bf10b373c65b746d9496673d39112dbc14475",
+    "optimisation/handoff.py": "ecd452128be2da447222e862fb0d0a4e64512822214a441dbab78a55c94a189e",
+    "optimisation/knobs.py": "7cdd75e13da48a3dd30c007112e741e720d61a6332f812f188c4cc6eba4dbf03",
+    "optimisation/matter_equations.py": "34aa07fd2a22025dc7e2c359c6bf70df19a0c75a1d858e4e0214431d2ef125ca",
+    "optimisation/potentials.py": "bd3cee537614a436511d807eca6f7dc554c381c28884824d6e4424f5ce72a5ca",
+    "optimisation/resolution.py": "8b2abd8b79ddab13d15e9b0205be963c1516b0148707dee584813a5e21b50fb9",
+    "optimisation/search/__init__.py": "7267a22b1413f6a063961a74681c2e740b94e186b68529b40f84b2d3e02ff6b7",
+    "optimisation/search/artifacts.py": "6a678206b4ca69f629c104e8cc679cda73f8678b5d05cfbd194d19b1d30d060a",
+    "optimisation/search/continuation.py": "58d68f561be6ce4099b72ef0c8782ca06663d0ab5e641a93fc61da93f34f19c2",
+    "optimisation/search/driver.py": "62ee9d3b61b53e3d58fb812c49af9e10e60058338034ec340856fb9eb116c3ce",
+    "optimisation/search/engines.py": "8abcc73614db1f372008fa1651cc8f2e8e0d2ac73d16a6662ef3acf7ebf09163",
+    "optimisation/search/evaluation.py": "d4550a98a1a5b4b35296908b936ef473f3184a4e8bc5fb75bb2ee61309cf8447",
+    "optimisation/search/objective.py": "fb652f91c35d04ab53b4a2b1712f275a592dd8b9ecde44113c1886571cec5789",
+    "optimisation/search/scoring.py": "60046b803a3d30506c420d92976f8ee80f874ee84a8ef7f79b7283fd3caf6b16",
+    "optimisation/search/state.py": "81089c35a02512dfc8355d5e501e3795ceba61b51456cd50500dd64b52716728",
+    "optimisation/solver/__init__.py": "88dc5fccb2ffec14abe964de1025b2d61b20f2fe582c9d67b94b6a66d0f2f3af",
+    "optimisation/solver/device.py": "1a36864491ad930f8d0c5936521eb2510aa0d5b84ef17e052e5db3d6b6ed7759",
+    "optimisation/solver/jacobian.py": "7dbd0f43b98d73829a71736d298d919af0cdf9d0583cc3213ac8890b78ee3946",
+    "optimisation/solver/newton.py": "25b3200d61b0ada0146aaf26b61fe2facfe93995d3d44bb4eb3df8f8190283ce",
+    "optimisation/stability_radial.py": "b8f64569e8c0d44253c781d1933c6ee2e49785b0899e92ba117fc8779a0fb6a4",
+    "optimisation/study.py": "251b1d6637aca1e6ff2798c7a420faf589988640008daa7c28642a7c5762e752",
+    "optimisation/study_diagnostics.py": "c0c08faf553bc82d1d12c390efd3bc6a21621c8c9df489a42f82a2e35f906fa1",
+    "optimisation/study_report.py": "b1cf1c41f6ee3cd9e0025eee15111c0bf5addd87cb786edc7cd627f4d7a191a8",
+    "optimisation/study_validation.py": "3c15630d86941d1ce150b2b6ba6e19569e32eec425abf73b3858179841c27837",
+    "optimisation/surfaces.py": "2ba1d5297f4502189323b116cab92399db23c215a35d83b32ba7dbce3037584c",
+    "optimisation/workflows/__init__.py": "66e4d8cca509bcc873aa1b844493ca9236e6f44fba7d83345d4605c6ef849e7f",
+    "optimisation/workflows/cloud_solve.py": "d68fdbc02c416e76edaf1dd5af0671c0e1930b88c7d3bcc9d7d45abfe6bf8977",
+    "optimisation/workflows/explore_extensions.py": "a75e72cf232b1dceb2afea1ab8a9842505086e354bc4c62edbb629d49ddbb99a",
+    "optimisation/workflows/first_matter_solve.py": "c9c4348f8f8d7ba7b5319f875b8e04539b68d1b7be204663f092c1f6bd66b087",
+    "optimisation/workflows/grid_check.py": "83ed5f833e43558f376cf24b668aa4e5a5bd18ca67607a1d434649fbe18f37c3",
+    "optimisation/workflows/scan_potential.py": "9a257513507b7e4f871b766f2bf7e4616a09d90c5377ee76af7301c914ddd844",
+    "optimisation/workflows/select_validated_candidate.py": "6f37bc1526cf20d39f6b84e4e5187bb079ea34981985590275a39fe6173f6e23",
+    "optimisation/workflows/stability_screen.py": "9f4a46fdbe02b9d63b8998ab41faa0a16199464ed5e045a17b645e4bd86d485d",
+    "optimisation/workflows/validate_candidate.py": "7dfe1ee54001b4c045cdae31e91fd17c3bf2a96e40c8611730c38813983a1e5b",
+    "optimisation/workflows/winding_solve.py": "f44ae7115b0313033cdca95984266c010e880cfb5391d98b408d1205827315c1"
+  },
+  "study": {
+    "version": 1,
+    "tidal_factors": [
+      4.0
+    ],
+    "energy_budgets": [
+      1.0
+    ],
+    "windings": [
+      0
+    ],
+    "mass_range": [
+      0.5,
+      8.0
+    ],
+    "mass_seeds": [
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "amplitude_seeds": [
+      0.01,
+      0.03,
+      0.1,
+      0.3
+    ],
+    "amplitude_max": 0.5,
+    "candidate_seeds": [
+      "results/optimisation/article/d21_e140_210x42.npz"
+    ],
+    "matter_candidate_seeds": [
+      "results/optimisation/validation/2026-10-31-extensions/boson-k0-local/candidate_00053.npz"
+    ]
+  },
+  "case": {
+    "tidal_factor": 4.0,
+    "energy_budget": 1.0,
+    "winding": 0
+  },
+  "search": {
+    "nx": 150,
+    "ny": 30,
+    "x0": "0.8,0.9601195600650203,0.45100992767366843,0.5814352124389958",
+    "m_min": 0.15,
+    "m_max": 1.2,
+    "q_min": -2.0,
+    "q_max": 8.0,
+    "maxfev": 96,
+    "engine": "cma",
+    "seed": 67,
+    "sigma0": 1.0,
+    "popsize": null,
+    "fatol": 2e-05,
+    "m_step": 0.1,
+    "walk_max_splits": 6,
+    "walk_max_iter": 12
+  },
+  "resume_mode": "restart_from_best_with_saved_continuation_seeds",
+  "stability": "not_assessed"
+}

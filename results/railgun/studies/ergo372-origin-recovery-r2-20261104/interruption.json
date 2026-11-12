@@ -1,0 +1,19 @@
+{
+  "completed_grids": [
+    [
+      224,
+      28
+    ],
+    [
+      256,
+      32
+    ]
+  ],
+  "unfinished_grid": [
+    288,
+    36
+  ],
+  "unfinished_grid_updates": 0,
+  "reason": "CUDA allocation failure in first LU",
+  "job_exit": 1
+}

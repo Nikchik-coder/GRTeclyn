@@ -1,0 +1,70 @@
+\section{Exact static benchmarks}
+\label{app:static}
+
+The static massless solution supplies analytical checks of the volume,
+local and null-ray measures. Define $a=-\gamma/(2\pi)$ and
+$y=\arctan(\eta/\eta_0)$. In the convention of Eq.~\eqref{eq:metric},
+$B=1$, $\nu=0$, $\omega=0$, and
+\begin{equation}
+f=-2a(\pi/2-y),\qquad
+(\partial_\eta\psi)^2=\frac{\eta_0^2(1+a^2)}{h^2}.
+\label{eq:static-fields}
+\end{equation}
+In particular, $f(-\infty)=\gamma$, as required. Minimizing the sphere
+radius $e^{-f/2}\sqrt h$ gives
+\begin{equation}
+\eta_{\rm th}=a\eta_0,\qquad
+R_e=\eta_0\sqrt{1+a^2}\,e^{a(\pi/2-\arctan a)}.
+\label{eq:static-throat}
+\end{equation}
+The angular integral in Eq.~\eqref{eq:X} cancels the $4\pi$ in the
+radial NEC deficit. Changing variables to $y$ leaves
+\begin{equation}
+\begin{split}
+X&=\frac{\eta_0(1+a^2)}{R_e}
+       \int_{-\pi/2}^{\pi/2} e^{a(\pi/2-y)}\,dy\\
+ &=\frac{2\sqrt{1+a^2}}{a}\,e^{a\arctan a}\sinh(\pi a/2).
+\end{split}
+\label{eq:static-X}
+\end{equation}
+The continuous $a\to0$ limit gives the symmetric result
+\begin{equation}
+X_{\mathrm{S0},V=0}=\frac{1}{\eta_0}
+ \int_{-\infty}^{\infty}\frac{\eta_0^2}{\eta^2+\eta_0^2}\,d\eta=\pi.
+\label{eq:ellis-X}
+\end{equation}
+For D0, $a=1/2$, so
+\begin{equation}
+X_{\mathrm{D0},V=0}=\sqrt5\,e^{\frac12\arctan(1/2)}
+ \left(e^{\pi/4}-e^{-\pi/4}\right).
+\label{eq:drainhole-X}
+\end{equation}
+These give $\clmAnalyticSzeroX$ and $\clmAnalyticDzeroX$, respectively,
+agreeing with the massless entries of Table~\ref{tab:X}.
+
+For D0 the local radial deficit is
+$|\rho+p_\eta|=e^f(\partial_\eta\psi)^2/(4\pi)$. Its derivative vanishes
+at $\eta=\eta_0/4$, giving
+\begin{equation}
+R_e^2\max|\rho+p_\eta|=
+ \frac{1}{4\pi}\left(\frac{20}{17}\right)^2
+ e^{\arctan(1/4)-\arctan(1/2)}.
+\label{eq:static-peak}
+\end{equation}
+For a radial null geodesic with Killing energy $E=1$ at positive infinity,
+$\dot t=e^{-f}$ and $|\dot\eta|=1$, where a dot denotes an affine derivative.
+Consequently the complete ray integral is
+\begin{equation}
+\begin{split}
+R_e\int|T_{\mu\nu}k^\mu k^\nu|\,d\lambda
+ &=\frac{R_e}{4\pi}\int(\partial_\eta\psi)^2\,d\eta\\
+ &=\frac{5\sqrt5}{64}
+   e^{\pi/4-\frac12\arctan(1/2)}.
+\end{split}
+\label{eq:static-ray}
+\end{equation}
+Equations~\eqref{eq:static-peak} and \eqref{eq:static-ray} yield
+$\clmAnalyticDzeroPeak$ and $\clmAnalyticDzeroRay$. Both reproduce the D0
+reference entries of Table~\ref{tab:physics} at its displayed precision.
+The different peak and ray normalizations are thus checked independently
+of the potential-bearing solutions.

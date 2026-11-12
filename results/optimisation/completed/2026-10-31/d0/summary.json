@@ -1,0 +1,37 @@
+{
+  "status": "failed",
+  "exit_status": 6,
+  "finished_utc": "2026-10-30T23:24:53Z",
+  "t_end": 88.41,
+  "death": "NaN diagnostic: rank=0 level=3 component=7 name=K",
+  "streams": {
+    "data/throat_geometry.dat": {
+      "sha256": "fc5100639fc1c04854c15af46ea593cbd091f7ea46cf437174c9be4144d80073",
+      "bytes": 645539
+    },
+    "data/constraint_norms_levels.dat": {
+      "sha256": "ce245a409c40e4cb2784ade30473ad8e113f457edcfa67f1de7f551cc0e0bbdf",
+      "bytes": 1883559
+    },
+    "data/collapse_diagnostics.dat": {
+      "sha256": "c717cf7e20292b79e9295ca1e030a43f2fdb8b51a5bf443bdceafa7a9e8cf970",
+      "bytes": 1883559
+    },
+    "data/constraint_norms.dat": {
+      "sha256": "822dfe4f6697ff333baa9cec07e741de5b4f2813eaa9dcb4b2074f9bffe3916d",
+      "bytes": 468679
+    },
+    "small_data/throat_spheres.dat": {
+      "sha256": "554b85569cbe5e795d838ef7e4b68cd987d8fe2f4c4bb439b7a3095032f0bef5",
+      "bytes": 13450
+    },
+    "small_data/mots_spectral.dat": {
+      "sha256": "3bcd70b215f5e6ad814a4cfcb7e0d339a947f2f47bb2adb1d68ab35c9b673f82",
+      "bytes": 33777
+    },
+    "small_data/psi4_mode_l2_all.dat": {
+      "sha256": "386ee34ca2268124899d5938e20b3cd0f5b72da0e174bf0425df061fc42c7cab",
+      "bytes": 67948
+    }
+  }
+}

@@ -1,4 +1,4 @@
-from grteclyn_wrapper.core.params import regrid_intervals_for_max_level
+from grteclyn_workflows.evolution.params import regrid_intervals_for_max_level
 
 
 def test_regrid_intervals_for_max_level_matches_amr_levels() -> None:

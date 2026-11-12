@@ -17,8 +17,6 @@
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "Interval.hpp"
-#include "simd.hpp"
-
 template <class matter_t, enum EMTensorOptions em_tensor_options>
 amrex::Vector<std::string> EMTensor<matter_t, em_tensor_options>::var_names()
 {

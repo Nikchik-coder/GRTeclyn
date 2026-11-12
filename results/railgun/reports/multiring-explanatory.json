@@ -1,0 +1,46 @@
+{
+  "source": "results/railgun/studies/annular-validated-k12/accepted.npz",
+  "source_sha256": "3952db5925d4903217f75156e14ff3ba57c05379ae2b01b6bcfba01f97a3c1ee",
+  "overlapping_rings_included": false,
+  "style": "One spatial view per image; plain descriptions attached to locations.",
+  "spatial_map": {
+    "peak_radii": [
+      6.2208756,
+      150.8380858911014
+    ],
+    "clocks_minutes_per_distant_hour": {
+      "inner": 53.23728414100336,
+      "outer": 59.578140002796935,
+      "gap": 58.40544441729552,
+      "outside": 59.69496726060415
+    },
+    "centre_turning_degrees_per_time": 0.24932894235616038,
+    "boundary": "Half each ring own peak energy density; green uses the separate 1e-6 threshold.",
+    "scale": "True relative coordinate sizes. Each density colour has its own normalisation."
+  },
+  "particle_map": {
+    "launch": [
+      37.10268291350083,
+      10.0
+    ],
+    "endpoints": {
+      "zero": [
+        36.404425133474966,
+        -9.999999999999998
+      ],
+      "positive": [
+        36.40442593332511,
+        -9.999999999999998
+      ],
+      "negative": [
+        36.404424333619296,
+        -10.000000000000002
+      ]
+    },
+    "matched_energy": 1.1251088204467277,
+    "opposite_spin_arrival_difference": 3.5873877024528156e-06,
+    "all_eight_passed": true,
+    "paths_shifted_for_display": false,
+    "scope": "Actual saved finite passage, not an escape or net energy gain test."
+  }
+}

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Preview by default; three re-solves of the same weak ring, then stop.
+set -euo pipefail
+card="${1:?usage: run_railgun_throat_validation.sh GPU OUT [--run]}"
+out="${2:?fresh output directory required}"
+mode="${3:---dry-run}"
+[[ $# -le 3 && "$card" =~ ^[0-9]+$ ]] || exit 2
+[[ "$mode" == --dry-run || "$mode" == --run ]] || exit 2
+cd "$(dirname "${BASH_SOURCE[0]}")/../../../.."
+[[ ! -e "$out" ]] || { echo 'output must be fresh' >&2; exit 2; }
+config=grteclyn-wrapper/scripts/campaigns/optimisation/configs/railgun_throat_validation.json
+grteclyn-wrapper/.venv/bin/python -m grteclyn_stationary.ringwormhole.workflow \
+    --config "$config" --out "$out"
+command=(bash grteclyn-wrapper/scripts/ops/capped_job.sh start
+         "railgun-throat-validation-$(date -u +%Y%m%dT%H%M%S)"
+         --gpu --threads 4 --mem 160 --timeout 3600 --
+         env XLA_PYTHON_CLIENT_ALLOCATOR=platform XLA_PYTHON_CLIENT_PREALLOCATE=false
+         PYTHONUNBUFFERED=1
+         bash grteclyn-wrapper/scripts/campaigns/optimisation/run_railgun_throat_validation_worker.sh "$card" "$out")
+printf '%q ' "${command[@]}"; printf '\n'
+[[ "$mode" == --run ]] || exit 0
+used="$(nvidia-smi -i "$card" --query-gpu=memory.used --format=csv,noheader,nounits)"
+used="${used//[[:space:]]/}"
+[[ "$used" =~ ^[0-9]+$ ]] && (( used <= 100 )) || { echo 'GPU occupied or unavailable' >&2; exit 3; }
+apps="$(nvidia-smi -i "$card" --query-compute-apps=pid --format=csv,noheader,nounits)"
+[[ -z "${apps//[[:space:]]/}" ]] || { echo 'GPU has compute jobs' >&2; exit 3; }
+ulimit -c 0
+exec "${command[@]}"

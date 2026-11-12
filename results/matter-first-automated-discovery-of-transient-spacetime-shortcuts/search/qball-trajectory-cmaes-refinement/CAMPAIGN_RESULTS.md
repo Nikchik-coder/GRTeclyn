@@ -353,7 +353,7 @@ Excluded on purpose, as with every pack in `results/`: `initial_data.gridinit` (
 
 [`grteclyn-wrapper/scripts/campaigns/qball_trajectory/cmaes_run.sh`](../../../../grteclyn-wrapper/scripts/campaigns/qball_trajectory/cmaes_run.sh)
 → [`scripts/campaigns/cmaes/run.sh`](../../../../grteclyn-wrapper/scripts/campaigns/cmaes/run.sh)
-→ `grteclyn_wrapper … optimize`.
+→ `grteclyn_workflows … optimize`.
 
 The exact detached launch used for this run:
 
@@ -403,7 +403,7 @@ RESUME=1 RUN_NAME=<same name> bash scripts/campaigns/qball_trajectory/cmaes_run.
 
 # stop — orchestrator first, then verify
 bash scripts/campaigns/stop_campaign.sh <name>
-pgrep -af "grteclyn_wrapper|grtresna"     # must come back empty
+pgrep -af "grteclyn_workflows|grtresna"     # must come back empty
 ```
 
 The resume capability (`--resume` / `RESUME=1`) was added to the driver during this run, in response to

@@ -1,0 +1,17 @@
+{
+  "original_files_sha256": {
+    "accepted.npz": "1140a0d9c2f08d00de3feedf8d399aab5e9589bed637d502b60c2f081d833357",
+    "corridor.json": "75ae88f325666bd405819879945c47cf2d132a86fa947beed7cb499a4307db3b",
+    "evolution_qualification.json": "1a855d3b7c9e87a15be8b176154daf9a5eaf362c6e5c03e35f5632853bd55bfa",
+    "grid_224x28.json": "f6c6778d42a1f5b2630e3609f9e92e2eaeb4e8e6485c76460e1af1e0da610eb8",
+    "grid_224x28.npz": "92ba779441589bc8e51de9fefc0cacc2eb78b21b618c7846a07f9049b63387e0",
+    "grid_256x32.json": "7c85cb97b4b098b1716af2816c2f47a84928e5ce23ffac52b973a3c2b3743744",
+    "grid_256x32.npz": "98412892633d73f8c81abdf045bdc8c6df3e5ad5c80f2467b046cbf228ead38f",
+    "grid_288x36.json": "a467c21704ab0c8b51c44d7f579ef9dcdf108983f459f3091620e90fd6c97117",
+    "grid_288x36.npz": "1040704b0fcd1c405528df92015faf48ef0815a3cf2af29a30cf67ba611ae9b0",
+    "manifest.json": "4f1626de124656b7deaed0f9decbc8452a8efdcc10b75b46aeeb322871ddca28",
+    "outcome.json": "c0e4eb1fa1f2bfc3d12338012d197a714fba3c5f8afe537c00f6fdb40b1a53fe"
+  },
+  "portability": "NPZ files copied byte for byte; text paths made repository relative.",
+  "source": "runs/railgun/evolution/ergo372-smooth-cubic-r2-20261104"
+}

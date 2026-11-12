@@ -1,0 +1,98 @@
+{
+  "status": "nonzero_branch_unresolved",
+  "elapsed_seconds": 708.9704661790747,
+  "reference": {
+    "nx": 210,
+    "ny": 42,
+    "newton": 1.4399204310389995e-15,
+    "iters": 2,
+    "newton_updates": 2,
+    "newton_converged": true,
+    "newton_reason": "converged",
+    "newton_history": [
+      8.509195415125762e-07,
+      3.681802725209944e-13,
+      1.4399204310389995e-15
+    ],
+    "newton_steps": [
+      1.0,
+      1.0
+    ],
+    "jacobian_evals": 1,
+    "X": 4.6445331445299765,
+    "X_A": 4.6842382599916315,
+    "VIQ": -18.87459544235289,
+    "R_e": 4.063830534906226,
+    "R_A": 4.029384156562621,
+    "R_pol": 4.012329147814773,
+    "sigma": 2.00000000000009,
+    "E19": 1.5600143321082383e-11,
+    "E_c": 1.613846652031938e-10,
+    "J_error": 4.3129525644162103e-10,
+    "pin_error": 4.440892098500626e-16,
+    "tails": 0.4386247665211756,
+    "lapse_min": 0.20787957635076193,
+    "stability": "not_assessed",
+    "scalar_in_vacuum_interval": true,
+    "verdict": "PASS",
+    "seed_perturbation": 1e-06,
+    "X_full": 4.684238262964382,
+    "X_radial": 4.684238262964382,
+    "X_angular": 8.177354867095949e-23,
+    "area": 204.02679760669835,
+    "E_b": 0.0,
+    "E_b_over_R_A": 0.0,
+    "Q_b": 0.0,
+    "J_b": 0.0,
+    "B_min": 0.9999999999999979,
+    "local_nec_peak": 0.0053737350624885145,
+    "phantom_ray_axis": -0.07568380473647807,
+    "phantom_ray_equator": -0.0765857251963129,
+    "volume_relative_drift": 6.257130018735555e-15,
+    "surface_verified": true,
+    "surface_minima": 1,
+    "surface_unresolved": false,
+    "surface_area_drift": 0.0,
+    "surface_gradient": 1.0103705077625658e-14,
+    "surface_hessian_min": 4.5041822648225684,
+    "offgrid_einstein": 3.894782140510087e-12,
+    "offgrid_scalar": 1.2992727140607999e-12,
+    "offgrid_points": 1092,
+    "offgrid_pass": true,
+    "tidal_peak": 0.032122951330482534,
+    "tidal_location": [
+      0.040876804661180294,
+      2.1781914256280293e-07,
+      -0.5
+    ],
+    "tidal_converged": true,
+    "tidal_drift": 0.0,
+    "tidal_tail": [
+      [
+        5.013982037002486e-09,
+        3.975785544158706e-11,
+        3.967816680894097e-14
+      ],
+      [
+        1.3326288508624452e-07,
+        1.07740216899251e-09,
+        1.0799538699290182e-12
+      ]
+    ],
+    "tidal_axis_error": 8.393307750208877e-14,
+    "tidal_samples": 3975,
+    "tidal_speeds": [
+      0.0,
+      -0.5,
+      0.5
+    ],
+    "transit_axis": 198.24209114224874,
+    "transit_equator": 198.47695092815505,
+    "M_ADM_plus_estimate": 1.114895466303829,
+    "M_ADM_plus_fit_drift": 0.00010811661687482044,
+    "M_ADM_minus_estimate": -4.557565454200486,
+    "M_ADM_minus_fit_drift": 0.00040550152125717887,
+    "rejection_reasons": [],
+    "seconds": 23.163304309127852
+  }
+}

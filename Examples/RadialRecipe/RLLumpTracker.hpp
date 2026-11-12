@@ -1,7 +1,7 @@
 #ifndef RL_LUMP_TRACKER_HPP_
 #define RL_LUMP_TRACKER_HPP_
 
-#include "GRAMR.hpp"
+#include "GRAmr.hpp"
 #include "RLLumpState.hpp"
 #include "RadialRecipeLevel.hpp"
 #include "SetupFunctions.hpp"
@@ -21,7 +21,7 @@
 //! Weight field = |Phi|^2.  For the complex boson field every lump is a blob of
 //! the same field (distinguished only by its ball location); for independent
 //! real scalars lump ``k`` uses its own ``phi_lump(k)`` component.
-inline void track_rl_lumps(GRAMR &amr, int num_lumps, bool complex_field,
+inline void track_rl_lumps(GRAmr &amr, int num_lumps, bool complex_field,
                            double ball_radius,
                            const std::array<double, AMREX_SPACEDIM> &center,
                            std::array<RLLumpState, RL_MAX_LUMPS> &lumps)

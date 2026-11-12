@@ -1,0 +1,65 @@
+{
+  "search_solves": 0,
+  "refinement_solves": 3,
+  "evaluations": [],
+  "finalists": [
+    {
+      "log_lapse": -2.040754325796122,
+      "accepted": true,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102/finalists/01",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 1.6898982213575664e-13,
+          "gtt_max": 7.137068713802819e-13,
+          "shift_norm_over_lapse_max": 2.6294766973415497e-12,
+          "frequency": 4.2588155224621005e-13
+        },
+        "ergoregion_resolved": true,
+        "gtt_three_grid_spread": 7.137068713802819e-13,
+        "frequencies": [
+          0.6741001876996131,
+          0.6741001876998064,
+          0.6741001877002323
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.11774462779091585,
+            "gtt_max": 0.24679809284783608,
+            "shift_norm_over_lapse_max": 3.7207895365932924,
+            "gtt_max_point": {
+              "rho": 0.35974782295200164,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.11774462779094644,
+            "gtt_max": 0.24679809284775864,
+            "shift_norm_over_lapse_max": 3.720789536592029,
+            "gtt_max_point": {
+              "rho": 0.35974782295200164,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.11774462779077745,
+            "gtt_max": 0.24679809284847234,
+            "shift_norm_over_lapse_max": 3.7207895366018127,
+            "gtt_max_point": {
+              "rho": 0.35974782295200164,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      }
+    }
+  ],
+  "ergoregion_resolved": true,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-validate271-20261102/finalists/01/accepted.npz",
+  "best_ratio": 3.7207895366018127,
+  "incumbent_ratio": 1.0809707039958907,
+  "seconds": 139.93001588992774
+}

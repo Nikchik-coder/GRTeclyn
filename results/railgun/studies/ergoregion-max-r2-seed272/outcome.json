@@ -1,0 +1,26 @@
+{
+  "stage": "complete",
+  "stop_reason": "refinement_solve_budget",
+  "cma_stop": {
+    "reason": "refinement_solve_budget",
+    "criteria": {},
+    "evaluations_started": 10,
+    "cma_version": "4.4.4"
+  },
+  "ergoregion_resolved": true,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/04/accepted.npz",
+  "evaluations": 9,
+  "best_shift_norm_over_lapse": 5.231237832495988,
+  "best_central_lapse": 0.09955434853823275,
+  "incumbent_ratio": 3.7207895366018127,
+  "global_maximum_established": false,
+  "searched_central_lapse_bounds": [
+    0.08,
+    0.32
+  ],
+  "search_solves": 18,
+  "refinement_solves": 10,
+  "seconds": 911.5399569610599,
+  "stability": "not_assessed",
+  "scope": "Fixed-model stationary search; best sampled branch values, no global maximum or stability claim."
+}

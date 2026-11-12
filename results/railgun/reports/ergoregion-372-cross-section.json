@@ -1,0 +1,100 @@
+{
+  "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "record": "results/railgun/studies/ergoregion-max-validate271/finalists/01/grid_224x28.json",
+  "record_sha256": "80bfeffc44ac315deb454b7c7367b1d268ad6e22fd45591704710a1fc5d29e3e",
+  "provisional": false,
+  "grid": [
+    224,
+    28
+  ],
+  "frequency": 0.6741001877002323,
+  "mass": 0.8726601618127403,
+  "angular_momentum": -0.7168066451301044,
+  "centre_clock_minutes_per_distant_hour": 7.795839831114961,
+  "centre_angular_degrees_per_time_unit": 24.985974436115917,
+  "density_peak": {
+    "radius": 0.2335923253045938,
+    "value": 0.08987235462392199
+  },
+  "half_peak_edges": [
+    0.0915603295644962,
+    0.38626003369234735
+  ],
+  "ergoregion_edges": [
+    0.05825049159058579,
+    0.8525499813860229
+  ],
+  "drag_max": {
+    "radius": 0.2590152826228451,
+    "value": 3.721835773892663
+  },
+  "gtt_max": {
+    "radius": 0.3590850295316683,
+    "value": 0.2467995222451332
+  },
+  "clock_definition": "Held at the coordinate centre, where the shift vanishes: exp(f/2).",
+  "units": "G=c=scalar mass=1; radii are coordinate distances, not proper distances.",
+  "stability": "not_assessed",
+  "outer_density_cutoff": {
+    "relative_density": 1e-06,
+    "radius": 4.951841208047026,
+    "meaning": "Equatorial effective matter edge; diffuse tails continue beyond it."
+  },
+  "minimum_lapse_equatorial": {
+    "radius": 0.18399907029654225,
+    "value": 0.11774453673988808
+  },
+  "centre_lapse": 0.129930663851916,
+  "observer_definitions": {
+    "locally_nonrotating": "dphi/dt = w = -beta^phi; d_tau/dt = alpha.",
+    "fixed_coordinates": "dphi/dt = 0; d_tau/dt = sqrt(-g_tt), only g_tt < 0.",
+    "dragging": "|w| is angular rate; |beta|/alpha is a metric ratio, not local photon speed.",
+    "time": "t is Killing time, normalized at infinity; clock minutes are 60 d_tau/dt."
+  },
+  "label_audit": [],
+  "figure_scope": "Stationary equatorial cross-section; no particle trajectory or evolution.",
+  "layout": "Shared radius/ergoregion key above all panels; descriptions in panel headers; mathematical axis labels.",
+  "map_style": {
+    "density_scale": "linear",
+    "density_limits": [
+      0,
+      1
+    ],
+    "coordinate_extent": [
+      -0.5407640471692863,
+      0.5407640471692863
+    ],
+    "reference_circles": [
+      {
+        "name": "in",
+        "radius": 0.0915603295644962,
+        "linestyle": "--",
+        "color": "#202020"
+      },
+      {
+        "name": "peak",
+        "radius": 0.2335923253045938,
+        "linestyle": ":",
+        "color": "#929292"
+      },
+      {
+        "name": "out",
+        "radius": 0.38626003369234735,
+        "linestyle": "-",
+        "color": "#202020"
+      }
+    ],
+    "reference_definition": "Inner/outer are half-maximum energy-density radii, not material surfaces; all circles match vertical lines in every radial panel."
+  },
+  "profile_columns": [
+    "m_rho",
+    "relative_energy_density",
+    "lapse",
+    "zamo_min_per_distant_hour",
+    "fixed_min_per_distant_hour",
+    "abs_w_over_m",
+    "shift_over_lapse",
+    "g_tt"
+  ]
+}

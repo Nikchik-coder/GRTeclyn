@@ -1,0 +1,10 @@
+[capped_job] start 2026-11-01T17:05:01Z threads=4 mem=160G timeout=1800s
+[annular-transit] rk0_zero: stop=target_z, conservation=True, channel=True
+[annular-transit] rk0_positive: stop=target_z, conservation=True, channel=True
+[annular-transit] rk0_negative: stop=target_z, conservation=True, channel=True
+[annular-transit] rk0_reversed: stop=target_z, conservation=True, channel=True
+[annular-transit] rk1_zero: stop=target_z, conservation=True, channel=True
+[annular-transit] rk1_positive: stop=target_z, conservation=True, channel=True
+[annular-transit] rk1_negative: stop=target_z, conservation=True, channel=True
+[annular-transit] rk1_reversed: stop=target_z, conservation=True, channel=True
+[capped_job] end 2026-11-01T17:07:55Z exit=0

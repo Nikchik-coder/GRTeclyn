@@ -1,0 +1,39 @@
+{
+  "run": "D40_cma20261031_L64_N128_ml3_spdrv0_t100",
+  "status": "finished",
+  "t_end": 100,
+  "amrex_finalized": true,
+  "finished_utc": "2026-10-31T11:50:40.509460+00:00",
+  "sources": [
+    {
+      "file": "data/throat_geometry.dat",
+      "sha256": "d080dc22b2bb8b13b9f5db20d7b5ea7e219cb3b58e5558b28ad313d403648a91"
+    },
+    {
+      "file": "data/constraint_norms.dat",
+      "sha256": "769422436678151a11d2df13f61e02e8b9012fa2eb7725a2598a47776496f65b"
+    },
+    {
+      "file": "data/constraint_norms_levels.dat",
+      "sha256": "3236c43a427fd03d2fbfeed0fec35b11c0bfccb099f6b98c376df72ff4dede8c"
+    },
+    {
+      "file": "data/collapse_diagnostics.dat",
+      "sha256": "b83c288d64d3c17b4699d1d6c761feacf72bdd584fc87b1b59de72bee72b1a11"
+    },
+    {
+      "file": "small_data/mots_spectral.dat",
+      "sha256": "b699397a2627bd4c0edfa034abd87989fbb2f7d02264aede7812004f25dca331"
+    },
+    {
+      "file": "small_data/throat_spheres.dat",
+      "sha256": "3febff9f05f069a45ca6143faeda73cd77f842b441d47179f6cf17c06f05cccd"
+    },
+    {
+      "file": "small_data/psi4_mode_l2_all.dat",
+      "sha256": "24b019dcfaf48a12d73322b30a7a6c1952c51aa1467a41296271a39e02a3af04"
+    }
+  ],
+  "note": "Reached the chosen stop time; no claim of dynamical stability or continuum accuracy.",
+  "params_note": "Deployment paths made repository-relative; numerical settings unchanged."
+}

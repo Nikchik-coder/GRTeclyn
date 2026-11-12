@@ -147,7 +147,7 @@ in flight, solves may run freely.
       source, Q-torus work committed.)*
 - [x] Disk: ≥ 150 GB free under `runs/` *(3.5 TB free)*.
 - [x] No orphaned orchestrators or solvers alive from earlier sessions
-      (`pgrep -af "grteclyn_wrapper|grtresna|main3d|gpu_queue"`).
+      (`pgrep -af "grteclyn_workflows|grtresna|main3d|gpu_queue"`).
       *(One caveat found during 0: `main3d...ex.pre_trsfix` no longer exists
       anywhere — the optional Phase 1b A/B is impossible.)*
 
@@ -794,7 +794,7 @@ export GRTECLYN_EVOLVING_GEODESIC_MODE=hq
 export GRTECLYN_GEO_EMIT_INTERVAL=2.0
 export GRTECLYN_GEO_MAX_EMISSIONS=<from the manifest — matches the window>
 grteclyn-wrapper/.venv/bin/python \
-  grteclyn-wrapper/scripts/campaigns/rl/score_evolving_geodesic.py \
+  grteclyn-wrapper/scripts/campaigns/neuralspacetime/score_evolving_geodesic.py \
   runs/neuralspacetime/hq/<run> --ftl-l 8
 # verify the first stdout line says mode=hq; use --dry-run for any
 # --max-time comparison, or the truncated result overwrites the full one.

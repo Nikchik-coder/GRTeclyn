@@ -6,26 +6,26 @@
 #ifndef PARTICLEINTERPOLATORLEVEL_HPP_
 #define PARTICLEINTERPOLATORLEVEL_HPP_
 
-#include "DefaultLevelFactory.hpp"
+#include "DefaultLevelBld.hpp"
 #include "FixedGridsTagger.hpp"
-#include "GRAMR.hpp"
-#include "GRAMRLevel.hpp"
+#include "GRAmr.hpp"
+#include "GRAmrLevel.hpp"
 #include "PolynomialDerivedQuantity.hpp"
 #include "StateTypes.hpp"
 
 // We basically need this to have a valid AMR hierarchy
 
-class ParticleInterpolatorLevel : public GRAMRLevel
+class ParticleInterpolatorLevel : public GRAmrLevel
 {
   public:
-    friend class DefaultLevelFactory<ParticleInterpolatorLevel>;
+    friend class DefaultLevelBld<ParticleInterpolatorLevel>;
 
-    // Inherit the contructors from GRAMRLevel
-    using GRAMRLevel::GRAMRLevel;
+    // Inherit the contructors from GRAmrLevel
+    using GRAmrLevel::GRAmrLevel;
 
     static void variableSetUp()
     {
-        stateVariableSetUp();
+        state_variable_set_up();
         PolynomialDerivedQuantity::set_up(state_index);
     }
 
@@ -37,6 +37,8 @@ class ParticleInterpolatorLevel : public GRAMRLevel
         auto const &geom       = Geom();
         auto const prob_lo     = geom.ProbLoArray();
         auto const dx          = geom.CellSizeArray();
+        // a second, non-contiguous state component to interpolate
+        const int c_polystate2 = c_phi;
 
         std::array<amrex::Real, AMREX_SPACEDIM> center{
             AMREX_D_DECL(0., 0., 0.)};
@@ -52,18 +54,20 @@ class ParticleInterpolatorLevel : public GRAMRLevel
                 const auto &array = arrs[box_no];
 
                 // compute coordinates
+                amrex::Real y = prob_lo[1] + (j + 0.5) * dx[1] - center[1];
                 amrex::Real z = prob_lo[2] + (k + 0.5) * dx[2] - center[2];
 
                 // write in
-                array(i, j, k, c_polystate) = z * z * z;
+                array(i, j, k, c_polystate)  = z * z * z;
+                array(i, j, k, c_polystate2) = y * y * y;
             });
 
         amrex::Gpu::streamSynchronize();
     }
 
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    void specificEvalRHS(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
-                         const amrex::Real a_time) override
+    void specific_eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
+                           const amrex::Real a_time) override
     {
     }
 
@@ -75,16 +79,10 @@ class ParticleInterpolatorLevel : public GRAMRLevel
         const auto &tag_arrs   = a_tag_box_array.arrays();
         const auto &state_arrs = state_new.arrays();
 
-        const amrex::Real dx         = Geom().CellSize(0);
-        const int current_level      = Level();
-        const amrex::Real box_length = Geom().ProbLength(0);
-        std::array<amrex::Real, AMREX_SPACEDIM> center{
-            AMREX_D_DECL(0., 0., 0.)};
-        GRParmParse pp;
-        pp.query("geometry.center", center);
+        const amrex::Real dx    = Geom().CellSize(0);
+        const int current_level = Level();
 
-        FixedGridsTagger my_tagging_criterion{dx, current_level, box_length,
-                                              center};
+        FixedGridsTagger my_tagging_criterion{dx, current_level};
 
         // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
         amrex::ParallelFor(

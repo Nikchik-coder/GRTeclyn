@@ -1,0 +1,7 @@
+[capped_job] start 2026-11-01T15:19:33Z threads=4 mem=160G timeout=1800s
+[profile] GPU=cuda:0 float64=True; measuring observables
+[profile] fitting and certifying Cartesian core
+[profile] core accepted=True maxima={'einstein_max': 1.6984720812204682e-11, 'kg_max': 2.9043989435706408e-12, 'kg_intrinsic_max': 1.7748247316262677e-11, 'kg_coordinate_difference': 1.8615813751621246e-11, 'order_metric_difference': 9.50350909079134e-14, 'order_curvature_difference': 2.646521196636442e-10, 'parent_metric_difference': 1.3011813848606835e-13, 'parent_curvature_difference': 2.1274530748183196e-09}
+[profile] sampling signed axial curvature
+[profile] accepted=True seconds=390.02
+[capped_job] end 2026-11-01T15:26:09Z exit=0

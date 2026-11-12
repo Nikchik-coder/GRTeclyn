@@ -1,0 +1,45 @@
+[capped_job] start 2026-11-02T14:56:39Z threads=4 mem=160G timeout=1800s
+Mon Nov  2 14:56:39 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:4C:00.0 Off |                    0 |
+| N/A   29C    P0             68W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         1.8T  1.2T  531G  69% /
+47M	<scratch>/_cache
+1.7G	<scratch>/ring070-n128-t2-20261102
+5.6G	<scratch>/ring070-n192-t2-20261102
+5.6G	<scratch>/ring070-n192-t50-20261102
+709M	<scratch>/ring070-n96-t2-r2-20261102
+.......................                                                  [100%]
+23 passed in 38.88s
+{"event": "device", "platform": "gpu", "device_kind": "NVIDIA H100 80GB HBM3", "float64": true}
+[newton] iter 0: |R| 6.303e-06 -> 4.105e-10 (t = 1)
+[newton] iter 1: |R| 4.105e-10 -> 3.874e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 4.440e-16
+{"event": "grid", "grid": [128, 16], "verdict": "PASS", "reasons": [], "seconds": 35.151724501978606}
+[newton] iter 0: |R| 5.060e-06 -> 3.291e-10 (t = 1)
+[newton] iter 1: |R| 3.291e-10 -> 4.790e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 6.654e-16
+{"event": "grid", "grid": [160, 20], "verdict": "PASS", "reasons": [], "seconds": 49.77351840608753}
+[newton] iter 0: |R| 4.220e-06 -> 2.746e-10 (t = 1)
+[newton] iter 1: |R| 2.746e-10 -> 5.829e-15 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 6.540e-16
+{"event": "grid", "grid": [192, 24], "verdict": "PASS", "reasons": [], "seconds": 48.07191839092411}
+{"event": "amplitude", "index": 0, "pin": 0.3073986678634803, "predictor": "physical_radius_remap_and_repin", "directory": "amplitude_00", "accepted": false, "checks": {"passed": false, "drifts": {"lapse_min": 1.2269582999047124e-06, "gtt_max": 1.6971775197160976e-06, "shift_norm_over_lapse_max": 1.1471449304689685e-05, "frequency": 3.752553823233029e-14}, "ergoregion_resolved": false, "gtt_three_grid_spread": 1.3707140099183945e-05}, "frequencies": [0.7000000000006971, 0.7000000000006763, 0.7000000000006388]}
+[capped_job] end 2026-11-02T14:59:36Z exit=2

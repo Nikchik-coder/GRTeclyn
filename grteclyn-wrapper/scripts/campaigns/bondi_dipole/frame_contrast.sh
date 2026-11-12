@@ -2,7 +2,7 @@
 # Bondi dipole -- frame colour scales, sourced by the bondi launchers.
 #
 # WHY THIS EXISTS
-# The frame renderer's built-in colour limits (visualisation/process_wave/
+# The frame renderer's built-in colour limits (plotting/waveforms/
 # consume_plotfiles/config.py) were calibrated for the search campaign's matter
 # rung -- scalar_lambda=640, mu=85333 -- whose lumps are several times taller
 # than the stars this campaign evolves.  On the bondi rung (lambda=10240,

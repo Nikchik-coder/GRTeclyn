@@ -1,0 +1,39 @@
+{
+  "run": "D30_e0316_L64_N128_ml3_spdrv0_t100",
+  "status": "finished",
+  "exit_status": 0,
+  "finished_utc": "2026-10-31T10:44:58Z",
+  "t_end": 100.0,
+  "sources": [
+    {
+      "file": "data/throat_geometry.dat",
+      "sha256": "19eefa608c0ee1762a99b9fcab0672ee7911530f91c3553ab97c7a98bc89b036"
+    },
+    {
+      "file": "data/constraint_norms.dat",
+      "sha256": "abc9fd905e4b41c097be74a9b0ffd44142ed42842984d10652afc6795644761f"
+    },
+    {
+      "file": "data/constraint_norms_levels.dat",
+      "sha256": "1dba80103d2be589f71b414d343e77a2f67bebffde2929a89c3b4fb4cfe18020"
+    },
+    {
+      "file": "data/collapse_diagnostics.dat",
+      "sha256": "8c4136ed1e88c08b313d9f9c0b77c3d5c6dd8d51c53a18df78b1a2a31ba1d797"
+    },
+    {
+      "file": "small_data/mots_spectral.dat",
+      "sha256": "b5d0c62d12ab0278ddb31271bffc91f381af36d6c69d8f926c21a49e125f62fd"
+    },
+    {
+      "file": "small_data/throat_spheres.dat",
+      "sha256": "f5c0b4b8b62b3a4ebbe335d2377730cd5a11afd15c9621dcd927e5977172b48a"
+    },
+    {
+      "file": "small_data/psi4_mode_l2_all.dat",
+      "sha256": "4b8cc97c88204f6db9b70c936e185f84aa067d988d04b848b00ba646fc93bc71"
+    }
+  ],
+  "note": "Reached the chosen stop time; this does not establish dynamical stability or late-time accuracy.",
+  "params_note": "Deployment paths made repository-relative; numerical settings unchanged."
+}

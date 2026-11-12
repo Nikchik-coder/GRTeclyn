@@ -35,4 +35,4 @@ Everything needed to re-run any configuration is retained: each eval's
 `params.txt` (and the `overrides` in `trajectory.jsonl`) fully specifies
 the candidate; initial data is regenerated deterministically by GRTresna.
 Trajectory figures for any eval:
-`grteclyn-wrapper/tests/visualisation/plot_lump_trajectories.py <eval_dir>`.
+`grteclyn-wrapper/tests/postprocessing/plot_lump_trajectories.py <eval_dir>`.

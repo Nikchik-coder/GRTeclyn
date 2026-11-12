@@ -1,0 +1,19 @@
+{
+  "backend": "cpu",
+  "case": "spherical",
+  "dependencies": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "matplotlib": "3.10.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "inputs": {
+    "results/railgun/studies/spherical-validated/accepted.npz": "0657d72339b9877a3b60299628335179f2ab8b3cec783a9fdac3dba290e70f33"
+  },
+  "python": "3.12.14",
+  "revision": "bf4e3b2e6085122073fdd0b4401c1acfda9ff1cb",
+  "seconds": 39.717256464995444,
+  "version": "wheel",
+  "wrapper_imports_blocked": true
+}

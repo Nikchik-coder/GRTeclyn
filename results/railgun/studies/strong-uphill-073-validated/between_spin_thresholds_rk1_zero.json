@@ -1,0 +1,45 @@
+{
+  "gates": {
+    "accepted": true,
+    "normalised_drift": {
+      "mass2": 3.043121310497552e-11,
+      "spin2": 3.0758420351630598e-30,
+      "energy": 9.496555144450912e-12,
+      "angular_momentum": 0.0
+    },
+    "tolerance": 1e-09,
+    "zero_invariant_scale": "unit rest mass units",
+    "ssc_max": 2.8423003675369597e-15,
+    "norm_error": 8.881784197001252e-16
+  },
+  "stop": "target_z",
+  "energy": 0.8802936647724655,
+  "launch": {
+    "mass2": 1.0000000000000007,
+    "spin2": 0.0,
+    "ssc_max": 0.0,
+    "energy": 0.8802936647724655,
+    "angular_momentum": 0.0,
+    "velocity_norm": -1.0,
+    "velocity_normalizer": 1.0000000000000007,
+    "velocity_denominator": 4.000000000000003,
+    "spin_curvature_ratio": 0.0
+  },
+  "final": {
+    "mass2": 0.9999999999975544,
+    "spin2": -3.6506872521834145e-32,
+    "ssc_max": 1.6874682026974641e-16,
+    "energy": 0.8802936647723067,
+    "angular_momentum": 0.0,
+    "velocity_norm": -1.0000000000000002,
+    "velocity_normalizer": 0.9999999999975544,
+    "velocity_denominator": 3.9999999999902176,
+    "spin_curvature_ratio": 7.633849353412674e-18
+  },
+  "proper_time": 39.70054175383021,
+  "coordinate_time": 58.003039664198965,
+  "final_z": -10.0,
+  "endpoint_energy_margin": 0.0,
+  "marginal": true,
+  "classification": "marginal"
+}

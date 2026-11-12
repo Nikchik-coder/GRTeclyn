@@ -1,0 +1,37 @@
+{
+  "config": {
+    "frequencies": [
+      0.85,
+      0.82,
+      0.79,
+      0.76,
+      0.73,
+      0.7,
+      0.67
+    ],
+    "grids": [
+      [
+        72,
+        10
+      ],
+      [
+        96,
+        12
+      ],
+      [
+        128,
+        16
+      ]
+    ],
+    "max_solves": 21,
+    "max_iter": 30,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06
+  },
+  "source_sha256": "832541f9e970a0ae2d1086a758792ff4c21f352ecf7565615921a45678a588c1",
+  "commit": "023f4384d0ad29f3fb5d8ded7c35774834e0d0f4",
+  "minimum_charge": 0.0012418771253603434,
+  "branch": "nodeless nonvacuum continuation",
+  "stability": "not_assessed"
+}

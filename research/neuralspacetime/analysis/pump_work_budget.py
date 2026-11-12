@@ -2,7 +2,7 @@
 """Integrate PD-pump work for candidate-146 HQ runs (pump-on RM vs pump-free).
 
 RadialRecipe collapse_diagnostics.dat layout (15 cols): pump_work at index 14.
-See grteclyn_wrapper.metrics.diagnostics.collapse._integrate_pump_work.
+See grteclyn_workflows.diagnostics.measurements.collapse._integrate_pump_work.
 
 Usage (from repo root):
   python research/neuralspacetime/analysis/pump_work_budget.py

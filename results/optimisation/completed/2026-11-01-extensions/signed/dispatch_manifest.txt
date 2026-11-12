@@ -1,0 +1,7 @@
+2026-10-31T19:13:15Z
+485f8d443ac4fdc6dc4c58ae3d7bb10329f07c5e
+Two stationary searches; no plotfiles or AMR checkpoints.
+Four threads per process; 200 GiB per-process virtual cap; each experiment timeout 4 h; queue timeout 8 h.
+8616fa9962d58895aa3cdec9787be2699047897843e76a8c59af292d153da97f  research/optimisation/studies/run_signed_potential.sh
+6df023533518139805e51e7d3037a9fb10a8392c2619b4575931c56759645bed  runs/optimisation/signchanging_20261031/queue/pending/010_d90.job
+c78201bc520001258c891583bbc79663e8e2571d0133c2d2b7ecd9afbeded879  runs/optimisation/signchanging_20261031/queue/pending/020_geometry.job

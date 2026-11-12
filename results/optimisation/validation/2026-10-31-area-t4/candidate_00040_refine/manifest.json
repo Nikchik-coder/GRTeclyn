@@ -1,0 +1,37 @@
+{
+  "method": "refine",
+  "config": {
+    "J": 1.0137999916840896,
+    "gamma": -3.141592653589793,
+    "m": 0.40749060153832006,
+    "q": [
+      -0.22022705693486183,
+      -0.3884055107921195,
+      0.1210261405009583
+    ]
+  },
+  "grids": [
+    [
+      150,
+      30
+    ],
+    [
+      180,
+      36
+    ],
+    [
+      210,
+      42
+    ]
+  ],
+  "pin": [
+    "minimal_area",
+    204.02679760669827
+  ],
+  "newton_acceptance": 1e-09,
+  "independent_constraint_gate": 1e-08,
+  "relative_bill_tolerance": 1e-06,
+  "score_key": "X_full",
+  "perturb_seed": true,
+  "stability": "not_assessed"
+}

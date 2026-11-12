@@ -1,0 +1,8 @@
+2026-10-31T19:13:16Z runner start pid=103348 slots=0 1 gate=100
+2026-10-31T19:48:50Z slot 0: start 010_d90.job
+2026-10-31T19:49:20Z slot 1: start 020_geometry.job
+2026-10-31T20:34:40Z slot 0: FAILED 010_d90.job — see logs/010_d90.job.log
+2026-10-31T20:52:00Z slot 1: done 020_geometry.job
+2026-10-31T20:52:00Z slot 1: queue drained, exiting
+2026-10-31T20:52:12Z slot 0: queue drained, exiting
+2026-10-31T20:52:12Z runner exit

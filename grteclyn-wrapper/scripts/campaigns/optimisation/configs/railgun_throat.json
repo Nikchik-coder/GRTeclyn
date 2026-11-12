@@ -1,0 +1,23 @@
+{
+  "source_directory": "results/railgun/studies/ring-validated",
+  "source_sha256": {
+    "grid_128x16.npz": "eceef1d1fe1efbe78194d96988d7899213e0ecd1efd640e9a1096e235d81e5fa",
+    "grid_128x16.json": "902049ac65d0bd5dd4bf36ba5a8f68062a230dc17ce9dcfa336108cdf767d754",
+    "outcome.json": "67582901ca95027cc425c22c23b994dd194bf03a21b0e9daff10f9f5775aaa72"
+  },
+  "throat_radius": 2.0,
+  "grids": [[150,24],[180,30],[210,36]],
+  "tidal_factor": 4.0,
+  "energy_budget": 1.0,
+  "control_J_step": 0.1,
+  "max_control_steps": 12,
+  "max_solves": 18,
+  "max_newton_iterations": 24,
+  "wall_seconds": 3600,
+  "threads": 4,
+  "memory_gib": 160,
+  "checkpoints": false,
+  "geometry": "matching rings at both mouths; nonrotating infinities",
+  "phantom_potential": "V=0 throughout",
+  "status": "prepared; fresh run-specific approval required"
+}

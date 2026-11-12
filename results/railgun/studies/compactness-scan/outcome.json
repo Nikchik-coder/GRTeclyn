@@ -1,0 +1,52 @@
+{
+  "scan_completed": false,
+  "records": [
+    {
+      "amplitude": 0.06,
+      "accepted": true,
+      "directory": "amplitude_01",
+      "frequency": 0.9224391054822539,
+      "M_ADM_estimate": 1.0246024788366501,
+      "J_volume": -1.0493098920552475,
+      "lapse_min": 0.8669782393823993,
+      "dragging_max": 0.005847766847651471,
+      "gtt_max": -0.7512536390609191,
+      "shift_norm_over_lapse_max": 0.02602272007203055,
+      "ergoregion_sampled": false
+    },
+    {
+      "amplitude": 0.075,
+      "accepted": true,
+      "directory": "amplitude_02",
+      "frequency": 0.9059382604081557,
+      "M_ADM_estimate": 1.0963237657035634,
+      "J_volume": -1.1277401171000472,
+      "lapse_min": 0.8377595682593247,
+      "dragging_max": 0.008759776488602041,
+      "gtt_max": -0.7011204835562731,
+      "shift_norm_over_lapse_max": 0.03633954756490545,
+      "ergoregion_sampled": false
+    },
+    {
+      "amplitude": 0.095,
+      "accepted": true,
+      "directory": "amplitude_03",
+      "frequency": 0.8740520564680417,
+      "M_ADM_estimate": 1.1980208869329598,
+      "J_volume": -1.2418771253603433,
+      "lapse_min": 0.7802204671879058,
+      "dragging_max": 0.016315117468190136,
+      "gtt_max": -0.6069405894693838,
+      "shift_norm_over_lapse_max": 0.06178653096086342,
+      "ergoregion_sampled": false
+    },
+    {
+      "amplitude": 0.12,
+      "accepted": false,
+      "directory": "amplitude_04"
+    }
+  ],
+  "seconds": 219.90513179497793,
+  "stability": "not_assessed",
+  "scope": "Stationary branch continuation; no guaranteed ergoregion, spin valve, maximum spin or dynamical stability."
+}

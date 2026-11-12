@@ -35,8 +35,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from grteclyn_wrapper.visualisation.wormhole_merger import plot_seed_linearity as P
-from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT
+from grteclyn_workflows.plotting.wormhole_merger import plot_seed_linearity as P
+from grteclyn_workflows.plotting.wormhole_merger.run_tree import PACK_ROOT
 
 SEED = PACK_ROOT / "campaign" / "01_single_throat" / "seed"
 RADII = (10.0, 14.0, 18.0)

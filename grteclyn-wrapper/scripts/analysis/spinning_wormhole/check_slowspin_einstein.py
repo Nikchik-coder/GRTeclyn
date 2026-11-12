@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Check the O(J^2) slow-rotation tables against the full Einstein equations.
 
-The generator (grteclyn_wrapper.analysis.spinning_wormhole.backgrounds,
+The generator (grteclyn_stationary.spinning_wormhole.backgrounds,
 ``slowspin``) solves the perturbation equations of Chew, Kleihaus & Kunz
 (arXiv:1608.05253, eqs. 10-13, 19).  This check does not use those
 equations: it builds the Ricci tensor of the Kleihaus-Kunz ansatz from the
@@ -32,7 +32,7 @@ import math
 import numpy as np
 import sympy as sp
 
-from grteclyn_wrapper.analysis.spinning_wormhole.backgrounds import (
+from grteclyn_stationary.spinning_wormhole.backgrounds import (
     slow_rotation_solution,
 )
 

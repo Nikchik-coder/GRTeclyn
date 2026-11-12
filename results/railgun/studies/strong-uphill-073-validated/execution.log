@@ -1,0 +1,4 @@
+[capped_job] start 2026-11-01T16:58:10Z threads=4 mem=160G timeout=1800s
+[phase-polish] requested_offset/zero: accepted=True, order error=4.512e-12
+[phase-polish] above_all/negative: accepted=True, order error=4.512e-12
+[capped_job] end 2026-11-01T16:58:22Z exit=0

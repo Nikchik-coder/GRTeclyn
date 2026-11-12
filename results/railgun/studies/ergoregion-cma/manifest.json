@@ -1,0 +1,81 @@
+{
+  "config": {
+    "source_sha256": "e586e4c1a4048773dcb4e3be87c67ce6cd523f7846b371a716cb4b1981b150ff",
+    "central_lapse_bounds": [
+      0.14,
+      0.41
+    ],
+    "x0": 0.3,
+    "sigma0": 0.05,
+    "seed": 171,
+    "popsize": 4,
+    "max_evaluations": 32,
+    "max_search_solves": 80,
+    "max_finalists": 3,
+    "max_refinement_solves": 9,
+    "max_log_lapse_step": 0.04,
+    "max_splits_per_evaluation": 4,
+    "search_grid": [
+      128,
+      16
+    ],
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "length": 2.5,
+    "max_iter": 30,
+    "newton_tol": 1e-14,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06
+  },
+  "plan": {
+    "metadata": {
+      "schema": 1,
+      "model": "canonical_regular_centre",
+      "nx": 192,
+      "ny": 24,
+      "length": 2.5,
+      "target_j": null,
+      "fields": [
+        {
+          "winding": 1,
+          "mass": 1.0,
+          "amplitude": 0.32584258793528914,
+          "parity": "even",
+          "anchor_radius": 1.2028929844078005,
+          "quartic": 0.0,
+          "sextic": 0.0
+        }
+      ],
+      "validated": true,
+      "stability": "not_assessed"
+    },
+    "central_lapse": 0.39812765775247805,
+    "initial_frequency": 0.6859558202632505,
+    "max_newton_solves": 89,
+    "numerical_execution": false,
+    "physical_parameters": [
+      "central lapse; frequency and amplitude solved"
+    ],
+    "model": "unchanged k=1, m=1 canonical free scalar"
+  },
+  "source": "runs/railgun/single-ring/scans/ergoregion-amplitude-20261102-r2/amplitude_01/accepted.npz",
+  "commit": "052487e5d734c77069abe5ec44368ab4edba939a",
+  "platform": "gpu",
+  "float64": true,
+  "minimum_charge": 0.0012693411817552304,
+  "stability": "not_assessed",
+  "cma_version": "4.4.4"
+}

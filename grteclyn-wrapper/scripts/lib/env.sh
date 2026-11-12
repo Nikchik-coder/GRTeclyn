@@ -71,7 +71,7 @@ fi
 export SIM_ROOT="${SIM_ROOT:-$(cd -- "${GRTECLYN_ROOT}/.." && pwd)}"
 export GRTRESNA_ROOT="${GRTRESNA_ROOT:-${SIM_ROOT}/GRTresna}"
 export CHOMBO_HOME="${CHOMBO_HOME:-${SIM_ROOT}/Chombo/lib}"
-export PYTHONPATH="${WRAPPER_ROOT}/src:${PYTHONPATH:-}"
+export PYTHONPATH="${WRAPPER_ROOT}/src:${WRAPPER_ROOT}/packages/stationary/src:${PYTHONPATH:-}"
 
 export OPENMPI_ROOT="${OPENMPI_ROOT:-${SIM_ROOT}/local/openmpi}"
 if [[ -d "${OPENMPI_ROOT}/bin" ]]; then

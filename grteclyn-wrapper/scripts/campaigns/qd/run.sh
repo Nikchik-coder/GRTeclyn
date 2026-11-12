@@ -74,7 +74,7 @@ if [[ -n "${EXTRA_SETS:-}" ]]; then
 fi
 
 # shellcheck disable=SC2086
-exec ${PYTHON_BIN} -m grteclyn_wrapper \
+exec ${PYTHON_BIN} -m grteclyn_workflows \
   --runs-dir "${RUNS_DIR}" \
   "${NAME_ARGS[@]}" \
   "${FTL_GLOBAL_ARGS[@]}" \

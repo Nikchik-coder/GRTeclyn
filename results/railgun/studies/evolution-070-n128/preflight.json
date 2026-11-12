@@ -1,0 +1,280 @@
+{
+ "schema": 1,
+ "campaign": "canonical scalar ring evolution",
+ "mode": "full",
+ "restart": false,
+ "exe": "main3d_ring070r2_3e6466ed_2026-11-02.ex",
+ "exe_sha256": "14c6dadf61899ad21773f8cbe9df589f2745b0907d3779218b9d890c7d8019bc",
+ "params_sha256": "a6a661491aacd634ae1a4e0b08f4ca15b09cc5bd1041cc06683dc7c5597ca7f8",
+ "verdict": "pass",
+ "reasons": [],
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "required": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "phi_lump0",
+   "Pi_lump0",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing": [],
+  "subset": null,
+  "source": "--frames-fields in SWH_CONSUME_ARGS",
+  "axis": "z",
+  "errors": [],
+  "warnings": [],
+  "render": {
+   "plotfile": "plt00000",
+   "frame": 0,
+   "status": "ok",
+   "seconds": 10.5,
+   "frames_out": "preflight_frames",
+   "log": "preflight_frames/render.log",
+   "fields": {
+    "chi": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 0.24820007383823395,
+     "max": 0.8019078373908997,
+     "verdict": "ok"
+    },
+    "chi_minus_1": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.7517999410629272,
+     "max": -0.19809216260910034,
+     "verdict": "ok"
+    },
+    "K": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -3.5445001591296536e-16,
+     "max": 3.5445001591296536e-16,
+     "verdict": "ok"
+    },
+    "lapse": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 0.4235185980796814,
+     "max": 0.8924248814582825,
+     "verdict": "ok"
+    },
+    "shift1": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.11943978071212769,
+     "max": 0.11943978071212769,
+     "verdict": "ok"
+    },
+    "shift2": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.11943978071212769,
+     "max": 0.11943978071212769,
+     "verdict": "ok"
+    },
+    "shift3": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "phi": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.08493134379386902,
+     "max": 0.08493134379386902,
+     "verdict": "ok"
+    },
+    "Pi": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.11868969351053238,
+     "max": 0.11868969351053238,
+     "verdict": "ok"
+    },
+    "phi_lump0": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.08493134379386902,
+     "max": 0.08493134379386902,
+     "verdict": "ok"
+    },
+    "Pi_lump0": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -0.11868969351053238,
+     "max": 0.11868969351053238,
+     "verdict": "ok"
+    },
+    "Weyl4_Re": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 1.0602939255477395e-05,
+     "max": 0.03586805611848831,
+     "verdict": "ok"
+    },
+    "Weyl4_Im": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": -1.587139740877319e-05,
+     "max": 0.003952889237552881,
+     "verdict": "ok"
+    },
+    "Weyl4_Mag": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 1.0603006558085326e-05,
+     "max": 0.036018311977386475,
+     "verdict": "ok"
+    },
+    "scalar_activity": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 3.471699892543256e-05,
+     "max": 0.14712706208229065,
+     "verdict": "ok"
+    },
+    "local_speed": {
+     "pixels": 4096,
+     "nan": 0,
+     "min": 0.23332802951335907,
+     "max": 0.8096604943275452,
+     "verdict": "ok"
+    }
+   },
+   "log_tail": []
+  }
+ },
+ "intent": {
+  "errors": [],
+  "warnings": [
+   "this run writes no checkpoints: if it dies, it cannot be restarted"
+  ]
+ },
+ "required_files": {
+  "files": {
+   "recipe_initial_data_file": "runs/railgun/evolution/initial-070-n128-20261102/initial.gridinit"
+  },
+  "errors": []
+ },
+ "header_binary_requirements": {
+  "checks": [],
+  "errors": []
+ },
+ "symmetry": {
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "consumer": {
+  "consume": true,
+  "areal_radius": "off",
+  "neck_horizons": false,
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "paths": {
+  "name": "ring070-n128-t2-20261102",
+  "errors": [],
+  "warnings": []
+ },
+ "static": {
+  "keys": 60,
+  "absent_from_binary": [],
+  "allowed_absent": []
+ },
+ "probe": {
+  "status": "ok",
+  "exit_code": 0,
+  "unused": [],
+  "version": "3e6466ed",
+  "seconds": 3.0,
+  "log_tail": [],
+  "allowed_unused": []
+ },
+ "t0": {
+  "collapse_diagnostics.dat": {
+   "time": 0.0,
+   "min_lapse": 0.42351860491,
+   "min_chi": 0.24820007575,
+   "max_abs_K": 3.5445002445e-16,
+   "min_lapse_x": 16.0,
+   "min_lapse_y": 16.0,
+   "min_lapse_z": 16.0,
+   "max_ah_r": 0.0,
+   "min_theta_plus": 0.10646591497,
+   "r_at_min_theta_plus": 16.083328927,
+   "min_phi": -0.084931342199,
+   "max_phi": 0.084931342199,
+   "min_Pi": -0.11868969432,
+   "max_Pi": 0.11868969432,
+   "pump_work": 0.0
+  },
+  "complex_scalar_diagnostics.dat": {
+   "time": 0.0,
+   "Q_box": 1.3063224291,
+   "Jz_matter_box": -1.3060031821,
+   "integral_abs_Phi_sq": 1.0731022455,
+   "m2_re": -1.2124125286e-17,
+   "m2_im": 0.0,
+   "max_abs_Phi_sq": 0.0073617345827
+  },
+  "constraint_norms.dat": {
+   "time": 0.0,
+   "L2_Ham": 0.0095068365753,
+   "L2_Mom": 9.6061441865e-06,
+   "min_rho_req": -0.0015195095967,
+   "max_rho_req": 0.011548756847,
+   "integral_neg_rho": 1.2521881548,
+   "L2_Ham_rel": 0.4093938499,
+   "L2_Mom_rel": 0.0010627001972,
+   "pump_force_L2": 0.0,
+   "governor": 0.99999995841,
+   "pump_fi_L2": 0.0,
+   "L2_Ham_amr": 9.8209264215e-06,
+   "L2_Mom_amr": 8.696445107e-06,
+   "L2_Ham_amr_rel": 0.00042077462818,
+   "L2_Mom_amr_rel": 0.00087329397628,
+   "Linf_Ham_amr": 0.00085371485351,
+   "L2_Ham_amr_ref": 0.0,
+   "L2_Ham_int": 3.4831235643e-05,
+   "L2_Mom_int": 3.0843111551e-05
+  }
+ },
+ "grteclyn_version": "3e6466ed",
+ "seed": {
+  "requested": {}
+ }
+}

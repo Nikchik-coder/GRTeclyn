@@ -1,0 +1,16 @@
+{
+  "accepted": true,
+  "export_only": true,
+  "determinant_error": 1.1102230246251565e-15,
+  "trace_A_error": 4.662069341687669e-17,
+  "finite_box_charge": 1.306322429183444,
+  "finite_box_matter_J": -1.306322429183444,
+  "charge_angular_relative_error": 0.0,
+  "minimum_lapse": 0.4222281897322229,
+  "gridinit_sha256": "64a606f3f248ecd939d4088c28116776847c2a6b0831d572b0d8ef67ec61bd58",
+  "bytes": 1856000388,
+  "cells": 8000000,
+  "seconds": 418.6460569279734,
+  "stability": "not_assessed",
+  "scope": "Validated conversion and core; Cartesian finite-difference constraints and evolution remain to be tested."
+}

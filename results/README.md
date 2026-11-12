@@ -11,11 +11,11 @@ directory — there are no loose campaign folders at this level.
 |---|---|---|
 | [`matter-first-automated-discovery-of-transient-spacetime-shortcuts/`](matter-first-automated-discovery-of-transient-spacetime-shortcuts/) | [`research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | [`pack_publishable_results.sh`](../research/neuralspacetime/pack_publishable_results.sh) (figures, tables, promotion runs) · [`pack_search_campaigns.sh`](../research/neuralspacetime/pack_search_campaigns.sh) (`search/`) |
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | [`research/bondi_dipole/article/bondi_dipole.tex`](../research/bondi_dipole/article/bondi_dipole.tex), v2 of [arXiv:2608.24577](https://arxiv.org/abs/2608.24577); data at tag `v2.0-bondi-dipole` | [`pack_runaway.sh`](../research/bondi_dipole/pack_runaway.sh) (`campaign/`) |
-| [`wormhole-dynamics/`](wormhole-dynamics/) | [`research/wormholedynamics/article.md`](../research/wormholedynamics/article.md) — published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`plot_diagnostic.sh`](../grteclyn-wrapper/scripts/plot/plot_diagnostic.sh) (diagnostics, embedding, `K_z` panels) · [`plot_extracted_psi4.py`](../grteclyn-wrapper/src/grteclyn_wrapper/visualisation/process_wave/plot_extracted_psi4.py) (`--combined --strain` GW panels) |
+| [`wormhole-dynamics/`](wormhole-dynamics/) | [`research/wormholedynamics/article.md`](../research/wormholedynamics/article.md) — published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`plot_diagnostic.sh`](../grteclyn-wrapper/scripts/plot/plot_diagnostic.sh) (diagnostics, embedding, `K_z` panels) · [`plot_extracted_psi4.py`](../grteclyn-wrapper/src/grteclyn_workflows/plotting/waveforms/plot_extracted_psi4.py) (`--combined --strain` GW panels) |
 | [`merger/`](merger/) | [`research/merger/article/research.tex`](../research/merger/article/research.tex) — v2 of [arXiv:2610.13206](https://arxiv.org/abs/2610.13206), code at tag [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger) | [`pack_results.sh`](../research/merger/pack_results.sh) (`campaign/`, `horizon/`, the summary tables) |
 
 All pack scripts scrub machine identity at runtime through the shared scrubber
-[`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
+[`grteclyn_workflows.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py)
 — host, user and home-path tokens are derived from the environment, never
 hard-coded — and then gate the pack: a surviving token fails the run.
 
@@ -49,7 +49,7 @@ paper quotes is redrawn from the pack without a GPU:
 
 ```bash
 # from the repository root
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole
 ```
 
 Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md), then

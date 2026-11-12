@@ -1,0 +1,26 @@
+{
+  "stage": "matched_control",
+  "references": {
+    "ring": {
+      "path": "runs/optimisation/railgun_throat_validation_20261105_r3/accepted_ring.npz",
+      "sha256": "4c3a266ba19be7af214ef41c612644113053bfeb20d2b6887fb105d6f8bf8c3b"
+    },
+    "static": {
+      "path": "runs/optimisation/railgun_throat_validation_20261105_r3/static_reference.npz",
+      "sha256": "14a88b0a2a79a065da70325a7697b1d7c8d88f2ba5c4da7c6123adce3110e28a"
+    }
+  },
+  "target_J": -0.9477747390613108,
+  "throat_radius": 2.0,
+  "grids": [[210,36],[224,38],[240,40]],
+  "independent_points": [49,21],
+  "control_J_step": 0.1,
+  "max_control_steps": 10,
+  "max_solves": 13,
+  "max_newton_iterations": 24,
+  "tidal_factor": 4.0,
+  "wall_seconds": 3600,
+  "threads": 4,
+  "memory_gib": 160,
+  "checkpoints": false
+}

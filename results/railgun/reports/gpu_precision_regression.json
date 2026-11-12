@@ -1,0 +1,130 @@
+{
+  "commit": "153c53c6",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "18",
+      "time": "18.015",
+      "timestamp": "2026-11-01T16:05:12.294903+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_uphill_precision",
+      "name": "test_two_failed_controls_are_the_only_eligible_tighter_integrations",
+      "time": "0.228",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_threshold_scan_brackets_all_three_rest_energies",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_dry_plan_refuses_an_unbudgeted_track_count",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_compactness_budget_preserves_three_grid_acceptance",
+      "time": "0.004",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_uphill_turnaround_agrees_with_exact_rindler_geodesic",
+      "time": "3.689",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_flat_transmission_does_not_trigger_a_turnaround",
+      "time": "1.261",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_uphill",
+      "name": "test_exact_threshold_contacts_cannot_supply_a_timing_claim",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_precedes_a_nearby_turn_within_the_same_sample_interval",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_a_turn_before_the_destination_does_not_become_a_crossing",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_first_crossing_rejects_nonfinite_saved_states",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_first_crossing",
+      "name": "test_recovered_crossing_matches_exact_rindler_time_and_killing_energy",
+      "time": "5.112",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.027",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.0]",
+      "time": "0.621",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.4]",
+      "time": "0.605",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.0]",
+      "time": "0.473",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.4]",
+      "time": "0.557",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_cartesian_interpolant_is_flat_and_finite_on_axis",
+      "time": "2.773",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_metric_interpolation_retains_coordinate_derivatives",
+      "time": "1.926",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T16:05:10Z threads=4 mem=160G timeout=1800s\n..................                                                       [100%]\n18 passed, 1 deselected in 18.02s\n[capped_job] end 2026-11-01T16:05:30Z exit=0\n"
+}

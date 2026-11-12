@@ -1,0 +1,30 @@
+{
+  "constraints-t0-n96.npz": {
+    "sha256": "649305e737f90ef9eb3e8bf87b1acc1c6ae606cfb4261091fa90b8e718b842e8",
+    "bytes": 2381127
+  },
+  "ring-t0-n96.npz": {
+    "sha256": "f4e82469527d8af45615ed772fe84e5146df148d755cdefd334194649c3bbc90",
+    "bytes": 84902
+  },
+  "constraints-t0-n192.npz": {
+    "sha256": "4e65a1164390936307ebd16e1de76c48a488358eb4713e397f922d8934bc3c46",
+    "bytes": 3770518
+  },
+  "ring-t0-n192.npz": {
+    "sha256": "82e9c88668d4ecccd189234b543013c0a6a7609a0c4774754fe928f691774d25",
+    "bytes": 117830
+  },
+  "constraints.json": {
+    "sha256": "0a3660224e6bd7cb7d6255c1e4b4b586296e49281ae0252ca6997ce2033e185e",
+    "bytes": 7715
+  },
+  "orders.md": {
+    "sha256": "8a438b450bedeb1ddd2f89de97c5af495b68fc5a472cbf090c3723812a4d5338",
+    "bytes": 767
+  },
+  "earlier-ring070-n192-t50.npz": {
+    "sha256": "7fbfdf215bdcea7aea2f0492645a7a943d4dd6704eab3e528cbbc6b18d6d0fa2",
+    "bytes": 23984
+  }
+}

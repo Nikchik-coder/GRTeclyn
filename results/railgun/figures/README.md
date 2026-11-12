@@ -1,0 +1,63 @@
+# Ring figures
+
+## Latest explanatory figures
+
+- [Current ergoregion ring and initial Ham/Mom errors](evolution/ergoregion372-grid-and-constraints.png). Both live resolutions at t=0, with the finest-grid edges shown; N128 is queued.
+- [Every earlier ring evolution](evolution/ring070-all-evolution-frames.png). N96/N128/N192 at t=2, plus the separate N192 run at t=50. Rebuild both figures with `python -m grteclyn_workflows.plotting.railgun.plot_evolution_startup`.
+- [Accepted 3.72 ring: equatorial cross-section, lapse, clocks and dragging](particles/ergoregion-372-cross-section.png) ([PDF](particles/ergoregion-372-cross-section.pdf)). Earlier search candidate, with a zoomed matter map and matching radius markers across all panels.
+- [Accepted concentric rings: equatorial cross-section, lapse, clocks and signed dragging](two-rings/annular-cross-section.png) ([PDF](two-rings/annular-cross-section.pdf)). Matching component radius markers and matter-gap shading, with an inner-ring zoom.
+- [Stronger rings: size, clocks and regions of forced rotation](single-ring/ergoregion-comparison.png) ([SVG](single-ring/ergoregion-comparison.svg)). The 3.72 ring passes all three resolutions; the 5.21 trial is rejected.
+- [Single ring: clocks and dragging at each location](single-ring/ring070-physics.png) ([SVG](single-ring/ring070-physics.svg)).
+- [Separated rings: opposite rotation, clocks and the gap](two-rings/multiring-separated-space.png) ([SVG](two-rings/multiring-separated-space.svg)).
+- [Particles passing between the separated rings](particles/multiring-particles-in-gap.png) ([SVG](particles/multiring-particles-in-gap.svg)).
+
+## Single ring
+
+- [Computed ring](single-ring/ring-validated.png).
+- [Three-dimensional ring](single-ring/ring-validated-3d.png).
+- [Initial ring profiles](single-ring/ring-profile.png).
+- [Stronger ring profiles](single-ring/strong-profile-073.png).
+- [Clocks and dragging](single-ring/ring070-physics.png).
+
+Changes with spin and concentration are in [single-ring/scans/](single-ring/scans/):
+
+- [Concentration scan](single-ring/scans/compactness-scan.png).
+- [Frequency scan](single-ring/scans/frequency-scan.png).
+- [Resolution checks at frequency 0.73](single-ring/scans/frequency-073-recovery.png).
+- [Accepted sequence through frequency 0.70](single-ring/scans/single-ring-frequency-sequence.png).
+
+## Two separated rings
+
+- [Spatial explanation](two-rings/multiring-separated-space.png).
+- [Computed rings and matter gap](two-rings/annular-rings-validated.png).
+
+Earlier overlapping solutions remain in [two-rings/overlapping/](two-rings/overlapping/).
+They do not have the clear passage required for the separated-ring experiment:
+
+- [Overlapping rings](two-rings/overlapping/two-rings.png).
+- [Their matter overlap](two-rings/overlapping/two-rings-density.png).
+- [Their dragging field](two-rings/overlapping/counter-dragging.png).
+
+The [earlier provisional candidate](two-rings/provisional/annular-rings-provisional.png)
+is retained separately from the accepted result.
+
+## Particle experiments
+
+- [Passage between the separated rings, explained spatially](particles/multiring-particles-in-gap.png).
+- [Between-ring paths and matter exposure](particles/annular-transit-k12.png).
+- [Initial passage through a single ring](particles/ring-transit.png).
+- [Uphill launch through a single ring](particles/uphill-transit.png) ([PDF](particles/uphill-transit.pdf)).
+- [Stronger single-ring experiment](particles/strong-uphill-073.png) ([PDF](particles/strong-uphill-073.pdf)).
+
+## Full spacetime evolution
+
+- [Initial 96³ grid](evolution/ring070-n96-initial.png).
+- [Initial 128³ grid](evolution/ring070-n128-initial.png).
+- [Initial 192³ grid](evolution/ring070-n192-initial.png).
+- [First two-resolution comparison](evolution/ring070-evolution-pilot.png).
+- [Completed three-resolution convergence study](evolution/ring070-evolution-convergence.png)
+  ([PDF](evolution/ring070-evolution-convergence.pdf)).
+
+Reproduction commands, measurements and source archives are listed in the
+[results README](../README.md). Standalone numeric companions stay in
+`../reports/`; archived study measurements stay in `../studies/`.

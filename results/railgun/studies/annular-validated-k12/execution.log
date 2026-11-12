@@ -1,0 +1,18 @@
+[capped_job] start 2026-11-01T16:58:10Z threads=4 mem=160G timeout=1800s
+[falloff] solve 192x16, unknowns=19689
+[newton] iter 0: |R| 1.635e-04 -> 8.936e-09 (t = 1)
+[newton] iter 1: |R| 8.936e-09 -> 5.467e-11 (t = 1)
+[newton] iter 2: |R| 5.467e-11 -> 5.062e-16 (t = 1)
+[newton] converged at iter 3: |R|_inf,scaled = 7.252e-17
+[falloff] 192x16: PASS, reasons=[]
+[falloff] solve 224x18, unknowns=25653
+[newton] iter 0: |R| 7.099e-13 -> 5.692e-16 (t = 1)
+[newton] iter 1: |R| 5.692e-16 -> 5.422e-16 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 6.399e-17
+[falloff] 224x18: PASS, reasons=[]
+[falloff] solve 256x20, unknowns=32385
+[newton] iter 0: |R| 4.009e-14 -> 6.805e-16 (t = 1)
+[newton] iter 1: |R| 6.805e-16 -> 6.674e-16 (t = 1)
+[newton] converged at iter 2: |R|_inf,scaled = 8.381e-17
+[falloff] 256x20: PASS, reasons=[]
+[capped_job] end 2026-11-01T17:02:35Z exit=0

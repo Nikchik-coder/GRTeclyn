@@ -36,8 +36,8 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from check_slowspin_einstein import COMPONENTS, ORDERS, ricci_lambdas  # noqa: E402
 
-from grteclyn_wrapper.analysis.spinning_wormhole import conventions as cv  # noqa: E402
-from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution  # noqa: E402
+from grteclyn_stationary.spinning_wormhole import conventions as cv  # noqa: E402
+from grteclyn_stationary.spinning_wormhole.solution import Solution  # noqa: E402
 
 
 def jets_from_solution(sol: Solution) -> dict[str, np.ndarray]:
@@ -111,7 +111,7 @@ def einstein_residuals(ricci, names, sol: Solution, d2: float,
 
 
 def static_solution(eta0: float, gamma: float, nx: int, ny: int) -> Solution:
-    from grteclyn_wrapper.analysis.spinning_wormhole import spectral
+    from grteclyn_stationary.numerics import spectral
 
     sx, _ = spectral.lobatto(nx)
     f = cv.static_f_of_x(sx, gamma)[:, None] * np.ones((1, ny + 1))
@@ -151,7 +151,7 @@ def main() -> int:
         sol = Solution.load(path)
         d2 = sol.gates.get("D2_median")
         if d2 is None:
-            from grteclyn_wrapper.analysis.spinning_wormhole.observables import (
+            from grteclyn_stationary.spinning_wormhole.observables import (
                 identity_gates,
             )
             d2 = identity_gates(sol)["D2_median"]

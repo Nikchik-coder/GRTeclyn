@@ -1,0 +1,100 @@
+{
+  "config": {
+    "source_sha256": "bf92fd0c8a9be3bb75481e693f6927ea82757e30f843d06305e053a77280d82e",
+    "length": 2.5,
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "amplitude_factors": [
+      1.0,
+      1.06,
+      1.1236,
+      1.191016,
+      1.26247696,
+      1.3382255776,
+      1.418519112256,
+      1.50363025899136,
+      1.5938480745308417
+    ],
+    "max_solves": 27,
+    "max_iter": 30,
+    "newton_tol": 1e-14,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06
+  },
+  "source": "results/railgun/studies/frequency-deep/frequency_01/accepted.npz",
+  "plan": {
+    "metadata": {
+      "schema": 1,
+      "model": "canonical_regular_centre",
+      "nx": 160,
+      "ny": 20,
+      "length": 5.0,
+      "target_j": null,
+      "fields": [
+        {
+          "winding": 1,
+          "mass": 1.0,
+          "amplitude": 0.095,
+          "parity": "even",
+          "anchor_radius": 5.0,
+          "quartic": 0.0,
+          "sextic": 0.0
+        }
+      ],
+      "validated": true,
+      "stability": "not_assessed",
+      "frequency_targets": [
+        0.7
+      ],
+      "measured_amplitude_pins": [
+        0.015689536135570097
+      ]
+    },
+    "anchor_radius": 1.2028929844078005,
+    "initial_pin": 0.3073986678634803,
+    "source_frequency": 0.7,
+    "amplitudes": [
+      0.3073986678634803,
+      0.32584258793528914,
+      0.34539314321140646,
+      0.3661167318040909,
+      0.38808373571233634,
+      0.4113687598550765,
+      0.43605088544638104,
+      0.4622139385731639,
+      0.4899467748875538
+    ],
+    "max_solves": 27,
+    "grids": [
+      [
+        128,
+        16
+      ],
+      [
+        160,
+        20
+      ],
+      [
+        192,
+        24
+      ]
+    ],
+    "numerical_execution": false
+  },
+  "commit": "ec764d6cc4a827dddc9dfbcc9c50691e9f47aa06",
+  "minimum_charge": 0.001306322429243766,
+  "stability": "not_assessed"
+}

@@ -1,0 +1,18 @@
+{
+  "max_tracks": 8,
+  "launch_z": 10.0,
+  "target_z": -10.0,
+  "speed": -0.5,
+  "spin": 0.001,
+  "duration": 100.0,
+  "rtols": [
+    2e-11,
+    2e-12
+  ],
+  "max_step": 0.4,
+  "samples": 1001,
+  "conservation_tol": 1e-09,
+  "timing_tol": 1e-07,
+  "position_tol": 1e-07,
+  "relative_density_cutoff": 1e-06
+}

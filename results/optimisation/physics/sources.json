@@ -1,0 +1,48 @@
+[
+  {
+    "model": "D0",
+    "inputs": [
+      {
+        "path": "results/optimisation/validation/2026-10-30-alternatives/d0/009_e0211/handoff.npz",
+        "sha256": "be5fcbd44d2f2d0aa3320a4c7d328aff20e178919378528615b77ddd0d521bc7"
+      }
+    ],
+    "analytic_reference": "eta0=2, gamma=-pi static drainhole"
+  },
+  {
+    "model": "D21",
+    "inputs": [
+      {
+        "path": "results/optimisation/article/d21_e140_210x42.npz",
+        "sha256": "41d21ef1b2a561595a5b082bed95c0c98d59bada2850897278a764df658803f9"
+      },
+      {
+        "path": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.json",
+        "sha256": "f9cbcfac924c54e7b3413ea3f61da3b4afe3c03db88078a40a4d21aba6b4e81b"
+      },
+      {
+        "path": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0000.npz",
+        "sha256": "0e95b0216753527155d31102c762c47226d91afb52e34cd051b9f15a5e29fa86"
+      }
+    ],
+    "analytic_reference": null
+  },
+  {
+    "model": "D30",
+    "inputs": [
+      {
+        "path": "results/optimisation/completed/2026-10-31/d30/fam_a_r1_0005_cma_resolution_20261030_best_clean.npz",
+        "sha256": "af2f8634462a0b15603f7fb3b70a67f1736fea6f4158f58fee28bc3f0f6f4fd7"
+      },
+      {
+        "path": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0005.json",
+        "sha256": "12b28f400d6252e2485b0f4a6699d046deb41e012c267167d3e215e4e9a0460c"
+      },
+      {
+        "path": "results/spinningwormhole/solutions/fam_a_r1/fam_a_r1_0005.npz",
+        "sha256": "ceaae1d718b51786b5224ceac8514b0a36470b122983b633bf801f766f896f6f"
+      }
+    ],
+    "analytic_reference": null
+  }
+]

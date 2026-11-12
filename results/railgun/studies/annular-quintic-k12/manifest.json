@@ -1,0 +1,41 @@
+{
+  "config": {
+    "source_sha256": "b796d38418b37e2ec5ccc116cbf02280cfc4d0b01e9da7b3a358d8ca2ecc4d6a",
+    "outer_winding": -12,
+    "target_j": 0.0,
+    "length": 50.0,
+    "grids": [
+      [
+        192,
+        16
+      ],
+      [
+        224,
+        18
+      ],
+      [
+        256,
+        20
+      ]
+    ],
+    "max_solves": 3,
+    "max_iter": 30,
+    "newton_tol": 1e-12,
+    "perturbation": 0.0,
+    "equation_tol": 1e-08,
+    "tail_tol": 1e-06,
+    "observable_tol": 1e-06,
+    "edge_tol": 1e-06,
+    "relative_density_cutoff": 1e-06,
+    "channel_half_height": 10.0,
+    "falloff_power": 5
+  },
+  "source_sha256": "b796d38418b37e2ec5ccc116cbf02280cfc4d0b01e9da7b3a358d8ca2ecc4d6a",
+  "source_model": "canonical_regular_centre",
+  "output_model": "canonical_regular_centre_factored_dragging_v1",
+  "commit": "568eaac8afe4a83feec6ac8e7b2fc2b33007d4df",
+  "platform": "gpu",
+  "float64": true,
+  "stability": "not_assessed",
+  "tau": "Power 5 falloff; every omitted outer PDE row is tested."
+}

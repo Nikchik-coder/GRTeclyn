@@ -1,0 +1,571 @@
+{
+  "search_solves": 18,
+  "refinement_solves": 10,
+  "evaluations": [
+    {
+      "central_lapse": 0.1427188782000127,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 2.2333829923981594,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/004/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.13001306561965395,
+        "gtt_max": 0.22332129963034666,
+        "shift_norm_over_lapse_max": 3.284802374519072,
+        "gtt_max_point": {
+          "rho": 0.3869601460432641,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "rejection_reason": "does_not_improve_validated_best"
+    },
+    {
+      "central_lapse": 0.12177762406671747,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 4.0,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/006/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.10997520516293931,
+        "gtt_max": 0.26264720154481747,
+        "shift_norm_over_lapse_max": 4.049729227158359,
+        "gtt_max_point": {
+          "rho": 0.3422920779460791,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "refinement": {
+        "log_lapse": -2.1055586510370525,
+        "accepted": false,
+        "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/01",
+        "checks": {
+          "passed": false,
+          "ergoregion_resolved": false,
+          "drifts": {},
+          "frequencies": [
+            0.6812218790028587
+          ],
+          "common_point_extrema": []
+        }
+      }
+    },
+    {
+      "central_lapse": 0.12582104342680767,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.11382189616310924,
+        "gtt_max": 0.2546961826190286,
+        "shift_norm_over_lapse_max": 3.881957084112045,
+        "gtt_max_point": {
+          "rho": 0.3509523294551565,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.20483588502947378,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/007/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.1138218961632584,
+        "gtt_max": 0.2546961826182415,
+        "shift_norm_over_lapse_max": 3.8819570841020905,
+        "gtt_max_point": {
+          "rho": 0.3509523294551565,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "PASS",
+      "refinement": {
+        "log_lapse": -2.0728946718623398,
+        "accepted": true,
+        "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/02",
+        "checks": {
+          "passed": true,
+          "drifts": {
+            "lapse_min": 1.6275869541004795e-13,
+            "gtt_max": 7.083222897108499e-13,
+            "shift_norm_over_lapse_max": 2.5626358494704373e-12,
+            "frequency": 4.3642867098014904e-13
+          },
+          "ergoregion_resolved": true,
+          "gtt_three_grid_spread": 7.083222897108499e-13,
+          "frequencies": [
+            0.6775374549988186,
+            0.6775374549990179,
+            0.6775374549994543
+          ],
+          "common_point_extrema": [
+            {
+              "lapse_min": 0.11382189616324183,
+              "gtt_max": 0.2546961826183859,
+              "shift_norm_over_lapse_max": 3.881957084103501,
+              "gtt_max_point": {
+                "rho": 0.3509523294551565,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.113821896163272,
+              "gtt_max": 0.2546961826183203,
+              "shift_norm_over_lapse_max": 3.881957084102097,
+              "gtt_max_point": {
+                "rho": 0.3509523294551565,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.11382189616310924,
+              "gtt_max": 0.2546961826190286,
+              "shift_norm_over_lapse_max": 3.881957084112045,
+              "gtt_max_point": {
+                "rho": 0.3509523294551565,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "central_lapse": 0.1394131048630947,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 2.2278165863070085,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/008/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.12683309555678318,
+        "gtt_max": 0.22922102108026313,
+        "shift_norm_over_lapse_max": 3.3894960248960393,
+        "gtt_max_point": {
+          "rho": 0.3869601460432641,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "rejection_reason": "does_not_improve_validated_best"
+    },
+    {
+      "central_lapse": 0.13693163836868888,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 2.2236125100206623,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/009/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.12444833598791202,
+        "gtt_max": 0.23375774836643565,
+        "shift_norm_over_lapse_max": 3.4720217125043584,
+        "gtt_max_point": {
+          "rho": 0.3777502634845601,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "rejection_reason": "does_not_improve_validated_best"
+    },
+    {
+      "central_lapse": 0.11260336127544637,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.10126470022823642,
+        "gtt_max": 0.2816293599238207,
+        "shift_norm_over_lapse_max": 4.479246034814384,
+        "gtt_max_point": {
+          "rho": 0.31710894404019097,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.18250686201096575,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/012/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.10126470022836,
+        "gtt_max": 0.2816293599231362,
+        "shift_norm_over_lapse_max": 4.4792460348046355,
+        "gtt_max_point": {
+          "rho": 0.31710894404019097,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "PASS",
+      "refinement": {
+        "log_lapse": -2.183883712252765,
+        "accepted": true,
+        "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/03",
+        "checks": {
+          "passed": true,
+          "drifts": {
+            "lapse_min": 1.3963830092222906e-13,
+            "gtt_max": 6.683542608243442e-13,
+            "shift_norm_over_lapse_max": 2.414150099325171e-12,
+            "frequency": 5.265787805797117e-13
+          },
+          "ergoregion_resolved": true,
+          "gtt_three_grid_spread": 6.932232565759477e-13,
+          "frequencies": [
+            0.6908351678899666,
+            0.69083516789011,
+            0.6908351678906366
+          ],
+          "common_point_extrema": [
+            {
+              "lapse_min": 0.10126470022836238,
+              "gtt_max": 0.2816293599231275,
+              "shift_norm_over_lapse_max": 4.479246034804501,
+              "gtt_max_point": {
+                "rho": 0.31710894404019097,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.10126470022837605,
+              "gtt_max": 0.28162935992315236,
+              "shift_norm_over_lapse_max": 4.4792460348035705,
+              "gtt_max_point": {
+                "rho": 0.31710894404019097,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.10126470022823642,
+              "gtt_max": 0.2816293599238207,
+              "shift_norm_over_lapse_max": 4.479246034814384,
+              "gtt_max_point": {
+                "rho": 0.31710894404019097,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "central_lapse": 0.12659464671946097,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 2.206164316350852,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/013/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.11455918535461612,
+        "gtt_max": 0.253208921143834,
+        "shift_norm_over_lapse_max": 3.8504999201617016,
+        "gtt_max_point": {
+          "rho": 0.3509523294551565,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "rejection_reason": "does_not_improve_validated_best"
+    },
+    {
+      "central_lapse": 0.11910708351817414,
+      "stage": "complete",
+      "passed": false,
+      "sample": null,
+      "score": 2.193509040224689,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/014/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.10743131576462105,
+        "gtt_max": 0.2680798403842522,
+        "shift_norm_over_lapse_max": 4.167717223127507,
+        "gtt_max_point": {
+          "rho": 0.33376567161455417,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "REJECT",
+      "rejection_reason": "does_not_improve_validated_best"
+    },
+    {
+      "central_lapse": 0.09955434853823275,
+      "stage": "complete",
+      "passed": true,
+      "sample": {
+        "lapse_min": 0.08897406899575044,
+        "gtt_max": 0.31083131119852336,
+        "shift_norm_over_lapse_max": 5.231237832495988,
+        "gtt_max_point": {
+          "rho": 0.2777168047130998,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "score": 0.16048175769908618,
+      "path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/attempts/018/state.npz",
+      "single_grid_passed": true,
+      "single_grid_sample": {
+        "lapse_min": 0.08897406899583316,
+        "gtt_max": 0.31083131119790147,
+        "shift_norm_over_lapse_max": 5.231237832483223,
+        "gtt_max_point": {
+          "rho": 0.2777168047130998,
+          "z": 0.0
+        },
+        "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+      },
+      "resolution_status": "PASS",
+      "refinement": {
+        "log_lapse": -2.307051567474853,
+        "accepted": true,
+        "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/04",
+        "checks": {
+          "passed": true,
+          "drifts": {
+            "lapse_min": 1.245115122117113e-13,
+            "gtt_max": 6.850076061937216e-13,
+            "shift_norm_over_lapse_max": 2.3625388685932433e-12,
+            "frequency": 6.430411758628907e-13
+          },
+          "ergoregion_resolved": true,
+          "gtt_three_grid_spread": 6.850076061937216e-13,
+          "frequencies": [
+            0.7081422911146898,
+            0.7081422911147772,
+            0.7081422911154203
+          ],
+          "common_point_extrema": [
+            {
+              "lapse_min": 0.08897406899583857,
+              "gtt_max": 0.31083131119788215,
+              "shift_norm_over_lapse_max": 5.231237832482759,
+              "gtt_max_point": {
+                "rho": 0.2777168047130998,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.08897406899587496,
+              "gtt_max": 0.31083131119783836,
+              "shift_norm_over_lapse_max": 5.231237832483629,
+              "gtt_max_point": {
+                "rho": 0.2777168047130998,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            },
+            {
+              "lapse_min": 0.08897406899575044,
+              "gtt_max": 0.31083131119852336,
+              "shift_norm_over_lapse_max": 5.231237832495988,
+              "gtt_max_point": {
+                "rho": 0.2777168047130998,
+                "z": 0.0
+              },
+              "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "finalists": [
+    {
+      "log_lapse": -2.1055586510370525,
+      "accepted": false,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/01",
+      "checks": {
+        "passed": false,
+        "ergoregion_resolved": false,
+        "drifts": {},
+        "frequencies": [
+          0.6812218790028587
+        ],
+        "common_point_extrema": []
+      }
+    },
+    {
+      "log_lapse": -2.0728946718623398,
+      "accepted": true,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/02",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 1.6275869541004795e-13,
+          "gtt_max": 7.083222897108499e-13,
+          "shift_norm_over_lapse_max": 2.5626358494704373e-12,
+          "frequency": 4.3642867098014904e-13
+        },
+        "ergoregion_resolved": true,
+        "gtt_three_grid_spread": 7.083222897108499e-13,
+        "frequencies": [
+          0.6775374549988186,
+          0.6775374549990179,
+          0.6775374549994543
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.11382189616324183,
+            "gtt_max": 0.2546961826183859,
+            "shift_norm_over_lapse_max": 3.881957084103501,
+            "gtt_max_point": {
+              "rho": 0.3509523294551565,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.113821896163272,
+            "gtt_max": 0.2546961826183203,
+            "shift_norm_over_lapse_max": 3.881957084102097,
+            "gtt_max_point": {
+              "rho": 0.3509523294551565,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.11382189616310924,
+            "gtt_max": 0.2546961826190286,
+            "shift_norm_over_lapse_max": 3.881957084112045,
+            "gtt_max_point": {
+              "rho": 0.3509523294551565,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      }
+    },
+    {
+      "log_lapse": -2.183883712252765,
+      "accepted": true,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/03",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 1.3963830092222906e-13,
+          "gtt_max": 6.683542608243442e-13,
+          "shift_norm_over_lapse_max": 2.414150099325171e-12,
+          "frequency": 5.265787805797117e-13
+        },
+        "ergoregion_resolved": true,
+        "gtt_three_grid_spread": 6.932232565759477e-13,
+        "frequencies": [
+          0.6908351678899666,
+          0.69083516789011,
+          0.6908351678906366
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.10126470022836238,
+            "gtt_max": 0.2816293599231275,
+            "shift_norm_over_lapse_max": 4.479246034804501,
+            "gtt_max_point": {
+              "rho": 0.31710894404019097,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.10126470022837605,
+            "gtt_max": 0.28162935992315236,
+            "shift_norm_over_lapse_max": 4.4792460348035705,
+            "gtt_max_point": {
+              "rho": 0.31710894404019097,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.10126470022823642,
+            "gtt_max": 0.2816293599238207,
+            "shift_norm_over_lapse_max": 4.479246034814384,
+            "gtt_max_point": {
+              "rho": 0.31710894404019097,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      }
+    },
+    {
+      "log_lapse": -2.307051567474853,
+      "accepted": true,
+      "directory": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/04",
+      "checks": {
+        "passed": true,
+        "drifts": {
+          "lapse_min": 1.245115122117113e-13,
+          "gtt_max": 6.850076061937216e-13,
+          "shift_norm_over_lapse_max": 2.3625388685932433e-12,
+          "frequency": 6.430411758628907e-13
+        },
+        "ergoregion_resolved": true,
+        "gtt_three_grid_spread": 6.850076061937216e-13,
+        "frequencies": [
+          0.7081422911146898,
+          0.7081422911147772,
+          0.7081422911154203
+        ],
+        "common_point_extrema": [
+          {
+            "lapse_min": 0.08897406899583857,
+            "gtt_max": 0.31083131119788215,
+            "shift_norm_over_lapse_max": 5.231237832482759,
+            "gtt_max_point": {
+              "rho": 0.2777168047130998,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.08897406899587496,
+            "gtt_max": 0.31083131119783836,
+            "shift_norm_over_lapse_max": 5.231237832483629,
+            "gtt_max_point": {
+              "rho": 0.2777168047130998,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          },
+          {
+            "lapse_min": 0.08897406899575044,
+            "gtt_max": 0.31083131119852336,
+            "shift_norm_over_lapse_max": 5.231237832495988,
+            "gtt_max_point": {
+              "rho": 0.2777168047130998,
+              "z": 0.0
+            },
+            "sampling": "385 radial x 50 angular common physical points, including origin/axis/equator"
+          }
+        ]
+      }
+    }
+  ],
+  "ergoregion_resolved": true,
+  "best_path": "runs/railgun/single-ring/scans/ergoregion-max-r2-seed272-20261102/finalists/04/accepted.npz",
+  "best_ratio": 5.231237832495988,
+  "incumbent_ratio": 3.7207895366018127,
+  "seconds": 911.5369117599912
+}

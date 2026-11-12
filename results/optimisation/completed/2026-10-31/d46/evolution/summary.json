@@ -1,0 +1,80 @@
+{
+  "run": "D46_cma20261031_L64_N128_ml3_spdrv0_t150",
+  "status": "failed",
+  "exit_status": 6,
+  "finished_utc": "2026-10-31T15:56:57Z",
+  "t_end": 141.43,
+  "death": "NaN diagnostic: rank=0 level=3 component=7 name=K",
+  "requested_stop_time": 150,
+  "analysis_t_max": 100,
+  "last_plot_time": 141,
+  "analysis_window_reason": "Early contraction interval before late constraint growth; no continuum-convergence claim.",
+  "growth_potential": {
+    "label": "D46 potential",
+    "j": 3.1541077119249783,
+    "frac": 28.37920593498286,
+    "branch": "collapses",
+    "tau": 11.479643770078393,
+    "fit_start": 77.0000000000025,
+    "fit_end": 96.0000000000122,
+    "rate": 0.0871107170247297
+  },
+  "growth_reference": {
+    "label": "D46",
+    "j": 3.1541077118914904,
+    "frac": 28.848338728858536,
+    "branch": "inflates",
+    "tau": 12.102609415928946,
+    "fit_start": 103.000000000016,
+    "fit_end": 106.000000000017,
+    "rate": 0.08262680927997577
+  },
+  "contraction_thresholds": [
+    {
+      "model": "D46",
+      "branch": "classical",
+      "deficit": 0.002,
+      "time": 50.16475268709019,
+      "source": "results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat"
+    },
+    {
+      "model": "D46",
+      "branch": "classical",
+      "deficit": 0.01,
+      "time": 73.72487656344413,
+      "source": "results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat"
+    },
+    {
+      "model": "D46",
+      "branch": "classical",
+      "deficit": 0.02,
+      "time": null,
+      "source": "results/spinningwormhole/campaign/drainhole/00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150/throat_spheres.dat"
+    },
+    {
+      "model": "D46",
+      "branch": "potential",
+      "deficit": 0.002,
+      "time": 76.62765968696577,
+      "source": "results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz"
+    },
+    {
+      "model": "D46",
+      "branch": "potential",
+      "deficit": 0.01,
+      "time": 96.1454946271912,
+      "source": "results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz"
+    },
+    {
+      "model": "D46",
+      "branch": "potential",
+      "deficit": 0.02,
+      "time": null,
+      "source": "results/optimisation/completed/2026-10-31/d46/evolution/small_data/throat_spheres.dat.gz"
+    }
+  ],
+  "reference_minimum_radius_ratio": 0.9888198015695897,
+  "reference_outcome": "Initial contraction reverses into expansion.",
+  "checkpoints": false,
+  "archive_manifest": "archive_manifest.json"
+}

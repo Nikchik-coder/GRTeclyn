@@ -1,0 +1,5 @@
+{
+  "status": "stopped_without_usable_seed",
+  "search_evaluations": 0,
+  "reason": "All 40 seed combinations exhausted; both numerically returned fields fail independent equations and both-end bound/localization checks. Try continuation from S0."
+}

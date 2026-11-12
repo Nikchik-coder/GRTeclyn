@@ -111,7 +111,7 @@ without a launcher change; the consumer, the scoring plotfile lookup and the
 cleanup paths follow the same mapping. `GRTECLYN_SCRATCH=/other/path` moves the
 root, `GRTECLYN_SCRATCH=0` restores the old episode-directory layout, and an
 unwritable root falls back to the episode directory with a warning rather than
-killing the campaign. A launcher that sets `amr.plot_file` explicitly (the RL
+killing the campaign. A launcher that sets `amr.plot_file` explicitly (the pump
 gate scripts, the pump queues) still wins — an explicit override is never
 overwritten.
 
@@ -158,7 +158,7 @@ Call the venv python directly instead of `uv run` (which writes to
 
 ```python
 cmd = [str(WRAPPER / ".venv/bin/python"), "-m",
-       "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles", ...]
+       "grteclyn_workflows.postprocessing", ...]
 env["XDG_CACHE_HOME"]      = f"{SCRATCH}/_cache"
 env["UV_CACHE_DIR"]        = f"{SCRATCH}/_cache/uv"
 env["MPLCONFIGDIR"]        = f"{SCRATCH}/_cache/mpl"
@@ -174,7 +174,7 @@ directories. The complete set of write targets for a campaign is
 `core/scratch.py` pins the same variables for every child process the wrapper
 spawns (`cache_env`), filling in only the ones the operator has not already
 set. Reference launcher implementation, predating the central one:
-[`rl/pump_ladder_queue.py`](rl/pump_ladder_queue.py) (mode-0 pump ladder).
+[`neuralspacetime/pump_ladder_queue.py`](neuralspacetime/pump_ladder_queue.py) (mode-0 pump ladder).
 
 ---
 

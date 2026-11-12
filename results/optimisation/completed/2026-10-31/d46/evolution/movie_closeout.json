@@ -1,0 +1,243 @@
+{
+  "t_max": 100,
+  "movies": [
+    {
+      "file": "movie_K_z.mp4",
+      "sha256": "589237373e82afec99eb727d461c5af0a757c64f5897b7a16925385e2a5e1810",
+      "bytes": 90396,
+      "width": 884,
+      "height": 814,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_Pi_z.mp4",
+      "sha256": "8e903488d97726ef1d5465e8a68d82988f906fed0716576fef4f2c50a25d6f33",
+      "bytes": 110280,
+      "width": 916,
+      "height": 814,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_Weyl4_Im_z.mp4",
+      "sha256": "61dc7b839de87576ad21f4f4c2fc8b0102be75f15df0501d4b16452a66c6ef75",
+      "bytes": 163854,
+      "width": 920,
+      "height": 818,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_Weyl4_Mag_z.mp4",
+      "sha256": "e0fb78b33d2490d190e16ca14b1362abe92d6ba83dfc1fc6cad208583c87f00b",
+      "bytes": 47907,
+      "width": 902,
+      "height": 818,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_Weyl4_Re_z.mp4",
+      "sha256": "1ccc7edc325c509604fb683f9c8c27ba6d841e5ade1dbfe147499d19cdc7c25e",
+      "bytes": 74542,
+      "width": 920,
+      "height": 818,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_chi_minus_1_z.mp4",
+      "sha256": "9610b1d70ee05de44e866b8daee372fe8154b698d63ddf541433cdea2145ebc2",
+      "bytes": 54629,
+      "width": 916,
+      "height": 816,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_chi_z.mp4",
+      "sha256": "b1bdec2e1a062f0530aaf0ec6d0b71ca132ed539279cc68f52f34c9ec9bf0212",
+      "bytes": 73744,
+      "width": 890,
+      "height": 816,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_lapse_z.mp4",
+      "sha256": "4f83047017131bf575d5fc996094eeeb491b19c01a8c6fd3c8afa6b91eed3f86",
+      "bytes": 97247,
+      "width": 890,
+      "height": 816,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_local_speed_z.mp4",
+      "sha256": "62dcfd0076098cbf0a77faef006a806a2d415da8d867360898b5f9db443a0790",
+      "bytes": 99379,
+      "width": 886,
+      "height": 816,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_phi_z.mp4",
+      "sha256": "e7ac1d3210e42a1a7b390a0548ff240b7afd9e9018cb92e8fe446121e0cde5ad",
+      "bytes": 58576,
+      "width": 918,
+      "height": 816,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_scalar_activity_z.mp4",
+      "sha256": "b61977540ffca55e938d08fc178809cc7e3e1679f8c0b253594660e291efa952",
+      "bytes": 37489,
+      "width": 930,
+      "height": 842,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_shift1_z.mp4",
+      "sha256": "84f547e5e68cee73fc307712e5b493dbf284543c2ae5bbe54e7d670248f127ee",
+      "bytes": 101409,
+      "width": 916,
+      "height": 814,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_shift2_z.mp4",
+      "sha256": "0a4808480abf6f437dee91b0faacaf25659c5dc62946251121b4b11f3b7e541d",
+      "bytes": 87786,
+      "width": 924,
+      "height": 814,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    },
+    {
+      "file": "movie_shift3_z.mp4",
+      "sha256": "f813ecb8cb563736f9d52bf28f086e2ebed10c2ca91c3995e8c3790e84758614",
+      "bytes": 120466,
+      "width": 902,
+      "height": 814,
+      "duration": "10.200000",
+      "nb_frames": "102"
+    }
+  ],
+  "fields": {
+    "K_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.004560722969472408,
+        0.004560722969472408
+      ]
+    },
+    "Pi_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.013326751999557018,
+        0.013326751999557018
+      ]
+    },
+    "Weyl4_Im_z": {
+      "frame_count": 101,
+      "zlim": [
+        -5.528867859538877e-06,
+        5.528867859538877e-06
+      ]
+    },
+    "Weyl4_Mag_z": {
+      "frame_count": 101,
+      "zlim": [
+        0.0,
+        0.0022230197209864855
+      ]
+    },
+    "Weyl4_Re_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.0022230155300348997,
+        0.0022230155300348997
+      ]
+    },
+    "chi_minus_1_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.940853476524353,
+        0.940853476524353
+      ]
+    },
+    "chi_z": {
+      "frame_count": 101,
+      "zlim": [
+        0.05,
+        0.8609581919386983
+      ]
+    },
+    "lapse_z": {
+      "frame_count": 101,
+      "zlim": [
+        0.2796441689133644,
+        0.9315954253077507
+      ]
+    },
+    "local_speed_z": {
+      "frame_count": 101,
+      "zlim": [
+        0.1870540887117386,
+        0.8539594665169716
+      ]
+    },
+    "phi_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.27187249064445496,
+        0.27187249064445496
+      ]
+    },
+    "scalar_activity_z": {
+      "frame_count": 101,
+      "zlim": [
+        0.0,
+        0.27187249064445496
+      ]
+    },
+    "shift1_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.10621441900730133,
+        0.10621441900730133
+      ]
+    },
+    "shift2_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.10621441900730133,
+        0.10621441900730133
+      ]
+    },
+    "shift3_z": {
+      "frame_count": 101,
+      "zlim": [
+        -0.00020857401250395924,
+        0.00020857401250395924
+      ]
+    }
+  },
+  "visual_check": "K, phi and chi at t=20 and t=80 inspected from encoded movies; color-bar positions and tick scales unchanged.",
+  "normalization": {
+    "symlog": {
+      "phi": 2,
+      "Pi": 2,
+      "chi_minus_1": 2,
+      "shift1": 2,
+      "Weyl4_Re": 1.5,
+      "Weyl4_Im": 1.5
+    },
+    "other_fields": "linear"
+  }
+}

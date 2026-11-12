@@ -40,7 +40,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from check_einstein import jets_from_solution  # noqa: E402
 from derive_xy_equations import ETA, TH, ckk_residuals  # noqa: E402
 
-from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution  # noqa: E402
+from grteclyn_stationary.spinning_wormhole.solution import Solution  # noqa: E402
 
 ETA0 = sp.Symbol("eta0", positive=True)
 ORDERS = [(2, 0), (1, 1), (0, 2), (1, 0), (0, 1), (0, 0)]

@@ -1,0 +1,10 @@
+[capped_job] start 2026-11-01T10:22:39Z threads=4 mem=160G timeout=1800s
+[gap-screen] k4_96x12 gap=False width=-32.32940856273189
+[gap-screen] k4_128x16 gap=False width=-32.32940856273103
+[gap-screen] k8_96x12 gap=False width=-21.983459489552587
+[gap-screen] k8_128x16 gap=False width=-21.983459489537076
+[gap-screen] k12_96x12 gap=True width=7.862980673652579
+[gap-screen] k12_128x16 gap=True width=7.862980676217617
+[gap-screen] k16_96x12 gap=True width=57.610495740406655
+[gap-screen] k16_128x16 gap=True width=57.6105012603878
+[capped_job] end 2026-11-01T10:22:52Z exit=0

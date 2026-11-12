@@ -1,0 +1,38 @@
+{
+  "method": "screen",
+  "config": {
+    "m": 0.06580983601527564,
+    "q": [
+      -0.42068515253380434,
+      0.11386544275633861,
+      -0.41242879538271937
+    ],
+    "gamma": -3.141592653589793,
+    "J": 138.20051514420075
+  },
+  "grids": [
+    [
+      150,
+      30
+    ],
+    [
+      180,
+      36
+    ],
+    [
+      210,
+      42
+    ]
+  ],
+  "pin": [
+    "R_e",
+    23.82166962411715
+  ],
+  "newton_acceptance": 1e-09,
+  "newton_target": 1e-09,
+  "independent_constraint_gate": 1e-08,
+  "relative_bill_tolerance": 1e-06,
+  "score_key": "X",
+  "perturb_seed": false,
+  "stability": "not_assessed"
+}

@@ -1,0 +1,26 @@
+[capped_job] start 2026-11-01T13:14:11Z threads=4 mem=160G timeout=1800s
+[annular] solving 192x16, unknowns=19689, target_J=0
+[newton] iter 0: |R| 1.552e-05 -> 1.192e-05 (t = 1)
+[newton] iter 1: |R| 4.797e-05 -> 2.346e-06 (t = 1)
+[newton] iter 2: |R| 2.346e-06 -> 1.470e-08 (t = 1)
+[newton] iter 3: |R| 1.470e-08 -> 9.885e-10 (t = 1)
+[newton] iter 4: |R| 9.885e-10 -> 1.059e-10 (t = 1)
+[newton] iter 5: |R| 3.646e-10 -> 4.958e-16 (t = 1)
+[newton] converged at iter 6: |R|_inf,scaled = 5.909e-17
+W1101 13:14:41.920613  409236 cuda_timer.cc:88] Delay kernel timed out: measured time has sub-optimal accuracy. There may be a missing warmup execution, please investigate in Nsight Systems.
+[annular] 192x16: PASS, reasons=[]
+[annular] solving 224x18, unknowns=25653, target_J=0
+[newton] iter 0: |R| 4.709e-06 -> 4.595e-08 (t = 1)
+[newton] iter 1: |R| 4.595e-08 -> 4.944e-10 (t = 1)
+[newton] iter 2: |R| 4.944e-10 -> 1.989e-11 (t = 1)
+[newton] iter 3: |R| 1.989e-11 -> 6.695e-13 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 9.175e-14
+[annular] 224x18: PASS, reasons=[]
+[annular] solving 256x20, unknowns=32385, target_J=0
+[newton] iter 0: |R| 4.117e-06 -> 4.036e-08 (t = 1)
+[newton] iter 1: |R| 4.036e-08 -> 4.708e-10 (t = 1)
+[newton] iter 2: |R| 4.708e-10 -> 1.728e-11 (t = 1)
+[newton] iter 3: |R| 1.728e-11 -> 5.818e-13 (t = 1)
+[newton] converged at iter 4: |R|_inf,scaled = 7.051e-14
+[annular] 256x20: REJECT, reasons=['angular_momentum_balance']
+[capped_job] end 2026-11-01T13:17:10Z exit=2

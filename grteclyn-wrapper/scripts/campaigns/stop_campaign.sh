@@ -140,7 +140,7 @@ for arg in "$@"; do
   if [[ -f "$dir/launcher.pid" ]]; then
     orch+=" $(cat "$dir/launcher.pid" 2>/dev/null)"
   fi
-  orch+=" $(pgrep_safe "grteclyn_wrapper .*--name ${name}( |$)")"      # QD/CMA-ES driver
+  orch+=" $(pgrep_safe "grteclyn_workflows .*--name ${name}( |$)")"      # QD/CMA-ES driver
   orch+=" $(pgrep_safe "replay_eval.py .*--runs-dir ${dir}")"          # replay/matrix cells
   ancestors=""
   for pid in $(live_filter $orch); do

@@ -15,12 +15,12 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+from grteclyn_stationary.profiles.boson_star_ode import (
     BosonStarODEProfile,
     cached_selfgrav_profile,
     solve_selfgrav_boson_star,
 )
-from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
+from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
 
 
 @pytest.fixture(autouse=True)
@@ -202,7 +202,7 @@ def test_cached_profile_returns_same_result() -> None:
 
 
 def test_profile_for_lump_selfgrav_default_amplitude() -> None:
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         profile_for_lump_selfgrav,
     )
     lump: dict = {}
@@ -221,7 +221,7 @@ def test_sech_width_matches_half_maximum() -> None:
     A sech ``1/cosh(r/w)`` has half-maximum at ``r = w * arccosh(2)``, so the
     fitted width must satisfy ``phi0(w * arccosh(2)) ~= phi0(0)/2``.
     """
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_stationary.profiles.boson_star_ode import (
         sech_width_for_profile,
     )
     c = QBallCouplings.free_field(mass=1.0, omega=0.5)
@@ -238,8 +238,8 @@ def test_selfgrav_pump_target_width_more_compact_than_tail_length() -> None:
     The tail-only length ``1/sqrt(m^2 - omega^2)`` overestimates the core width;
     the profile-fitted width should be strictly smaller for a typical star.
     """
-    from grteclyn_wrapper.grtresna.profiles.boson_star import bound_width
-    from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (
+    from grteclyn_workflows.grtresna.profiles.boson_star import bound_width
+    from grteclyn_stationary.profiles.boson_star_ode import (
         selfgrav_pump_target_width,
     )
     prof = cached_selfgrav_profile(1.0, 0.0, 0.0, 0.1)

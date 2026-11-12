@@ -1,0 +1,751 @@
+{
+  "accepted": false,
+  "radius": 0.04,
+  "degree": 8,
+  "comparison_degree": 10,
+  "tolerance": 1e-08,
+  "maxima": {
+    "einstein_max": 4.544046073724693e-10,
+    "kg_max": 7.346978581068697e-11,
+    "kg_intrinsic_max": 1.4770229483929143e-10,
+    "kg_coordinate_difference": 1.6280509579358338e-10,
+    "order_metric_difference": 1.0018652574217413e-11,
+    "order_curvature_difference": 2.996923285536468e-06,
+    "parent_metric_difference": 7.950973213155521e-12,
+    "parent_curvature_difference": 6.083968066228351e-06
+  },
+  "points": [
+    {
+      "einstein_max": 4.544046073724693e-10,
+      "kg_max": 0.0,
+      "radius": 0.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.0018652574217413e-11,
+      "order_curvature_difference": 1.3235840867764637e-08
+    },
+    {
+      "einstein_max": 4.051785419344791e-10,
+      "kg_max": 0.0,
+      "radius": 0.002,
+      "position": [
+        0.0,
+        0.0,
+        -0.002
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.393374966748524e-12,
+      "order_curvature_difference": 1.3942830889845936e-08,
+      "parent_metric_difference": 7.808864666003501e-12,
+      "parent_curvature_difference": 6.083968066228351e-06
+    },
+    {
+      "einstein_max": 4.051785419344791e-10,
+      "kg_max": 0.0,
+      "radius": 0.002,
+      "position": [
+        0.0,
+        0.0,
+        0.002
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.393374966748524e-12,
+      "order_curvature_difference": 1.3942830889845936e-08,
+      "parent_metric_difference": 7.808864666003501e-12,
+      "parent_curvature_difference": 6.083968066228351e-06
+    },
+    {
+      "einstein_max": 3.992978833680785e-10,
+      "kg_max": 5.764010362757643e-12,
+      "kg_intrinsic_max": 3.069544618483633e-11,
+      "kg_coordinate_difference": 2.4931435822078685e-11,
+      "radius": 0.002,
+      "position": [
+        0.0007788366846173011,
+        0.0,
+        -0.0018421219880057702
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.322320693172514e-12,
+      "order_curvature_difference": 1.3765877326932241e-08,
+      "parent_metric_difference": 7.950973213155521e-12,
+      "parent_curvature_difference": 3.741842000692941e-07
+    },
+    {
+      "einstein_max": 3.992978833680785e-10,
+      "kg_max": 5.764010362757643e-12,
+      "kg_intrinsic_max": 3.069544618483633e-11,
+      "kg_coordinate_difference": 2.4931435822078685e-11,
+      "radius": 0.002,
+      "position": [
+        0.0007788366846173011,
+        0.0,
+        0.0018421219880057702
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.322320693172514e-12,
+      "order_curvature_difference": 1.3765877326932241e-08,
+      "parent_metric_difference": 7.950973213155521e-12,
+      "parent_curvature_difference": 3.741842000692941e-07
+    },
+    {
+      "einstein_max": 3.607302243796371e-10,
+      "kg_max": 1.4577974244422975e-11,
+      "kg_intrinsic_max": 5.233147248873138e-11,
+      "kg_coordinate_difference": 3.7753498244308403e-11,
+      "radius": 0.002,
+      "position": [
+        0.002,
+        0.0,
+        -1.2246467991473531e-19
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.208633855450898e-12,
+      "order_curvature_difference": 1.3646587859739157e-08,
+      "parent_metric_difference": 5.8903992794512305e-12,
+      "parent_curvature_difference": 1.7585640961215177e-06
+    },
+    {
+      "einstein_max": 3.607302243796371e-10,
+      "kg_max": 1.4577974244422975e-11,
+      "kg_intrinsic_max": 5.233147248873138e-11,
+      "kg_coordinate_difference": 3.7753498244308403e-11,
+      "radius": 0.002,
+      "position": [
+        0.002,
+        0.0,
+        1.2246467991473531e-19
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 9.208633855450898e-12,
+      "order_curvature_difference": 1.3646587859739157e-08,
+      "parent_metric_difference": 5.8903992794512305e-12,
+      "parent_curvature_difference": 1.7585640961215177e-06
+    },
+    {
+      "einstein_max": 8.970152051493603e-11,
+      "kg_max": 0.0,
+      "radius": 0.008,
+      "position": [
+        0.0,
+        0.0,
+        -0.008
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.8421709430404007e-12,
+      "order_curvature_difference": 1.7150227904494386e-08,
+      "parent_metric_difference": 2.3305801732931286e-12,
+      "parent_curvature_difference": 3.8479779984612605e-07
+    },
+    {
+      "einstein_max": 8.970152051493603e-11,
+      "kg_max": 0.0,
+      "radius": 0.008,
+      "position": [
+        0.0,
+        0.0,
+        0.008
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.8421709430404007e-12,
+      "order_curvature_difference": 1.7150227904494386e-08,
+      "parent_metric_difference": 2.3305801732931286e-12,
+      "parent_curvature_difference": 3.8479779984612605e-07
+    },
+    {
+      "einstein_max": 8.323315675266142e-11,
+      "kg_max": 6.745408051567203e-12,
+      "kg_intrinsic_max": 3.8113512346171774e-11,
+      "kg_coordinate_difference": 4.485892039773898e-11,
+      "radius": 0.008,
+      "position": [
+        0.0031153467384692044,
+        0.0,
+        -0.007368487952023081
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.913225216616411e-13,
+      "order_curvature_difference": 3.9505010818174924e-08,
+      "parent_metric_difference": 2.3803181647963356e-12,
+      "parent_curvature_difference": 4.287178967388172e-08
+    },
+    {
+      "einstein_max": 8.323315675266142e-11,
+      "kg_max": 6.745408051567203e-12,
+      "kg_intrinsic_max": 3.8113512346171774e-11,
+      "kg_coordinate_difference": 4.485892039773898e-11,
+      "radius": 0.008,
+      "position": [
+        0.0031153467384692044,
+        0.0,
+        0.007368487952023081
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.913225216616411e-13,
+      "order_curvature_difference": 3.9505010818174924e-08,
+      "parent_metric_difference": 2.3803181647963356e-12,
+      "parent_curvature_difference": 4.287178967388172e-08
+    },
+    {
+      "einstein_max": 2.0531254582586408e-10,
+      "kg_max": 1.510280095429195e-11,
+      "kg_intrinsic_max": 1.4770229483929143e-10,
+      "kg_coordinate_difference": 1.6280509579358338e-10,
+      "radius": 0.008,
+      "position": [
+        0.008,
+        0.0,
+        -4.898587196589413e-19
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 3.0198066269804258e-12,
+      "order_curvature_difference": 3.720278130003862e-08,
+      "parent_metric_difference": 4.142464149481384e-12,
+      "parent_curvature_difference": 3.820236855744952e-07
+    },
+    {
+      "einstein_max": 2.0531254582586408e-10,
+      "kg_max": 1.510280095429195e-11,
+      "kg_intrinsic_max": 1.4770229483929143e-10,
+      "kg_coordinate_difference": 1.6280509579358338e-10,
+      "radius": 0.008,
+      "position": [
+        0.008,
+        0.0,
+        4.898587196589413e-19
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 3.0198066269804258e-12,
+      "order_curvature_difference": 3.720278130003862e-08,
+      "parent_metric_difference": 4.142464149481384e-12,
+      "parent_curvature_difference": 3.820236855744952e-07
+    },
+    {
+      "einstein_max": 2.951553606749946e-10,
+      "kg_max": 0.0,
+      "radius": 0.0196,
+      "position": [
+        0.0,
+        0.0,
+        -0.0196
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.241940132487798e-12,
+      "order_curvature_difference": 2.167257662222255e-08,
+      "parent_metric_difference": 6.73594513500575e-12,
+      "parent_curvature_difference": 7.311029071033204e-08
+    },
+    {
+      "einstein_max": 2.951553606749946e-10,
+      "kg_max": 0.0,
+      "radius": 0.0196,
+      "position": [
+        0.0,
+        0.0,
+        0.0196
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.241940132487798e-12,
+      "order_curvature_difference": 2.167257662222255e-08,
+      "parent_metric_difference": 6.73594513500575e-12,
+      "parent_curvature_difference": 7.311029071033204e-08
+    },
+    {
+      "einstein_max": 1.4094925110589665e-10,
+      "kg_max": 7.754533126735907e-12,
+      "kg_intrinsic_max": 3.6143532611276896e-11,
+      "kg_coordinate_difference": 2.838899948454099e-11,
+      "radius": 0.0196,
+      "position": [
+        0.00763259950924955,
+        0.0,
+        -0.018052795482456547
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.760636329592671e-13,
+      "order_curvature_difference": 1.69401914718037e-08,
+      "parent_metric_difference": 6.963318810448982e-13,
+      "parent_curvature_difference": 6.904458871304087e-08
+    },
+    {
+      "einstein_max": 1.4094925110589665e-10,
+      "kg_max": 7.754533126735907e-12,
+      "kg_intrinsic_max": 3.6143532611276896e-11,
+      "kg_coordinate_difference": 2.838899948454099e-11,
+      "radius": 0.0196,
+      "position": [
+        0.00763259950924955,
+        0.0,
+        0.018052795482456547
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.760636329592671e-13,
+      "order_curvature_difference": 1.69401914718037e-08,
+      "parent_metric_difference": 6.963318810448982e-13,
+      "parent_curvature_difference": 6.904458871304087e-08
+    },
+    {
+      "einstein_max": 2.503311571016244e-10,
+      "kg_max": 1.590354237190894e-11,
+      "kg_intrinsic_max": 1.0388578886022515e-10,
+      "kg_coordinate_difference": 1.197893312321341e-10,
+      "radius": 0.0196,
+      "position": [
+        0.0196,
+        0.0,
+        -1.200153863164406e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.412470389070222e-12,
+      "order_curvature_difference": 5.2544464779202826e-08,
+      "parent_metric_difference": 6.956213383091381e-12,
+      "parent_curvature_difference": 2.7495514132169774e-07
+    },
+    {
+      "einstein_max": 2.503311571016244e-10,
+      "kg_max": 1.590354237190894e-11,
+      "kg_intrinsic_max": 1.0388578886022515e-10,
+      "kg_coordinate_difference": 1.197893312321341e-10,
+      "radius": 0.0196,
+      "position": [
+        0.0196,
+        0.0,
+        1.200153863164406e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 4.412470389070222e-12,
+      "order_curvature_difference": 5.2544464779202826e-08,
+      "parent_metric_difference": 6.956213383091381e-12,
+      "parent_curvature_difference": 2.7495514132169774e-07
+    },
+    {
+      "einstein_max": 2.1481462631583969e-10,
+      "kg_max": 0.0,
+      "radius": 0.0204,
+      "position": [
+        0.0,
+        0.0,
+        -0.0204
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.9416469260468148e-12,
+      "order_curvature_difference": 2.249635144835338e-08,
+      "parent_metric_difference": 6.338041202980094e-12,
+      "parent_curvature_difference": 6.756763637483232e-08
+    },
+    {
+      "einstein_max": 2.1481462631583969e-10,
+      "kg_max": 0.0,
+      "radius": 0.0204,
+      "position": [
+        0.0,
+        0.0,
+        0.0204
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 2.9416469260468148e-12,
+      "order_curvature_difference": 2.249635144835338e-08,
+      "parent_metric_difference": 6.338041202980094e-12,
+      "parent_curvature_difference": 6.756763637483232e-08
+    },
+    {
+      "einstein_max": 1.23950499176263e-10,
+      "kg_max": 8.025947961787239e-12,
+      "kg_intrinsic_max": 1.9630519432212168e-11,
+      "kg_coordinate_difference": 1.160457147042493e-11,
+      "radius": 0.0204,
+      "position": [
+        0.00794413418309647,
+        0.0,
+        -0.01878964427765886
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.9184653865522705e-13,
+      "order_curvature_difference": 2.5128997549472842e-08,
+      "parent_metric_difference": 7.034373084024992e-13,
+      "parent_curvature_difference": 6.188584222854843e-08
+    },
+    {
+      "einstein_max": 1.23950499176263e-10,
+      "kg_max": 8.025947961787239e-12,
+      "kg_intrinsic_max": 1.9630519432212168e-11,
+      "kg_coordinate_difference": 1.160457147042493e-11,
+      "radius": 0.0204,
+      "position": [
+        0.00794413418309647,
+        0.0,
+        0.01878964427765886
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.9184653865522705e-13,
+      "order_curvature_difference": 2.5128997549472842e-08,
+      "parent_metric_difference": 7.034373084024992e-13,
+      "parent_curvature_difference": 6.188584222854843e-08
+    },
+    {
+      "einstein_max": 2.104981568149611e-10,
+      "kg_max": 1.9579560195381873e-11,
+      "kg_intrinsic_max": 4.6353143545729836e-11,
+      "kg_coordinate_difference": 6.593270374111171e-11,
+      "radius": 0.0204,
+      "position": [
+        0.0204,
+        0.0,
+        -1.2491397351303003e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 3.26139115713886e-12,
+      "order_curvature_difference": 3.340380771987839e-08,
+      "parent_metric_difference": 6.508571459562518e-12,
+      "parent_curvature_difference": 2.7375187983125215e-07
+    },
+    {
+      "einstein_max": 2.104981568149611e-10,
+      "kg_max": 1.9579560195381873e-11,
+      "kg_intrinsic_max": 4.6353143545729836e-11,
+      "kg_coordinate_difference": 6.593270374111171e-11,
+      "radius": 0.0204,
+      "position": [
+        0.0204,
+        0.0,
+        1.2491397351303003e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 3.26139115713886e-12,
+      "order_curvature_difference": 3.340380771987839e-08,
+      "parent_metric_difference": 6.508571459562518e-12,
+      "parent_curvature_difference": 2.7375187983125215e-07
+    },
+    {
+      "einstein_max": 2.2093821489070051e-10,
+      "kg_max": 0.0,
+      "radius": 0.027999999999999997,
+      "position": [
+        0.0,
+        0.0,
+        -0.027999999999999997
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 5.684341886080802e-14,
+      "order_curvature_difference": 5.359424903872423e-09,
+      "parent_metric_difference": 1.1226575225009583e-12,
+      "parent_curvature_difference": 2.9135700962967803e-08
+    },
+    {
+      "einstein_max": 2.2093821489070051e-10,
+      "kg_max": 0.0,
+      "radius": 0.027999999999999997,
+      "position": [
+        0.0,
+        0.0,
+        0.027999999999999997
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 5.684341886080802e-14,
+      "order_curvature_difference": 5.359424903872423e-09,
+      "parent_metric_difference": 1.1226575225009583e-12,
+      "parent_curvature_difference": 2.9135700962967803e-08
+    },
+    {
+      "einstein_max": 1.251189365234898e-10,
+      "kg_max": 8.945656715386718e-12,
+      "kg_intrinsic_max": 1.20543575121701e-11,
+      "kg_coordinate_difference": 2.1000014227556818e-11,
+      "radius": 0.028,
+      "position": [
+        0.010903713584642214,
+        0.0,
+        -0.02578970783208078
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.5631940186722204e-12,
+      "order_curvature_difference": 3.0440830300904054e-08,
+      "parent_metric_difference": 2.2097879082139116e-12,
+      "parent_curvature_difference": 6.159449128517736e-08
+    },
+    {
+      "einstein_max": 1.251189365234898e-10,
+      "kg_max": 8.945656715386718e-12,
+      "kg_intrinsic_max": 1.20543575121701e-11,
+      "kg_coordinate_difference": 2.1000014227556818e-11,
+      "radius": 0.028,
+      "position": [
+        0.010903713584642214,
+        0.0,
+        0.02578970783208078
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.5631940186722204e-12,
+      "order_curvature_difference": 3.0440830300904054e-08,
+      "parent_metric_difference": 2.2097879082139116e-12,
+      "parent_curvature_difference": 6.159449128517736e-08
+    },
+    {
+      "einstein_max": 1.2939448241410333e-10,
+      "kg_max": 3.4454800124095186e-11,
+      "kg_intrinsic_max": 2.6294078026012357e-11,
+      "kg_coordinate_difference": 8.160722098082829e-12,
+      "radius": 0.027999999999999997,
+      "position": [
+        0.027999999999999997,
+        0.0,
+        -1.7145055188062944e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.9113599591946695e-12,
+      "order_curvature_difference": 7.319988526433008e-08,
+      "parent_metric_difference": 9.237055564881302e-13,
+      "parent_curvature_difference": 1.2251427961018635e-07
+    },
+    {
+      "einstein_max": 1.2939448241410333e-10,
+      "kg_max": 3.4454800124095186e-11,
+      "kg_intrinsic_max": 2.6294078026012357e-11,
+      "kg_coordinate_difference": 8.160722098082829e-12,
+      "radius": 0.027999999999999997,
+      "position": [
+        0.027999999999999997,
+        0.0,
+        1.7145055188062944e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 1.9113599591946695e-12,
+      "order_curvature_difference": 7.319988526433008e-08,
+      "parent_metric_difference": 9.237055564881302e-13,
+      "parent_curvature_difference": 1.2251427961018635e-07
+    },
+    {
+      "einstein_max": 3.650192237008194e-10,
+      "kg_max": 0.0,
+      "radius": 0.0396,
+      "position": [
+        0.0,
+        0.0,
+        -0.0396
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 6.608047442568932e-13,
+      "order_curvature_difference": 1.615976756852433e-07,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 1.0658141036401503e-13
+    },
+    {
+      "einstein_max": 3.650192237008194e-10,
+      "kg_max": 0.0,
+      "radius": 0.0396,
+      "position": [
+        0.0,
+        0.0,
+        0.0396
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 6.608047442568932e-13,
+      "order_curvature_difference": 1.615976756852433e-07,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 1.0658141036401503e-13
+    },
+    {
+      "einstein_max": 1.9506433853555166e-10,
+      "kg_max": 1.6256315737983584e-11,
+      "kg_intrinsic_max": 1.6261658686289593e-11,
+      "kg_coordinate_difference": 5.342948306008566e-15,
+      "radius": 0.0396,
+      "position": [
+        0.015420966355422562,
+        0.0,
+        -0.03647401536251425
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 6.039613253960852e-13,
+      "order_curvature_difference": 5.2904326253155887e-08,
+      "parent_metric_difference": 1.1102230246251565e-16,
+      "parent_curvature_difference": 1.0231815394945443e-12
+    },
+    {
+      "einstein_max": 1.9506433853555166e-10,
+      "kg_max": 1.6256315737983584e-11,
+      "kg_intrinsic_max": 1.6261658686289593e-11,
+      "kg_coordinate_difference": 5.342948306008566e-15,
+      "radius": 0.0396,
+      "position": [
+        0.015420966355422562,
+        0.0,
+        0.03647401536251425
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 6.039613253960852e-13,
+      "order_curvature_difference": 5.2904326253155887e-08,
+      "parent_metric_difference": 1.1102230246251565e-16,
+      "parent_curvature_difference": 1.0231815394945443e-12
+    },
+    {
+      "einstein_max": 3.61745245095593e-10,
+      "kg_max": 6.963726817410532e-11,
+      "kg_intrinsic_max": 6.965050758367397e-11,
+      "kg_coordinate_difference": 1.3239409568654992e-14,
+      "radius": 0.0396,
+      "position": [
+        0.0396,
+        0.0,
+        -2.4248006623117595e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 7.318590178329032e-13,
+      "order_curvature_difference": 2.996923285536468e-06,
+      "parent_metric_difference": 7.771561172376096e-16,
+      "parent_curvature_difference": 9.094947017729282e-13
+    },
+    {
+      "einstein_max": 3.61745245095593e-10,
+      "kg_max": 6.963726817410532e-11,
+      "kg_intrinsic_max": 6.965050758367397e-11,
+      "kg_coordinate_difference": 1.3239409568654992e-14,
+      "radius": 0.0396,
+      "position": [
+        0.0396,
+        0.0,
+        2.4248006623117595e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "order_metric_difference": 7.318590178329032e-13,
+      "order_curvature_difference": 2.996923285536468e-06,
+      "parent_metric_difference": 7.771561172376096e-16,
+      "parent_curvature_difference": 9.094947017729282e-13
+    },
+    {
+      "einstein_max": 3.091720576929942e-10,
+      "kg_max": 0.0,
+      "radius": 0.0404,
+      "position": [
+        0.0,
+        0.0,
+        -0.0404
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 1.8207657603852567e-14
+    },
+    {
+      "einstein_max": 3.091720576929942e-10,
+      "kg_max": 0.0,
+      "radius": 0.0404,
+      "position": [
+        0.0,
+        0.0,
+        0.0404
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 1.8207657603852567e-14
+    },
+    {
+      "einstein_max": 2.3552766187470646e-10,
+      "kg_max": 1.7225346149452037e-11,
+      "kg_intrinsic_max": 1.7219115022726328e-11,
+      "kg_coordinate_difference": 6.231126725708691e-15,
+      "radius": 0.0404,
+      "position": [
+        0.015732501029269482,
+        0.0,
+        -0.03721086415771656
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 5.115907697472721e-13
+    },
+    {
+      "einstein_max": 2.3552766187470646e-10,
+      "kg_max": 1.7225346149452037e-11,
+      "kg_intrinsic_max": 1.7219115022726328e-11,
+      "kg_coordinate_difference": 6.231126725708691e-15,
+      "radius": 0.0404,
+      "position": [
+        0.015732501029269482,
+        0.0,
+        0.03721086415771656
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 5.115907697472721e-13
+    },
+    {
+      "einstein_max": 3.938544896253452e-10,
+      "kg_max": 7.346978581068697e-11,
+      "kg_intrinsic_max": 7.346789843154511e-11,
+      "kg_coordinate_difference": 1.887379141862766e-15,
+      "radius": 0.0404,
+      "position": [
+        0.0404,
+        0.0,
+        -2.4737865342776533e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 7.389644451905042e-13
+    },
+    {
+      "einstein_max": 3.938544896253452e-10,
+      "kg_max": 7.346978581068697e-11,
+      "kg_intrinsic_max": 7.346789843154511e-11,
+      "kg_coordinate_difference": 1.887379141862766e-15,
+      "radius": 0.0404,
+      "position": [
+        0.0404,
+        0.0,
+        2.4737865342776533e-18
+      ],
+      "positive_spatial_metric": true,
+      "timelike_normal": true,
+      "parent_metric_difference": 0.0,
+      "parent_curvature_difference": 7.389644451905042e-13
+    }
+  ],
+  "source_sha256": "918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f",
+  "join_continuity": "C6; degree-13 Bernstein step"
+}

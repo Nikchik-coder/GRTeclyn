@@ -22,7 +22,7 @@
 /// (usually) write their own conditions class which inherits from this one.
 /// Boundary handling combines AMReX ghost-cell filling with explicit RHS
 /// updates where required. FIRST_ORDER_EXTRAPOLATION_BC and REFLECTIVE_BC are
-/// translated into AMReX BCType values in GRAMRLevel::stateVariableSetUp(),
+/// translated into AMReX BCType values in GRAmrLevel::state_variable_set_up(),
 /// then imposed by AMReX when FillPatch fills the physical ghost cells.
 class BoundaryConditions
 {
@@ -97,9 +97,12 @@ class BoundaryConditions
     /// ghosts filled) the condition acts on the deviation a_soln - a_reference
     /// with asymptotic value zero: exact for a stationary reference that is
     /// not flat at the boundary, outgoing for perturbations of it.
+    /// A time-dependent reference also supplies a_reference_dt: its analytic
+    /// time derivative is added after applying Sommerfeld to the deviation.
     void apply_sommerfeld_boundaries(
         amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln,
-        const amrex::MultiFab *a_reference = nullptr) const;
+        const amrex::MultiFab *a_reference = nullptr,
+        const amrex::MultiFab *a_reference_dt = nullptr) const;
 };
 
 #endif /* BOUNDARYCONDITIONS_HPP_ */

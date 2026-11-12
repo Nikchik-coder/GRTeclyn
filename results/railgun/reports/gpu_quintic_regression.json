@@ -1,0 +1,226 @@
+{
+  "commit": "153c53c6",
+  "platform": "cuda",
+  "float64": true,
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1800,
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "34",
+      "time": "16.622",
+      "timestamp": "2026-11-01T16:05:12.285408+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_cubic_polynomial_projection_preserves_a_factored_field_and_zero_columns",
+      "time": "0.012",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_factored_flux_and_cartesian_ad_agree_with_an_analytic_finite_sphere",
+      "time": "2.597",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_tau_rows_do_not_hide_the_two_unimposed_outer_pdes",
+      "time": "0.688",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_falloff_recovery_budget_requires_the_saved_flux_rejection",
+      "time": "0.016",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_quintic_projection_is_a_stable_fit_of_physical_values",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_quintic_zero_j_flux_and_omitted_rows_are_explicit",
+      "time": "2.187",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_dragging_falloff",
+      "name": "test_flat_asymptotic_momentum_equation_selects_the_zero_j_octupole",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_preflight_never_starts_jax_and_bounds_all_three_grids",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change0]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change1]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change2]",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change3]",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change4]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change5]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_run_budget_and_physical_gates_cannot_silently_change[change6]",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_seed_checksum_and_screen_provenance_are_required",
+      "time": "0.003",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_an_accepted_state_cannot_masquerade_as_a_linear_screen",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_correction_has_one_additional_solve_and_cannot_change_the_model",
+      "time": "0.032",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_correction_verifies_prior_archive_before_reusing_passing_grids",
+      "time": "0.014",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_joint_acceptance_requires_gap_on_every_grid_and_component_convergence",
+      "time": "0.002",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_no_acceptance_from_two_grids_missing_corrections_or_nonfinite_charges",
+      "time": "0.001",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_finite_height_measurement_can_reject_an_equatorially_clear_gap",
+      "time": "0.006",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_unbordered_promotion_preserves_both_frequencies_and_adds_log_pin",
+      "time": "0.007",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_cylindrical_energy_per_component_matches_cartesian_ad[even--2]",
+      "time": "0.913",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_cylindrical_energy_per_component_matches_cartesian_ad[even--12]",
+      "time": "0.806",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_cylindrical_energy_per_component_matches_cartesian_ad[odd--2]",
+      "time": "0.694",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_annular_recovery",
+      "name": "test_cylindrical_energy_per_component_matches_cartesian_ad[odd--12]",
+      "time": "0.822",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_requested_device_and_precision",
+      "time": "0.028",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.0]",
+      "time": "0.683",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position0-0.4]",
+      "time": "0.603",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.0]",
+      "time": "0.528",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_kerr_ricci_and_kretschmann[position1-0.4]",
+      "time": "0.556",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_cartesian_interpolant_is_flat_and_finite_on_axis",
+      "time": "2.709",
+      "failed": false
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_geometry",
+      "name": "test_metric_interpolation_retains_coordinate_derivatives",
+      "time": "1.949",
+      "failed": false
+    }
+  ],
+  "log": "[capped_job] start 2026-11-01T16:05:10Z threads=4 mem=160G timeout=1800s\n..................................                                       [100%]\n34 passed, 1 deselected in 16.63s\n[capped_job] end 2026-11-01T16:05:29Z exit=0\n"
+}

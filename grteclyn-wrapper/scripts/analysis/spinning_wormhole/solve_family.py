@@ -20,8 +20,8 @@ import argparse
 import math
 import sys
 
-from grteclyn_wrapper.analysis.spinning_wormhole.continuation import run_family
-from grteclyn_wrapper.analysis.spinning_wormhole.conventions import (
+from grteclyn_stationary.spinning_wormhole.continuation import run_family
+from grteclyn_stationary.spinning_wormhole.conventions import (
     gamma_of_mass,
 )
 

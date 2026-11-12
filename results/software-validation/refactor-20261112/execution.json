@@ -1,0 +1,19 @@
+{
+  "job": "refactor-e2e-20261112-r2",
+  "node": "first GPU node, CPU only",
+  "start_utc": "2026-11-12T09:16:29Z",
+  "end_utc": "2026-11-12T09:19:27Z",
+  "exit_code": 0,
+  "threads": 4,
+  "address_space_cap_gib": 64,
+  "timeout_seconds": 1800,
+  "gpu_used": false,
+  "evolution_run": false,
+  "amrex_checkpoints": false,
+  "scratch_used_gb": 0,
+  "tmp_free_gb": 440,
+  "wheels": {
+    "grteclyn_stationary-0.1.0-py3-none-any.whl": "232506265d15da94a9c1ce4cf936ce68d4a1a0f258039e30c78c1e63bacb1dc4",
+    "grteclyn_workflows-0.1.0-py3-none-any.whl": "a39aa5dafc8bb1a165ed13e6603f2c4328c4eaa0460d431549b8d0043c9137e7"
+  }
+}

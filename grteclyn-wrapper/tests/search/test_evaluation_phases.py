@@ -9,17 +9,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from grteclyn_wrapper.core.config import resolve_example
-from grteclyn_wrapper.core.evaluation import (
-    CpuGateResult,
-    Evaluation,
-    _run_cpu_grtresna_gates,
-    _run_gpu_session,
-    evaluate_overrides,
-)
-from grteclyn_wrapper.core.episode import create_episode
-from grteclyn_wrapper.search.gpu_pool import GpuPool, GpuPoolConfig
-from grteclyn_wrapper.search.grtresna_evaluation_gates import GRTresnaPreEvolutionGateConfig
+from grteclyn_workflows.evolution.config import resolve_example
+from grteclyn_workflows.evolution.evaluation import CpuGateResult, Evaluation, _run_cpu_grtresna_gates, _run_gpu_session, evaluate_overrides
+from grteclyn_workflows.evolution.episode import create_episode
+from grteclyn_workflows.search.gpu_pool import GpuPool, GpuPoolConfig
+from grteclyn_workflows.search.grtresna_evaluation_gates import GRTresnaPreEvolutionGateConfig
 
 
 @pytest.fixture
@@ -30,7 +24,7 @@ def episode(tmp_path: Path):
 def test_cpu_gates_never_acquire_gpu(tmp_path: Path) -> None:
     pool = GpuPool(GpuPoolConfig(gpu_ids=[0], slots_per_gpu=1))
     with patch(
-        "grteclyn_wrapper.core.evaluation._run_cpu_grtresna_gates",
+        "grteclyn_workflows.evolution.evaluation._run_cpu_grtresna_gates",
         return_value=Evaluation(
             score=-80.0,
             components={"grtresna_rejection": -80.0},
@@ -77,7 +71,7 @@ def test_postload_reject_single_lease_released(tmp_path: Path, episode) -> None:
         return original_lease()
 
     with patch.object(pool, "lease", side_effect=counting_lease), patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate",
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate",
         return_value=MagicMock(
             reason="postload_fail",
             fitness=90.0,
@@ -86,7 +80,7 @@ def test_postload_reject_single_lease_released(tmp_path: Path, episode) -> None:
             notes=(),
             metrics=None,
         ),
-    ), patch("grteclyn_wrapper.core.evaluation.run_episode") as mock_episode:
+    ), patch("grteclyn_workflows.evolution.evaluation.run_episode") as mock_episode:
         with pool.lease() as gpu:
             result = _run_gpu_session(
                 cpu_result=cpu_result,
@@ -132,24 +126,24 @@ def test_postload_pass_lease_spans_evolution(tmp_path: Path, episode) -> None:
         return original_lease()
 
     with patch.object(pool, "lease", side_effect=counting_lease), patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate",
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate",
         return_value=None,
     ), patch(
-        "grteclyn_wrapper.core.evaluation.run_episode",
+        "grteclyn_workflows.evolution.evaluation.run_episode",
         return_value=MagicMock(returncode=0),
     ) as mock_episode, patch(
-        "grteclyn_wrapper.core.evaluation.read_episode_metrics",
+        "grteclyn_workflows.evolution.evaluation.read_episode_metrics",
         return_value=MagicMock(__dataclass_fields__={}),
     ), patch(
-        "grteclyn_wrapper.core.evaluation.score_episode",
+        "grteclyn_workflows.evolution.evaluation.score_episode",
         return_value=MagicMock(total=2.0, components={}, notes=[]),
     ), patch(
-        "grteclyn_wrapper.core.evaluation.dataclass_to_dict",
+        "grteclyn_workflows.evolution.evaluation.dataclass_to_dict",
         side_effect=lambda obj: {"total": 2.0, "components": {}, "notes": []}
         if hasattr(obj, "total")
         else {},
     ), patch(
-        "grteclyn_wrapper.core.evaluation.write_params",
+        "grteclyn_workflows.evolution.evaluation.write_params",
     ):
         with pool.lease() as gpu:
             _run_gpu_session(
@@ -186,20 +180,20 @@ def test_postload_disabled_skips_gpu_gate(tmp_path: Path, episode) -> None:
         gate_config=GRTresnaPreEvolutionGateConfig(),
     )
     with patch(
-        "grteclyn_wrapper.core.evaluation.reject_postload_gate",
+        "grteclyn_workflows.evolution.evaluation.reject_postload_gate",
     ) as mock_postload, patch(
-        "grteclyn_wrapper.core.evaluation.read_episode_metrics",
+        "grteclyn_workflows.evolution.evaluation.read_episode_metrics",
         return_value=MagicMock(__dataclass_fields__={}),
     ), patch(
-        "grteclyn_wrapper.core.evaluation.score_episode",
+        "grteclyn_workflows.evolution.evaluation.score_episode",
         return_value=MagicMock(total=1.0, components={}, notes=[]),
     ), patch(
-        "grteclyn_wrapper.core.evaluation.dataclass_to_dict",
+        "grteclyn_workflows.evolution.evaluation.dataclass_to_dict",
         side_effect=lambda obj: {"total": 1.0, "components": {}, "notes": []}
         if hasattr(obj, "total")
         else {},
     ), patch(
-        "grteclyn_wrapper.core.evaluation.write_params",
+        "grteclyn_workflows.evolution.evaluation.write_params",
     ):
         _run_gpu_session(
             cpu_result=cpu_result,
@@ -234,10 +228,10 @@ def test_solve_only_returns_after_cpu_phase_without_gpu(tmp_path: Path, episode)
         gate_config=GRTresnaPreEvolutionGateConfig(),
     )
     with patch(
-        "grteclyn_wrapper.core.evaluation._run_cpu_grtresna_gates",
+        "grteclyn_workflows.evolution.evaluation._run_cpu_grtresna_gates",
         return_value=cpu_result,
     ) as mock_cpu, patch(
-        "grteclyn_wrapper.core.evaluation._run_gpu_session"
+        "grteclyn_workflows.evolution.evaluation._run_gpu_session"
     ) as mock_gpu:
         result = evaluate_overrides(
             {"grtresna_lumps": 1},
@@ -287,9 +281,9 @@ def test_solve_only_propagates_cpu_rejection(tmp_path: Path) -> None:
         metrics={},
     )
     with patch(
-        "grteclyn_wrapper.core.evaluation._run_cpu_grtresna_gates",
+        "grteclyn_workflows.evolution.evaluation._run_cpu_grtresna_gates",
         return_value=rejection,
-    ), patch("grteclyn_wrapper.core.evaluation._run_gpu_session") as mock_gpu:
+    ), patch("grteclyn_workflows.evolution.evaluation._run_gpu_session") as mock_gpu:
         result = evaluate_overrides(
             {"grtresna_lumps": 1},
             out_dir=tmp_path,

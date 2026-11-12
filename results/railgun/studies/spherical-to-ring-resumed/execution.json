@@ -1,0 +1,10 @@
+{
+  "commit": "da1280f53e015f90678a90de7d79315193f15fa8",
+  "threads": 4,
+  "address_space_gib": 160,
+  "timeout_seconds": 1500,
+  "jacobian_chunk": 128,
+  "start_msk": "2026-11-01 10:56:58",
+  "end_msk": "2026-11-01 10:57:42",
+  "exit_code": 2
+}

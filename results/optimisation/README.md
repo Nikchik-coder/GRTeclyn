@@ -1,0 +1,110 @@
+# Quantum-budget campaign — measured data
+
+Campaign F (plan: `research/optimisation/Quantum Budget Wormhole Search.md`,
+status: `research/optimisation/STATUS.md`).  Everything here rebuilds from a
+clean checkout on CPU; no run output is involved.
+Figures live under [`figures/`](figures/README.md), grouped by meaning:
+search, coverage, stationary, evolution and setup.
+
+## Campaign M search figures
+
+`figures/coverage/potential_scans.{png,pdf}` now shows the ten completed fixed-size,
+fixed-spin CMA-ES searches through 2026-10-30, replacing the earlier
+fixed-mass slice overview. Rebuild with the wrapper Python and
+`-m grteclyn_workflows.plotting.optimisation.plot_potential_scans`.
+Its explicit `SEARCHES` list selects the packed TSVs under `opt/`, including
+the latest D30 and D80 traces. Parameter projections show every recorded
+proposal, including failed solves; they are not interpolated response surfaces.
+Diamonds and running minima use stored PASS/FRONTIER rows, the background
+constraint ceiling of 1e-6, and do not represent stability or finer-grid clearance.
+Each progress curve is divided by its own first qualifying candidate's X.
+Evaluation numbers are TSV row indices; inadmissible proposals rejected before
+the Newton solve are absent from these TSVs. Extension trials are excluded.
+
+`figures/search/cma_progress_d21.{png,pdf}` uses
+`opt/fam_a_r1_0000_opt4s_150x30_kink.tsv`. Rebuild with
+`-m grteclyn_workflows.plotting.optimisation.plot_cma_progress --tsv`
+followed by that file path. It shows the same constraint threshold, a running
+minimum, and an inset resolving the second half of the recorded search.
+
+## Campaign M article tables and resolution study
+
+`article/ledger_models.tsv` selects the parameter and exoticity tables and
+the original search-grid points in `figures/stationary/exotic_spin.{png,pdf}`. The spin
+figure now replaces D0/D21/D30 with their selected 210x42 fields and adds
+the validated D40/D46 finalists. Filled squares identify these five fine-grid
+solutions; open markers retain the other search-grid selections. Squares and
+solid blue guides denote D; circles and dashed light-blue guides denote S.
+The curves use shape-preserving cubic interpolation (PCHIP) through the
+sampled values, with no extrapolation or inferred fit law. The same
+interpolation smooths the display of the sampled massless reference curves. Individual
+model labels are omitted to keep the single-column figure readable. Its explicit
+`REFINED` source list reads the archived validation and completed searches;
+D21 comes from the article ledger. Rotation is the massless reference's
+value (zero for D0), and each family retains its own static normalization.
+Rebuild with `-m grteclyn_workflows.plotting.optimisation.plot_exotic_spin`.
+See `article/README.md` for table provenance and the claims checker.
+
+`campaign/` contains the final D21 N96/N128/N192 diagnostic streams and
+numerical settings. Rebuild `figures/evolution/convergence_d21.{png,pdf}` with
+`-m grteclyn_workflows.plotting.optimisation.plot_convergence`.
+The plot and measured order table use these tracked inputs. Constraint orders
+are measured through t=50; the later diagnostic histories show contraction.
+The classical evolution has different angular momentum and sponge driving;
+a controlled delay comparison is deferred in the campaign STATUS.
+
+## Completed searches and evolution comparisons
+
+`completed/2026-10-31/` archives the finished D30 search (400 evaluations,
+final three-grid PASS, X = 1.918733359440, stability unassessed) and D0's
+N128 evolution, which contracted and terminated with NaN in K at t = 88.4175.
+The pack includes complete small diagnostic streams and the validated D30
+fields. D30 and D40 completed t=100; D46 terminated near t=141.43 with
+a NaN. The article figures include all five evolved potential models.
+Rebuild with `-m grteclyn_workflows.plotting.optimisation.plot_contraction_delay`
+and `-m grteclyn_workflows.plotting.optimisation.plot_instability_curve`.
+D46 analysis stops at t=100, before its late numerical breakdown. Its
+classical reference briefly crosses 1% contraction and then expands, while
+the optimized run keeps contracting. The figures distinguish first-crossing
+delay from the growth rate and eventual direction of motion.
+
+The fixed-area extension archives under `validation/2026-10-31-extensions/`
+include the finished nonrotating boson CMA and strict rotating continuation.
+Neither produced a validated D21 boson winner; rejected proposals are not
+added as physical points to the article figures.
+
+The completed high-spin and geometry experiments are archived in
+[`completed/2026-11-01-extensions`](completed/2026-11-01-extensions/README.md).
+The D90 extensions establish no validated gain over V=0; the signed-interior
+minimum is rejected. Two geometry finalists pass independent refinement, but
+matching massless controls at their increased spin remain unresolved. The
+relaxed-domain winner still has a positive potential throughout the field
+interval. These exploratory outputs are excluded from article figures.
+
+## Stationary mechanism and trade-offs
+
+`physics/` compares saved D0/D21/D30 fields with their exact fixed-R_e,
+fixed-J massless references. Optimisation localises the scalar gradients:
+the total exoticity decreases while peak NEC violation, peak tides and
+finite-endpoint light transit increase. See [definitions, results and
+checks](physics/README.md). The article uses `figures/stationary/mechanism_d21` and a
+comparison table from `article/ledger_physics.tsv`; the numerical profiles
+stay under `physics/`. The redundant NEC map and trade-off plot are removed.
+
+## Campaign F measurements
+
+| path | what | rebuild |
+|---|---|---|
+| `binaries.tsv` | Campaign M GRTeclyn evolution builds and provenance | `grteclyn-wrapper/scripts/campaigns/optimisation/build_binary.sh` |
+| `fcurve/f_curve.tsv` | one row per solution of both spin families (200 saved solutions + 2 synthesized static anchors): the Ford–Roman compliance factor fhat, its normalizations, gates | `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/quantum_budget/measure_f.py` |
+| `fcurve/measurement.json` | the measurement's configuration and provenance | written by the same script |
+
+Definitions (one place: `grteclyn_workflows/analysis/quantum_budget/conventions.py`):
+fhat is F with the code length unit read as one Planck length;
+F at a physical throat is `fhat / R_eq^2 * (R_phys / l_p)^2`
+(`log10_F_1m` in the TSV); `max_planck_throat` is the largest throat radius,
+in Planck lengths, with F <= 1.  The bound is the flat Ford–Roman Lorentzian
+one for the massless scalar, sampled by stationary observers with
+tau0 = ell_c (the local curvature scale); `fhat_field_max` documents the
+tail illegality of phantom-supported members (the pointwise budget grows
+without bound off the throat), never the curve.

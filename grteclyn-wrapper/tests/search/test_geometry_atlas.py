@@ -7,47 +7,17 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.io.gridinit import read_gridinit
-from grteclyn_wrapper.initial_data.adm_stationary import pack_ccz4_grid
-from grteclyn_wrapper.initial_data.teo import TeoWormholeConfig, build_adm, build_grid
-from grteclyn_wrapper.metrics.probes.ftl.geodesic import build_metric_3d_from_gridinit
-from grteclyn_wrapper.search.geometry_atlas import (
-    GeometryAtlasConfig,
-    GeometryGenomeConfig,
-    RenderConfig,
-    calibrate_atlas_probe,
-    evaluate_genome,
-    mutate_genome,
-    render_and_write,
-    render_genome,
-    run_geometry_atlas,
-    run_geometry_cmaes,
-    sample_genome,
-    seed_alcubierre_genome,
-    zero_genome,
-)
-from grteclyn_wrapper.search.geometry_atlas.ansatz import (
-    ANALYTIC_PARAMS,
-    ansatz_offset,
-)
-from grteclyn_wrapper.search.geometry_atlas.genome import (
-    GeometryGenome,
-    genome_bounds,
-)
-from grteclyn_wrapper.search.geometry_atlas.genome import (
-    PARAMS_PER_CENTER,
-    compact_envelope,
-    decode_fields_at_points,
-    fibonacci_centers,
-    unpack_alcubierre,
-)
-from grteclyn_wrapper.search.geometry_atlas.score import (
-    cell_from_descriptors,
-    descriptor_axes,
-    probe_half_length,
-)
-from grteclyn_wrapper.search.qd_search.archive import QDArchive
-from grteclyn_wrapper.visualisation.geometry_atlas.embedding import intrinsic_embedding
+from grteclyn_workflows.grtresna.io.gridinit import read_gridinit
+from grteclyn_workflows.initial_data.adm_stationary import pack_ccz4_grid
+from grteclyn_workflows.initial_data.teo import TeoWormholeConfig, build_adm, build_grid
+from grteclyn_workflows.diagnostics.probes.ftl.geodesic import build_metric_3d_from_gridinit
+from grteclyn_workflows.search.geometry_atlas import GeometryAtlasConfig, GeometryGenomeConfig, RenderConfig, calibrate_atlas_probe, evaluate_genome, mutate_genome, render_and_write, render_genome, run_geometry_atlas, run_geometry_cmaes, sample_genome, seed_alcubierre_genome, zero_genome
+from grteclyn_workflows.search.geometry_atlas.ansatz import ANALYTIC_PARAMS, ansatz_offset
+from grteclyn_workflows.search.geometry_atlas.genome import GeometryGenome, genome_bounds
+from grteclyn_workflows.search.geometry_atlas.genome import PARAMS_PER_CENTER, compact_envelope, decode_fields_at_points, fibonacci_centers, unpack_alcubierre
+from grteclyn_workflows.search.geometry_atlas.score import cell_from_descriptors, descriptor_axes, probe_half_length
+from grteclyn_workflows.search.qd_search.archive import QDArchive
+from grteclyn_workflows.plotting.geometry_atlas.embedding import intrinsic_embedding
 
 
 def test_zero_genome_is_minkowski():

@@ -1,0 +1,175 @@
+Initializing AMReX (26.02-12-gd7da50458966)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (26.02-12-gd7da50458966) initialized
+GRTeclyn (3e6466ed) initialized
+Parameter: num_ghosts not found in parameter file. It has been set to its default value = 3.
+Parameter: tag_buffer_size not found in parameter file. It has been set to its default value = 3.
+Parameter: grid_buffer_size not found in parameter file. It has been set to its default value = 8.
+Parameter: fill_ratio not found in parameter file. It has been set to its default value = 0.7.
+Using single regrid threshold.
+Parameter: checkpoint_keep not found in parameter file. It has been set to its default value = 0.
+Parameter: lapse_shock_kappa not found in parameter file. It has been set to its default value = 0.
+Parameter: nan_autopsy not found in parameter file. It has been set to its default value = 0.
+Parameter: chi_rhs_floor not found in parameter file. It has been set to its default value = 0.
+Parameter: activate_extraction not found in parameter file. It has been set to its default value = 0.
+Parameter: kappa1 = 0.1 warning: setting to 0.0 as required for BSSN!
+Parameter: kappa3 = 1 warning: setting to 0.0 as required for BSSN!
+Parameter: extraction_center not found in parameter file. It has been set to its default value = 16 16 16.
+Parameter: recipe_support_strength not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_num_scalar_fields not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_scalar_field_sign_0 not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_scalar_field_sign_1 not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_scalar_field_sign_2 not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_scalar_field_sign_3 not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_scalar_field_sign_4 not found in parameter file. It has been set to its default value = 1.
+recipe_scalar_field_signs parsed: 1 1 1 1 1
+Parameter: rl_coarse_step_interval not found in parameter file. It has been set to its default value = 64.
+Parameter: rl_zmq_port not found in parameter file. It has been set to its default value = 5555.
+Parameter: rl_zmq_timeout_ms not found in parameter file. It has been set to its default value = 120000.
+Parameter: rl_num_lumps not found in parameter file. It has been set to its default value = 1.
+Parameter: rl_pump_width not found in parameter file. It has been set to its default value = 1.5.
+Parameter: rl_pump_max_amplitude not found in parameter file. It has been set to its default value = 0.05.
+Parameter: rl_l2_ham_governor_center not found in parameter file. It has been set to its default value = 0.035.
+Parameter: rl_l2_ham_governor_width not found in parameter file. It has been set to its default value = 0.003.
+Parameter: rl_pump_kp not found in parameter file. It has been set to its default value = 0.
+Parameter: rl_pump_kd not found in parameter file. It has been set to its default value = 0.
+Parameter: rl_pump_kp_phantom not found in parameter file. It has been set to its default value = -1.
+Parameter: rl_pump_kd_phantom not found in parameter file. It has been set to its default value = -1.
+Parameter: rl_pump_target_profile not found in parameter file. It has been set to its default value = 0.
+Parameter: rl_pump_target_width not found in parameter file. It has been set to its default value = 0.
+Parameter: rl_pump_target_amp not found in parameter file. It has been set to its default value = 0.
+Parameter: rl_pump_superpose_targets not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_num_lumps not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_A_breath not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_omega_breath not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_z_amp not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_omega_z not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_well_width not found in parameter file. It has been set to its default value = 1.5.
+Parameter: trajectory_pump_frequency not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump0_R0 not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_lump0_omega_rot not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump0_phase0 not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump0_tilt_theta not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump0_tilt_phi not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump0_well_depth not found in parameter file. It has been set to its default value = 0.05.
+Parameter: trajectory_lump0_v_rad not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump1_R0 not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_lump1_omega_rot not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump1_phase0 not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump1_tilt_theta not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump1_tilt_phi not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump1_well_depth not found in parameter file. It has been set to its default value = 0.05.
+Parameter: trajectory_lump1_v_rad not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump2_R0 not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_lump2_omega_rot not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump2_phase0 not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump2_tilt_theta not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump2_tilt_phi not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump2_well_depth not found in parameter file. It has been set to its default value = 0.05.
+Parameter: trajectory_lump2_v_rad not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump3_R0 not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_lump3_omega_rot not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump3_phase0 not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump3_tilt_theta not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump3_tilt_phi not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump3_well_depth not found in parameter file. It has been set to its default value = 0.05.
+Parameter: trajectory_lump3_v_rad not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump4_R0 not found in parameter file. It has been set to its default value = 5.
+Parameter: trajectory_lump4_omega_rot not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump4_phase0 not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump4_tilt_theta not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump4_tilt_phi not found in parameter file. It has been set to its default value = 0.
+Parameter: trajectory_lump4_well_depth not found in parameter file. It has been set to its default value = 0.05.
+Parameter: trajectory_lump4_v_rad not found in parameter file. It has been set to its default value = 0.
+Parameter: sponge_enabled not found in parameter file. It has been set to its default value = 0.
+Parameter: sponge_inner_radius not found in parameter file. It has been set to its default value = 24.
+Parameter: sponge_outer_radius not found in parameter file. It has been set to its default value = 32.
+Parameter: sponge_strength not found in parameter file. It has been set to its default value = 4.
+Parameter: sponge_ramp_power not found in parameter file. It has been set to its default value = 4.
+Parameter: sponge_center not found in parameter file. It has been set to its default value = 16 16 16.
+Parameter: constraint_shells_dt not found in parameter file. It has been set to its default value = 0.
+Parameter: treadmill_enabled not found in parameter file. It has been set to its default value = 0.
+Parameter: treadmill_axis not found in parameter file. It has been set to its default value = 0.
+Parameter: treadmill_threshold not found in parameter file. It has been set to its default value = 2.
+Parameter: treadmill_check_interval not found in parameter file. It has been set to its default value = 20.
+Parameter: treadmill_ball_radius not found in parameter file. It has been set to its default value = 8.
+Parameter: treadmill_fill_mode not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_bases not found in parameter file. It has been set to its default value = 4.
+Parameter: recipe_basis_width not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_basis_radius_max not found in parameter file. It has been set to its default value = 8.
+Parameter: recipe_chi_asymptotic not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_alpha_asymptotic not found in parameter file. It has been set to its default value = 1.
+Parameter: recipe_beta_asymptotic not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_K_asymptotic not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_phi_asymptotic not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_Pi_asymptotic not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_chi_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_chi_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_chi_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_chi_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_alpha_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_alpha_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_alpha_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_alpha_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_beta_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_beta_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_beta_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_beta_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_K_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_K_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_K_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_K_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_phi_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_phi_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_phi_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_phi_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_Pi_coeff_0 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_Pi_coeff_1 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_Pi_coeff_2 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_Pi_coeff_3 not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_chi_angular_modes not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_chi_Ylm_modes not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_lapse_angular_modes not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_beta_angular_modes not found in parameter file. It has been set to its default value = 0.
+Parameter: recipe_num_K_angular_modes not found in parameter file. It has been set to its default value = 0.
+Successfully read inputs file ... 
+Successfully read inputs file ... 
+ExternalGridInitialData: mapped 29 of 41 state variables by name
+ExternalGridInitialData: loaded runs/railgun/evolution/initial-070-n96-20261102/initial.gridinit (104x104x104, 29 components)
+INITIAL GRIDS 
+  Level 0   27 grids  884736 cells  100 % of domain
+            smallest grid: 32 x 32 x 32  biggest grid: 32 x 32 x 32
+
+PLOTFILE: file = <scratch>/ring070-n96-t2-20261102/_preflight/run/plt00000
+Write plotfile time = 0.158227275  seconds
+
+Unused ParmParse Variables:
+  [TOP]::hdf5_subpath(nvals = 1)  :: [hdf5]
+
+amrex::Abort::0::ERROR: unused ParmParse variables. !!!
+SIGABRT
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+addr2line: '<scratch>/ring070-n96-t2-20261102/_preflight/run/test': No such file
+See Backtrace.0 file for details
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+  Proc: [[17041,0],0]
+  Errorcode: 6
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

@@ -82,7 +82,7 @@ export SCORE_PUMP_ENERGY_WEIGHT="${SCORE_PUMP_ENERGY_WEIGHT:-40}"
 # run sits inside the validated band, so the 4-unit igniter was leaving 12 of
 # 16 units unpumped for no constraint-budget reason.
 export RL_PUMP_STOP_TIME="${RL_PUMP_STOP_TIME:--1}"
-# RL_PUMP_STOP_TIME doubles as the f_geo emission floor (metrics/score/ftl.py
+# RL_PUMP_STOP_TIME doubles as the f_geo emission floor (search/scoring/ftl.py
 # prefers GEODESIC_EMIT_MIN_TIME, else falls back to it).  With the pump always
 # on that fallback yields no floor at all, so every ray from t=0 would count and
 # f_geo would silently change meaning.  Pin the floor explicitly at the old

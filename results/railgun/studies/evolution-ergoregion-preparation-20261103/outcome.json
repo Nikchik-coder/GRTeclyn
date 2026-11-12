@@ -1,0 +1,59 @@
+{
+  "stage": "complete",
+  "accepted": false,
+  "reason": "origin_curvature_agreement",
+  "source_sha256": "918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f",
+  "origin_checks": [
+    {
+      "name": "core",
+      "commit": "574f1a6ac",
+      "exit_code": 2,
+      "accepted": false,
+      "maxima": {
+        "einstein_max": 4.544046073724693e-10,
+        "kg_max": 7.346978581068697e-11,
+        "kg_intrinsic_max": 1.4770229483929143e-10,
+        "kg_coordinate_difference": 1.6280509579358338e-10,
+        "order_metric_difference": 1.0018652574217413e-11,
+        "order_curvature_difference": 2.996923285536468e-06,
+        "parent_metric_difference": 7.950973213155521e-12,
+        "parent_curvature_difference": 6.083968066228351e-06
+      }
+    },
+    {
+      "name": "core-dct",
+      "commit": "71b2cabb8",
+      "exit_code": 2,
+      "accepted": false,
+      "maxima": {
+        "einstein_max": 4.774303498744564e-10,
+        "kg_max": 4.069701173281537e-12,
+        "kg_intrinsic_max": 2.702904566831421e-11,
+        "kg_coordinate_difference": 3.109874684159575e-11,
+        "order_metric_difference": 2.6929569685307797e-12,
+        "order_curvature_difference": 5.742708708567079e-07,
+        "parent_metric_difference": 6.743050562363351e-12,
+        "parent_curvature_difference": 2.87102849938492e-07
+      }
+    },
+    {
+      "name": "core-fit",
+      "commit": "437072396",
+      "exit_code": 2,
+      "accepted": false,
+      "maxima": {
+        "einstein_max": 4.5348945159547985e-10,
+        "kg_max": 1.71940239823698e-12,
+        "kg_intrinsic_max": 2.702904566831421e-11,
+        "kg_coordinate_difference": 2.8066991439312794e-11,
+        "order_metric_difference": 2.8848035071860068e-12,
+        "order_curvature_difference": 1.7572718036262813e-07,
+        "parent_metric_difference": 6.94910795573378e-12,
+        "parent_curvature_difference": 2.873407218828561e-07
+      }
+    }
+  ],
+  "gpu_regressions_passed": 35,
+  "evolutions_started": 0,
+  "checkpoints": false
+}

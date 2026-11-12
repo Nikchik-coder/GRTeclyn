@@ -1,0 +1,28 @@
+{
+  "commit": "303bdab5",
+  "platform": "cuda",
+  "float64": true,
+  "ended_msk": "2026-11-01 10:43:52",
+  "fixture": "results/railgun/spherical-validated/accepted.npz",
+  "suites": [
+    {
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "140.428"
+    }
+  ],
+  "cases": [
+    {
+      "classname": "tests.optimisation.test_railgun_baseline",
+      "name": "test_saved_spherical_intrinsic_kg_and_regular_cartesian_core",
+      "time": "140.275"
+    },
+    {
+      "classname": "tests.optimisation.test_railgun_baseline",
+      "name": "test_saved_spherical_metric_supplies_a_bound_integer_winding_mode",
+      "time": "0.129"
+    }
+  ]
+}
