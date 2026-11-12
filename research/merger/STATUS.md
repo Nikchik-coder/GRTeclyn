@@ -15,16 +15,18 @@ Builds: BinaryWormholeMerger, SpinningWormhole and RadialRecipe; separate
 executables, with the production pins retained. First comparison: archived
 `place_d8_step1_csm`, unchanged N=128, L=64, three refinement levels,
 mode-3 constraint solve, dt=0.01 and one coarse evolution step.
-State: both placement evolutions finished at t=0.01; consumers draining.
-All 20 evolved fields agree within 4.8e-16. Weyl4 differs by up to 0.0371.
-The old callback defaulted the misspelled `G_newton` key to zero; the new
-callback uses `G_Newton`/matter coupling. A third one-step old-binary run
-with **only** `G_newton=1` is launched on first-node card 0 to isolate that
-cause (0.5 h cap; no checkpoints). The updated merger, spin and scalar CUDA
-binaries are built. Production pins remain unchanged.
-Logs:
-`runs/upstream-evolution-20261112/`. Comparisons will report evolved fields
-and derived diagnostics separately. No full-campaign equivalence established.
+Completed: all three one-step runs and their full-frame consumers exited 0.
+All 20 stored evolution fields agree within 4.8e-16. Constraint norms match
+both the pre-merge build and the archived run at printed precision.
+Weyl4 differs by up to 0.0371 under the original inputs. Changing **only**
+the old callback's `G_newton` to 1 restores agreement to 7.1e-15: the default
+matter coupling explains the discrepancy. At R=14 the t=0 real l=2,m=0
+mode changes from 1.4060318e-3 to 1.2134236e-3; this initial near-field
+comparison is not a measurement of the change in radiated energy.
+Evidence: `results/software-validation/upstream-evolution-20261112/`.
+All three updated research CUDA binaries are built. Production pins remain
+unchanged. Placement scratch was pruned after packing; all NFS frames remain.
+No long merger/spinning evolution equivalence has been established.
 
 ## Live
 

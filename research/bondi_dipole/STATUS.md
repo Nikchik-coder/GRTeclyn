@@ -24,7 +24,9 @@ both templates, with no active input changed. Before/after evolutions are now
 launched on first-node cards 0/1 (`upstream-scalar-{before,after}-active-20261112`). This tests code compatibility on that input,
 not reproduction of the revised paper's full t=200/1000 runs. Logs and templates:
 `runs/upstream-evolution-20261112/`; job `upstream-scalar-after-20261112`.
-Preflight/start verification pending; speed and ETA not yet measured.
+Both full preflights passed and consumers are advancing. At 13:48 MSK,
+before/after are at t=6.23/6.82, 241/265 units per hour; estimated remaining
+evolution 0.02 h, finishing around 13:49 MSK. Final comparison pending.
 
 ## Journal trail
 
