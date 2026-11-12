@@ -31,13 +31,20 @@ study through t=2 is complete; no long-time stability claim. See [EVOLUTION.md](
 
 ## Software validation — 2026-11-12
 
-The wrapper refactor extracts `grteclyn-stationary` as a standalone package.
-The installed wheel passes cold-import, CLI and exact-background recovery checks
-with wrapper imports blocked. Physics equations and acceptance gates are unchanged.
-CPU-only cluster verification is queued for the archived spherical-core fixture
-and slow boson-profile regressions: first node, four CPU threads, 64 GiB
-address-space cap, 0.5 h hard limit. No evolution, GPU or checkpoints.
-Logs will be in `runs/capped_jobs/stationary-packaging-cpu-20261112/`.
+Source `f17403e01` extracts `grteclyn-stationary` as a standalone package.
+Local checks: 946 passed, 12 skipped; one missing rotating-wormhole template
+failure also reproduces on the original source. The installed wheel passes
+cold imports, CLI and exact-background recovery with wrapper imports blocked.
+Physics equations and acceptance gates are unchanged.
+
+**Running:** `stationary-packaging-cpu-20261112-r2`, first node, CPU only,
+started **10:30:12 MSK**; four CPU threads, 64 GiB address-space cap,
+**0.5 h hard limit (11:00:12 MSK)**. It checks the archived spherical-core
+fixture and slow boson-profile regressions; no evolution, GPU or checkpoints.
+Logs: `runs/capped_jobs/stationary-packaging-cpu-20261112-r2/`.
+The unsuffixed attempt exited 127 before pytest: the optional `/usr/bin/time`
+executable was absent. Its log is retained; the corrected command has identical
+resource limits and test selection. Scratch absent (0 GB); `/tmp` 440 GB free.
 
 ## Live and queue
 
