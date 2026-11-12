@@ -4,6 +4,30 @@ The tested evolution fields reproduce to floating-point roundoff. The Weyl4
 diagnostic does not reproduce the old default: the merge restores a matter
 contribution that the old callback omitted unless `G_newton` was specified.
 
+The upstream history identifies the change precisely. Commit `d4541f2c1`
+introduced Einstein sources containing `8*pi*G`; `7c510350f` switched Weyl4
+to those sources and removed the callback's lowercase `G_newton` lookup
+with its zero default. Thus `-4*pi*G*STF(S)` became
+`-0.5*STF(source.S)`, the same expression when the old coupling is set
+correctly. The vacuum electric/magnetic tensors and tetrad projection did
+not change. Upstream `4a474a49e` also filled derived ghost cells, a fix
+already present in this fork before the merge.
+
+The merged callback retains the upstream source convention, plus the fork's
+explicit global `G_Newton` override and coordinate/time-aware matter dispatch.
+Without that override, native `ScalarField` uses `scalar_field.G_Newton`;
+research classes without native coupled sources use G=1. Restoring the old
+zero default would reintroduce the missing matter contribution.
+
+Independent callback regression: `Tests/MatterDispatchTest/WeylMatterCouplingTest.cpp`
+checks an analytic anisotropic stress on flat geometry, time-dependent stress,
+native ScalarField coupling at G=0.3, explicit G=2 and G=0, output component
+offsets and ghost cells. This is an isolated formula fixture, not an Einstein
+solution. Its 60 assertions pass; together with MatterDispatch, Weyl4 and
+Weyl4WithMatter, the targeted CPU run passes 4 cases / 75 assertions
+(`weyl-coupling-tests.txt`). The review required no further production formula
+change; the CUDA control above already exercises the corrected implementation.
+
 `builds.json` records six executable hashes: BinaryWormholeMerger,
 SpinningWormhole and RadialRecipe before (`66ed1a658`) and after (`ef14909fc`)
 the merge. Both arms used the same H100 node, CUDA/MPI flags, compiler and

@@ -1,0 +1,6 @@
+[doctest] doctest version is "2.5.3"
+[doctest] run with "--dt-help" for options
+===============================================================================
+[doctest] test cases:  4 |  4 passed | 0 failed | 16 skipped
+[doctest] assertions: 75 | 75 passed | 0 failed |
+[doctest] Status: SUCCESS!

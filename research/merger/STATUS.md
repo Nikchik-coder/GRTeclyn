@@ -27,6 +27,9 @@ Evidence: `results/software-validation/upstream-evolution-20261112/`.
 All three updated research CUDA binaries are built. Production pins remain
 unchanged. Placement scratch was pruned after packing; all NFS frames remain.
 No long merger/spinning evolution equivalence has been established.
+Weyl follow-up: upstream `7c510350f` removed the zero-default matter coupling;
+the merged callback passes independent analytic coupling/time/ghost-cell checks
+(4 targeted CPU cases, 75 assertions). No additional formula correction needed.
 
 ## Live
 
