@@ -65,7 +65,14 @@ entry point imported successfully, or that full campaign outputs were unchanged.
 
 ## Live and queue
 
-**Software reproduction solves complete; plot check needs harness correction**, first node CPU,
+**Full software reproduction retry running**, first node CPU,
+`refactor-e2e-20261112-r2`, source `bf4e3b2e6`, started **12:16:29 MSK**.
+Fresh wheels and all six cases rerun after the checkout-root harness fix.
+Same four CPU cores and 64 GiB cap; **0.5 h hard limit (12:46:29 MSK)**.
+Previous timings suggest approximately **0.06 h (12:20 MSK)** to completion.
+No GPU, evolution or AMReX checkpoints. Scratch absent (0 GB), 440 GB free.
+
+**First software reproduction attempt stopped**, first node CPU,
 `refactor-e2e-20261112`, source `8a894f30a`, started **12:10:33 MSK,
 2026-11-12**. Pre-extraction source `2f1c4506` versus installed stationary
 and workflows wheels: two spinning solves and background-table exports,
