@@ -11,6 +11,7 @@ py="${repo}/grteclyn-wrapper/.venv/bin/python"
 driver="${repo}/grteclyn-wrapper/scripts/validation/refactor_reproduction.py"
 export JAX_PLATFORMS=cpu CUDA_VISIBLE_DEVICES="" JAX_ENABLE_X64=true
 export WH_JAC_CHUNK=128 MPLBACKEND=Agg
+export GRTECLYN_ROOT="${repo}"
 export MPLCONFIGDIR="${out}/matplotlib"
 mkdir -p "${out}/baseline" "${out}/wheels" "${out}/installed" "${out}/work"
 git -C "${repo}" archive "${baseline}" grteclyn-wrapper/src | tar -x -C "${out}/baseline"

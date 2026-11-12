@@ -65,7 +65,7 @@ entry point imported successfully, or that full campaign outputs were unchanged.
 
 ## Live and queue
 
-**Software reproduction check running**, first node CPU,
+**Software reproduction solves complete; plot check needs harness correction**, first node CPU,
 `refactor-e2e-20261112`, source `8a894f30a`, started **12:10:33 MSK,
 2026-11-12**. Pre-extraction source `2f1c4506` versus installed stationary
 and workflows wheels: two spinning solves and background-table exports,
@@ -73,8 +73,14 @@ perturbed spherical recovery, accepted/rejected ring validation, boson-star
 ODE solve, constraint metrics and plot regeneration. Identical inputs and
 dependencies; wrapper imports blocked during standalone wheel solves.
 Four pinned CPU cores, 64 GiB address-space cap, **1 h hard limit
-(13:10:33 MSK)**; no GPU, evolution or AMReX checkpoints. Runtime ETA not
-yet measured. Logs and outputs: `runs/refactor-e2e-20261112/` and
+(13:10:33 MSK)**; no GPU, evolution or AMReX checkpoints. Stopped at
+**12:13:37 MSK (0.051 h), exit 1**: both versions passed all five solver
+cases, then the legacy plot import required an explicit `GRTECLYN_ROOT`.
+No scientific solve failed. Spinning fields differ by at most 3.20e-14;
+the throat minimizer shifts by 6.25e-9, with both versions inside every
+original physical gate. The comparator now distinguishes physical fields,
+gate residuals and sqrt(eps)-limited minimum locations; no solver acceptance
+limit changes. Logs and outputs: `runs/refactor-e2e-20261112/` and
 `runs/capped_jobs/refactor-e2e-20261112/`. Scratch absent (0 GB), 440 GB free.
 
 **Full-coefficient recovery COMPLETE; source qualified for evolution.**
