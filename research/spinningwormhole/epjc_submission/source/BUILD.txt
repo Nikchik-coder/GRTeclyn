@@ -1,0 +1,10 @@
+Compile research.tex with pdfLaTeX using a standard TeX Live installation:
+
+latexmk -pdf -interaction=nonstopmode -halt-on-error research.tex
+
+Required standard packages include REVTeX 4.2, Latin Modern, TikZ/PGF,
+hyperref, microtype, amsmath, amssymb, graphicx, iftex and placeins.
+The bibliography is included in research.tex. All six external figure PDFs
+are included in figures/. The seventh figure is drawn directly in LaTeX.
+Plot lettering is represented by vector outlines to avoid embedded Type 3 fonts.
+Use pdfLaTeX for the journal PDF so that manuscript fonts are embedded as Type 1.

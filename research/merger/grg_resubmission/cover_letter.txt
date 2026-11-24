@@ -1,0 +1,34 @@
+                                                                             24 November 2026
+
+
+To the Editors, General Relativity and Gravitation
+
+Dear Editors,
+
+Please consider our manuscript “Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity:
+mergers, fly-bys and gravitational waves”, by Nikita M. Shirokov and Ilya Nachevsky, as a
+Research Article in General Relativity and Gravitation.
+
+The manuscript studies pairs of massive Ellis–Bronnikov wormholes supported by a phantom
+scalar field in three-dimensional numerical relativity. It examines how the signs of the scalar
+charges determine attraction or repulsion, how a common horizon forms around two throats in
+a collision, and how the instability of each throat affects mergers and fly-bys. It also reports
+the gravitational and scalar radiation from these encounters. The work addresses the nonlinear
+dynamics of exotic compact objects and their gravitational-wave signatures.
+
+Our earlier submission to this journal was withdrawn on 21 October 2026. We now submit the
+revised manuscript corresponding to arXiv:2610.13206v2, with journal submission details and
+a disclosure of AI-assisted scientific software development added. The revision reorganises the
+presentation, defines the notation, and presents convergence tests using rescaled differences.
+
+The manuscript is not under consideration by another journal. The preprint is available at
+https://arxiv.org/abs/2610.13206. The code, parameter files, diagnostic data and analysis
+scripts are archived at https://doi.org/10.5281/zenodo.23257999. Funding, competing-
+interest, data-availability and code-availability statements are included in the manuscript.
+
+Yours sincerely,
+
+Nikita M. Shirokov (corresponding author)
+Moscow Institute of Physics and Technology
+shirokov.nm@phystech.edu
+

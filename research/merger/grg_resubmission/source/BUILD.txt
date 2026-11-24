@@ -1,0 +1,12 @@
+Build research.tex with pdfLaTeX (TeX Live, REVTeX 4.2):
+
+latexmk -pdf -interaction=nonstopmode -halt-on-error research.tex
+
+LuaLaTeX is also supported:
+
+latexmk -lualatex -interaction=nonstopmode -halt-on-error research.tex
+
+All figure PDFs are included under figures/. The bibliography is inline in
+research.tex; no external bibliography database is required. numbers.tex holds
+the numerical values used by the manuscript. No simulation data or external
+repository checkout is needed to build this source package.
