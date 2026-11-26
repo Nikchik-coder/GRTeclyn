@@ -5,15 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.profiles.complex_scalar import (
-    ComplexScalarState,
-    compute_emtensor,
-    conserved_charge_density,
-    flat_minkowski_h,
-    phase_velocity_pi2,
-    potential_and_derivatives,
-    random_test_state,
-)
+from grteclyn_workflows.grtresna.profiles.complex_scalar import ComplexScalarState, compute_emtensor, conserved_charge_density, flat_minkowski_h, phase_velocity_pi2, potential_and_derivatives, random_test_state
 
 
 def test_potential_uses_modulus_squared() -> None:

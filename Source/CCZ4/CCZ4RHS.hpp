@@ -18,16 +18,15 @@
 #include <array>
 
 /// Base parameter struct for CCZ4
-/** This struct collects the gauge independent CCZ4 parameters i.e. the damping
- * ones
- */
+/** This struct collects the gauge-independent CCZ4 parameters. */
 struct CCZ4_params_t
 {
-    amrex::Real kappa1; //!< Damping parameter kappa1 as in arXiv:1106.2254
-    amrex::Real kappa2; //!< Damping parameter kappa2 as in arXiv:1106.2254
-    amrex::Real kappa3; //!< Damping parameter kappa3 as in arXiv:1106.2254
-    bool covariantZ4;   //!< if true, replace kappa1->kappa1/lapse as in
-                        //!<  arXiv:1307.7391 eq. 27
+    amrex::Real bssn_coeff; //!< 0 for CCZ4 and 1 for BSSN
+    amrex::Real kappa1;     //!< Damping parameter kappa1 as in arXiv:1106.2254
+    amrex::Real kappa2;     //!< Damping parameter kappa2 as in arXiv:1106.2254
+    amrex::Real kappa3;     //!< Damping parameter kappa3 as in arXiv:1106.2254
+    amrex::Real covariant_z4_coeff; //!< 1 to replace kappa1->kappa1/lapse as in
+                                    //!< arXiv:1307.7391 eq. 27
     //! Point-of-use regularisation of chi in the evolution equations: every
     //! genuine 1/chi in the vacuum RHS (the (d chi)^2 / chi curvature term and
     //! the A^ij d_j chi / chi term of the Gamma equation) is evaluated as
@@ -42,11 +41,16 @@ struct CCZ4_params_t
     void fill_params()
     {
         GRParmParse ccz4_pp("ccz4");
+        int formulation{};
+        ccz4_pp.get("formulation", formulation);
+        bssn_coeff = static_cast<amrex::Real>(formulation);
         ccz4_pp.get("kappa1", kappa1);
         ccz4_pp.get("kappa2", kappa2);
         ccz4_pp.get("kappa3", kappa3);
-        ccz4_pp.get("covariantZ4", covariantZ4);
-        chi_rhs_floor = 0.0;
+        bool covariant_z4{};
+        ccz4_pp.get("covariantZ4", covariant_z4);
+        covariant_z4_coeff = static_cast<amrex::Real>(covariant_z4);
+        chi_rhs_floor      = 0.0;
         ccz4_pp.query("chi_rhs_floor", chi_rhs_floor);
     }
 };
@@ -55,9 +59,7 @@ struct CCZ4_params_t
 /**
  * This compute class implements the CCZ4 right hand side equations.
  **/
-template <class gauge_t = MovingPunctureGauge,
-          class deriv_t = FourthOrderDerivatives>
-class CCZ4RHS
+template <class deriv_t = FourthOrderDerivatives> class CCZ4RHS
 {
   public:
     enum formulations : int
@@ -66,17 +68,10 @@ class CCZ4RHS
         USE_BSSN = 1
     };
 
-    enum covariantZ4 : int
-    {
-        YES,
-        NO
-    };
-
     using params_t = CCZ4_params_t;
 
   protected:
     params_t m_params;   //!< CCZ4 parameters
-    gauge_t m_gauge;     //!< Class to compute gauge in rhs_equation
     amrex::Real m_sigma; //!< Coefficient for Kreiss-Oliger dissipation
     amrex::Real m_cosmological_constant;
     deriv_t m_deriv;
@@ -99,16 +94,9 @@ class CCZ4RHS
                          const amrex::Array4<const amrex::Real> &state) const;
 
     // Calculates rhs for A_ij and Theta and Gamma
-    template <int formulation, int use_covariant_Z4>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void compute_A_ij_and_Theta_and_Gamma(
         int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs,
         const amrex::Array4<const amrex::Real> &state) const;
-
-    // Apply gauage (no derivatives needed here!)
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    calculate_gauge_rhs(int ix, int iy, int iz,
-                        const amrex::Array4<amrex::Real> &rhs,
-                        const amrex::Array4<const amrex::Real> &state) const;
 
     // Apply dissipation (split for matter classes)
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
@@ -134,7 +122,7 @@ inline void CCZ4_params_t::check_params()
     if (formulation != CCZ4RHS<>::USE_CCZ4 &&
         formulation != CCZ4RHS<>::USE_BSSN)
     {
-        ccz4_pp.error("formulation", "must be 0 (BSSN) or 1 (CCZ4)");
+        ccz4_pp.error("formulation", "must be 0 (CCZ4) or 1 (BSSN)");
     }
 
     if (formulation == CCZ4RHS<>::USE_BSSN)

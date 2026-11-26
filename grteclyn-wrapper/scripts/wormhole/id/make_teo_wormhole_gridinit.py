@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CLI launcher: write a Teo rotating wormhole .gridinit for GRTeclyn.
 
-All physics lives in ``grteclyn_wrapper.initial_data.teo``; this script only
+All physics lives in ``grteclyn_workflows.initial_data.teo``; this script only
 parses arguments, calls the generator, and writes the file plus a manifest.
 
 Run variants are driven here (spin / source), not by separate params files:
@@ -26,12 +26,8 @@ from pathlib import Path
 WRAPPER_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(WRAPPER_ROOT / "src"))
 
-from grteclyn_wrapper.grtresna.io import write_gridinit
-from grteclyn_wrapper.initial_data.teo import (
-    TeoWormholeConfig,
-    build_grid,
-    constraint_residuals,
-)
+from grteclyn_workflows.grtresna.io import write_gridinit
+from grteclyn_workflows.initial_data.teo import TeoWormholeConfig, build_grid, constraint_residuals
 
 
 def parse_args() -> argparse.Namespace:

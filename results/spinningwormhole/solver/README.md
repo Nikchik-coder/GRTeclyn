@@ -4,7 +4,7 @@
 Ellis–Bronnikov wormholes in 20 continuation legs, one row each, tab-separated with
 one header line. A leg follows one family (fixed η0 and γ) in steps of the angular
 momentum J; each converged Newton step is one row. Numbers are written at full double
-precision for the figure scripts; `grteclyn_wrapper.visualisation.spinning_wormhole.solutions.load`
+precision for the figure scripts; `grteclyn_workflows.plotting.spinning_wormhole.solutions.load`
 reads the table back.
 
 ## Columns

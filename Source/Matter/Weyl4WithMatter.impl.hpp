@@ -19,6 +19,7 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE void Weyl4WithMatter<matter_t>::operator()(
         state.cellData(ix, iy, iz);
     const typename matter_t::Vars vars(state_cell_data);
 
+    //    const typename matter_t::D1Vars d1(ix, iy, iz, state, m_deriv);
     // we only need d2 of chi and h
     const Tensor::Sym12Rank2 d2_chi =
         m_deriv.d2_scalar(ix, iy, iz, state, c_chi);
@@ -48,14 +49,15 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE void Weyl4WithMatter<matter_t>::operator()(
                           d2_h, epsilon3_LUU, h_UU, chris);
 
     // Add in matter terms to E and B fields
+
     add_matter_EB(ebfields, ix, iy, iz, state, epsilon3_LUU, h_UU, chris);
 
     // work out the Newman Penrose scalar
     weyl_scalar_t out = compute_Weyl4(ebfields, vars, h_UU, coords);
 
     // Write the rhs into the output FArrayBox
-    weyl_scalars(ix, iy, iz, m_out_comp)     = out.Real;
-    weyl_scalars(ix, iy, iz, m_out_comp + 1) = out.Im;
+    weyl_scalars(ix, iy, iz, m_dcomp)     = out.Real;
+    weyl_scalars(ix, iy, iz, m_dcomp + 1) = out.Im;
 }
 
 template <class matter_t>
@@ -73,19 +75,18 @@ Weyl4WithMatter<matter_t>::add_matter_EB(
 
     const Coordinates coords(amrex::IntVect{AMREX_D_DECL(ix, iy, iz)}, m_dx,
                              m_center);
+    const auto source = MatterDispatch::compute_einstein_sources(
+        m_matter, ix, iy, iz, state, m_deriv, h_UU, coords, m_time, m_G_Newton,
+        m_use_matter_coupling);
 
-    // Calculate decomposed energy momentum tensor components
-    const auto emtensor = MatterDispatch::compute_emtensor(
-        m_matter, ix, iy, iz, state, m_deriv, h_UU, coords, m_time);
-
-    Tensor::Rank2 S_TF = emtensor.S;
+    Tensor::Rank2 S_TF = source.S;
     CCZ4Geometry::make_trace_free(S_TF, vars, h_UU);
 
     // as we made the vacuum expression of Bij explictly symmetric and Eij
     // explictly trace-free, only Eij has matter terms
     FOR (i, j)
     {
-        ebfields.E(i, j) += -4.0 * M_PI * m_G_Newton * S_TF(i, j);
+        ebfields.E(i, j) += -0.5 * S_TF(i, j);
     }
 }
 
@@ -109,8 +110,8 @@ void Weyl4WithMatter<matter_t>::set_up(int a_state_index)
 }
 
 template <class matter_t>
-void Weyl4WithMatter<matter_t>::compute_mf(amrex::MultiFab &out_mf,
-                                           int out_comp, int ncomp,
+void Weyl4WithMatter<matter_t>::compute_mf(amrex::MultiFab &out_mf, int dcomp,
+                                           int ncomp,
                                            const amrex::MultiFab &src_mf,
                                            const amrex::Geometry &geomdata,
                                            amrex::Real time,
@@ -119,21 +120,18 @@ void Weyl4WithMatter<matter_t>::compute_mf(amrex::MultiFab &out_mf,
     const auto &out_arrays = out_mf.arrays();
     const auto &src_arrays = src_mf.const_arrays();
 
+    Weyl4WithMatter<matter_t> weyl4(geomdata.CellSize(0), dcomp);
+    weyl4.m_time = time;
     GRParmParse pp;
-    amrex::Real G_Newton = 0;
-
-    pp.queryAdd("G_newton", G_Newton);
-
-    Weyl4WithMatter<matter_t> my_weyl4_with_matter(geomdata.CellSize(0),
-                                                   out_comp, G_Newton, time);
+    if (pp.query("G_Newton", weyl4.m_G_Newton))
+    {
+        weyl4.m_use_matter_coupling = false;
+    }
 
     amrex::ParallelFor(
         out_mf, out_mf.nGrowVect(),
         [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz) noexcept
-        {
-            my_weyl4_with_matter(ix, iy, iz, out_arrays[box_no],
-                                 src_arrays[box_no]);
-        });
+        { weyl4(ix, iy, iz, out_arrays[box_no], src_arrays[box_no]); });
 }
 
 #endif /* WEYL4WITHMATTER_IMPL_HPP_ */

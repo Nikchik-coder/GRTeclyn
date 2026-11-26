@@ -3,12 +3,17 @@
 Helper scripts for the GRTeclyn wrapper. Run from the repo root (`GRTeclyn/`).
 Paths below are relative to that root unless noted.
 
+The complete folder audit and retired scripts are listed in
+[ARCHITECTURE.md](../ARCHITECTURE.md). Analysis, validation, benchmarks and operations
+remain separate from launchers. Solver commands belong to the independent
+[stationary package](../packages/stationary/README.md).
+
 ## Layout
 
 | Folder | What lives here |
 |--------|-----------------|
 | [`campaigns/`](campaigns/README.md) | **Three-stage FTL pipeline** — QD, CMA-ES, HQ promotion launchers + shared config. Start here for production searches. |
-| [`lib/`](lib/env.sh) | Shared `env.sh` (sets `GRTECLYN_ROOT`, `PYTHONPATH`, optional OpenMPI/GRTresna env). Thin redirects to `campaigns/lib/` for search/promote defaults. |
+| [`lib/`](lib/env.sh) | Shared `env.sh` (sets `GRTECLYN_ROOT`, `PYTHONPATH`, optional OpenMPI/GRTresna env). Search/promote defaults live directly in `campaigns/lib/`. |
 | [`plot/`](plot/) | **Plotfile streaming and post-run figures** — shared across examples (wormhole collapse, RadialRecipe episodes, Teo runs, etc.). |
 | [`radial/`](radial/) | RadialRecipe smoke tests, batch runs, promotion, validation campaigns. |
 | [`search/`](search/) | FTL offline analysis (tier validation, campaign reports, artifact cleanup). |

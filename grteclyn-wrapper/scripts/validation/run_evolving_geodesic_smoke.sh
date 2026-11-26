@@ -10,9 +10,9 @@ cd "${WRAPPER_ROOT}"
 
 echo "== evolving geodesic unit tests =="
 uv run pytest -q \
-  tests/metrics/ftl/test_evolving_geodesic.py \
-  tests/metrics/ftl/test_metric_field.py \
-  tests/metrics/aggregation/test_evolving_geodesic_collector.py
+  tests/diagnostics/ftl/test_evolving_geodesic.py \
+  tests/diagnostics/ftl/test_metric_field.py \
+  tests/diagnostics/aggregation/test_evolving_geodesic_collector.py
 
 echo
 echo "== analytic Alcubierre validation =="

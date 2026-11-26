@@ -13,8 +13,8 @@ from pathlib import Path
 
 import pytest
 
-from grteclyn_wrapper.grtresna.solver import runner as solver_runner
-from grteclyn_wrapper.grtresna.solver.config import GRTresnaConfig
+from grteclyn_workflows.grtresna.solver import runner as solver_runner
+from grteclyn_workflows.grtresna.solver.config import GRTresnaConfig
 
 
 class _FakeProc:

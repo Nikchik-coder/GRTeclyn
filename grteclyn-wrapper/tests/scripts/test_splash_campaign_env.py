@@ -96,7 +96,7 @@ def test_search_common_critical_collapse_boson_defaults() -> None:
 
 
 def test_parser_accepts_splash_cli_choices() -> None:
-    from grteclyn_wrapper.cli.parser import build_parser
+    from grteclyn_workflows.cli.parser import build_parser
 
     parser = build_parser()
     args = parser.parse_args(

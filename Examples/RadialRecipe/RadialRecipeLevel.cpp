@@ -11,14 +11,16 @@
 #include "ChiTagger.hpp"
 #include "ConstraintsWithMatter.hpp"
 #include "GRParmParse.hpp"
+#include "FourthOrderDerivatives.hpp"
 #include "PositiveChiAndLapse.hpp"
 #include "ScalarField.hpp"
 #include "ExoticScalarField.hpp"
 #include "SmallDataIO.hpp"
-#include "TraceARemoval.hpp"
+#include "AlgebraicConstraintsEnforcer.hpp"
 #include "RLMatterPumpParams.hpp"
 #include "RLPumpForce.hpp"
 #include "Weyl4WithMatter.hpp"
+#include "../SpinningWormhole/SpongeDrive.hpp"
 
 #include <AMReX_MultiFabUtil.H>
 #include <AMReX_Reduce.H>
@@ -297,7 +299,7 @@ void compute_rho_req_mf(amrex::MultiFab &out_mf, int dcomp, int /*ncomp*/,
 void RadialRecipeLevel::variableSetUp()
 {
     BL_PROFILE("RadialRecipeLevel::variableSetUp()");
-    stateVariableSetUp();
+    state_variable_set_up();
 
     RadialRecipeMatter::setup_derived_quantities(state_index, simParams());
 
@@ -317,11 +319,11 @@ void RadialRecipeLevel::variableSetUp()
     }
 }
 
-void RadialRecipeLevel::specificAdvance()
+void RadialRecipeLevel::specific_advance()
 {
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
@@ -342,7 +344,8 @@ void RadialRecipeLevel::initData()
     if (!simParams().recipe_initial_data_file.empty())
     {
         ExternalGridInitialData ext_data(simParams().external_grid_params,
-                                         Geom().CellSize(0));
+                                         Geom().CellSize(0), Level());
+        ext_data.validate_coverage(state.boxArray(), state.nGrowVect());
 
         amrex::ParallelFor(
             state, state.nGrowVect(),
@@ -354,6 +357,7 @@ void RadialRecipeLevel::initData()
                 }
                 ext_data.compute(i, j, k, arrs[box_no]);
             });
+        amrex::Gpu::streamSynchronize();
     }
     else
     {
@@ -377,11 +381,11 @@ void RadialRecipeLevel::initData()
     amrex::Gpu::streamSynchronize();
 }
 
-void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+void RadialRecipeLevel::specific_eval_rhs(amrex::MultiFab &a_soln,
                                         amrex::MultiFab &a_rhs,
                                         const double a_time)
 {
-    BL_PROFILE("RadialRecipeLevel::specificEvalRHS()");
+    BL_PROFILE("RadialRecipeLevel::specific_eval_rhs()");
     // No FillPatch here.  AmrLevel::RK fills the stage's ghost cells itself
     // (FillRKPatch) right before this call, and FillPatch also overwrites the
     // VALID cells with the old and new state interpolated to a_time: RK4's two
@@ -389,7 +393,7 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     // integrator drops to first order (2026-10-23: the Bondi stars' core drift
     // converged at order 1.0 in dx with dt = 0.02 dx).
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
@@ -403,13 +407,89 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
         a_soln, a_rhs, simParams(), Geom().CellSize(0),
         simParams().recipe_params.grid_center, a_time);
 
+    if (Level() == 0 && (simParams().sponge_drive_strength > 0.0 ||
+                         simParams().sommerfeld_relative_to_background))
+    {
+        update_boundary_background(a_time);
+        if (simParams().sponge_drive_strength > 0.0)
+        {
+            const auto &p = simParams().sponge_params;
+            SpongeDrive drive;
+            drive.enabled = true;
+            drive.inner_radius = p.inner_radius;
+            drive.inv_width = 1.0 / (p.outer_radius - p.inner_radius);
+            drive.strength = simParams().sponge_drive_strength;
+            drive.ramp_power = p.ramp_power;
+            drive.dx = Geom().CellSize(0);
+            drive.center = p.center;
+            const auto &ref = m_background.const_arrays();
+            const auto &rhs_arrays = a_rhs.arrays();
+            const auto &source_arrays = a_soln.const_arrays();
+            amrex::ParallelFor(a_rhs,
+                [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                { drive.apply(i, j, k, rhs_arrays[box_no], source_arrays[box_no], ref[box_no]); });
+        }
+    }
+
     amrex::Gpu::streamSynchronize();
 }
 
-void RadialRecipeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+void RadialRecipeLevel::update_boundary_background(amrex::Real time)
+{
+    const auto &state = get_new_data(state_index);
+    if (!m_background_initial.ok() || m_background_initial.boxArray() != state.boxArray() ||
+        m_background_initial.DistributionMap() != state.DistributionMap())
+    {
+        m_background_initial.define(state.boxArray(), state.DistributionMap(), state.nComp(), state.nGrowVect());
+        m_background.define(state.boxArray(), state.DistributionMap(), state.nComp(), state.nGrowVect());
+        m_background_dt.define(state.boxArray(), state.DistributionMap(), state.nComp(), state.nGrowVect());
+        m_background_initial.setVal(0.0);
+        ExternalGridInitialData initial(simParams().external_grid_params, Geom().CellSize(0), Level());
+        initial.validate_coverage(state.boxArray(), state.nGrowVect());
+        const auto &arrs = m_background_initial.arrays();
+        amrex::ParallelFor(m_background_initial, state.nGrowVect(),
+            [=] AMREX_GPU_DEVICE(int b, int i, int j, int k) { initial.compute(i, j, k, arrs[b]); });
+        amrex::Gpu::streamSynchronize();
+        amrex::MultiFab::Copy(m_background, m_background_initial, 0, 0, state.nComp(), state.nGrowVect());
+        m_background_dt.setVal(0.0);
+    }
+    const double omega = simParams().recipe_background_frequency;
+    const double co = std::cos(omega*time), si = std::sin(omega*time);
+    const auto &initial = m_background_initial.const_arrays();
+    const auto &current = m_background.arrays();
+    const auto &derivative = m_background_dt.arrays();
+    amrex::ParallelFor(m_background, m_background.nGrowVect(),
+        [=] AMREX_GPU_DEVICE(int b, int i, int j, int k)
+        {
+            const int real[2] = {c_phi, c_Pi};
+            const int imag[2] = {c_phi2, c_Pi2};
+            for (int p = 0; p < 2; ++p)
+            {
+                const double re = initial[b](i,j,k,real[p]), im = initial[b](i,j,k,imag[p]);
+                const double r = co*re-si*im, v = si*re+co*im;
+                current[b](i,j,k,real[p]) = r;
+                current[b](i,j,k,imag[p]) = v;
+                derivative[b](i,j,k,real[p]) = -omega*v;
+                derivative[b](i,j,k,imag[p]) = omega*r;
+            }
+        });
+}
+
+const amrex::MultiFab *RadialRecipeLevel::sommerfeld_reference() const
+{
+    return (Level() == 0 && simParams().sommerfeld_relative_to_background)
+               ? &m_background : nullptr;
+}
+
+const amrex::MultiFab *RadialRecipeLevel::sommerfeld_reference_dt() const
+{
+    return sommerfeld_reference() ? &m_background_dt : nullptr;
+}
+
+void RadialRecipeLevel::specific_update_ode(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -435,6 +515,26 @@ void RadialRecipeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     amrex::MultiFab &state_new = get_new_data(state_index);
     const auto &tag_arrs       = a_tag_box_array.arrays();
     const auto &state_new_arrs = state_new.const_arrays();
+
+    if (!simParams().recipe_refinement_radii.empty())
+    {
+        if (Level() >= simParams().recipe_refinement_radii.size())
+            return;
+        const double radius = simParams().recipe_refinement_radii.at(Level());
+        const double dx = Geom().CellSize(0);
+        const auto centre = simParams().center;
+        amrex::ParallelFor(state_new, amrex::IntVect(0),
+            [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+            {
+                const double x = (i + 0.5) * dx - centre[0];
+                const double y = (j + 0.5) * dx - centre[1];
+                const double z = (k + 0.5) * dx - centre[2];
+                if (x*x + y*y + z*z < radius*radius)
+                    tag_arrs[box_no](i, j, k) = amrex::TagBox::SET;
+            });
+        amrex::Gpu::streamSynchronize();
+        return;
+    }
 
     ChiTagger chi_tagger(Geom().CellSize(0), a_regrid_threshold);
 
@@ -477,6 +577,7 @@ namespace
 // ---------------------------------------------------------------------------
 struct AmrConstraintNorms
 {
+    std::vector<double> levels;
     amrex::Real L2_Ham     = 0.0; // composite, covered cells + boundary dropped
     amrex::Real L2_Mom     = 0.0;
     amrex::Real L2_Ham_rel = 0.0; // / composite norm of the individual terms
@@ -512,6 +613,7 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     amrex::Real max_ham = 0.0;
 
     const int finest = parent->finestLevel();
+    out.levels.resize(2 * (parent->maxLevel() + 1), 0.0);
     const int n0     = parent->Geom(0).Domain().length(0);
 
     const amrex::Real r_int  = params.constraint_norms_interior_radius;
@@ -519,6 +621,9 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     const amrex::Real icx    = params.sponge_params.center[0];
     const amrex::Real icy    = params.sponge_params.center[1];
     const amrex::Real icz    = params.sponge_params.center[2];
+    const amrex::Real level_cutoff2 = params.sponge_params.enabled
+        ? params.sponge_params.inner_radius * params.sponge_params.inner_radius
+        : 1.e300;
 
     for (int lev = 0; lev <= finest; ++lev)
     {
@@ -576,11 +681,12 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                          amrex::ReduceOpSum, amrex::ReduceOpSum,
                          amrex::ReduceOpSum, amrex::ReduceOpMax,
                          amrex::ReduceOpSum, amrex::ReduceOpSum,
-                         amrex::ReduceOpSum>
+                         amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum>
             ops;
         amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
                           amrex::Real, amrex::Real, amrex::Real, amrex::Real,
-                          amrex::Real>
+                          amrex::Real, amrex::Real, amrex::Real, amrex::Real>
             data(ops);
         using Tuple = typename decltype(data)::Type;
 
@@ -597,7 +703,7 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                     if (cov(i, j, k) != 0 || i < ilo[0] || i > ihi[0] ||
                         j < ilo[1] || j > ihi[1] || k < ilo[2] || k > ihi[2])
                     {
-                        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
                     }
                     const amrex::Real ham     = arr(i, j, k, 0);
                     const amrex::Real m1      = arr(i, j, k, 1);
@@ -618,6 +724,8 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                         prob_lo[2] + (amrex::Real(k) + 0.5) * dx[2] - icz;
                     const amrex::Real in_int =
                         (x * x + y * y + z * z <= r_int2) ? 1.0 : 0.0;
+                    const amrex::Real in_level =
+                        (x * x + y * y + z * z < level_cutoff2) ? 1.0 : 0.0;
                     return {ham * ham * cell_vol,
                             mom2 * cell_vol,
                             cell_vol,
@@ -626,13 +734,28 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                             std::abs(ham),
                             in_int * ham * ham * cell_vol,
                             in_int * mom2 * cell_vol,
-                            in_int * cell_vol};
+                            in_int * cell_vol,
+                            in_level * ham * ham * cell_vol,
+                            in_level * mom2 * cell_vol,
+                            in_level * cell_vol};
                 });
         }
 
         const auto v             = data.value();
         const amrex::Real lv_ham2 = amrex::get<0>(v);
         const amrex::Real lv_vol  = amrex::get<2>(v);
+        if (params.constraint_norms_levels)
+        {
+            amrex::Real h = amrex::get<9>(v), m = amrex::get<10>(v), volume = amrex::get<11>(v);
+            amrex::ParallelDescriptor::ReduceRealSum(h);
+            amrex::ParallelDescriptor::ReduceRealSum(m);
+            amrex::ParallelDescriptor::ReduceRealSum(volume);
+            if (volume > 0.0)
+            {
+                out.levels[2 * lev] = std::sqrt(h / volume);
+                out.levels[2 * lev + 1] = std::sqrt(m / volume);
+            }
+        }
         sum_ham2     += lv_ham2;
         sum_mom2     += amrex::get<1>(v);
         sum_vol      += lv_vol;
@@ -784,15 +907,118 @@ void write_constraint_shells(const amrex::MultiFab &cst,
 }
 } // namespace
 
-void RadialRecipeLevel::specificPostTimeStep()
+void RadialRecipeLevel::specific_post_init()
 {
-    BL_PROFILE("RadialRecipeLevel::specificPostTimeStep");
+    // Initial diagnostics are opt-in so existing campaigns keep their cadence.
+    // This includes the t=0 constraints and collapse streams, not only charge.
+    if (Level() == 0 && simParams().calculate_complex_scalar_diagnostics)
+        specific_post_timestep();
+}
+
+void RadialRecipeLevel::write_complex_scalar_diagnostics()
+{
+    const auto time = get_state_data(state_index).curTime();
+    // Q and J are finite-box matter integrals, not a surface ADM measurement.
+    // Shape moments use |Phi|^2 dV and are coordinate diagnostics. Covered
+    // coarse cells are excluded, so these remain valid with future AMR runs.
+    std::array<amrex::Real, 6> total{};
+    const auto centre = simParams().center;
+    for (int lev = 0; lev <= parent->finestLevel(); ++lev)
+    {
+        auto &level_data = parent->getLevel(lev);
+        auto &state = level_data.get_new_data(state_index);
+        FillPatch(level_data, state, 2, time, state_index, 0, state.nComp());
+        const auto dx = level_data.Geom().CellSizeArray();
+        const auto lo = level_data.Geom().ProbLoArray();
+        const amrex::Real volume = dx[0] * dx[1] * dx[2];
+        const FourthOrderDerivatives deriv(dx[0]);
+        amrex::iMultiFab covered(state.boxArray(), state.DistributionMap(), 1, 0);
+        if (lev < parent->finestLevel())
+            covered = amrex::makeFineMask(state,
+                parent->getLevel(lev + 1).boxArray(), parent->refRatio(lev), 0, 1);
+        else
+            covered.setVal(0);
+        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpMax> ops;
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real, amrex::Real, amrex::Real> data(ops);
+        using Tuple = typename decltype(data)::Type;
+        for (amrex::MFIter mfi(state, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
+        {
+            const auto arr = state.const_array(mfi);
+            const auto mask = covered.const_array(mfi);
+            ops.eval(mfi.validbox(), data,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> Tuple
+                {
+                    if (mask(i, j, k) != 0)
+                        return {0., 0., 0., 0., 0., 0.};
+                    const auto cell = arr.cellData(i, j, k);
+                    const CCZ4Vars vars(cell);
+                    // sqrt(det gamma), including roundoff in det h.
+                    const amrex::Real det_h = vars.h(0, 0) *
+                        (vars.h(1, 1)*vars.h(2, 2)-vars.h(1, 2)*vars.h(1, 2))
+                        - vars.h(0, 1) *
+                        (vars.h(0, 1)*vars.h(2, 2)-vars.h(1, 2)*vars.h(0, 2))
+                        + vars.h(0, 2) *
+                        (vars.h(0, 1)*vars.h(1, 2)-vars.h(1, 1)*vars.h(0, 2));
+                    const amrex::Real dv = std::sqrt(det_h) *
+                        std::pow(vars.chi(), -1.5) * volume;
+                    const amrex::Real re = cell[c_phi], im = cell[c_phi2];
+                    const amrex::Real pr = cell[c_Pi], pi = cell[c_Pi2];
+                    const amrex::Real x = lo[0]+(i+.5)*dx[0]-centre[0];
+                    const amrex::Real y = lo[1]+(j+.5)*dx[1]-centre[1];
+                    const auto dre = deriv.d1_scalar(i, j, k, arr, c_phi);
+                    const auto dim = deriv.d1_scalar(i, j, k, arr, c_phi2);
+                    const amrex::Real jx = -pr*dre(0)-pi*dim(0);
+                    const amrex::Real jy = -pr*dre(1)-pi*dim(1);
+                    const amrex::Real amp2 = re*re+im*im;
+                    const amrex::Real rho2 = x*x+y*y;
+                    const amrex::Real c2 = rho2 > 0 ? (x*x-y*y)/rho2 : 0.;
+                    const amrex::Real s2 = rho2 > 0 ? 2*x*y/rho2 : 0.;
+                    return {(re*pi-im*pr)*dv, (-y*jx+x*jy)*dv,
+                            amp2*dv, amp2*c2*dv, amp2*s2*dv, amp2};
+                });
+        }
+        const auto value = data.value();
+        total[0] += amrex::get<0>(value); total[1] += amrex::get<1>(value);
+        total[2] += amrex::get<2>(value); total[3] += amrex::get<3>(value);
+        total[4] += amrex::get<4>(value);
+        total[5] = std::max(total[5], amrex::get<5>(value));
+    }
+    for (int c = 0; c < 5; ++c)
+        amrex::ParallelDescriptor::ReduceRealSum(total[c]);
+    amrex::ParallelDescriptor::ReduceRealMax(total[5]);
+    GRParmParse pp;
+    std::string output, subpath;
+    pp.load("output_path", output, std::string("./"));
+    pp.load("data_subpath", subpath, std::string("data"));
+    const auto directory = output + "/" + subpath + "/";
+    amrex::UtilCreateDirectory(directory, 0755, false);
+    SmallDataIO file(directory + "complex_scalar_diagnostics", parent->dtLevel(0),
+                     time, get_gr_amr_ptr()->get_restart_time(), SmallDataIO::APPEND,
+                     time == 0.);
+    file.remove_duplicate_time_data();
+    if (time == 0.)
+        file.write_header_line({"Q_box", "Jz_matter_box", "integral_abs_Phi_sq",
+                                "m2_re", "m2_im", "max_abs_Phi_sq"});
+    const auto norm = std::max(total[2], amrex::Real(1.e-300));
+    file.write_time_data_line(std::vector<double>{total[0], total[1], total[2],
+                              total[3]/norm, total[4]/norm, total[5]});
+}
+
+void RadialRecipeLevel::specific_post_timestep()
+{
+    BL_PROFILE("RadialRecipeLevel::specific_post_timestep");
+
+    if (Level() == 0 && simParams().calculate_complex_scalar_diagnostics)
+        write_complex_scalar_diagnostics();
 
     if (simParams().calculate_constraint_norms && Level() == 0)
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         amrex::MultiFab &state_new = get_new_data(state_index);
@@ -1105,6 +1331,24 @@ void RadialRecipeLevel::specificPostTimeStep()
              static_cast<double>(amr_norms.L2_Ham_int),
              static_cast<double>(amr_norms.L2_Mom_int)});
 
+        if (simParams().constraint_norms_levels)
+        {
+            SmallDataIO levels_file(out_dir + "constraint_norms_levels", dt, time,
+                                    restart_time, SmallDataIO::APPEND, first_step);
+            levels_file.remove_duplicate_time_data();
+            if (first_step)
+            {
+                std::vector<std::string> names;
+                for (int lev = 0; lev <= parent->maxLevel(); ++lev)
+                {
+                    names.push_back("Ham_L" + std::to_string(lev));
+                    names.push_back("Mom_L" + std::to_string(lev));
+                }
+                levels_file.write_header_line(names);
+            }
+            levels_file.write_time_data_line(amr_norms.levels);
+        }
+
         if (simParams().constraint_shells_dt > 0.0)
         {
             write_constraint_shells(cst, Geom(), simParams(), out_dir, dt, time,
@@ -1116,7 +1360,7 @@ void RadialRecipeLevel::specificPostTimeStep()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev = parent->finestLevel();
@@ -1129,7 +1373,7 @@ void RadialRecipeLevel::specificPostTimeStep()
 
         {
             const auto &arrs = state_fine.arrays();
-            TraceARemoval trace_A_removal;
+            AlgebraicConstraintsEnforcer trace_A_removal(false);
             PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_fine, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
@@ -1808,7 +2052,7 @@ void RadialRecipeLevel::specificPostTimeStep()
 
         const RecentringBox::Step tread = recentring_box().advance(
             states, Geom(), parent->levelSteps(0), state_data.curTime(),
-            parent->dtLevel(0), get_gramr_ptr()->get_restart_time());
+            parent->dtLevel(0), get_gr_amr_ptr()->get_restart_time());
 
         if (tread.shifted)
         {

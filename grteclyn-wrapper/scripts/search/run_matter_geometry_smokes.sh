@@ -60,14 +60,14 @@ run_postload_smoke() {
   # shellcheck disable=SC2086
   ${PYTHON_BIN} - <<PY
 from pathlib import Path
-from grteclyn_wrapper.grtresna.solver import (
+from grteclyn_workflows.grtresna.solver import (
     GRTresnaConfig,
     apply_exotic_safe_solver,
     config_has_exotic_lump,
     solve,
 )
-from grteclyn_wrapper.grtresna.matter.wiring import evolution_overrides_from_config
-from grteclyn_wrapper.projection.postload_gate import PostLoadGateConfig, run_postload_gate
+from grteclyn_workflows.grtresna.matter.wiring import evolution_overrides_from_config
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig, run_postload_gate
 
 out = Path("${out}")
 cfg = GRTresnaConfig(
@@ -128,14 +128,14 @@ run_postload_smoke exotic 1
 # shellcheck disable=SC2086
 ${PYTHON_BIN} - <<PY
 from pathlib import Path
-from grteclyn_wrapper.grtresna.solver import (
+from grteclyn_workflows.grtresna.solver import (
     GRTresnaConfig,
     apply_exotic_safe_solver,
     config_has_exotic_lump,
     solve,
 )
-from grteclyn_wrapper.grtresna.matter.wiring import evolution_overrides_from_config
-from grteclyn_wrapper.projection.postload_gate import PostLoadGateConfig, run_postload_gate
+from grteclyn_workflows.grtresna.matter.wiring import evolution_overrides_from_config
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig, run_postload_gate
 
 out = Path("${SMOKE_DIR}/mixed_shell")
 cfg = GRTresnaConfig(

@@ -71,7 +71,7 @@ that produced it does not.
 2026-09-26): every PNG/PDF pair there is included by `research/merger/article/research.tex`,
 and [`figures/FIGURES.md`](figures/FIGURES.md) maps each file to its figure number, label and
 the wrapper module that redraws it (one command each, no arguments). Every figure is drawn by
-`grteclyn_wrapper.visualisation.wormhole_merger` in one house style; when a figure leaves the
+`grteclyn_workflows.plotting.wormhole_merger` in one house style; when a figure leaves the
 paper its files are deleted and its script stays in the wrapper.
 
 ## Layout
@@ -166,8 +166,8 @@ summary.md, summary.csv           one row per run (csv: plus a `group` column), 
 ```
 
 The generated notes, the summary tables and `analysis/` are written from the packed streams
-alone by the reductions in `grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`
-(its README lists each one); the figures are drawn by `grteclyn_wrapper.visualisation.wormhole_merger`.
+alone by the reductions in `grteclyn-wrapper/src/grteclyn_workflows/analysis/wormhole_merger/`
+(its README lists each one); the figures are drawn by `grteclyn_workflows.plotting.wormhole_merger`.
 
 The four evolution streams are written every step (dt = 0.01) and thinned here to
 dt = 0.05 — **except the last time unit of each run, kept at full cadence**, because that

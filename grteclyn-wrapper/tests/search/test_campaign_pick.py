@@ -7,11 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from grteclyn_wrapper.search.campaign_pick import (
-    load_gpu_ok_records,
-    pick_top_eval_id,
-    pick_top_eval_ids,
-)
+from grteclyn_workflows.search.campaign_pick import load_gpu_ok_records, pick_top_eval_id, pick_top_eval_ids
 
 
 def _write_trajectory(path: Path, rows: list[dict]) -> None:

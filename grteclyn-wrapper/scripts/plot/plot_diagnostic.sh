@@ -6,7 +6,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../lib/env.sh
 source "${SCRIPT_DIR}/../lib/env.sh"
-VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_wrapper/visualisation"
+VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_workflows/plotting"
 SIM_ROOT="$(cd "${GRTECLYN_ROOT}/.." && pwd)"
 
 ESD_FMAX_DEFAULT="20"
@@ -117,12 +117,12 @@ if command -v uv >/dev/null 2>&1 && [[ -f "${WRAPPER_ROOT}/pyproject.toml" ]]; t
 fi
 
 echo "[1/3] Plotting constraint norms..."
-"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.constraines \
+"${PYTHON[@]}" -m grteclyn_workflows.plotting.constraints \
   "${CONSTRAINT_FILE}" \
   -o "${PLOTS_DIR}/constraints_plot.eps"
 
 echo "[2/3] Plotting collapse diagnostics (+ areal radius + K-decay lifetime)..."
-"${PYTHON[@]}" "${VIS_DIR}/diagnostic/diagnostic.py" \
+"${PYTHON[@]}" "${VIS_DIR}/diagnostics/diagnostic.py" \
   "${COLLAPSE_FILE}" \
   --data "${RUN_DIR}" \
   --out "${PLOTS_DIR}"
@@ -145,7 +145,7 @@ for CONFIG in "${UNIQUE_CONFIGS[@]}"; do
   OUT_NAME="psi4_analysis_M${M_VAL}_D${D_VAL}.eps"
   echo "  -> Generating ${OUT_NAME} for Mass=${M_VAL} M_sun, Distance=${D_VAL} Mpc"
 
-  "${PYTHON[@]}" -m grteclyn_wrapper.visualisation.process_wave.plot_extracted_psi4 \
+  "${PYTHON[@]}" -m grteclyn_workflows.plotting.waveforms.plot_extracted_psi4 \
     "${PSI4_FILE}" \
     "${RADII_ARGS[@]}" \
     "${ESD_ARGS[@]}" \

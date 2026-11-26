@@ -5,9 +5,9 @@ from __future__ import annotations
 import threading
 import time
 
-from grteclyn_wrapper.core.evaluation import Evaluation
-from grteclyn_wrapper.search.eval_pipeline import EvalJob, EvalPipeline
-from grteclyn_wrapper.search.gpu_pool import CpuAdmissionController, GpuPool, GpuPoolConfig
+from grteclyn_workflows.evolution.evaluation import Evaluation
+from grteclyn_workflows.search.eval_pipeline import EvalJob, EvalPipeline
+from grteclyn_workflows.search.gpu_pool import CpuAdmissionController, GpuPool, GpuPoolConfig
 
 
 def _evaluation(score: float = 1.0) -> Evaluation:

@@ -1,0 +1,6 @@
+# True minimal area and asymmetry stay fixed; spin is a bounded search variable.
+# The tidal ceiling refers to the initial D21 massless solution throughout.
+version = 1
+tidal_factors = [4.0]
+windings = []
+candidate_seeds = ["results/optimisation/validation/2026-10-31-extensions/factored/best_clean.npz"]

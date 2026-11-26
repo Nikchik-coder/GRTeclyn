@@ -1,6 +1,6 @@
-#include "BHAMR.hpp"
-#include "DefaultLevelFactory.hpp"
-#include "GRAMR.hpp"
+#include "BHAmr.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmr.hpp"
 #include "GRParmParse.hpp"
 #include "SetupFunctions.hpp"
 #include "SimulationParameters.hpp"
@@ -18,14 +18,14 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
 
     SpinningWormholeLevel::set_sim_params(&sim_params);
 
-    DefaultLevelFactory<SpinningWormholeLevel> swh_level_bld;
+    DefaultLevelBld<SpinningWormholeLevel> swh_level_bld;
 
-    // BHAMR (a GRAMR child) so that BHAMR::init() sets up the Weyl4
+    // BHAmr (a GRAmr child) so that BHAmr::init() sets up the Weyl4
     // ParticleInterpolator used for in-code Psi4 spherical-harmonic extraction
-    // (see SpinningWormholeLevel::specificPostTimeStep).  Puncture tracking is
+    // (see SpinningWormholeLevel::specific_post_timestep).  Puncture tracking is
     // disabled; the throat sits at the grid centre and is monitored through
     // throat_geometry.dat instead.
-    BHAMR<SpinningWormholeLevel::num_punctures> swh_amr(&swh_level_bld);
+    BHAmr<SpinningWormholeLevel::num_punctures> swh_amr(&swh_level_bld);
 
     swh_amr.init(0., sim_params.stop_time);
 

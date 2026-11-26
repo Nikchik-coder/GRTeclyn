@@ -1025,7 +1025,7 @@ def main(argv: list[str]) -> int:
                 return finish("refused", 1)
         else:
             cmd = shlex.split(a.frames_cmd) if a.frames_cmd else [
-                sys.executable, "-m", "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"]
+                sys.executable, "-m", "grteclyn_workflows.postprocessing"]
             frames_out = pathlib.Path(a.frames_out) if a.frames_out else workdir_arg / "frames"
             print(f"[preflight] frames : rendering {len(render_fields)} field(s) from {plts[-1].name} "
                   f"with the consumer -> {_shown(frames_out)} ...")

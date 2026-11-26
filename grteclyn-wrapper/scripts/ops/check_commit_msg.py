@@ -7,7 +7,8 @@ showed nothing and every search went through prose.  The rule is the usual one:
 
   * subject (first line) at most 72 characters, not empty;
   * if there is a body, a blank line between subject and body;
-  * no "Co-Authored-By: Claude" / anthropic.com trailers (repo convention).
+  * no agent co-author trailers (Claude, Cursor, anthropic.com,
+    cursoragent@cursor.com); the hook strips them.
 
 The detail still belongs in the body, and the current state in
 research/merger/STATUS.md -- the gate only keeps the first line readable.
@@ -30,11 +31,24 @@ import sys
 
 MAX_SUBJECT = 72
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
-AGENT_TRAILER = re.compile(r"^co-authored-by:.*(claude|anthropic\.com)", re.I | re.M)
+AGENT_TRAILER = re.compile(
+    r"^co-authored-by:.*(claude|anthropic\.com|cursor|cursoragent@cursor\.com)",
+    re.I | re.M,
+)
 GIT_WRITTEN = re.compile(r"^(Merge |Revert \"|fixup! |squash! |amend! )")
 
 
+def strip_agent_trailers(message: str) -> str:
+    """Drop Claude / Cursor co-author lines the editor may append."""
+    kept = [line for line in message.splitlines()
+            if not AGENT_TRAILER.match(line)]
+    while kept and not kept[-1].strip():
+        kept.pop()
+    return ("\n".join(kept) + "\n") if kept else ""
+
+
 def check(message: str) -> list[str]:
+    message = strip_agent_trailers(message)
     lines = [l for l in message.splitlines() if not l.startswith("#")]
     while lines and not lines[0].strip():
         lines.pop(0)
@@ -50,7 +64,7 @@ def check(message: str) -> list[str]:
     if len(lines) > 1 and lines[1].strip():
         problems.append("leave a blank line between the subject and the body")
     if AGENT_TRAILER.search(message):
-        problems.append("no Claude / anthropic.com co-author trailers in this repo")
+        problems.append("no Claude / Cursor co-author trailers in this repo")
     return problems
 
 
@@ -73,7 +87,12 @@ def main(argv: list[str]) -> int:
     if len(argv) != 1:
         print(__doc__)
         return 1
-    problems = check(pathlib.Path(argv[0]).read_text(encoding="utf-8", errors="replace"))
+    path = pathlib.Path(argv[0])
+    raw = path.read_text(encoding="utf-8", errors="replace")
+    cleaned = strip_agent_trailers(raw)
+    if cleaned != raw:
+        path.write_text(cleaned, encoding="utf-8")
+    problems = check(cleaned)
     for p in problems:
         print(f"[commit-msg] {p}", file=sys.stderr)
     if problems:

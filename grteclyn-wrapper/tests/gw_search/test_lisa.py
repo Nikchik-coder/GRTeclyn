@@ -8,7 +8,7 @@ import math
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.gw_search import lisa
+from grteclyn_workflows.gw_search import lisa
 
 
 @dataclasses.dataclass

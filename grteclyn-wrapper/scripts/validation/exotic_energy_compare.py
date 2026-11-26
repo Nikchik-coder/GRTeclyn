@@ -6,7 +6,7 @@ against an analytic Alcubierre warp bubble, on ONE common measure::
 
 with ``rho = T_{mu nu} n^mu n^nu`` the Eulerian energy density and ``T = G/8pi``.
 
-Both sides go through ``grteclyn_wrapper.metrics.probes.warpfactory``
+Both sides go through ``grteclyn_workflows.diagnostics.probes.warpfactory``
 (:func:`stress_energy` + :func:`exotic_energy_budget`), so the comparison answers
 "how much *less* exotic matter does our self-consistent candidate need than a
 textbook warp drive?" apples-to-apples.
@@ -39,7 +39,7 @@ from pathlib import Path
 
 import numpy as np
 
-from grteclyn_wrapper.metrics.probes import warpfactory as wf
+from grteclyn_workflows.diagnostics.probes import warpfactory as wf
 
 
 def alcubierre_budget(*, v_s: float, radius: float, sigma: float, n: int,

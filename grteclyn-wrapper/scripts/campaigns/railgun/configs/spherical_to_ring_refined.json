@@ -1,0 +1,10 @@
+{
+  "ring_field": {"winding": 1, "mass": 1.0, "amplitude": 0.05, "anchor_radius": 5.0},
+  "initial_amplitude": 0.001,
+  "old_amplitude_floor": 0.001,
+  "steps": 8,
+  "max_solves": 24,
+  "max_splits": 6,
+  "max_iter": 30,
+  "grids": [[72, 10], [96, 12], [128, 16]]
+}

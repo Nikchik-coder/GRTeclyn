@@ -7,15 +7,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from grteclyn_wrapper.metrics.probes import warpfactory as wf
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic import (
-    compute_evolving_geodesic_ftl_from_analytic,
-)
-from grteclyn_wrapper.metrics.probes.ftl.general import find_recent_plotfiles
-from grteclyn_wrapper.metrics.probes.ftl.geodesic import compute_geodesic_ftl_from_plotfile
-from grteclyn_wrapper.metrics.probes.ftl.evolving_geodesic import (
-    compute_evolving_geodesic_ftl_from_plotfiles,
-)
+from grteclyn_workflows.diagnostics.probes import warpfactory as wf
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic import compute_evolving_geodesic_ftl_from_analytic
+from grteclyn_workflows.diagnostics.probes.ftl.general import find_recent_plotfiles
+from grteclyn_workflows.diagnostics.probes.ftl.geodesic import compute_geodesic_ftl_from_plotfile
+from grteclyn_workflows.diagnostics.probes.ftl.evolving_geodesic import compute_evolving_geodesic_ftl_from_plotfiles
 
 
 def _print_row(label: str, frozen: float | None, evolving: float | None) -> None:

@@ -8,6 +8,6 @@ def test_h5py_import_available() -> None:
 
 
 def test_convert_chombo_imports_h5py_lazily() -> None:
-    from grteclyn_wrapper.grtresna.io import convert_chombo_to_gridinit
+    from grteclyn_workflows.grtresna.io import convert_chombo_to_gridinit
 
     assert callable(convert_chombo_to_gridinit)

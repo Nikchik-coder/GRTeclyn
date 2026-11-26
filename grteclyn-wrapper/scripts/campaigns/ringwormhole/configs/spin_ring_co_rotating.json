@@ -1,0 +1,25 @@
+{
+  "ring_seed": {
+    "path": "runs/ringwormhole/ergoregion108_continuation_20261105/accepted_overlap.npz",
+    "sha256": "3db8efad05afbeae9946c784cf82ccabcf2777340e22b5d5fc51ba175cdffa0b"
+  },
+  "control_seed": {
+    "path": "runs/optimisation/railgun_matched_control_20261105/matched_spin.npz",
+    "sha256": "0abdefaafae2c178eb239f45d41bfb31f224bee0ae1d2240b54714610031a157"
+  },
+  "grids": [[210, 36], [224, 38], [240, 40]],
+  "throat_radius": 2.0,
+  "added_total_J": -0.08,
+  "ring_J_step": 0.02,
+  "control_J_step": 0.05,
+  "max_solves": 14,
+  "max_newton_iterations": 24,
+  "independent_points": [49, 21],
+  "energy_budget": 1.0,
+  "tidal_factor": 4.0,
+  "matter_may_overlap_throat": true,
+  "wall_seconds": 3600,
+  "threads": 4,
+  "memory_gib": 160,
+  "checkpoints": false
+}

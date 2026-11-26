@@ -3,15 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from grteclyn_wrapper.search.ftl_retention import (
-    FTL_CHAMPIONS_FILE,
-    FTL_RETENTION_LOG,
-    FtlChampionBoard,
-    append_ftl_retention_events,
-    compute_keep_eval_ids,
-    save_ftl_champions,
-)
-from grteclyn_wrapper.search.qd_search.io import _prune_eval_dirs
+from grteclyn_workflows.search.ftl_retention import FTL_CHAMPIONS_FILE, FTL_RETENTION_LOG, FtlChampionBoard, append_ftl_retention_events, compute_keep_eval_ids, save_ftl_champions
+from grteclyn_workflows.search.qd_search.io import _prune_eval_dirs
 
 
 def _gpu_ok_record(

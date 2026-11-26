@@ -21,7 +21,7 @@ fi
 DATA_DIR=""
 STEP=""
 DRY_RUN=false
-VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_wrapper/visualisation/visualize"
+VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_workflows/plotting/slices"
 
 usage() {
   cat <<'EOF'

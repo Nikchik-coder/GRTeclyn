@@ -11,27 +11,12 @@ from unittest.mock import patch
 
 import numpy as np
 
-from grteclyn_wrapper.grtresna.fit.motif import (
-    build_grtresna_config_from_fitted,
-    estimate_momentum_source,
-    fit_matter_from_motif,
-    fit_momentum_from_motif,
-    read_fitted_matter_json,
-    write_fitted_matter_json,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, write_grtresna_params
-from grteclyn_wrapper.initial_data.motif import (
-    extract_motif_from_episode,
-    read_motif_json,
-    write_motif_json,
-)
-from grteclyn_wrapper.projection.motif_preservation import compare_motif_preservation
-from grteclyn_wrapper.projection.postload_gate import (
-    PostLoadGateConfig,
-    evaluate_constraint_gate,
-    run_postload_gate,
-)
-from grteclyn_wrapper.search.optimize import build_grtresna_config
+from grteclyn_workflows.grtresna.fit.motif import build_grtresna_config_from_fitted, estimate_momentum_source, fit_matter_from_motif, fit_momentum_from_motif, read_fitted_matter_json, write_fitted_matter_json
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig, write_grtresna_params
+from grteclyn_workflows.initial_data.motif import extract_motif_from_episode, read_motif_json, write_motif_json
+from grteclyn_workflows.projection.motif_preservation import compare_motif_preservation
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig, evaluate_constraint_gate, run_postload_gate
+from grteclyn_workflows.search.optimize import build_grtresna_config
 
 
 def _write_geometry_episode(root: Path, *, with_motor: bool) -> Path:
@@ -220,10 +205,7 @@ def test_evaluate_constraint_gate_retries_on_missing_file() -> None:
 
 def test_nfs_retry_loop_in_run_postload_gate() -> None:
     """Verify the NFS retry loop recovers when file appears after retries."""
-    from grteclyn_wrapper.projection.postload_gate import (
-        _NFS_MAX_RETRIES,
-        _invalidate_nfs_cache,
-    )
+    from grteclyn_workflows.projection.postload_gate import _NFS_MAX_RETRIES, _invalidate_nfs_cache
 
     with TemporaryDirectory() as tmp:
         data = Path(tmp) / "episode" / "data"
@@ -245,17 +227,17 @@ def test_nfs_retry_loop_in_run_postload_gate() -> None:
             original_invalidate(path)
 
         with patch(
-            "grteclyn_wrapper.projection.postload_gate._invalidate_nfs_cache",
+            "grteclyn_workflows.projection.postload_gate._invalidate_nfs_cache",
             side_effect=delayed_write_invalidate,
         ), patch(
-            "grteclyn_wrapper.projection.postload_gate.time.sleep",
+            "grteclyn_workflows.projection.postload_gate.time.sleep",
         ) as mock_sleep:
             gate = evaluate_constraint_gate(dat)
             assert not gate.passed, "File absent — first call should fail"
 
             # Now test the retry loop directly by simulating what
             # run_postload_gate does (without launching GRTeclyn).
-            from grteclyn_wrapper.projection import postload_gate as _mod
+            from grteclyn_workflows.projection import postload_gate as _mod
 
             gate_result = None
             for attempt in range(_NFS_MAX_RETRIES + 1):

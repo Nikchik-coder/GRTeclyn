@@ -1,0 +1,17 @@
+{
+  "source_sha256": "2a417e307822456e07ccd14f9d4ed09796c61032458ea444656c3deeb8b4dc43",
+  "outer_winding": -12,
+  "target_j": 0.0,
+  "length": 50.0,
+  "grids": [[192, 16], [224, 18], [256, 20]],
+  "max_solves": 3,
+  "max_iter": 30,
+  "newton_tol": 1e-12,
+  "perturbation": 1e-5,
+  "equation_tol": 1e-8,
+  "tail_tol": 1e-6,
+  "observable_tol": 1e-6,
+  "edge_tol": 1e-6,
+  "relative_density_cutoff": 1e-6,
+  "channel_half_height": 10.0
+}

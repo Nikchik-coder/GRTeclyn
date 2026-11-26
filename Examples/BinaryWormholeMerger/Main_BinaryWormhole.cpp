@@ -1,7 +1,7 @@
-#include "BHAMR.hpp"
+#include "BHAmr.hpp"
 #include "BinaryWormholeLevel.hpp"
-#include "DefaultLevelFactory.hpp"
-#include "GRAMR.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmr.hpp"
 #include "GRParmParse.hpp"
 #include "SetupFunctions.hpp"
 #include "SimulationParameters.hpp"
@@ -18,14 +18,14 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
 
     BinaryWormholeLevel::set_sim_params(&sim_params);
 
-    DefaultLevelFactory<BinaryWormholeLevel> wh_level_bld;
+    DefaultLevelBld<BinaryWormholeLevel> wh_level_bld;
 
-    // BHAMR (a GRAMR child) so that BHAMR::init() sets up the Weyl4
+    // BHAmr (a GRAmr child) so that BHAmr::init() sets up the Weyl4
     // ParticleInterpolator used for in-code Psi4 spherical-harmonic extraction
-    // (see BinaryWormholeLevel::specificPostTimeStep).  Puncture tracking is
+    // (see BinaryWormholeLevel::specific_post_timestep).  Puncture tracking is
     // disabled; the two throats are tracked through
     // binary_throat_diagnostics.dat instead.
-    BHAMR<BinaryWormholeLevel::num_punctures> wh_amr(&wh_level_bld);
+    BHAmr<BinaryWormholeLevel::num_punctures> wh_amr(&wh_level_bld);
 
     wh_amr.init(0., sim_params.stop_time);
 

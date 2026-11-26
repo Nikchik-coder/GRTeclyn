@@ -7,7 +7,7 @@ scripts so they do not regenerate them"). Every file here is included by
 `research/merger/pack_results.sh` draws no figure (it runs `plot_branches
 --no-figure` for `campaign/01_single_throat/BRANCHES.md` only). When a figure
 leaves the paper, delete its PNG/PDF here and its row below; its script stays in
-`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/`.
+`grteclyn-wrapper/src/grteclyn_workflows/plotting/wormhole_merger/`.
 **Add the row when you add a figure to the paper.**
 
 Run each command from the repository root with the wrapper's venv; every one
@@ -15,7 +15,7 @@ takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
 PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-07.
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.<module>
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.<module>
 ```
 
 | Fig. | label | file | module |
@@ -310,9 +310,9 @@ Two figures certify the 2026-09-18/19 validation arms; both are drawn with
 no arguments:
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_linearity
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_fill_insensitivity
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_mouth_growth
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_seed_linearity
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_fill_insensitivity
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_mouth_growth
 ```
 
 `01_single_throat/seed_linearity` — queue 2e gate 3: the (2,0) wave divided
@@ -383,11 +383,11 @@ The article's five wave figures live in `08_waves/`, cross-cutting because they
 belong to no single group. All are drawn with no arguments:
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_ligo
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_channel
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_censorship
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_heavy_seeds
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_psi4_gallery
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_psi4_ligo
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_scalar_channel
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_scalar_censorship
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_heavy_seeds
 ```
 
 `08_waves/heavy_seeds` (2026-09-21; labels and one error bar fixed 2026-09-23 --
@@ -675,7 +675,7 @@ time all four spheres peak together at t - R ~ 34.5, as radiation must.
 spiral collapse figure (sec:spiral:inspiral), drawn with no arguments:
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_spiral_collapse
 ```
 
 **REDRAWN 2026-09-24** (a read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. SINCE 2026-09-26 four panels: (d) went to `constraint_evolution` (f) as plain norms, max|K| joined (c), and (e) is (d). Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/wormhole_merger/pit_throats.py`). The older notes below describe the ten-panel page.
@@ -708,7 +708,7 @@ the p012 series gains legs or the scan table gains rows.
 head-on figure (sec:headon:contact), drawn with no arguments:
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_headon_collapse
 ```
 
 **REDRAWN 2026-09-24** (decided: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. SINCE 2026-09-26 five panels: (e) went to `constraint_evolution` (e), and (f) is (e), spanning the right half's bottom row. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `headon_remnant.py` (removed 2026-10-08 with the superposed head-on runs it read; born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
@@ -800,7 +800,7 @@ have a different start time, so a second panel, two columns like the other
 figures), drawn with no arguments:
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_ladder
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_spiral_ladder
 ```
 
 (a) reads `campaign/05_binary_spiral/refinement_ladder.dat` (levels 3-7 from
@@ -844,8 +844,8 @@ horizontal layout ... and do the same with fig 3 and fig 4 cause now they
 span too much space"):
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_single_throat_row
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_pair_row
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_single_throat_row
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.wormhole_merger.plot_pair_row
 ```
 
 `01_single_throat/single_throat_instability` (7.05 x 2.75 since 2026-09-26, one

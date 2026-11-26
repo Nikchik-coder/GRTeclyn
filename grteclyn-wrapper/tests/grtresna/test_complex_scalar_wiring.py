@@ -4,18 +4,9 @@ from __future__ import annotations
 
 import json
 
-from grteclyn_wrapper.grtresna.fields.boson_star import rename_complex_scalar_components
-from grteclyn_wrapper.grtresna.matter.wiring import (
-    GRTRESNA_COMPLEX_SCALAR_MODEL,
-    evolution_overrides_from_bicomplex_scalar,
-    evolution_overrides_from_complex_scalar,
-    evolution_overrides_from_metadata,
-    plot_vars_for_bicomplex_scalar,
-    plot_vars_for_complex_scalar,
-    read_matter_metadata,
-    write_matter_metadata,
-)
-from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
+from grteclyn_workflows.grtresna.fields.boson_star import rename_complex_scalar_components
+from grteclyn_workflows.grtresna.matter.wiring import GRTRESNA_COMPLEX_SCALAR_MODEL, evolution_overrides_from_bicomplex_scalar, evolution_overrides_from_complex_scalar, evolution_overrides_from_metadata, plot_vars_for_bicomplex_scalar, plot_vars_for_complex_scalar, read_matter_metadata, write_matter_metadata
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
 
 
 def test_rename_complex_scalar_components() -> None:
@@ -53,7 +44,7 @@ def test_read_matter_metadata_includes_scalar_lambda(tmp_path) -> None:
 
 
 def test_bicomplex_metadata_round_trip_includes_scalar_mu(tmp_path) -> None:
-    from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
+    from grteclyn_workflows.grtresna.solver import GRTresnaConfig
 
     cfg = GRTresnaConfig(
         matter_model=GRTRESNA_BICOMPLEX_SCALAR_MODEL,

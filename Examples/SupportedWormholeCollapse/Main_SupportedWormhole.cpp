@@ -1,5 +1,5 @@
-#include "DefaultLevelFactory.hpp"
-#include "GRAMR.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmr.hpp"
 #include "GRParmParse.hpp"
 #include "SetupFunctions.hpp"
 #include "SimulationParameters.hpp"
@@ -17,9 +17,9 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
 
     SupportedWormholeLevel::set_sim_params(&sim_params);
 
-    DefaultLevelFactory<SupportedWormholeLevel> wh_level_bld;
+    DefaultLevelBld<SupportedWormholeLevel> wh_level_bld;
 
-    GRAMR wh_amr(&wh_level_bld);
+    GRAmr wh_amr(&wh_level_bld);
 
     wh_amr.init(0., sim_params.stop_time);
 

@@ -97,7 +97,7 @@ exists at all — the discovery that unblocked the campaign.
 
 ### 3.1 The star ODE
 
-`grteclyn-wrapper/src/grteclyn_wrapper/grtresna/profiles/boson_star_ode.py`
+`grteclyn-wrapper/src/grteclyn_workflows/grtresna/profiles/boson_star_ode.py`
 integrates a static, spherically symmetric, maximally sliced star in isotropic
 coordinates with state `[φ₀, φ₀′, ψ, ψ′, α, α′]`:
 
@@ -162,7 +162,7 @@ phantom φ_c = 0.019589, ADM = −0.076962, α(0) = 1.0249.
 3. **The lapse is joined to its exterior.** Each table joins the integrated
    interior to an analytic exterior at r ≈ 5.2; since 2026-10-22 the lapse is
    joined with matching value and slope (`_lapse_join` in
-   `grteclyn_wrapper.grtresna.profiles.boson_star_ode`). The step it had before
+   `grteclyn_workflows.grtresna.profiles.boson_star_ode`). The step it had before
    (4–5 × 10⁻⁵) does not enter the t = 0 constraints, but the first time step
    turned it into a momentum-constraint violation.
 

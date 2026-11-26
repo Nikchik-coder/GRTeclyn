@@ -1,0 +1,19 @@
+{
+  "backend": null,
+  "case": "application",
+  "dependencies": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "matplotlib": "3.10.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "inputs": {
+    "results/merger/campaign/08_convergence/farzone_headon_flip_d8_L512_lvl7_t100_csm/constraint_norms.dat": "98aa232c9e4ef1512d5169355cb213d52bbce1f9ae3b5d03be813c7c91f71d62"
+  },
+  "python": "3.12.14",
+  "revision": "2f1c450604956cc31d927ae096490e291aa81cef",
+  "seconds": 1.9891261486336589,
+  "version": "legacy",
+  "wrapper_imports_blocked": false
+}

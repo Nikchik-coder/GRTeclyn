@@ -9,14 +9,10 @@
 #include "CCZ4Geometry.hpp"
 #include "CCZ4RHS.hpp"
 #include "CCZ4Vars.hpp"
-#include "Coordinates.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "MatterDispatch.hpp"
-#include "MovingPunctureGaugeWithMatter.hpp"
 #include "StateVariables.hpp" //This files needs NUM_VARS - total number of components
 #include "TensorAlgebra.hpp"
-
-#include <array>
 
 //!  Calculates RHS using CCZ4 including matter terms, and matter variable
 //!  evolution
@@ -28,73 +24,45 @@
    the matter variables. It does not assume a specific form of matter but is
    templated over a matter class matter_t. Please see the class ScalarField as
    an example of a matter_t. \sa CCZ4RHS(), ScalarField()
-
-   Two entry points exist:
-   * operator()<formulation, covariantZ4>() is the upstream contract: it adds
-     ONLY the matter contribution (plus dissipation over all NUM_VARS) and
-     expects the vacuum kernels of CCZ4RHS to have run on the same cell first
-     (see Tests/BSSNMatterTest for the composition).
-   * compute_full_rhs() runs the vacuum kernels and then the matter
-     contribution in one kernel, selecting formulation / covariantZ4 at runtime
-     from the constructor parameters.  This is the pre-#172 behaviour and what
-     the Level classes of this fork call.
 */
 
-template <class matter_t, class gauge_t = MovingPunctureGaugeWithMatter,
-          class deriv_t = FourthOrderDerivatives>
-class CCZ4RHSWithMatter : public CCZ4RHS<gauge_t, deriv_t>
+template <class matter_t, class deriv_t = FourthOrderDerivatives>
+class CCZ4RHSWithMatter : public CCZ4RHS<deriv_t>
 {
   public:
     // Use this alias for the same template instantiation as this class
-    using CCZ4 = CCZ4RHS<gauge_t, deriv_t>;
+    using CCZ4 = CCZ4RHS<deriv_t>;
 
     using params_t = CCZ4_params_t;
 
-    //!  Constructor of class MatterCCZ4
+    //! Constructor of class CCZ4RHSWithMatter
     /*!
-       Inputs are the grid spacing and optionally a matter object, Newton's
-       constant, the grid centre and the current time (the latter two are
-       handed to matter classes that need coordinates — pumps, support ramps).
-       The CCZ4 damping parameters, the dissipation coefficient
-       (evolution.sigma) and the formulation (ccz4.formulation) are read from
-       ParmParse, as in the base class.
+       The evolution parameters are read from the inputs. The
+       default-constructed matter object supplies stress-energy sources with
+       their gravitational coupling already applied.
     */
-    CCZ4RHSWithMatter(amrex::Real a_dx, amrex::Real a_G_Newton = 1.0,
-                      std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0,
-                                                                     0.0},
-                      amrex::Real a_time = 0.0);
+    CCZ4RHSWithMatter(amrex::Real a_dx);
 
+    CCZ4RHSWithMatter(amrex::Real a_dx, amrex::Real a_G_Newton,
+                      std::array<double, AMREX_SPACEDIM> a_center = {},
+                      amrex::Real a_time                          = 0.0);
     CCZ4RHSWithMatter(matter_t a_matter, amrex::Real a_dx,
-                      amrex::Real a_G_Newton = 1.0,
-                      std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0,
-                                                                     0.0},
-                      amrex::Real a_time = 0.0);
+                      amrex::Real a_G_Newton                      = 1.0,
+                      std::array<double, AMREX_SPACEDIM> a_center = {},
+                      amrex::Real a_time                          = 0.0);
 
-    //!  Matter contribution only (upstream contract).  The vacuum solution
-    //!  must be computed beforehand with the CCZ4RHS kernels.
-    //!  \sa compute_full_rhs()
-    template <int formulation, int use_covariant_Z4>
+    //! Full update with a separate gauge; matter sources precede the gauge.
+    template <class gauge_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    operator()(const int ix, const int iy, const int iz,
-               const amrex::Array4<amrex::Real> &rhs_state,
-               const amrex::Array4<amrex::Real const> &state) const;
+    compute_full_rhs(int ix, int iy, int iz,
+                     const amrex::Array4<amrex::Real> &rhs,
+                     const amrex::Array4<const amrex::Real> &state,
+                     const gauge_t &gauge) const;
 
-    //!  Vacuum + matter RHS in one kernel, formulation chosen at runtime.
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    compute_full_rhs(const int ix, const int iy, const int iz,
-                     const amrex::Array4<amrex::Real> &rhs_state,
-                     const amrex::Array4<amrex::Real const> &state) const;
-
-  protected:
-    //! EM-tensor source terms, matter-field evolution and dissipation.  Shared
-    //! by both entry points.
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_contribution(const int ix, const int iy, const int iz,
-                            const amrex::Array4<amrex::Real> &rhs_state,
-                            const amrex::Array4<const amrex::Real> &state) const;
-
-    //! The function which adds in the EM Tensor terms to the CCZ4 rhs \sa
-    //! compute()
+    //! Add stress-energy terms to the CCZ4 RHS, including the Gamma RHS.
+    /** Call this before a gauge update that derives the B-field RHS from the
+     * time derivative of the conformal connection functions.
+     */
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void add_emtensor_rhs(
         const int ix, const int iy, const int iz,
         const amrex::Array4<amrex::Real>
@@ -103,13 +71,26 @@ class CCZ4RHSWithMatter : public CCZ4RHS<gauge_t, deriv_t>
             &state) //!< the current value of the variables at the point.
         const;
 
+    //! Add the evolution equations for the matter variables.
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+    add_matter_rhs(int ix, int iy, int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state) const;
+
+    //! Add dissipation to the CCZ4 and matter variables.
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+    apply_dissipation(int ix, int iy, int iz,
+                      const amrex::Array4<amrex::Real> &rhs_state,
+                      const amrex::Array4<const amrex::Real> &state) const;
+
+  protected:
     // Class members
-    matter_t m_matter;      //!< The matter object, e.g. a scalar field.
-    amrex::Real m_G_Newton; //!< Newton's constant, set to one by default.
-    int m_formulation{};
+    amrex::Real m_G_Newton{1.0};
+    bool m_use_matter_coupling{true};
     amrex::Real m_dx;
-    std::array<double, AMREX_SPACEDIM> m_center;
-    amrex::Real m_time;
+    std::array<double, AMREX_SPACEDIM> m_center{};
+    amrex::Real m_time{0.0};
+    matter_t m_matter; //!< The matter object, e.g. a scalar field.
 };
 
 #include "CCZ4RHSWithMatter.impl.hpp"

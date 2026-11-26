@@ -6,11 +6,11 @@ import json
 import threading
 from pathlib import Path
 
-from grteclyn_wrapper.search.eval_pipeline import resume_eval_counter, scan_partial_eval_dirs
-from grteclyn_wrapper.search.qd_search.archive import Elite, QDArchive
-from grteclyn_wrapper.search.qd_search.driver import run_qd_search
-from grteclyn_wrapper.search.validation_tiers import DEFAULT_TIER_CONFIG, evaluate_tiers
-from grteclyn_wrapper.search.qd_search.descriptors import _descriptor_details
+from grteclyn_workflows.search.eval_pipeline import resume_eval_counter, scan_partial_eval_dirs
+from grteclyn_workflows.search.qd_search.archive import Elite, QDArchive
+from grteclyn_workflows.search.qd_search.driver import run_qd_search
+from grteclyn_workflows.search.validation_tiers import DEFAULT_TIER_CONFIG, evaluate_tiers
+from grteclyn_workflows.search.qd_search.descriptors import _descriptor_details
 
 
 def test_archive_lock_prevents_concurrent_insert_race() -> None:
@@ -62,8 +62,8 @@ def test_prune_removes_pipeline_interrupted(tmp_path: Path) -> None:
         {"eval": 1, "score": 1.0, "status": "gpu_ok"},
         {"eval": 7, "status": "pipeline_interrupted", "score": None},
     ]
-    from grteclyn_wrapper.search.ftl_retention import compute_keep_eval_ids
-    from grteclyn_wrapper.search.qd_search.io import _prune_eval_dirs
+    from grteclyn_workflows.search.ftl_retention import compute_keep_eval_ids
+    from grteclyn_workflows.search.qd_search.io import _prune_eval_dirs
 
     keep_ids = compute_keep_eval_ids(
         trajectory,
@@ -85,8 +85,8 @@ def test_prune_protects_in_flight_eval_ids(tmp_path: Path) -> None:
     (qd_dir / "eval_000007").mkdir()
     (qd_dir / "eval_000001").mkdir()
     trajectory = [{"eval": 1, "score": 1.0, "status": "gpu_ok"}]
-    from grteclyn_wrapper.search.qd_search.io import _prune_eval_dirs
-    from grteclyn_wrapper.search.ftl_retention import compute_keep_eval_ids
+    from grteclyn_workflows.search.qd_search.io import _prune_eval_dirs
+    from grteclyn_workflows.search.ftl_retention import compute_keep_eval_ids
 
     keep_ids = compute_keep_eval_ids(
         trajectory,
@@ -117,8 +117,8 @@ def test_scan_partial_eval_dirs_defaults_to_keep(tmp_path: Path) -> None:
 
 
 def test_no_midrun_trajectory_compaction(tmp_path: Path, monkeypatch) -> None:
-    from grteclyn_wrapper.core.evaluation import Evaluation
-    from grteclyn_wrapper.search import qd_search as qd_module
+    from grteclyn_workflows.evolution.evaluation import Evaluation
+    from grteclyn_workflows.search import qd_search as qd_module
 
     def fake_evaluate_overrides(overrides, *, out_dir, name, **_kwargs):
         episode = out_dir / name

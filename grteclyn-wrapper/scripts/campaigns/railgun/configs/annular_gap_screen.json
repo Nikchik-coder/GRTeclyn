@@ -1,0 +1,9 @@
+{
+  "outer_windings": [-4, -8, -12, -16],
+  "grids": [[96, 12], [128, 16]],
+  "radial_scale": 50.0,
+  "max_eigenproblems": 8,
+  "relative_density_cutoff": 1e-6,
+  "screen_frequency_tol": 1e-4,
+  "screen_edge_tol": 1e-2
+}

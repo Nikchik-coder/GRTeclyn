@@ -88,7 +88,7 @@ if command -v uv >/dev/null 2>&1 && [[ -f "${WRAPPER_ROOT}/pyproject.toml" ]]; t
   PYTHON=(uv run --directory "${WRAPPER_ROOT}" python)
 fi
 
-"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
+"${PYTHON[@]}" -m grteclyn_workflows.postprocessing \
   --data "${RUN_DIR}" \
   --out "${SMALL_DATA_DIR}" \
   --radii "${RADII[@]}" \

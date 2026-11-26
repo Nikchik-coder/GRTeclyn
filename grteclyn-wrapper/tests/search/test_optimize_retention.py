@@ -10,12 +10,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from grteclyn_wrapper.search.ftl_retention import (
-    FTL_CHAMPIONS_FILE,
-    FTL_RETENTION_LOG,
-    FtlChampionBoard,
-)
-from grteclyn_wrapper.search.optimize.driver import _apply_optimize_retention
+from grteclyn_workflows.search.ftl_retention import FTL_CHAMPIONS_FILE, FTL_RETENTION_LOG, FtlChampionBoard
+from grteclyn_workflows.search.optimize.driver import _apply_optimize_retention
 
 
 def _gpu_ok_record(

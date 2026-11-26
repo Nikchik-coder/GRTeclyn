@@ -127,7 +127,7 @@ EXAMPLE_DIR="${REPO_ROOT}/Examples/SpinningWormhole"
 # this campaign's facts live in preflight_campaign.json beside this script.
 CAMPAIGNS_LIB="$(cd -- "${SELF_DIR}/../lib" && pwd)"
 PREFLIGHT_PY="${CAMPAIGNS_LIB}/preflight.py"
-PREFLIGHT_CFG="${SELF_DIR}/preflight_campaign.json"
+PREFLIGHT_CFG="${SWH_PREFLIGHT_CONFIG:-${SELF_DIR}/preflight_campaign.json}"
 # The campaign's frame fields (SWH_FRAMES_FULL, from frames_default.txt): the
 # default below and what the preflight holds every launch to.  Stops here if
 # the list is missing.
@@ -439,7 +439,7 @@ fi
 # exactly this consumer and these flags.
 swh_consumer_args "${RUN_PARAMS}"
 CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
-CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+CONSUMER_MOD="grteclyn_workflows.postprocessing"
 CONSUMER_PID=""
 
 # The consumer's public name (see "Process table").  Python locates its virtual
@@ -466,8 +466,22 @@ if [[ "${SWH_CONSUME:-1}" != "0" ]]; then
   # directory instead and the process is named after the run's label.
   cat > "${RUN_DIR}/post.py" <<PY
 # written by run_single.sh: entry point for the plotfile consumer
+import os
 import runpy
-runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
+import signal
+if __name__ == "__main__":
+    # Spawned workers import this file as __mp_main__; only the parent enters
+    # the CLI. Long runs can cap each consumer worker independently of AMReX.
+    if "SWH_CONSUMER_THREADS" in os.environ:
+        for key in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                    "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
+            os.environ[key] = os.environ["SWH_CONSUMER_THREADS"]
+    # Unwind the process-pool context before the supervisor's final drain.
+    # Otherwise orphan workers could still be writing the same frame files.
+    def stop_after_workers(signum, frame):
+        raise SystemExit(0)
+    signal.signal(signal.SIGTERM, stop_after_workers)
+    runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
 PY
 fi
 # What the preflight checks and renders the frames with (through the

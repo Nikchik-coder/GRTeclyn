@@ -1,0 +1,157 @@
+{
+  "placement": {
+    "data/constraint_solve.dat": {
+      "shape": [
+        18
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 4.8104771581,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/constraint_norms.dat": {
+      "shape": [
+        2,
+        3
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 0.01,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/collapse_diagnostics.dat": {
+      "shape": [
+        2,
+        11
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 0.88397706496,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/binary_throat_diagnostics.dat": {
+      "shape": [
+        2,
+        18
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 8.0625,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/throat_track.dat": {
+      "shape": [
+        2,
+        11
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 4.03125,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "small_data/psi4_mode_l2m0.dat": {
+      "shape": [
+        2,
+        7
+      ],
+      "max_abs_difference": 0.0008801529819849373,
+      "max_abs_reference": 0.01,
+      "same_nan_mask": true,
+      "match": false
+    },
+    "small_data/psi4_mode_l2_all.dat": {
+      "shape": [
+        2,
+        31
+      ],
+      "max_abs_difference": 0.0010708117613855055,
+      "max_abs_reference": 0.01,
+      "same_nan_mask": true,
+      "match": false
+    },
+    "small_data/psi4_directional.dat": {
+      "shape": [
+        2,
+        6
+      ],
+      "max_abs_difference": 0.03179867748797338,
+      "max_abs_reference": 3.995849393661407,
+      "same_nan_mask": true,
+      "match": false
+    },
+    "small_data/areal_radius.dat": {
+      "shape": [
+        2,
+        3
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 0.9001649811992268,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "small_data/mots_spectral.dat": {
+      "shape": [
+        2,
+        22
+      ],
+      "max_abs_difference": 0.0,
+      "max_abs_reference": 6.0,
+      "same_nan_mask": true,
+      "match": true
+    }
+  },
+  "scalar": {
+    "data/constraint_norms.dat": {
+      "shape": [
+        1001,
+        19
+      ],
+      "max_abs_difference": 1.000000082740371e-11,
+      "max_abs_reference": 10.01,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/constraint_shells.dat": {
+      "shape": [
+        101,
+        100
+      ],
+      "max_abs_difference": 1.000000321264849e-14,
+      "max_abs_reference": 10.0,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/collapse_diagnostics.dat": {
+      "shape": [
+        1001,
+        15
+      ],
+      "max_abs_difference": 1.000000321264849e-15,
+      "max_abs_reference": 32.166657855,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/energy_conditions.dat": {
+      "shape": [
+        1001,
+        6
+      ],
+      "max_abs_difference": 5.480000121406506e-48,
+      "max_abs_reference": 10.01,
+      "same_nan_mask": true,
+      "match": true
+    },
+    "data/curvature_invariants.dat": {
+      "shape": [
+        1001,
+        5
+      ],
+      "max_abs_difference": 9.999986949615902e-13,
+      "max_abs_reference": 10.01,
+      "same_nan_mask": true,
+      "match": true
+    }
+  },
+  "placement_archived_constraint_norms_exact": true,
+  "placement_R14_real_l2m0_relative_change_t0": -0.13698710634805006
+}

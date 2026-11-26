@@ -11,12 +11,8 @@ from __future__ import annotations
 
 import argparse
 
-from grteclyn_wrapper.grtresna.domain.export import GridinitExportSpec
-from grteclyn_wrapper.grtresna.solver import (
-    GRTresnaConfig,
-    aligned_solve_enforced,
-    solve_grid_alignment_error,
-)
+from grteclyn_workflows.grtresna.domain.export import GridinitExportSpec
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig, aligned_solve_enforced, solve_grid_alignment_error
 
 
 def _aligned_cfg() -> GRTresnaConfig:
@@ -107,7 +103,7 @@ def _search_args(**overrides) -> argparse.Namespace:
 
 def test_context_maximal_slicing_flag_reaches_base_config(monkeypatch) -> None:
     monkeypatch.delenv("GRTRESNA_REQUIRE_ALIGNED_SOLVE", raising=False)
-    from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
+    from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
 
     context = build_grtresna_search_context(
         _search_args(grtresna_maximal_slicing=True, grtresna_require_converged=True),
@@ -129,7 +125,7 @@ def test_context_maximal_slicing_flag_reaches_base_config(monkeypatch) -> None:
 
 def test_context_misaligned_raises_when_enforced(monkeypatch) -> None:
     monkeypatch.setenv("GRTRESNA_REQUIRE_ALIGNED_SOLVE", "1")
-    from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
+    from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
 
     args = _search_args(
         grtresna_domain_nx=64, grtresna_domain_ny=64, grtresna_max_level=3
@@ -144,7 +140,7 @@ def test_context_misaligned_raises_when_enforced(monkeypatch) -> None:
 
 def test_context_misaligned_only_warns_when_not_enforced(monkeypatch) -> None:
     monkeypatch.delenv("GRTRESNA_REQUIRE_ALIGNED_SOLVE", raising=False)
-    from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
+    from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
 
     args = _search_args(
         grtresna_domain_nx=64, grtresna_domain_ny=64, grtresna_max_level=3

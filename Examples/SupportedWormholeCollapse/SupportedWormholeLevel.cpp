@@ -6,7 +6,7 @@
 #include "GRParmParse.hpp"
 #include "PositiveChiAndLapse.hpp"
 #include "SmallDataIO.hpp"
-#include "TraceARemoval.hpp"
+#include "AlgebraicConstraintsEnforcer.hpp"
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
 #include "SupportedWormholeInitialData.hpp"
@@ -39,7 +39,7 @@ const SimulationParameters &SupportedWormholeLevel::simParams()
 void SupportedWormholeLevel::variableSetUp()
 {
     BL_PROFILE("SupportedWormholeLevel::variableSetUp()");
-    stateVariableSetUp();
+    state_variable_set_up();
     
     PhantomDecayPotential potential;
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
@@ -47,11 +47,11 @@ void SupportedWormholeLevel::variableSetUp()
     Weyl4WithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
 }
 
-void SupportedWormholeLevel::specificAdvance()
+void SupportedWormholeLevel::specific_advance()
 {
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
@@ -87,11 +87,11 @@ void SupportedWormholeLevel::initData()
     amrex::Gpu::streamSynchronize();
 }
 
-void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+void SupportedWormholeLevel::specific_eval_rhs(amrex::MultiFab &a_soln,
                                     amrex::MultiFab &a_rhs,
                                     const double a_time)
 {
-    BL_PROFILE("SupportedWormholeLevel::specificEvalRHS()");
+    BL_PROFILE("SupportedWormholeLevel::specific_eval_rhs()");
     const int soln_ghosts = a_soln.nGrowVect()[0];
     if (soln_ghosts > 0)
     {
@@ -101,7 +101,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     const auto &soln_arrs   = a_soln.arrays();
     const auto &soln_c_arrs = a_soln.const_arrays();
     const auto &rhs_arrs    = a_rhs.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
@@ -114,20 +114,21 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     PhantomDecayPotential potential(simParams().wormhole_params.phantom_mass);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(
         potential, simParams().wormhole_params.support_strength);
-    CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>, MovingPunctureGaugeWithMatter, FourthOrderDerivatives> ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
+    CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>, FourthOrderDerivatives> ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
+    const MovingPunctureGauge<FourthOrderDerivatives> gauge(Geom().CellSize(0));
 
     amrex::ParallelFor(
         a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-        { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+        { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no], gauge); });
 
     amrex::Gpu::streamSynchronize();
 }
 
-void SupportedWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+void SupportedWormholeLevel::specific_update_ode(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -166,15 +167,15 @@ void SupportedWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     amrex::Gpu::streamSynchronize();
 }
 
-void SupportedWormholeLevel::specificPostTimeStep()
+void SupportedWormholeLevel::specific_post_timestep()
 {
-    BL_PROFILE("SupportedWormholeLevel::specificPostTimeStep");
+    BL_PROFILE("SupportedWormholeLevel::specific_post_timestep");
 
     if (simParams().calculate_constraint_norms && Level() == 0)
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         amrex::MultiFab &state_new = get_new_data(state_index);
@@ -275,7 +276,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev = parent->finestLevel();
@@ -288,7 +289,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
 
         {
             const auto &arrs = state_fine.arrays();
-            TraceARemoval trace_A_removal;
+            AlgebraicConstraintsEnforcer trace_A_removal(false);
             PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_fine, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,

@@ -4,13 +4,8 @@ from __future__ import annotations
 
 import json
 
-from grteclyn_wrapper.core.evaluation import Evaluation
-from grteclyn_wrapper.search.trajectory_log import (
-    format_eval_log_line,
-    format_trajectory_line,
-    infer_trajectory_status,
-    trajectory_flags_from_evaluation,
-)
+from grteclyn_workflows.evolution.evaluation import Evaluation
+from grteclyn_workflows.search.trajectory_log import format_eval_log_line, format_trajectory_line, infer_trajectory_status, trajectory_flags_from_evaluation
 
 
 def test_trajectory_line_puts_eval_first() -> None:

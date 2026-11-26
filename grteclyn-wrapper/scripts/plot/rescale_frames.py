@@ -46,9 +46,7 @@ SYMMETRIC_FIELDS = {
 
 def _series_scale(cache_root: str, field: str, axis: str, percentile: float):
     """Limits over every cached frame of one series, not frame by frame."""
-    from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles.frames import (
-        slice_cache,
-    )
+    from grteclyn_workflows.postprocessing.frames import slice_cache
 
     paths = slice_cache.cached_series(os.path.dirname(cache_root), field, axis)
     chunks = []
@@ -89,9 +87,7 @@ def _do_series(job):
     sys.path.insert(
         0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src")
     )
-    from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles.frames import (
-        slice_cache,
-    )
+    from grteclyn_workflows.postprocessing.frames import slice_cache
 
     cache_root = os.path.join(frames_dir, slice_cache.CACHE_DIR_NAME)
     scale = _series_scale(cache_root, field, axis, percentile)
@@ -119,9 +115,7 @@ def main(argv=None) -> int:
     sys.path.insert(
         0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src")
     )
-    from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles.frames import (
-        slice_cache,
-    )
+    from grteclyn_workflows.postprocessing.frames import slice_cache
 
     frames_dir = os.path.abspath(args.frames_dir)
     cache_root = os.path.join(frames_dir, slice_cache.CACHE_DIR_NAME)

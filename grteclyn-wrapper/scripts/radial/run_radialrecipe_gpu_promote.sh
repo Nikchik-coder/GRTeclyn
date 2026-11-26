@@ -72,8 +72,8 @@ echo "== Promotion summary (upgraded FTL scoring) =="
 ${PYTHON_BIN} - <<PY
 import json
 from pathlib import Path
-from grteclyn_wrapper.metrics import read_episode_metrics
-from grteclyn_wrapper.metrics import score_episode
+from grteclyn_workflows.diagnostics import read_episode_metrics
+from grteclyn_workflows.search.scoring import score_episode
 
 runs = Path(${RUNS_DIR@Q})
 stamp = ${RUN_STAMP@Q}

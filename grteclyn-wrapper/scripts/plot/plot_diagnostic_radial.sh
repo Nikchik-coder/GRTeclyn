@@ -7,8 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../lib/env.sh
 source "${SCRIPT_DIR}/../lib/env.sh"
-VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_wrapper/visualisation"
-PLOTS_DIR="${VIS_DIR}/plots/radial"
+VIS_DIR="${WRAPPER_ROOT}/src/grteclyn_workflows/plotting"
 
 choose_latest_episode() {
   local root="${GRTECLYN_ROOT}/runs"
@@ -34,6 +33,7 @@ if [[ -z "${RUN_DIR}" ]]; then
   exit 2
 fi
 RUN_DIR="$(cd "${RUN_DIR}" && pwd)"
+PLOTS_DIR="${RUN_DIR}/plots/radial"
 
 CONSTRAINT_FILE="${RUN_DIR}/data/constraint_norms.dat"
 COLLAPSE_FILE="${RUN_DIR}/data/collapse_diagnostics.dat"
@@ -61,12 +61,12 @@ if command -v uv >/dev/null 2>&1 && [[ -f "${WRAPPER_ROOT}/pyproject.toml" ]]; t
 fi
 
 echo "[1/3] Constraint norms..."
-"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.constraines \
+"${PYTHON[@]}" -m grteclyn_workflows.plotting.constraints \
   "${CONSTRAINT_FILE}" \
   -o "${PLOTS_DIR}/constraints_plot.eps"
 
 echo "[2/3] Collapse diagnostics..."
-"${PYTHON[@]}" "${VIS_DIR}/diagnostic/diagnostic.py" \
+"${PYTHON[@]}" "${VIS_DIR}/diagnostics/diagnostic.py" \
   "${COLLAPSE_FILE}" \
   --data "${RUN_DIR}" \
   --out "${PLOTS_DIR}" \
@@ -74,7 +74,7 @@ echo "[2/3] Collapse diagnostics..."
 
 if [[ -f "${SHELL_FILE}" ]]; then
   echo "[3/3] Shell profiles (chi/lapse/K)..."
-  "${PYTHON[@]}" -m grteclyn_wrapper.visualisation.radial.plot_shell_profiles \
+  "${PYTHON[@]}" -m grteclyn_workflows.plotting.radial.plot_shell_profiles \
     "${SHELL_FILE}" \
     --out "${PLOTS_DIR}" \
     --name shell_profiles

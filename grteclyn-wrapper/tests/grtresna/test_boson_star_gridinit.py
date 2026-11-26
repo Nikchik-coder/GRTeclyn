@@ -4,11 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from grteclyn_wrapper.grtresna.fields.boson_star import (
-    apply_post_solve_lapse_correction,
-    paint_boson_star_fields_on_grid,
-)
-from grteclyn_wrapper.grtresna.profiles.boson_star import solve_mini_boson_star
+from grteclyn_workflows.grtresna.fields.boson_star import apply_post_solve_lapse_correction, paint_boson_star_fields_on_grid
+from grteclyn_workflows.grtresna.profiles.boson_star import solve_mini_boson_star
 
 
 def test_paint_boson_star_fields_sets_phase_velocity() -> None:

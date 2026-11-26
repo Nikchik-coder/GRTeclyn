@@ -1,0 +1,41 @@
+{
+  "ring_seed": {
+    "path": "runs/ringwormhole/ergoregion108_continuation_20261105/accepted_overlap.npz",
+    "sha256": "3db8efad05afbeae9946c784cf82ccabcf2777340e22b5d5fc51ba175cdffa0b"
+  },
+  "control_seed": {
+    "path": "runs/ringwormhole/spin_ring_control_20261105/control_accepted.npz",
+    "sha256": "42ea87d72d2e43f1e7904619a753ff825515bb1578c6d254cefe710fa251b52c"
+  },
+  "grids": [
+    [
+      210,
+      36
+    ],
+    [
+      224,
+      38
+    ],
+    [
+      240,
+      40
+    ]
+  ],
+  "throat_radius": 2.0,
+  "control_J_step": 0.05,
+  "max_solves": 14,
+  "max_newton_iterations": 24,
+  "independent_points": [
+    49,
+    21
+  ],
+  "energy_budget": 1.0,
+  "tidal_factor": 4.0,
+  "matter_may_overlap_throat": true,
+  "wall_seconds": 3600,
+  "threads": 4,
+  "memory_gib": 160,
+  "checkpoints": false,
+  "target_geometric_flux_xi0": -0.08,
+  "flux_step": 0.02
+}

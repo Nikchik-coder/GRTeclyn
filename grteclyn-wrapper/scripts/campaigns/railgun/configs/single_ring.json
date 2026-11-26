@@ -1,0 +1,6 @@
+{
+  "fields": [{"winding": 1, "mass": 1.0, "amplitude": 0.05, "anchor_radius": 5.0}],
+  "length": 6.0,
+  "grids": [[32, 8], [40, 10], [48, 12]],
+  "max_iter": 40
+}

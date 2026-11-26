@@ -21,7 +21,7 @@
 #include "SmallDataIO.hpp"
 #include "SpongeZone.hpp"
 #include "ThroatTracker.hpp"
-#include "TraceARemoval.hpp"
+#include "AlgebraicConstraintsEnforcer.hpp"
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
 
@@ -90,15 +90,15 @@ const SimulationParameters &BinaryWormholeLevel::simParams()
     return *s_sim_params;
 }
 
-BHAMR<BinaryWormholeLevel::num_punctures> *BinaryWormholeLevel::get_bhamr_ptr()
+BHAmr<BinaryWormholeLevel::num_punctures> *BinaryWormholeLevel::get_bhamr_ptr()
 {
-    return dynamic_cast<BHAMR<num_punctures> *>(get_gramr_ptr());
+    return dynamic_cast<BHAmr<num_punctures> *>(get_gr_amr_ptr());
 }
 
 void BinaryWormholeLevel::variableSetUp()
 {
     BL_PROFILE("BinaryWormholeLevel::variableSetUp()");
-    stateVariableSetUp();
+    state_variable_set_up();
 
     PhantomDecayPotential potential;
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
@@ -108,11 +108,11 @@ void BinaryWormholeLevel::variableSetUp()
         state_index);
 }
 
-void BinaryWormholeLevel::specificAdvance()
+void BinaryWormholeLevel::specific_advance()
 {
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
@@ -207,11 +207,11 @@ void BinaryWormholeLevel::initData()
     amrex::Gpu::streamSynchronize();
 }
 
-void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+void BinaryWormholeLevel::specific_eval_rhs(amrex::MultiFab &a_soln,
                                           amrex::MultiFab &a_rhs,
                                           const double a_time)
 {
-    BL_PROFILE("BinaryWormholeLevel::specificEvalRHS()");
+    BL_PROFILE("BinaryWormholeLevel::specific_eval_rhs()");
     const int soln_ghosts = a_soln.nGrowVect()[0];
     if (soln_ghosts > 0)
     {
@@ -221,7 +221,7 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     const auto &soln_arrs   = a_soln.arrays();
     const auto &soln_c_arrs = a_soln.const_arrays();
     const auto &rhs_arrs    = a_rhs.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     DetHRescale det_h_rescale;
     const bool do_det_h = (simParams().rescale_det_h != 0);
@@ -241,15 +241,16 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(
         potential, simParams().wormhole_params.support_strength);
     CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>,
-                      MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
+                      FourthOrderDerivatives>
         ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
                 simParams().wormhole_params.grid_center, a_time);
+    const MovingPunctureGauge<FourthOrderDerivatives> gauge(Geom().CellSize(0));
 
     amrex::ParallelFor(a_rhs,
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
                            ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no],
-                                                    soln_c_arrs[box_no]);
+                                                    soln_c_arrs[box_no], gauge);
                        });
 
     // Sponge zone: extra radially-ramped Kreiss-Oliger dissipation in an outer
@@ -314,10 +315,10 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     amrex::Gpu::streamSynchronize();
 }
 
-void BinaryWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+void BinaryWormholeLevel::specific_update_ode(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     DetHRescale det_h_rescale;
     const bool do_det_h = (simParams().rescale_det_h != 0);
@@ -651,7 +652,7 @@ void BinaryWormholeLevel::solve_initial_constraints()
 
     // The same, as one t = 0 row (packed with the run's streams).
     const amrex::Real dt           = parent->dtLevel(0);
-    const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+    const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
     SmallDataIO cs_file(resolve_out_dir() + "constraint_solve", dt, 0.0,
                         restart_time, SmallDataIO::APPEND, true);
     cs_file.remove_duplicate_time_data();
@@ -681,7 +682,7 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         amrex::MultiFab &state_new = get_new_data(state_index);
@@ -790,7 +791,7 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev        = parent->finestLevel();
@@ -803,7 +804,7 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
 
         {
             const auto &arrs = state_fine.arrays();
-            TraceARemoval trace_A_removal;
+            AlgebraicConstraintsEnforcer trace_A_removal(false);
             PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(
                 state_fine, amrex::IntVect(0),
@@ -1061,9 +1062,9 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
     }
 }
 
-void BinaryWormholeLevel::specificPostTimeStep()
+void BinaryWormholeLevel::specific_post_timestep()
 {
-    BL_PROFILE("BinaryWormholeLevel::specificPostTimeStep");
+    BL_PROFILE("BinaryWormholeLevel::specific_post_timestep");
 
     write_scalar_diagnostics();
 
@@ -1080,9 +1081,9 @@ void BinaryWormholeLevel::specificPostTimeStep()
         if (calculate_weyl && Level() == min_level)
         {
             const amrex::Real m_time = get_state_data(state_index).curTime();
-            const amrex::Real m_dt   = get_gramr_ptr()->dtLevel(Level());
+            const amrex::Real m_dt   = get_gr_amr_ptr()->dtLevel(Level());
             const amrex::Real restart_time =
-                get_gramr_ptr()->get_restart_time();
+                get_gr_amr_ptr()->get_restart_time();
             const bool first_step = (m_time <= m_dt);
 
             WeylExtraction my_extraction(simParams().extraction_params, m_dt,

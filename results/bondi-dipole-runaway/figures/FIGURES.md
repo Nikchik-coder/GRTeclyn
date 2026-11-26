@@ -8,7 +8,7 @@ the revision's runs on the fixed code (`../runs_registry.tsv`); nothing is drawn
 Rebuild from the repository root on the workstation (the text goes through pdflatex, matplotlib's pgf backend):
 
 ```
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole [article|bend|convergence]
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole [article|bend|convergence]
 ```
 
 | Fig. | label | file | drawn by | runs |
@@ -16,8 +16,8 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
 | 1 | `fig:schematic` | `00_overview/schematic` | `article_figures.fig_schematic` | none (drawn) |
 | 2 | `fig:frames` | `04_runaway/chase_frames` | `article_figures.fig_chase_frames` | PM10 N 256 (its packed stills) |
 | 3 | `fig:traj` | `04_runaway/trajectories` | `article_figures.fig_trajectories` | PM10 N 128 / 256, PM10-t400, P N 128, M N 256, PP10, MM10 |
-| 4 | `fig:forcelaw` | `05_separation/forcelaw` | `article_figures.fig_forcelaw` | PM8–PM20, PM10 N 256; E0.64, PM20, E1.34, E1.57 through `../campaign/06_mass/mass_law.csv` (`grteclyn_wrapper.analysis.bondi_dipole.fit_mass_law`) |
-| 5 | `fig:samesign` | `03_same_sign/samesign` | `article_figures.fig_samesign` | PP10, MM10 (their `well_tracking.dat`, from `grteclyn_wrapper.analysis.bondi_dipole.track_wells` at packing), PM10 N 256 |
+| 4 | `fig:forcelaw` | `05_separation/forcelaw` | `article_figures.fig_forcelaw` | PM8–PM20, PM10 N 256; E0.64, PM20, E1.34, E1.57 through `../campaign/06_mass/mass_law.csv` (`grteclyn_workflows.analysis.bondi_dipole.fit_mass_law`) |
+| 5 | `fig:samesign` | `03_same_sign/samesign` | `article_figures.fig_samesign` | PP10, MM10 (their `well_tracking.dat`, from `grteclyn_workflows.analysis.bondi_dipole.track_wells` at packing), PM10 N 256 |
 | 6 | `fig:massscale` | `06_mass/massscale` | `article_figures.fig_massscale` | R0.60, R0.80, PM10 N 128, R1.33 |
 | 7 | `fig:wavezone` | `04_runaway/wavezone` | `article_figures.fig_wavezone` | PM10-L128 |
 | 8 (App. A) | `fig:constraints` | `09_convergence/convergence_pair` | `plot_convergence --study pair` | PM10 N 128 / 192 / 256 |

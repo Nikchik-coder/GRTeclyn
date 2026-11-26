@@ -9,23 +9,16 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 
-from grteclyn_wrapper.metrics import read_episode_metrics, read_growth_metrics, score_episode
-from grteclyn_wrapper.metrics.probes.physical import compute_physical_metrics
-from grteclyn_wrapper.search.pareto import ParetoPoint, dominates, pareto_front
-from grteclyn_wrapper.search.qd_search import (
-    QDArchive,
-    Elite,
-    _bin_index,
-    _descriptor_details,
-    _descriptors,
-    _iterations_for_target_evals,
-    run_qd_search,
-)
-from grteclyn_wrapper.core.evaluation import Evaluation
-from grteclyn_wrapper.initial_data.seeds import get_seed
-from grteclyn_wrapper.search import qd_search as qd_module
-from grteclyn_wrapper.search.optimize import SearchDimension
-from grteclyn_wrapper.search.surrogate import RBFSurrogate, screen_candidates
+from grteclyn_workflows.diagnostics import read_episode_metrics, read_growth_metrics
+from grteclyn_workflows.search.scoring import score_episode
+from grteclyn_workflows.diagnostics.probes.physical import compute_physical_metrics
+from grteclyn_workflows.search.pareto import ParetoPoint, dominates, pareto_front
+from grteclyn_workflows.search.qd_search import QDArchive, Elite, _bin_index, _descriptor_details, _descriptors, _iterations_for_target_evals, run_qd_search
+from grteclyn_workflows.evolution.evaluation import Evaluation
+from grteclyn_workflows.initial_data.seeds import get_seed
+from grteclyn_workflows.search import qd_search as qd_module
+from grteclyn_workflows.search.optimize import SearchDimension
+from grteclyn_workflows.search.surrogate import RBFSurrogate, screen_candidates
 
 
 # --------------------------------------------------------------------------

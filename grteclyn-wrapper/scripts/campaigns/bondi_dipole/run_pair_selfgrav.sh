@@ -258,7 +258,7 @@ campaign_register_launcher "${RUNS_DIR}"
 # Live per-sector centroid stream + radiation extraction.
 export GRTECLYN_SECTOR_BARYCENTERS=1
 export GRTECLYN_PSI4=1
-# Neutral process table, as the merger launcher's (core/runner.py): the
+# Neutral process table, as the merger launcher's (evolution/runner.py): the
 # evolution shows as `test params.txt`, run from a checksum-named copy of the
 # binary, and the consumer as `test_post post.py` (2026-10-23).
 export GRTECLYN_PROC_LABEL="${BONDI_PROC_LABEL:-test}"

@@ -1,0 +1,12 @@
+{
+  "source_sha256": "bf92fd0c8a9be3bb75481e693f6927ea82757e30f843d06305e053a77280d82e",
+  "length": 2.5,
+  "grids": [[128, 16], [160, 20], [192, 24]],
+  "amplitude_factors": [1.0, 1.06, 1.1236, 1.191016, 1.26247696, 1.3382255776, 1.418519112256, 1.50363025899136, 1.5938480745308416],
+  "max_solves": 27,
+  "max_iter": 30,
+  "newton_tol": 1e-14,
+  "equation_tol": 1e-8,
+  "tail_tol": 1e-6,
+  "observable_tol": 1e-6
+}

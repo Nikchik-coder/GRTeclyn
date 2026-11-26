@@ -6,14 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from grteclyn_wrapper.core.episode import create_episode
-from grteclyn_wrapper.grtresna.matter.wiring import evolution_overrides_from_config
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.projection.postload_gate import PostLoadGateConfig
-from grteclyn_wrapper.search.grtresna_evaluation_gates import (
-    GRTresnaPreEvolutionGateConfig,
-    apply_grtresna_pre_evolution_gates,
-)
+from grteclyn_workflows.evolution.episode import create_episode
+from grteclyn_workflows.grtresna.matter.wiring import evolution_overrides_from_config
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig
+from grteclyn_workflows.search.grtresna_evaluation_gates import GRTresnaPreEvolutionGateConfig, apply_grtresna_pre_evolution_gates
 
 
 def test_apply_pre_evolution_gates_accepts_good_convergence_and_dry_postload(

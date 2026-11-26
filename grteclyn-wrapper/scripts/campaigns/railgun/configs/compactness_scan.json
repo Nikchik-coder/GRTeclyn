@@ -1,0 +1,10 @@
+{
+  "amplitudes": [0.06, 0.075, 0.095, 0.12, 0.15, 0.19, 0.23],
+  "length": 5.0,
+  "grids": [[72, 10], [96, 12], [128, 16]],
+  "max_solves": 21,
+  "max_iter": 30,
+  "equation_tol": 1e-8,
+  "tail_tol": 1e-6,
+  "observable_tol": 1e-6
+}

@@ -2,17 +2,9 @@
 
 from __future__ import annotations
 
-from grteclyn_wrapper.grtresna.matter.models import (
-    GRTRESNA_COMPLEX_SCALAR_MODEL,
-    GRTRESNA_INDEPENDENT_MATTER_MODEL,
-    MATTER_COUPLING_EXOTIC,
-    MATTER_SECTOR_BOSON_STAR,
-    MATTER_SECTOR_SCALAR,
-    matter_selection_base_overrides,
-    resolve_matter_selection,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.search.optimize import build_grtresna_config, build_search_space
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_COMPLEX_SCALAR_MODEL, GRTRESNA_INDEPENDENT_MATTER_MODEL, MATTER_COUPLING_EXOTIC, MATTER_SECTOR_BOSON_STAR, MATTER_SECTOR_SCALAR, matter_selection_base_overrides, resolve_matter_selection
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.search.optimize import build_grtresna_config, build_search_space
 
 
 def test_matter_selection_four_modes() -> None:

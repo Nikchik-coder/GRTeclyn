@@ -99,7 +99,7 @@ RESUME_ARGS=()
 [[ "${RESUME:-0}" == "1" ]] && RESUME_ARGS+=(--resume)
 
 # shellcheck disable=SC2086
-exec ${PYTHON_BIN} -m grteclyn_wrapper \
+exec ${PYTHON_BIN} -m grteclyn_workflows \
   "${PRE_ARGS[@]}" \
   "${EXTRA_SET_ARGS[@]}" \
   optimize \

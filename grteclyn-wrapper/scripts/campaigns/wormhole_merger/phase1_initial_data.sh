@@ -482,7 +482,7 @@ shells() {
   mkdir -p "${out}"
   # shellcheck disable=SC2086
   "${WRAPPER_DIR}/.venv/bin/python" -m \
-    grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
+    grteclyn_workflows.postprocessing \
     --data "${scratch}" --out "${out}" --no-psi4 \
     --shell-fields ${fields} --radii ${radii} --n-points 32 \
     --center "${c}" "${c}" "${c}" --stable-seconds 0 >/dev/null 2>&1

@@ -4,7 +4,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../../lib/env.sh
 source "${SCRIPT_DIR}/../../lib/env.sh"
 
-BASE_VISUALISATION_DIR="${WRAPPER_ROOT}/src/grteclyn_wrapper/visualisation"
 SIM_RESULTS_DIR="${WRAPPER_ROOT}/output/SimResults"
 
 RUN_TYPE="${1:-SupportedWormholeCollapse}"
@@ -12,11 +11,11 @@ RUN_TYPE="${1:-SupportedWormholeCollapse}"
 if [ "$RUN_TYPE" == "SupportedWormholeCollapse" ]; then
     DATA_DIR="$(cd "${GRTECLYN_ROOT}/.." && pwd)/data_supported"
     PARAMS_FILE="${GRTECLYN_ROOT}/Examples/SupportedWormholeCollapse/params_2gpu.txt"
-    VIS_FRAMES_DIR="${BASE_VISUALISATION_DIR}/visualize"
+    VIS_FRAMES_DIR="${DATA_DIR}/frames"
 else
     DATA_DIR="$(cd "${GRTECLYN_ROOT}/.." && pwd)/data_2gpu"
     PARAMS_FILE="${GRTECLYN_ROOT}/Examples/WormholeCollapse/params_2gpu.txt"
-    VIS_FRAMES_DIR="${BASE_VISUALISATION_DIR}/visualize"
+    VIS_FRAMES_DIR="${DATA_DIR}/frames"
 fi
 
 if [ ! -f "$PARAMS_FILE" ]; then
@@ -55,7 +54,7 @@ cp -ur "$VIS_FRAMES_DIR/Weyl4_Mag"* "$TARGET_DIR/" 2>/dev/null || true
 cp -ur "$VIS_FRAMES_DIR/Weyl4_Re"* "$TARGET_DIR/" 2>/dev/null || true
 cp -ur "$VIS_FRAMES_DIR/embedding"* "$TARGET_DIR/" 2>/dev/null || true
 
-PLOTS_DIR="${BASE_VISUALISATION_DIR}/plots"
+PLOTS_DIR="${DATA_DIR}/plots"
 echo "Copying plot files from ${PLOTS_DIR} ..."
 if [ -d "$PLOTS_DIR" ]; then
   cp -u "$PLOTS_DIR"/* "$TARGET_DIR/" 2>/dev/null || true

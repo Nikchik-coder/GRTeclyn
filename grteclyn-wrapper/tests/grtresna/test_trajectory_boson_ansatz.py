@@ -10,23 +10,12 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from grteclyn_wrapper.__main__ import build_parser
-from grteclyn_wrapper.cli.grtresna_context import build_grtresna_search_context
-from grteclyn_wrapper.grtresna.matter.models import (
-    GRTRESNA_BICOMPLEX_SCALAR_MODEL,
-    GRTRESNA_COMPLEX_SCALAR_MODEL,
-    GRTRESNA_EXAMPLE_BOSON_STAR_BH,
-    matter_selection_base_overrides,
-    resolve_matter_selection,
-)
-from grteclyn_wrapper.grtresna.matter.sign_consistency import SignMismatchError
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.search.optimize import (
-    TRAJECTORY_BOSON_PROFILE_CHOICES,
-    build_grtresna_config,
-    build_search_space,
-    grtresna_trajectory_boson_search_space,
-)
+from grteclyn_workflows.__main__ import build_parser
+from grteclyn_workflows.cli.grtresna_context import build_grtresna_search_context
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL, GRTRESNA_COMPLEX_SCALAR_MODEL, GRTRESNA_EXAMPLE_BOSON_STAR_BH, matter_selection_base_overrides, resolve_matter_selection
+from grteclyn_workflows.grtresna.matter.sign_consistency import SignMismatchError
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.search.optimize import TRAJECTORY_BOSON_PROFILE_CHOICES, build_grtresna_config, build_search_space, grtresna_trajectory_boson_search_space
 
 
 # ---------------------------------------------------------------------------
@@ -321,10 +310,8 @@ def test_trajectory_boson_exotic_lumps() -> None:
     assert cfg.lumps[1]["exotic"] == 0
     assert cfg.lumps[2]["exotic"] == 1
     # Bicomplex wiring maps exotic→sign (−1 / +1) for Phi± evolution.
-    from grteclyn_wrapper.grtresna.fields.lump import lump_sign
-    from grteclyn_wrapper.grtresna.matter.wiring import (
-        evolution_overrides_from_bicomplex_scalar,
-    )
+    from grteclyn_workflows.grtresna.fields.lump import lump_sign
+    from grteclyn_workflows.grtresna.matter.wiring import evolution_overrides_from_bicomplex_scalar
 
     signs = tuple(lump_sign(L) for L in cfg.lumps)
     assert signs == (-1, 1, -1)
@@ -460,10 +447,7 @@ def test_scalar_trajectory_unchanged_by_boson_path() -> None:
 
 def test_trajectory_boson_selfgrav_selects_profile_4() -> None:
     """grtresna_bs_selfgrav=1 tags every lump as the self-gravitating profile."""
-    from grteclyn_wrapper.grtresna.profiles.boson_star import (
-        PROFILE_SECH_BOUND,
-        PROFILE_SELFGRAV_BOUND,
-    )
+    from grteclyn_workflows.grtresna.profiles.boson_star import PROFILE_SECH_BOUND, PROFILE_SELFGRAV_BOUND
 
     ov = _boson_trajectory_overrides(num_lumps=3)
     ov["grtresna_bs_selfgrav"] = 1

@@ -58,7 +58,7 @@ if [[ -z "${RL_PUMP_STOP_TIME:-}" ]]; then
 fi
 export RL_PUMP_STOP_TIME
 # A negative pump value erases the scorer's fallback emission floor
-# (metrics/score/ftl.py skips values < 0) — the floor must then be pinned
+# (search/scoring/ftl.py skips values < 0) — the floor must then be pinned
 # explicitly or f_geo silently changes meaning.
 if [[ "${RL_PUMP_STOP_TIME}" == -* && -z "${GEODESIC_EMIT_MIN_TIME:-}" ]]; then
   echo "[cmaes] RL_PUMP_STOP_TIME=${RL_PUMP_STOP_TIME} needs an explicit emission" >&2

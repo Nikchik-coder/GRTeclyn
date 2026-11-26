@@ -20,17 +20,8 @@ from __future__ import annotations
 
 import math
 
-from grteclyn_wrapper.search.optimize.candidates import (
-    TRAJECTORY_R_MIN_DEFAULT,
-    TRAJECTORY_STOP_TIME_DEFAULT,
-    TRAJECTORY_V_MAX_DEFAULT,
-    _clamp_trajectory_speed,
-    _clamp_trajectory_spiral_radius,
-    _enforce_retrograde,
-    _min_spiral_v_rad,
-    _vector_to_overrides,
-)
-from grteclyn_wrapper.search.optimize.dimension import SearchDimension
+from grteclyn_workflows.search.optimize.candidates import TRAJECTORY_R_MIN_DEFAULT, TRAJECTORY_STOP_TIME_DEFAULT, TRAJECTORY_V_MAX_DEFAULT, _clamp_trajectory_speed, _clamp_trajectory_spiral_radius, _enforce_retrograde, _min_spiral_v_rad, _vector_to_overrides
+from grteclyn_workflows.search.optimize.dimension import SearchDimension
 
 
 def _physical_speed(overrides: dict, lump_idx: int) -> tuple[float, float, float]:

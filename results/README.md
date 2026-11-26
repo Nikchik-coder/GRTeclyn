@@ -13,9 +13,10 @@ directory — there are no loose campaign folders at this level.
 | [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
 | [`merger/`](merger/) | Complete. The colliding-wormholes campaign behind [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) (v2); the paper cites tag `v1.0.1-wormhole-merger`. |
 | [`spinningwormhole/`](spinningwormhole/) | Complete. Rotating drainholes: the solver's solutions and the 3D runs of the rotating-wormholes paper. |
+| [`software-validation/`](software-validation/) | Refactor reproduction checks and analytic regressions for upstream evolution and matter diagnostics. |
 
 The pack scripts scrub machine identity at runtime through the shared scrubber
-[`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
+[`grteclyn_workflows.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_workflows/packaging/scrub_paths.py)
 — host, user and home-path tokens are derived from the environment, never
 hard-coded — and then gate the pack: a surviving token fails the run.
 
@@ -33,7 +34,7 @@ paper quotes is redrawn from the pack without a GPU:
 
 ```bash
 # from the repository root
-grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
+grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.bondi_dipole
 ```
 
 Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md), then

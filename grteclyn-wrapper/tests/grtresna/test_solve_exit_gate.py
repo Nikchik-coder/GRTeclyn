@@ -10,11 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from grteclyn_wrapper.grtresna.solver import classify_solve_exit, parse_convergence
-from grteclyn_wrapper.search.grtresna_convergence_gate import (
-    GRTresnaConvergenceConfig,
-    convergence_rejection_reason,
-)
+from grteclyn_workflows.grtresna.solver import classify_solve_exit, parse_convergence
+from grteclyn_workflows.search.grtresna_convergence_gate import GRTresnaConvergenceConfig, convergence_rejection_reason
 
 
 def _work_dir(

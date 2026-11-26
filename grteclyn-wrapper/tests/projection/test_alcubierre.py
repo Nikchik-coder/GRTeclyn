@@ -16,30 +16,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.fit.motif import (
-    fit_matter_from_motif,
-    fit_momentum_from_motif,
-)
-from grteclyn_wrapper.initial_data.motif import (
-    GeometryMotif,
-    MomentumTarget,
-    alcubierre_shape_function,
-    motif_from_alcubierre,
-)
-from grteclyn_wrapper.projection.mismatch import (
-    _is_warp_motif,
-    _target_2d_slice_warp,
-    _warp_params_from_motif,
-    _compute_si_mismatch,
-    warp_factory_cross_check,
-)
-from grteclyn_wrapper.projection.warp_gridinit import (
-    alcubierre_analytic_fields,
-    alcubierre_analytic_Si,
-    paint_alcubierre_warp_on_gridinit,
-    write_alcubierre_gridinit,
-)
-from grteclyn_wrapper.grtresna.io.gridinit import read_gridinit, write_gridinit
+from grteclyn_workflows.grtresna.fit.motif import fit_matter_from_motif, fit_momentum_from_motif
+from grteclyn_workflows.initial_data.motif import GeometryMotif, MomentumTarget, alcubierre_shape_function, motif_from_alcubierre
+from grteclyn_workflows.projection.mismatch import _is_warp_motif, _target_2d_slice_warp, _warp_params_from_motif, _compute_si_mismatch, warp_factory_cross_check
+from grteclyn_workflows.projection.warp_gridinit import alcubierre_analytic_fields, alcubierre_analytic_Si, paint_alcubierre_warp_on_gridinit, write_alcubierre_gridinit
+from grteclyn_workflows.grtresna.io.gridinit import read_gridinit, write_gridinit
 
 
 # ---------------------------------------------------------------------------

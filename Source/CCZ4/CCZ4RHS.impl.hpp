@@ -14,10 +14,10 @@
 #include "GRInterval.hpp"
 
 // NOLINTBEGIN(bugprone-easily-swappable-parameters)
-template <class gauge_t, class deriv_t>
-inline CCZ4RHS<gauge_t, deriv_t>::CCZ4RHS(amrex::Real a_dx,
-                                          amrex::Real a_cosmological_constant)
-    : m_gauge(), m_cosmological_constant(a_cosmological_constant), m_deriv(a_dx)
+template <class deriv_t>
+inline CCZ4RHS<deriv_t>::CCZ4RHS(amrex::Real a_dx,
+                                 amrex::Real a_cosmological_constant)
+    : m_cosmological_constant(a_cosmological_constant), m_deriv(a_dx)
 // NOLINTEND(bugprone-easily-swappable-parameters)
 {
     m_params.fill_params();
@@ -26,9 +26,8 @@ inline CCZ4RHS<gauge_t, deriv_t>::CCZ4RHS(amrex::Real a_dx,
     pp.get("evolution.sigma", m_sigma);
 }
 
-template <class gauge_t, class deriv_t>
-AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHS<gauge_t, deriv_t>::compute_chi_and_h_ij(
+template <class deriv_t>
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void CCZ4RHS<deriv_t>::compute_chi_and_h_ij(
     int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs,
     const amrex::Array4<const amrex::Real> &state) const
 {
@@ -67,10 +66,9 @@ CCZ4RHS<gauge_t, deriv_t>::compute_chi_and_h_ij(
     }
 }
 
-template <class gauge_t, class deriv_t>
-template <int formulation, int use_covariant_Z4>
+template <class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
+CCZ4RHS<deriv_t>::compute_A_ij_and_Theta_and_Gamma(
     int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs,
     const amrex::Array4<const amrex::Real> &state) const
 {
@@ -90,16 +88,13 @@ CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
     Tensor::Rank1 Z_over_chi;
     Tensor::Rank1 Z; // NOLINT(readability-identifier-length)
 
-    if constexpr (formulation == formulations::USE_BSSN)
-    {
-        FOR (i)
-            Z_over_chi(i) = 0.0;
-    }
-    else
-    {
+    // Select CCZ4 without introducing a branch into the GPU kernel.
+    const amrex::Real ccz4_coeff = 1.0 - m_params.bssn_coeff;
 
-        FOR (i)
-            Z_over_chi(i) = 0.5 * (vars.Gamma(i) - chris.contracted(i));
+    FOR (i)
+    {
+        Z_over_chi(i) =
+            ccz4_coeff * 0.5 * (vars.Gamma(i) - chris.contracted(i));
     }
     FOR (i)
         Z(i) = vars.chi() * Z_over_chi(i);
@@ -207,56 +202,48 @@ CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
         }
     }
 
-    amrex::Real kappa1_times_lapse;
-    if constexpr (use_covariant_Z4)
-    {
-        kappa1_times_lapse = m_params.kappa1;
-    }
-    else
-    {
-        kappa1_times_lapse = m_params.kappa1 * vars.lapse();
-    }
+    const amrex::Real non_covariant_z4 = 1.0 - m_params.covariant_z4_coeff;
+    const amrex::Real kappa1_times_lapse =
+        m_params.covariant_z4_coeff * m_params.kappa1 +
+        non_covariant_z4 * m_params.kappa1 * vars.lapse();
 
-    if constexpr (formulation == formulations::USE_BSSN)
-    {
-        // ensure the Theta of CCZ4 remains at zero
-        rhs_cell_data[c_Theta] = 0.0;
-        // Use hamiltonian constraint to remove ricci.scalar for BSSN update
-        rhs_cell_data[c_K] =
-            advec_K +
-            vars.lapse() *
-                (Aij_squared + vars.K() * vars.K() / (amrex::Real)GR_SPACEDIM) -
-            tr_covd2lapse -
-            2.0 * vars.lapse() * m_cosmological_constant /
-                ((amrex::Real)GR_SPACEDIM - 1.0);
-    }
-    else
-    {
-        amrex::Real advec_Theta =
-            m_deriv.advection(ix, iy, iz, state, shift_vector, c_Theta);
+    const amrex::Real advec_Theta =
+        m_deriv.advection(ix, iy, iz, state, shift_vector, c_Theta);
 
-        rhs_cell_data[c_Theta] =
-            advec_Theta +
-            0.5 * vars.lapse() *
-                (ricci.scalar - Aij_squared +
-                 (((amrex::Real)GR_SPACEDIM - 1.0) / (amrex::Real)GR_SPACEDIM) *
-                     vars.K() * vars.K() -
-                 2.0 * vars.Theta() * vars.K()) -
-            0.5 * vars.Theta() * kappa1_times_lapse *
-                (((amrex::Real)GR_SPACEDIM + 1) +
-                 m_params.kappa2 * ((amrex::Real)GR_SPACEDIM - 1.0)) -
-            Z_dot_d1lapse - vars.lapse() * m_cosmological_constant;
+    const amrex::Real ccz4_Theta_rhs =
+        advec_Theta +
+        0.5 * vars.lapse() *
+            (ricci.scalar - Aij_squared +
+             (((amrex::Real)GR_SPACEDIM - 1.0) / (amrex::Real)GR_SPACEDIM) *
+                 vars.K() * vars.K() -
+             2.0 * vars.Theta() * vars.K()) -
+        0.5 * vars.Theta() * kappa1_times_lapse *
+            (((amrex::Real)GR_SPACEDIM + 1) +
+             m_params.kappa2 * ((amrex::Real)GR_SPACEDIM - 1.0)) -
+        Z_dot_d1lapse - vars.lapse() * m_cosmological_constant;
 
-        rhs_cell_data[c_K] =
-            advec_K +
-            vars.lapse() *
-                (ricci.scalar + vars.K() * (vars.K() - 2.0 * vars.Theta())) -
-            kappa1_times_lapse * (amrex::Real)GR_SPACEDIM *
-                (1.0 + m_params.kappa2) * vars.Theta() -
-            tr_covd2lapse -
-            2.0 * vars.lapse() * (amrex::Real)GR_SPACEDIM /
-                ((amrex::Real)GR_SPACEDIM - 1.0) * m_cosmological_constant;
-    }
+    // Theta is not evolved in BSSN, so this also keeps it fixed at zero.
+    rhs_cell_data[c_Theta] = ccz4_coeff * ccz4_Theta_rhs;
+
+    const amrex::Real common_K_rhs = advec_K - tr_covd2lapse;
+
+    const amrex::Real ccz4_K_terms =
+        vars.lapse() *
+            (ricci.scalar + vars.K() * (vars.K() - 2.0 * vars.Theta())) -
+        kappa1_times_lapse * (amrex::Real)GR_SPACEDIM *
+            (1.0 + m_params.kappa2) * vars.Theta() -
+        2.0 * vars.lapse() * (amrex::Real)GR_SPACEDIM /
+            ((amrex::Real)GR_SPACEDIM - 1.0) * m_cosmological_constant;
+
+    // The BSSN update uses the Hamiltonian constraint to eliminate R.
+    const amrex::Real bssn_K_terms =
+        vars.lapse() *
+            (Aij_squared + vars.K() * vars.K() / (amrex::Real)GR_SPACEDIM) -
+        2.0 * vars.lapse() * m_cosmological_constant /
+            ((amrex::Real)GR_SPACEDIM - 1.0);
+
+    rhs_cell_data[c_K] = common_K_rhs + ccz4_coeff * ccz4_K_terms +
+                         m_params.bssn_coeff * bssn_K_terms;
 
     // Gamma specific parts:
     Tensor::Sym23Rank3 d2_shift =
@@ -309,40 +296,8 @@ CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
     }
 }
 
-template <class gauge_t, class deriv_t>
-AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHS<gauge_t, deriv_t>::calculate_gauge_rhs(
-    int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs,
-    const amrex::Array4<const amrex::Real> &state) const
-{
-    const amrex::CellData<amrex::Real> &rhs_cell_data =
-        rhs.cellData(ix, iy, iz);
-    const amrex::CellData<const amrex::Real> &state_cell_data =
-        state.cellData(ix, iy, iz);
-
-    CCZ4Vars vars(state_cell_data);
-
-    Tensor::Rank1 shift_vector({vars.shift(0), vars.shift(1), vars.shift(2)});
-
-    amrex::Real advec_lapse =
-        m_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_lapse);
-
-    Tensor::Rank1 advec_shift =
-        m_deriv.advec_vector(ix, iy, iz, state, shift_vector, c_shift1);
-
-    Tensor::Rank1 advec_B =
-        m_deriv.advec_vector(ix, iy, iz, state, shift_vector, c_B1);
-
-    Tensor::Rank1 advec_Gamma =
-        m_deriv.advec_vector(ix, iy, iz, state, shift_vector, c_Gamma1);
-
-    m_gauge.rhs_gauge(rhs_cell_data, vars, advec_lapse, advec_shift, advec_B,
-                      advec_Gamma);
-}
-
-template <class gauge_t, class deriv_t>
-AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHS<gauge_t, deriv_t>::apply_dissipation(
+template <class deriv_t>
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void CCZ4RHS<deriv_t>::apply_dissipation(
     int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs,
     const amrex::Array4<const amrex::Real> &state) const
 {

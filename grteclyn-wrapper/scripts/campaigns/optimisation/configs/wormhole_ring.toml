@@ -1,0 +1,15 @@
+# Prepared only: each case is a separate, explicitly dispatched stationary job.
+# Full two-ended wormhole equations; no regular-centre ring is transplanted.
+version = 1
+tidal_factors = [4.0]
+energy_budgets = [1.0] # positive proper-volume canonical energy / throat R_A
+windings = [-1] # exp(i omega t+i k phi): J_b=-k Q_b, measured after solving
+mass_range = [0.5, 8.0]
+mass_seeds = [2.0, 4.0]
+amplitude_seeds = [0.01, 0.03]
+amplitude_max = 0.5
+candidate_seeds = []
+# Archived ABOVE_GATE field is only a numerical guess. Reconstruct its true
+# minimal surface, rescale, reflect winding, and re-solve at the reference J.
+rescale_matter_seeds = true
+matter_candidate_seeds = ["results/optimisation/extensions/2026-10-30/s0_20261030_r2/winding_a1.npz"]

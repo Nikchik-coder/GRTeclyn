@@ -110,8 +110,8 @@ fi
 
 # ---- 7. Config parity QD vs CMA-ES -----------------------------------------
 run_step "QD/CMA-ES share search_common.sh" bash -c '
-  diff -q scripts/campaigns/lib/search_common.sh scripts/lib/ftl_search_common.sh >/dev/null 2>&1 || \
-  grep -q campaigns/lib/search_common scripts/lib/ftl_search_common.sh
+  grep -q '"'"'source.*lib/search_common.sh'"'"' scripts/campaigns/qd/run.sh &&
+  grep -q '"'"'source.*lib/search_common.sh'"'"' scripts/campaigns/cmaes/run.sh
 '
 
 # ---- 8. Full campaign orchestrator dry-run (QD stage) ------------------------

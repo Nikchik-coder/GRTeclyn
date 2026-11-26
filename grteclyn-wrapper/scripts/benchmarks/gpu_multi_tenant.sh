@@ -29,7 +29,7 @@ for n in $(seq 1 "${MAX_CONCURRENCY}"); do
   pids=()
   for i in $(seq 1 "${n}"); do
     (
-      CUDA_VISIBLE_DEVICES="${GPU_ID}" PYTHONPATH="${WRAPPER_ROOT}/src" python -m grteclyn_wrapper \
+      CUDA_VISIBLE_DEVICES="${GPU_ID}" PYTHONPATH="${WRAPPER_ROOT}/src" python -m grteclyn_workflows \
         --runs-dir "${BENCH_RUNS}" \
         --dry-run \
         --cuda-devices "${GPU_ID}" \

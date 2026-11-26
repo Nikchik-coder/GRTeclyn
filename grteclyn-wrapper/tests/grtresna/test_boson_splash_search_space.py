@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_COMPLEX_SCALAR_MODEL
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.search.optimize import build_grtresna_config, build_search_space
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_COMPLEX_SCALAR_MODEL
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.search.optimize import build_grtresna_config, build_search_space
 
 
 def test_build_search_space_splash_ansatz() -> None:

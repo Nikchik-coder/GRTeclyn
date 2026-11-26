@@ -1,0 +1,44 @@
+{
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "central_lapse_bounds": [
+    0.08,
+    0.32
+  ],
+  "x0": 0.12993066385192364,
+  "sigma0": 0.025,
+  "seed": 272,
+  "popsize": 4,
+  "max_evaluations": 32,
+  "max_search_solves": 80,
+  "max_finalists": 4,
+  "max_refinement_solves": 12,
+  "max_log_lapse_step": 0.04,
+  "max_splits_per_evaluation": 4,
+  "search_grid": [
+    160,
+    20
+  ],
+  "grids": [
+    [
+      160,
+      20
+    ],
+    [
+      192,
+      24
+    ],
+    [
+      224,
+      28
+    ]
+  ],
+  "length": 2.5,
+  "max_iter": 30,
+  "newton_tol": 1e-14,
+  "equation_tol": 1e-08,
+  "tail_tol": 1e-06,
+  "observable_tol": 1e-06,
+  "mode": "maximise",
+  "finalist_log_separation": 0.02,
+  "campaign": "verified-r2"
+}

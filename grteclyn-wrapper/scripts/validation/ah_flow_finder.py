@@ -58,10 +58,7 @@ sys.path.insert(
     str(__import__("pathlib").Path(__file__).resolve().parents[1] / "src"),
 )
 
-from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles.extraction.horizon import (  # noqa: E402
-    STATE_FIELDS,
-    covering_fields,
-)
+from grteclyn_workflows.postprocessing.extraction.horizon import STATE_FIELDS, covering_fields
 
 _SYM = ((0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2))
 
@@ -358,7 +355,7 @@ def flow(
 
 
 # --------------------------------------------------------------------------
-# analytic self-tests (mirrors tests/visualisation/test_horizon_scan.py)
+# analytic self-tests (mirrors tests/postprocessing/test_horizon_scan.py)
 # --------------------------------------------------------------------------
 
 

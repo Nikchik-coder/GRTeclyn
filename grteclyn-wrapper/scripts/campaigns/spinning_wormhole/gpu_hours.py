@@ -2,7 +2,7 @@
 """GPU-hours of the packed spinning-wormhole campaign, by the merger paper's method.
 
 Each run's wall time is (t_end - t_start) / speed from its own logs, through
-the merger accounting (grteclyn_wrapper.analysis.wormhole_merger.pack.gpu_hours):
+the merger accounting (grteclyn_workflows.analysis.wormhole_merger.pack.gpu_hours):
 AMReX's last "average evolution speed" and "ADVANCE at time" in run_tail.log,
 the start from the first row of the run's constraint stream, a restart dated
 from its checkpoint.  The merger walker stops at campaign/<group>/<sub>/<run>;
@@ -25,8 +25,8 @@ import argparse
 import pathlib
 import re
 
-from grteclyn_wrapper.analysis.wormhole_merger.pack.gpu_hours import leg_start, parse_tail
-from grteclyn_wrapper.analysis.wormhole_merger.pack.readers import parse_params
+from grteclyn_workflows.analysis.wormhole_merger.pack.gpu_hours import leg_start, parse_tail
+from grteclyn_workflows.analysis.wormhole_merger.pack.readers import parse_params
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 CAMPAIGN = REPO / "results" / "spinningwormhole" / "campaign"

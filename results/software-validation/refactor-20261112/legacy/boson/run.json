@@ -1,0 +1,17 @@
+{
+  "backend": null,
+  "case": "boson",
+  "dependencies": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "matplotlib": "3.10.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "inputs": {},
+  "python": "3.12.14",
+  "revision": "2f1c450604956cc31d927ae096490e291aa81cef",
+  "seconds": 6.114070829004049,
+  "version": "legacy",
+  "wrapper_imports_blocked": false
+}

@@ -57,7 +57,7 @@ ftl_pipeline_monitor_begin() {
       fi
       grtresna_n=$(ps aux | grep 'ScalarFieldBH' | grep "${FTL_PIPELINE_QD_NAME}" | grep -v grep | awk '{print $NF}' | sed 's|.*/eval_||;s|/grtresna.*||' | sort -u | wc -l)
       main3d_n=$(ps aux | grep 'main3d.gnu.CUDA.ex' | grep "${FTL_PIPELINE_QD_NAME}" | grep -v grep | wc -l)
-      driver=$(ps aux | grep "grteclyn_wrapper.*${FTL_PIPELINE_QD_NAME}" | grep -v grep | wc -l)
+      driver=$(ps aux | grep "grteclyn_workflows.*${FTL_PIPELINE_QD_NAME}" | grep -v grep | wc -l)
 
       while IFS=, read -r _idx _u _m; do
         _u="${_u// /}"

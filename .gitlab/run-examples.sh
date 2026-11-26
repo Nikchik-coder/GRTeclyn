@@ -17,10 +17,14 @@
 set -euo pipefail
 
 cd ${HOME}/${CI_PROJECT_DIR}/Tests
-make run ${BUILD_CONFIG}
+# Memory allocation fails sometimes during tests so only allocate 10 GiB
+srun ./Tests3d.gnu.DEBUG.MPI.CUDA.ex -dt-d=yes amrex.the_arena_init_size=10737418240
 
 cd ${HOME}/${CI_PROJECT_DIR}/Examples/BinaryBH
 srun ./BinaryBH3d.gnu.DEBUG.MPI.CUDA.ex ./params_test.txt amr.plot_file=${OUTPUT_DIR}/BinaryBH_
 
 cd ${HOME}/${CI_PROJECT_DIR}/Examples/KleinGordon
 srun ./KleinGordon3d.gnu.DEBUG.MPI.CUDA.ex ./params_test.txt amr.plot_file=${OUTPUT_DIR}/KleinGordon_
+
+cd ${HOME}/${CI_PROJECT_DIR}/Examples/KerrBH
+srun ./KerrBH3d.gnu.DEBUG.MPI.CUDA.ex ./params_test.txt amr.plot_file=${OUTPUT_DIR}/KerrBH_

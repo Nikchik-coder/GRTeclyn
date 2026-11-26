@@ -1,19 +1,19 @@
 #ifndef SUPPORTEDWORMHOLELEVEL_HPP_
 #define SUPPORTEDWORMHOLELEVEL_HPP_
 
-#include "DefaultLevelFactory.hpp"
-#include "GRAMRLevel.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmrLevel.hpp"
 
 class SimulationParameters;
 
-class SupportedWormholeLevel : public GRAMRLevel
+class SupportedWormholeLevel : public GRAmrLevel
 {
   public:
     static void variableSetUp();
 
-    using GRAMRLevel::GRAMRLevel;
+    using GRAmrLevel::GRAmrLevel;
 
-    //! Fork-local replacement for the GRAMR simulation-parameters store that
+    //! Fork-local replacement for the GRAmr simulation-parameters store that
     //! upstream deleted: main() hands this class a pointer to its
     //! SimulationParameters before Amr::init.  Pointer semantics preserve the
     //! old behaviour where runtime updates made in main (RL pump state) are
@@ -22,15 +22,15 @@ class SupportedWormholeLevel : public GRAMRLevel
     static const SimulationParameters &simParams();
 
 
-    void specificAdvance() override;
+    void specific_advance() override;
     void initData() override;
-    void specificEvalRHS(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
+    void specific_eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                          const double a_time) override;
-    void specificUpdateODE(amrex::MultiFab &a_soln) override;
+    void specific_update_ode(amrex::MultiFab &a_soln) override;
     void pre_tag_cells() final;
     void tag_cells(amrex::TagBoxArray &a_tag_box_array,
                    amrex::Real a_regrid_threshold) final;
-    void specificPostTimeStep() override;
+    void specific_post_timestep() override;
 };
 
 #endif /* SUPPORTEDWORMHOLELEVEL_HPP_ */

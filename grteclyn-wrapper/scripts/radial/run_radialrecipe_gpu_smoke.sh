@@ -123,7 +123,7 @@ if [[ ! -x "${EXECUTABLE}" ]]; then
 fi
 
 echo "== Step 2/5: Python pre-flight validation/dry-run params generation =="
-${PYTHON_BIN} -m grteclyn_wrapper \
+${PYTHON_BIN} -m grteclyn_workflows \
   --example RadialRecipe \
   "${WRAPPER_ID_ARGS[@]}" \
   --constrained \
@@ -149,7 +149,7 @@ grep -E "^(recipe_|stop_time|N_full|max_level|dt_multiplier|plot_interval|checkp
 echo
 
 echo "== Step 3/5: C++ check_params + short GPU evolution =="
-${PYTHON_BIN} -m grteclyn_wrapper \
+${PYTHON_BIN} -m grteclyn_workflows \
   --example RadialRecipe \
   "${WRAPPER_ID_ARGS[@]}" \
   --constrained \
@@ -174,7 +174,7 @@ echo
 echo "== Step 4/5: diagnostics summary =="
 ${PYTHON_BIN} - <<PY
 from pathlib import Path
-from grteclyn_wrapper.metrics import dataclass_to_dict, read_episode_metrics
+from grteclyn_workflows.diagnostics import dataclass_to_dict, read_episode_metrics
 import json
 
 episode = Path(${EPISODE_DIR@Q})

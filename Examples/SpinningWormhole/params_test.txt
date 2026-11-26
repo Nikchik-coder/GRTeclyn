@@ -6,7 +6,7 @@
 # Needs a background table next to the params file; generate the static one
 # (= the drainhole, the v_e = 0 member of the rotating family) with:
 #   grteclyn-wrapper/.venv/bin/python -m \
-#     grteclyn_wrapper.analysis.spinning_wormhole.backgrounds static \
+#     grteclyn_workflows.analysis.spinning_wormhole.backgrounds static \
 #     --eta0 1.0 --out background.spinbg
 # Launch through the campaign launcher, never directly:
 #   bash grteclyn-wrapper/scripts/campaigns/spinning_wormhole/launch.sh \

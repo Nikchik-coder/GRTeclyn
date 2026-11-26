@@ -30,7 +30,7 @@ from pathlib import Path
 _WRAPPER_SRC = Path(__file__).resolve().parents[3] / "src"
 if str(_WRAPPER_SRC) not in sys.path:
     sys.path.insert(0, str(_WRAPPER_SRC))
-from grteclyn_wrapper.core.site_paths import grteclyn_root, grtresna_root
+from grteclyn_workflows.evolution.site_paths import grteclyn_root, grtresna_root
 
 # --- Paths -------------------------------------------------------------------
 GRTECLYN_ROOT = grteclyn_root()
@@ -121,7 +121,7 @@ def _write_qball_profile(dst_dir: Path) -> Path:
     point at; the winding painter loads it for profile==3 lumps and normalises
     to phi0(0)=1, so ``lump0_amp`` sets the throat's central amplitude.
     """
-    from grteclyn_wrapper.grtresna.profiles.qball_ode import (
+    from grteclyn_stationary.profiles.qball_ode import (
         cached_qball_radial_profile,
     )
 
@@ -367,7 +367,7 @@ def solve_one(kappa: float, base_amp: float, base_text: str, nranks: int) -> dic
         raise FileNotFoundError(f"solve produced no {hdf5}")
 
     # Flatten Chombo AMR -> uniform .gridinit at the evolution's level-0 dx.
-    from grteclyn_wrapper.grtresna.io.conversion import convert_chombo_to_gridinit
+    from grteclyn_workflows.grtresna.io.conversion import convert_chombo_to_gridinit
 
     gridinit = run_dir / "initial_data.gridinit"
     convert_chombo_to_gridinit(

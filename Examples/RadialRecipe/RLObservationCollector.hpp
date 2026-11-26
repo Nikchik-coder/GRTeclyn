@@ -1,7 +1,7 @@
 #ifndef RL_OBSERVATION_COLLECTOR_HPP_
 #define RL_OBSERVATION_COLLECTOR_HPP_
 
-#include "GRAMR.hpp"
+#include "GRAmr.hpp"
 #include "RLLumpState.hpp"
 #include "RLLumpTracker.hpp"
 #include "RLMatterPumpParams.hpp" // RLRuntime::g_lump_state
@@ -23,7 +23,7 @@
 //! Layout: [min_chi, min_lapse, max_abs_K, L2_Ham, L2_Mom, time,
 //!          {x,y,z,size,mass,peak,min_lapse,min_chi} * num_lumps]
 inline std::vector<double> collect_rl_observations(
-    GRAMR &amr, double l2_ham, double l2_mom, int num_lumps, bool complex_field,
+    GRAmr &amr, double l2_ham, double l2_mom, int num_lumps, bool complex_field,
     double ball_radius, const std::array<double, AMREX_SPACEDIM> &center)
 {
     const int finest_lev = amr.finestLevel();
@@ -95,7 +95,7 @@ inline std::vector<double> collect_rl_observations(
     return obs;
 }
 
-inline double compute_l2_hamiltonian_norm(GRAMR &amr)
+inline double compute_l2_hamiltonian_norm(GRAmr &amr)
 {
     auto &level0 = dynamic_cast<RadialRecipeLevel &>(amr.getLevel(0));
     return compute_radial_recipe_constraint_norms(level0).L2_Ham;

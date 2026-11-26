@@ -1,5 +1,5 @@
-#include "DefaultLevelFactory.hpp"
-#include "GRAMR.hpp"
+#include "DefaultLevelBld.hpp"
+#include "GRAmr.hpp"
 #include "GRParmParse.hpp"
 #include "RadialRecipeLevel.hpp"
 #include "SetupFunctions.hpp"
@@ -28,9 +28,9 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
 
     RadialRecipeLevel::set_sim_params(&sim_params);
 
-    DefaultLevelFactory<RadialRecipeLevel> recipe_level_bld;
+    DefaultLevelBld<RadialRecipeLevel> recipe_level_bld;
 
-    GRAMR recipe_amr(&recipe_level_bld);
+    GRAmr recipe_amr(&recipe_level_bld);
 
     recipe_amr.init(0., sim_params.stop_time);
 

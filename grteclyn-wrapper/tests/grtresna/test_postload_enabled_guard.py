@@ -7,12 +7,9 @@ from unittest.mock import patch
 
 import pytest
 
-from grteclyn_wrapper.core.episode import create_episode
-from grteclyn_wrapper.projection.postload_gate import PostLoadGateConfig
-from grteclyn_wrapper.search.grtresna_evaluation_gates import (
-    GRTresnaPreEvolutionGateConfig,
-    apply_grtresna_pre_evolution_gates,
-)
+from grteclyn_workflows.evolution.episode import create_episode
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig
+from grteclyn_workflows.search.grtresna_evaluation_gates import GRTresnaPreEvolutionGateConfig, apply_grtresna_pre_evolution_gates
 
 
 @pytest.fixture
@@ -26,7 +23,7 @@ def gate_context(tmp_path: Path):
 def test_postload_gate_skipped_when_disabled(gate_context) -> None:
     episode, gridinit = gate_context
     with patch(
-        "grteclyn_wrapper.search.grtresna_evaluation_gates.reject_postload_gate",
+        "grteclyn_workflows.search.grtresna_evaluation_gates.reject_postload_gate",
     ) as mock_postload:
         rejection = apply_grtresna_pre_evolution_gates(
             episode=episode,
@@ -46,7 +43,7 @@ def test_postload_gate_skipped_when_disabled(gate_context) -> None:
 def test_postload_gate_runs_when_enabled(gate_context) -> None:
     episode, gridinit = gate_context
     with patch(
-        "grteclyn_wrapper.search.grtresna_evaluation_gates.reject_postload_gate",
+        "grteclyn_workflows.search.grtresna_evaluation_gates.reject_postload_gate",
         return_value=None,
     ) as mock_postload:
         rejection = apply_grtresna_pre_evolution_gates(

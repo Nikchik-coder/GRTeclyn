@@ -84,7 +84,7 @@ class SimulationParametersBase : public AMReXParameters
         // Nan Check and min chi and lapse values
         pp.load("nan_check", nan_check, true);
         // Read bare, like nan_check, and injected as evolution.nan_autopsy
-        // below.  GRAMRLevel queries the prefixed name; without the inject the
+        // below.  GRAmrLevel queries the prefixed name; without the inject the
         // key in the params file is silently ignored and the report never
         // fires (that is what happened to the 2026-09-08 autopsy run).
         pp.load("nan_autopsy", nan_autopsy, false);
@@ -221,6 +221,8 @@ class SimulationParametersBase : public AMReXParameters
     void inject_new_scheme_params()
     {
         inject("evolution.sigma", sigma);
+        // Archived campaigns refine the same extraction ball on each level.
+        inject("extraction_tagging.level_separation", 1.0);
         inject("evolution.nan_check", nan_check);
         inject("evolution.nan_autopsy", nan_autopsy);
 

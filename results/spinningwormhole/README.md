@@ -10,7 +10,7 @@ are in `grteclyn-wrapper/`.
 ## The paper
 
 Every figure rebuilds from this directory without a GPU, with
-`grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.spinning_wormhole.<script>`:
+`grteclyn-wrapper/.venv/bin/python -m grteclyn_workflows.plotting.spinning_wormhole.<script>`:
 
 | In the paper | Data | Script |
 |---|---|---|

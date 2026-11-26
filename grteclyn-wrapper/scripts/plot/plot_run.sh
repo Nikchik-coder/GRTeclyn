@@ -6,7 +6,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../lib/env.sh
 source "${SCRIPT_DIR}/../lib/env.sh"
 SIM_ROOT="$(cd "${GRTECLYN_ROOT}/.." && pwd)"
-VIS_ROOT="${WRAPPER_ROOT}/src/grteclyn_wrapper/visualisation"
 
 DEFAULT_DATA_DIR=""
 for candidate in "${SIM_ROOT}/data_2gpu" "${SIM_ROOT}/data_supported" "${SIM_ROOT}/data"; do
@@ -21,7 +20,7 @@ fi
 
 REMOVE_STALE=true
 DATA_DIR=""
-EXTRA_ARGS=""
+EXTRA_ARGS="--keep-existing-frames"
 JOBS=64
 N_POINTS="${GRTECLYN_PLOT_N_POINTS:-128}"
 FRAME_FIELDS="${GRTECLYN_PLOT_FRAME_FIELDS:-chi chi_minus_1 K lapse phi Pi scalar_activity Weyl4_Re Weyl4_Im Weyl4_Mag}"
@@ -35,7 +34,6 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     --not-remove)
       REMOVE_STALE=false
-      EXTRA_ARGS="${EXTRA_ARGS} --keep-existing-frames"
       shift
       ;;
     -j|--jobs)
@@ -102,29 +100,8 @@ if [ "$REMOVE_STALE" = true ]; then
     echo "Reset run diagnostics in: ${RUN_DATA_DIR}"
   fi
 
-  rm -f "${VIS_ROOT}/constraines/constraints_plot.png" \
-        "${VIS_ROOT}/constraines/constraints_plot.eps" \
-        "${VIS_ROOT}/constraines/constraints_plot.pdf" \
-        "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.png" \
-        "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.eps" \
-        "${VIS_ROOT}/diagnostic/collapse_diagnostics_plot.pdf" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_R8_R12_R16.png" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_R8_R12_R16.eps" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_R8_R12_R16.pdf" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_simulation.png" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_simulation.eps" \
-        "${VIS_ROOT}/process_wave/psi4_extracted_simulation.pdf" \
-        "${VIS_ROOT}/process_wave/psi4_strain_analysis.png" \
-        "${VIS_ROOT}/process_wave/psi4_strain_analysis.eps" \
-        "${VIS_ROOT}/process_wave/psi4_strain_analysis.pdf" \
-        "${VIS_ROOT}/process_wave/psi4_propagation_speed.png" \
-        "${VIS_ROOT}/process_wave/psi4_propagation_speed.eps" \
-        "${VIS_ROOT}/process_wave/psi4_propagation_speed.pdf"
-  if [[ -d "${FRAMES_DIR}" ]]; then
-    rm -rf "${FRAMES_DIR}"
-    echo "Reset frames in: ${FRAMES_DIR}"
-  fi
-  echo "Removed shared generated plot images"
+  # Rendered frames and plots are retained across consumer restarts.
+
 else
   echo "=========================================="
   echo "Keeping existing plotfiles and data in: ${DATA_DIR}"
@@ -204,7 +181,7 @@ if [[ "${FRAME_GLOBAL_ZLIM}" == "0" ]]; then
   GLOBAL_ZLIM_ARGS=(--no-frames-global-zlim)
 fi
 
-"${PYTHON[@]}" -m grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
+"${PYTHON[@]}" -m grteclyn_workflows.postprocessing \
   --data "${DATA_DIR}" \
   --out "${DATA_DIR}/small_data" \
   --center ${EXTRACTION_CENTER} \

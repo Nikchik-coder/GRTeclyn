@@ -1,0 +1,82 @@
+{
+  "stage": "preparing",
+  "source": "results/railgun/studies/ergo372-full-spectral-20261104/accepted.npz",
+  "source_sha256": "7adc3bceec7c342775abd7cbe0bffafaec19bfd248196d96e50d79a6998538b5",
+  "selection": "Same 3.72 ring after three-grid full-coefficient recovery and the unchanged centre certificate; no change in physical model.",
+  "frequency": 0.6741001876998484,
+  "base_N": [
+    96,
+    128,
+    192
+  ],
+  "length": 64.0,
+  "max_level": 6,
+  "refinement_radii": [
+    12.0,
+    6.0,
+    3.0,
+    1.5,
+    0.75,
+    0.375
+  ],
+  "initial_cube_lengths": [
+    64.0,
+    48.0,
+    24.0,
+    12.0,
+    6.0,
+    3.0,
+    1.5
+  ],
+  "finest_dx": [
+    0.010416666666666666,
+    0.0078125,
+    0.005208333333333333
+  ],
+  "core": {
+    "radius": 0.08,
+    "degree": 12,
+    "comparison_degree": 14,
+    "tolerance": 1e-08,
+    "join": "C6 Bernstein"
+  },
+  "stop_time": 50.0,
+  "dt_multiplier": 0.02,
+  "comparison_times": [
+    0.0,
+    2.0,
+    10.0,
+    20.0,
+    30.0,
+    40.0,
+    50.0
+  ],
+  "constraint_interior_radius": 0.5,
+  "perturbation": "none",
+  "gpus": {
+    "0": [
+      96,
+      128
+    ],
+    "1": [
+      192
+    ]
+  },
+  "checkpoints": false,
+  "keep_last_plotfiles": 3,
+  "threads_per_job": 4,
+  "host_GiB_per_job": 160,
+  "wall_seconds_per_evolution": 172800,
+  "frames": "All default frames, both complex components and slice caches; retain originals.",
+  "scope": "Unperturbed three-resolution t<=50 evolution, fixed refinement and background-relative outer boundary; stability assessed only within measured convergence.",
+  "approval": "November 3: GPU regressions and one centre certificate on GPU 0, radius 0.08 and degrees 12/14, 0.5 h cap. If accepted, export and evolve N96 then N128 on GPU 0 and N192 on GPU 1 through t=50, L_full=64, max_level=6, four threads and 160 GiB per job, checkpoints OFF, full frames and last three plotfiles. No new stationary solves. November 4 full-coefficient recovery go: adopt the refined source only after all stationary and centre checks pass; conditional evolutions remain approved, checkpoints OFF.",
+  "boundary": {
+    "type": "background-relative Sommerfeld plus quartic KO sponge and background damping",
+    "inner_radius": 24.0,
+    "outer_radius": 32.0,
+    "strength": 4.0,
+    "ramp_power": 4,
+    "drive_strength": 1.0,
+    "scalar_reference": "rotate both scalar and normal momentum with the saved positive-frequency phase"
+  }
+}

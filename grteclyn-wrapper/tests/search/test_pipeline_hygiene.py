@@ -20,10 +20,10 @@ from pathlib import Path
 
 import numpy as np
 
-import grteclyn_wrapper.search.qd_search.driver
-from grteclyn_wrapper.search.optimize.candidates import _force_exotic_template
-from grteclyn_wrapper.search.optimize.dimension import SearchDimension
-from grteclyn_wrapper.search.qd_search.descriptors import _bin_index
+import grteclyn_workflows.search.qd_search.driver
+from grteclyn_workflows.search.optimize.candidates import _force_exotic_template
+from grteclyn_workflows.search.optimize.dimension import SearchDimension
+from grteclyn_workflows.search.qd_search.descriptors import _bin_index
 
 
 # --- PG-5 -----------------------------------------------------------------
@@ -128,7 +128,7 @@ def test_the_pipeline_refill_survives_a_failed_recording() -> None:
     does, the submit that keeps the pipeline full still happens.
     """
     source = (
-        Path(grteclyn_wrapper.search.qd_search.driver.__file__)
+        Path(grteclyn_workflows.search.qd_search.driver.__file__)
     ).read_text(encoding="utf-8")
     body = source.split("def _on_eval_complete", 1)[1].split("\n    def ", 1)[0]
     assert "try:" in body

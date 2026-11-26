@@ -1,0 +1,10 @@
+{
+  "fields": [
+    {"winding": 1, "mass": 1.0, "amplitude": 0.05, "anchor_radius": 5.0},
+    {"winding": -2, "mass": 1.0, "amplitude": 0.03, "anchor_radius": 8.0}
+  ],
+  "length": 7.0,
+  "target_j": 0.0,
+  "grids": [[40, 10], [48, 12], [56, 14]],
+  "max_iter": 40
+}

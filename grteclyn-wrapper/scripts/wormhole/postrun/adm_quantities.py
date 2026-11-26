@@ -27,7 +27,7 @@ _WRAPPER_SRC = Path(__file__).resolve().parents[3] / "src"
 if str(_WRAPPER_SRC) not in sys.path:
     sys.path.insert(0, str(_WRAPPER_SRC))
 
-from grteclyn_wrapper.grtresna.io import read_gridinit  # noqa: E402
+from grteclyn_workflows.grtresna.io import read_gridinit  # noqa: E402
 
 
 def _comp_index(names: list[str], name: str) -> int:

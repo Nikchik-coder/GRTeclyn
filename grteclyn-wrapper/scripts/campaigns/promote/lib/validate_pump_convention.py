@@ -19,7 +19,7 @@ pump values without copying the declaration is refused at launch.
 Pump-on manifests must additionally have the emission floor pinned in the
 environment (``GEODESIC_EMIT_MIN_TIME``): with no non-negative pump value the
 scorer's fallback floor vanishes, every launch from t=0 counts, and f_geo
-silently changes meaning (metrics/score/ftl.py).
+silently changes meaning (search/scoring/ftl.py).
 
 Exit codes: 0 ok, 3 refused, 2 usage.  Wired into run_matrix.sh for every
 --list and launch; standalone:
@@ -109,7 +109,7 @@ def validate(manifest_path: str, env: dict[str, str]) -> list[str]:
             f"pump-on manifest without {FLOOR_ENV} in the environment:\n"
             "    with no non-negative pump value the scorer's fallback emission\n"
             "    floor vanishes and every launch from t=0 counts -- f_geo silently\n"
-            f"    changes meaning (metrics/score/ftl.py). Export {FLOOR_ENV}=4\n"
+            f"    changes meaning (search/scoring/ftl.py). Export {FLOOR_ENV}=4\n"
             "    in campaign.env.sh."
         )
 

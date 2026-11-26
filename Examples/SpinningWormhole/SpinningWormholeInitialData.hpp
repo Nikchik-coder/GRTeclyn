@@ -31,6 +31,15 @@
  * (b - a)/rho^2 = -e^{-f} Omega^2 nu_bar S(nu_bar sin^2 theta) / r^2 with
  * S(u) = expm1(u)/u -- finite everywhere including the axis.
  *
+ * Fourth function B(eta, theta) (the table's optional 7th column, else 1):
+ * gamma_ij -> B^2 gamma_ij, lapse and shift unchanged.  Then
+ * det(gamma) -> B^6 det(gamma), chi -> B^-2 chi, h_ij = chi gamma_ij is
+ * unchanged, and so are Gamma^i (from h_ij).  K_ij below scales by B^2 through
+ * m_i = gamma_ij (d_varphi)^j: d_varphi stays Killing and
+ * beta^k d_k B = -omega d_varphi B = 0 (B depends on rho^2 = X^2 + Y^2 and Z
+ * only), so L_beta (B^2 gamma) = B^2 L_beta gamma.  A_ij = chi K_ij is
+ * therefore unchanged too: B enters through chi alone.
+ *
  * 3+1 split of the stationary metric:
  *   alpha  = e^{f/2},
  *   beta^varphi = -omega   =>  beta^i = omega (Y, -X, 0),
@@ -167,13 +176,16 @@ class SpinningWormholeInitialData
         const double g_xy = -c_coef * X * Y;
         const double g_zz = a_coef;
 
-        // det(gamma) = a^2 b exactly (the phihat projector structure).
+        // det(gamma) = a^2 b exactly (the phihat projector structure), at
+        // B = 1: chi, h_ij and A_ij below are the B = 1 ones (see the top).
         const double det_gamma = a_coef * a_coef * b_coef;
         const double chi       = amrex::max(std::pow(det_gamma, -1.0 / 3.0),
                                             1.0e-10);
-        // The kick scales the physical metric by psi_k^4: chi by psi_k^-4,
-        // h_ij unchanged.
-        const double chi_k = amrex::max(chi / psi_k4, 1.0e-10);
+        // The kick (psi_k^4) and B (B^2) scale the physical metric: chi by
+        // psi_k^-4 B^-2, h_ij unchanged.  At B = 1 this divides by psi_k4
+        // exactly.
+        const double B2    = bg.B * bg.B;
+        const double chi_k = amrex::max(chi / (B2 * psi_k4), 1.0e-10);
 
         cell(i, j, k, c_chi) = static_cast<amrex::Real>(chi_k);
         cell(i, j, k, c_h11) = static_cast<amrex::Real>(chi * g_xx);
@@ -197,7 +209,8 @@ class SpinningWormholeInitialData
         const double m1 = -b_coef * Y;
         const double m2 = b_coef * X;
 
-        // A_ij = chi_k K_ij with the kicked K_ij = psi_k^-2 K_ij: psi_k^-6.
+        // A_ij = chi_k K_ij with the kicked K_ij = psi_k^-2 K_ij: psi_k^-6
+        // (B^-2 from chi_k and B^2 from K_ij cancel).
         const double pre = -chi / (2.0 * alpha * psi_k4 * psi_k * psi_k);
         cell(i, j, k, c_K)   = 0.0;
         cell(i, j, k, c_A11) = static_cast<amrex::Real>(pre * 2.0 * w1 * m1);

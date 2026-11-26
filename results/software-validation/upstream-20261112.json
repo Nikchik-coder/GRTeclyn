@@ -1,0 +1,67 @@
+{
+  "upstream": "ed2e9a9d66cf6ba2f442522ba5f9765331db49f8",
+  "merge_parent": "66ed1a658ff6a20725c53f22925ae8c41254c286",
+  "upstream_commits_merged": 173,
+  "code_diff_sha256": "194b9c7d32e9b2d4b58f346ff764220dce1107785255c9880777d7c9cb616d2d",
+  "environment": {
+    "compiler": "GCC 13.3.0",
+    "amrex": "bac24575699e",
+    "backend": "CPU",
+    "mpi": false,
+    "openmp": false,
+    "hdf5": true,
+    "build_jobs": 2,
+    "address_space_cap_GiB": 4
+  },
+  "cpp_suite": {
+    "cases": 19,
+    "passed": 18,
+    "failed": 1,
+    "assertions": 393790,
+    "assertions_failed": 24,
+    "failing_case": "PunctureTracker"
+  },
+  "upstream_control": {
+    "tracked_source_files_verified_unmodified": 189,
+    "case": "PunctureTracker",
+    "assertions": 280,
+    "failed": 24,
+    "failure_signatures_match": true
+  },
+  "new_matter_dispatch_test": {
+    "passed": true,
+    "assertions": 13,
+    "checks": [
+      "timed matter RHS",
+      "single 8 pi G coupling",
+      "matter contribution to gauge",
+      "unused matter components zeroed",
+      "Hamiltonian and momentum sources",
+      "determinant enforcement optional for archived campaigns",
+      "shock-avoiding lapse term"
+    ]
+  },
+  "example_syntax_checks": {
+    "passed": [
+      "BinaryWormholeMerger",
+      "SpinningWormhole",
+      "SupportedWormholeCollapse",
+      "RadialRecipe",
+      "BinaryBH",
+      "KerrBH",
+      "ScalarField",
+      "KleinGordon"
+    ],
+    "translation_units": 17,
+    "full_example_link_or_evolution": false
+  },
+  "python_selection": {
+    "passed": 138,
+    "skipped": 4,
+    "failed": 1,
+    "failing_test": "test_preflight_symmetry::TestCommandLine::test_octant_inflation_launch_passes",
+    "known_before_merge": true
+  },
+  "gpu_validation": false,
+  "raw_logs": "runs/upstream-merge-20261112/"
+}

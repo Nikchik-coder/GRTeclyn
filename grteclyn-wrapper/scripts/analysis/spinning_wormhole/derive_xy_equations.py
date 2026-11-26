@@ -3,7 +3,7 @@
 
 The solver (research/spinningwormhole/SpinningSolver.md) imposes E_f, E_w,
 E_N and monitors E_c, D2, all defined ONCE in
-grteclyn_wrapper.analysis.spinning_wormhole.equations.residual_forms for a
+grteclyn_stationary.spinning_wormhole.equations.residual_forms for a
 generic radial map eta(xi).  This script checks that formulation:
 
   forms    the five forms against Chew-Kleihaus-Kunz (arXiv:1608.05253)
@@ -35,8 +35,8 @@ import sys
 import numpy as np
 import sympy as sp
 
-from grteclyn_wrapper.analysis.spinning_wormhole import spectral
-from grteclyn_wrapper.analysis.spinning_wormhole.equations import residual_forms
+from grteclyn_stationary.numerics import spectral
+from grteclyn_stationary.spinning_wormhole.equations import residual_forms
 
 ETA, TH, XI, Y, ETA0 = sp.symbols("eta theta xi y eta0", real=True)
 

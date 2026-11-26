@@ -7,7 +7,8 @@ import argparse
 import json
 from pathlib import Path
 
-from grteclyn_wrapper.metrics import read_episode_metrics, score_episode
+from grteclyn_workflows.diagnostics import read_episode_metrics
+from grteclyn_workflows.search.scoring import score_episode
 
 
 def _load_old_score(eval_dir: Path) -> float | None:

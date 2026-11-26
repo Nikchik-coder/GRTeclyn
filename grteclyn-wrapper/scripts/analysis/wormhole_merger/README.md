@@ -9,7 +9,7 @@ the plotfile consumer runs on every plotfile.
 
 These are scripts, not package modules: several import the claims code under
 `research/merger/article/claims/`, the figure modules, or yt, sympy and astropy. The
-importable reductions of the pack are the package `grteclyn_wrapper.analysis.wormhole_merger`.
+importable reductions of the pack are the package `grteclyn_workflows.analysis.wormhole_merger`.
 Run them from the repository root with the wrapper's environment:
 
 ```bash
@@ -44,6 +44,6 @@ Every script's docstring states its method and its caveats.
 
 `checkpoint_hamiltonian.py` uses `local_hamiltonian.py`, which uses `horizon_first_law.py`.
 `headon_first_law.py` builds on the flow finder `scripts/validation/ah_flow_finder.py`, and
-the consumer (`grteclyn_wrapper.visualisation.process_wave.consume_plotfiles`) loads it from
+the consumer (`grteclyn_workflows.postprocessing`) loads it from
 this folder to write `mots_spectral.dat`; keep its path and its `fields_on_box` and
 `analyse_fields` functions stable.

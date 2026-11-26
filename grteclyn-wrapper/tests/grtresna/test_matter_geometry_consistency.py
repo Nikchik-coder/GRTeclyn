@@ -8,27 +8,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from grteclyn_wrapper.grtresna.io import write_gridinit
-from grteclyn_wrapper.grtresna.fields.lump import (
-    lump_phi_at,
-    lump_pi_at,
-    lump_sign,
-    paint_lump_fields_on_grid,
-    shift_lump_centers_for_gridinit,
-)
-from grteclyn_wrapper.core.params import format_param_value, write_params
-from grteclyn_wrapper.core.config import resolve_example
-from grteclyn_wrapper.grtresna.matter.wiring import (
-    GRTRESNA_INDEPENDENT_MATTER_MODEL,
-    evolution_overrides_from_config,
-    plot_vars_for_independent_scalars,
-    write_matter_metadata,
-)
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
-from grteclyn_wrapper.projection.postload_gate import (
-    PostLoadGateConfig,
-    evaluate_constraint_gate,
-)
+from grteclyn_workflows.grtresna.io import write_gridinit
+from grteclyn_workflows.grtresna.fields.lump import lump_phi_at, lump_pi_at, lump_sign, paint_lump_fields_on_grid, shift_lump_centers_for_gridinit
+from grteclyn_workflows.evolution.params import format_param_value, write_params
+from grteclyn_workflows.evolution.config import resolve_example
+from grteclyn_workflows.grtresna.matter.wiring import GRTRESNA_INDEPENDENT_MATTER_MODEL, evolution_overrides_from_config, plot_vars_for_independent_scalars, write_matter_metadata
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig
+from grteclyn_workflows.projection.postload_gate import PostLoadGateConfig, evaluate_constraint_gate
 def _canonical_lump(**kwargs) -> dict:
     base = {
         "amp": 0.2,

@@ -19,7 +19,7 @@
 #include "SpinningWormholeInitialData.hpp"
 #include "SpongeDrive.hpp"
 #include "SpongeZone.hpp"
-#include "TraceARemoval.hpp"
+#include "AlgebraicConstraintsEnforcer.hpp"
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
 
@@ -29,6 +29,10 @@
 #include <AMReX_Utility.H>
 #include <cmath>
 #include <memory>
+
+static_assert(PhantomDecayPotential::max_num_coeffs >=
+                  RotatingBackgroundTable::max_potential_coeffs,
+              "the potential must hold every coefficient the table allows");
 
 namespace
 {
@@ -90,30 +94,32 @@ const SimulationParameters &SpinningWormholeLevel::simParams()
     return *s_sim_params;
 }
 
-BHAMR<SpinningWormholeLevel::num_punctures> *
+BHAmr<SpinningWormholeLevel::num_punctures> *
 SpinningWormholeLevel::get_bhamr_ptr()
 {
-    return dynamic_cast<BHAMR<num_punctures> *>(get_gramr_ptr());
+    return dynamic_cast<BHAmr<num_punctures> *>(get_gr_amr_ptr());
 }
 
 void SpinningWormholeLevel::variableSetUp()
 {
     BL_PROFILE("SpinningWormholeLevel::variableSetUp()");
-    stateVariableSetUp();
+    state_variable_set_up();
 
-    PhantomDecayPotential potential;
+    PhantomDecayPotential potential(simParams().phantom_mass,
+                                    simParams().potential_coeffs);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
     ConstraintsWithMatter<
-        ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
+        ExoticScalarField<PhantomDecayPotential>>::set_up(state_index,
+                                                          exotic_scalar);
     Weyl4WithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(
         state_index);
 }
 
-void SpinningWormholeLevel::specificAdvance()
+void SpinningWormholeLevel::specific_advance()
 {
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
@@ -163,11 +169,11 @@ void SpinningWormholeLevel::initData()
     amrex::Gpu::streamSynchronize();
 }
 
-void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+void SpinningWormholeLevel::specific_eval_rhs(amrex::MultiFab &a_soln,
                                             amrex::MultiFab &a_rhs,
                                             const double a_time)
 {
-    BL_PROFILE("SpinningWormholeLevel::specificEvalRHS()");
+    BL_PROFILE("SpinningWormholeLevel::specific_eval_rhs()");
     // AmrLevel::RK has already filled this stage's ghost cells (FillRKPatch,
     // from the coarse level's stored RK stages).  This FillPatch re-reads the
     // whole MultiFab, valid cells included, from the level's StateData at
@@ -185,7 +191,7 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     const auto &soln_arrs   = a_soln.arrays();
     const auto &soln_c_arrs = a_soln.const_arrays();
     const auto &rhs_arrs    = a_rhs.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     DetHRescale det_h_rescale;
     const bool do_det_h = (simParams().rescale_det_h != 0);
@@ -201,18 +207,20 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                            positive_chi_lapse(i, j, k, soln_arrs[box_no]);
                        });
 
-    PhantomDecayPotential potential(simParams().phantom_mass);
+    PhantomDecayPotential potential(simParams().phantom_mass,
+                                    simParams().potential_coeffs);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
     CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>,
-                      MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
+                      FourthOrderDerivatives>
         ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
                 simParams().spinning_params.grid_center, a_time);
+    const MovingPunctureGauge<FourthOrderDerivatives> gauge(Geom().CellSize(0));
 
     amrex::ParallelFor(a_rhs,
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
                            ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no],
-                                                    soln_c_arrs[box_no]);
+                                                    soln_c_arrs[box_no], gauge);
                        });
 
     // Sponge zone: extra radially-ramped Kreiss-Oliger dissipation in an
@@ -324,10 +332,10 @@ const amrex::MultiFab *SpinningWormholeLevel::sommerfeld_reference() const
                                                                 : nullptr;
 }
 
-void SpinningWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+void SpinningWormholeLevel::specific_update_ode(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
-    TraceARemoval trace_A_removal;
+    AlgebraicConstraintsEnforcer trace_A_removal(false);
     PositiveChiAndLapse positive_chi_lapse;
     DetHRescale det_h_rescale;
     const bool do_det_h = (simParams().rescale_det_h != 0);
@@ -434,7 +442,7 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         amrex::MultiFab &state_new = get_new_data(state_index);
@@ -444,7 +452,8 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
         amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(),
                             4, 0);
         cst.setVal(0.0);
-        PhantomDecayPotential potential(simParams().phantom_mass);
+        PhantomDecayPotential potential(simParams().phantom_mass,
+                                        simParams().potential_coeffs);
         ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
         const auto dx = Geom().CellSizeArray();
         ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>>
@@ -529,7 +538,7 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev     = parent->finestLevel();
@@ -562,7 +571,8 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
             amrex::MultiFab cst(state_lev.boxArray(),
                                 state_lev.DistributionMap(), 4, 0);
             cst.setVal(0.0);
-            PhantomDecayPotential potential(simParams().phantom_mass);
+            PhantomDecayPotential potential(simParams().phantom_mass,
+                                            simParams().potential_coeffs);
             ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
             const auto &geom_lev = parent->Geom(lev);
             const auto dx        = geom_lev.CellSizeArray();
@@ -687,7 +697,7 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
         const amrex::Real dt           = parent->dtLevel(0);
-        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const amrex::Real restart_time = get_gr_amr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
         const int finest_lev        = parent->finestLevel();
@@ -700,7 +710,7 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
 
         {
             const auto &arrs = state_fine.arrays();
-            TraceARemoval trace_A_removal;
+            AlgebraicConstraintsEnforcer trace_A_removal(false);
             PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(
                 state_fine, amrex::IntVect(0),
@@ -882,9 +892,9 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     }
 }
 
-void SpinningWormholeLevel::specificPostTimeStep()
+void SpinningWormholeLevel::specific_post_timestep()
 {
-    BL_PROFILE("SpinningWormholeLevel::specificPostTimeStep");
+    BL_PROFILE("SpinningWormholeLevel::specific_post_timestep");
 
     write_scalar_diagnostics();
 
@@ -898,9 +908,9 @@ void SpinningWormholeLevel::specificPostTimeStep()
         if (calculate_weyl && Level() == min_level)
         {
             const amrex::Real m_time = get_state_data(state_index).curTime();
-            const amrex::Real m_dt   = get_gramr_ptr()->dtLevel(Level());
+            const amrex::Real m_dt   = get_gr_amr_ptr()->dtLevel(Level());
             const amrex::Real restart_time =
-                get_gramr_ptr()->get_restart_time();
+                get_gr_amr_ptr()->get_restart_time();
             const bool first_step = (m_time <= m_dt);
 
             WeylExtraction my_extraction(simParams().extraction_params, m_dt,

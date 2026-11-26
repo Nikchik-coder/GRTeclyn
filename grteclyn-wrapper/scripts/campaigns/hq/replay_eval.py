@@ -12,26 +12,18 @@ from typing import Any, Mapping
 
 import numpy as np
 
-from grteclyn_wrapper.core.config import resolve_example, resolve_executable
-from grteclyn_wrapper.core.evaluation import evaluate_overrides
-from grteclyn_wrapper.core.plot_consumer import consumer_radii_from_env
-from grteclyn_wrapper.core.params import regrid_intervals_for_max_level
-from grteclyn_wrapper.grtresna.domain import GRTresnaDomainConfig
-from grteclyn_wrapper.grtresna.matter.wiring import (
-    EVOLUTION_MATTER_KEYS,
-    GRTRESNA_COMPLEX_SCALAR_MODEL,
-    evolution_overrides_from_metadata,
-    plot_vars_for_bicomplex_scalar,
-    plot_vars_for_complex_scalar,
-    plot_vars_for_independent_scalars,
-    read_matter_metadata,
-)
-from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
-from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
-from grteclyn_wrapper.grtresna.io import read_gridinit
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, apply_exotic_safe_solver
-from grteclyn_wrapper.objective_modes import OBJECTIVE_MODES
-from grteclyn_wrapper.search.grtresna_convergence_gate import GRTresnaConvergenceConfig
+from grteclyn_workflows.evolution.config import resolve_example, resolve_executable
+from grteclyn_workflows.evolution.evaluation import evaluate_overrides
+from grteclyn_workflows.evolution.plot_consumer import consumer_radii_from_env
+from grteclyn_workflows.evolution.params import regrid_intervals_for_max_level
+from grteclyn_workflows.grtresna.domain import GRTresnaDomainConfig
+from grteclyn_workflows.grtresna.matter.wiring import EVOLUTION_MATTER_KEYS, GRTRESNA_COMPLEX_SCALAR_MODEL, evolution_overrides_from_metadata, plot_vars_for_bicomplex_scalar, plot_vars_for_complex_scalar, plot_vars_for_independent_scalars, read_matter_metadata
+from grteclyn_workflows.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
+from grteclyn_stationary.profiles.qball_couplings import QBallCouplings
+from grteclyn_workflows.grtresna.io import read_gridinit
+from grteclyn_workflows.grtresna.solver import GRTresnaConfig, apply_exotic_safe_solver
+from grteclyn_workflows.objective_modes import OBJECTIVE_MODES
+from grteclyn_workflows.search.grtresna_convergence_gate import GRTresnaConvergenceConfig
 
 
 # Match scripts/campaigns/lib/search_common.sh (QD stage-0 defaults).

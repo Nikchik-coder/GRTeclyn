@@ -18,12 +18,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from grteclyn_wrapper.search.validation_tiers import (
-    DEFAULT_TIER_CONFIG,
-    Tier,
-    TierConfig,
-    assess_campaign,
-)
+from grteclyn_workflows.search.validation_tiers import DEFAULT_TIER_CONFIG, Tier, TierConfig, assess_campaign
 
 
 def main() -> None:

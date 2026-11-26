@@ -1,0 +1,51 @@
+{
+  "fields": [
+    {
+      "winding": 1,
+      "mass": 1.0,
+      "amplitude": 0.32584258793528914,
+      "parity": "even",
+      "anchor_radius": 1.2028929844078005,
+      "quartic": 0.0,
+      "sextic": 0.0
+    }
+  ],
+  "length": 2.5,
+  "central_lapse": 0.09955434853823275,
+  "grids": [
+    [
+      224,
+      28
+    ],
+    [
+      256,
+      32
+    ],
+    [
+      288,
+      36
+    ]
+  ],
+  "require_gpu": true,
+  "max_iter": 30,
+  "min_updates": 2,
+  "newton_tol": 1e-14,
+  "chord_ratio": 0.0,
+  "perturbation": 1e-05,
+  "equation_tol": 1e-08,
+  "tail_tol": 1e-06,
+  "observable_tol": 1e-06,
+  "minimum_charges": [
+    0.0007168066451301045
+  ],
+  "require_nodeless": true,
+  "source": "results/railgun/studies/ergoregion-max-r2-seed272/finalists/04/accepted.npz",
+  "source_sha256": "918323cc935ae66dce851af294fe7c6fbea0e4adbef16e40b43db6e4e4fc425f",
+  "max_solves": 3,
+  "core": {
+    "radius": 0.04,
+    "degree": 12,
+    "tolerance": 1e-08
+  },
+  "approval": "November 3: regressions, at most three stationary solves on GPU 1 of the two-GPU node, then degrees 12/14 origin certification; four threads, 160 GiB, one hour, chunks 128, checkpoints OFF. Refined source adopted only after all checks pass."
+}

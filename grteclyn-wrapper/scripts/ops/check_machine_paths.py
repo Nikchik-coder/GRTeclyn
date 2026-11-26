@@ -46,10 +46,7 @@ import sys
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "grteclyn-wrapper" / "src"))
 
-from grteclyn_wrapper.packaging.scrub_paths import (  # noqa: E402
-    BINARY_SUFFIXES,
-    _identity_tokens,
-)
+from grteclyn_workflows.packaging.scrub_paths import BINARY_SUFFIXES, _identity_tokens
 
 # Placeholder home paths that documentation is *supposed* to contain.  Anything
 # outside this set is a real person's directory.
@@ -201,7 +198,7 @@ def main() -> int:
         "[paths] Usually the file is a run artefact that should be gitignored\n"
         "[paths] (AMReX writes parameters_and_version.txt into the binary's cwd).\n"
         "[paths] To rewrite a file you do want to keep:\n"
-        "[paths]   python3 -m grteclyn_wrapper.packaging.scrub_paths <file>\n"
+        "[paths]   python3 -m grteclyn_workflows.packaging.scrub_paths <file>\n"
         "[paths] Override once, deliberately, with: git commit --no-verify\n"
     )
     return 1

@@ -30,6 +30,7 @@
 
 #include "StateVariables.hpp"
 #include <AMReX_Array4.H>
+#include <AMReX_BoxArray.H>
 #include <AMReX_GpuMemory.H>
 #include <AMReX_Print.H>
 #include <AMReX_REAL.H>
@@ -53,12 +54,53 @@ class ExternalGridInitialData
     {
         std::string gridinit_file;
         std::array<double, AMREX_SPACEDIM> grid_center{};
+        std::vector<std::string> level_files;
+        bool require_aligned{false};
     };
 
-    ExternalGridInitialData(const params_t &a_params, double a_dx)
-        : m_dx(a_dx)
+    ExternalGridInitialData(const params_t &a_params, double a_dx, int a_level = 0)
+        : m_dx(a_dx), m_require_aligned(a_params.require_aligned)
     {
-        load_gridinit(a_params.gridinit_file);
+        const std::string &path = a_params.level_files.empty()
+                                      ? a_params.gridinit_file
+                                      : a_params.level_files.at(a_level);
+        load_gridinit(path);
+        if (m_require_aligned)
+        {
+            for (int d = 0; d < 3; ++d)
+            {
+                const double offset = m_origin[d] / m_dx;
+                if (!std::isfinite(m_dx) || m_dx <= 0.0 ||
+                    !std::isfinite(m_file_dx[d]) || m_file_dx[d] <= 0.0 ||
+                    !std::isfinite(offset) ||
+                    std::abs(m_file_dx[d] / m_dx - 1.0) > 1.e-12 ||
+                    std::abs(offset - std::round(offset)) > 1.e-8)
+                    throw std::runtime_error("Gridinit cell centres do not match the AMR level: " + path);
+            }
+        }
+    }
+
+    // Refuse clamping outside an aligned level cube, including ghost cells.
+    // This check happens before any GPU kernel reads the file.
+    void validate_coverage(const amrex::BoxArray &boxes,
+                           const amrex::IntVect &ghosts) const
+    {
+        if (!m_require_aligned)
+            return;
+        const int extent[3] = {m_nx, m_ny, m_nz};
+        for (int b = 0; b < boxes.size(); ++b)
+        {
+            const amrex::Box box = amrex::grow(boxes[b], ghosts);
+            for (int d = 0; d < 3; ++d)
+            {
+                const double first = (box.smallEnd(d) + 0.5) * m_dx;
+                const double last = (box.bigEnd(d) + 0.5) * m_dx;
+                const double lo = m_origin[d] + 0.5 * m_file_dx[d];
+                const double hi = lo + (extent[d] - 1) * m_file_dx[d];
+                if (first < lo - 1.e-8 * m_dx || last > hi + 1.e-8 * m_dx)
+                    throw std::runtime_error("Aligned gridinit cube does not cover AMR boxes and ghosts");
+            }
+        }
     }
 
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
@@ -69,9 +111,15 @@ class ExternalGridInitialData
         const double py = (j + 0.5) * m_dx;
         const double pz = (k + 0.5) * m_dx;
 
-        const double fi = (px - m_origin[0]) / m_file_dx[0] - 0.5;
-        const double fj = (py - m_origin[1]) / m_file_dx[1] - 0.5;
-        const double fk = (pz - m_origin[2]) / m_file_dx[2] - 0.5;
+        double fi = (px - m_origin[0]) / m_file_dx[0] - 0.5;
+        double fj = (py - m_origin[1]) / m_file_dx[1] - 0.5;
+        double fk = (pz - m_origin[2]) / m_file_dx[2] - 0.5;
+        if (m_require_aligned)
+        {
+            fi = std::round(fi);
+            fj = std::round(fj);
+            fk = std::round(fk);
+        }
 
         const int i0 = amrex::max(0, amrex::min(int(fi), m_nx - 2));
         const int j0 = amrex::max(0, amrex::min(int(fj), m_ny - 2));
@@ -120,6 +168,7 @@ class ExternalGridInitialData
 
   private:
     double m_dx{1.0};
+    bool m_require_aligned{false};
     int m_nx{0}, m_ny{0}, m_nz{0}, m_ncomp{0};
     double m_file_dx[3]{1.0, 1.0, 1.0};
     double m_origin[3]{};

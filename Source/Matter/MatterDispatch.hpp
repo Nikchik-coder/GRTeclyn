@@ -88,8 +88,8 @@ compute_emtensor(const matter_t &matter, const int ix, const int iy,
 {
     if constexpr (has_time_emtensor_v<matter_t, deriv_t>)
     {
-        return matter.compute_emtensor(ix, iy, iz, state, a_deriv, h_UU,
-                                       coords, time);
+        return matter.compute_emtensor(ix, iy, iz, state, a_deriv, h_UU, coords,
+                                       time);
     }
     else
     {
@@ -97,12 +97,50 @@ compute_emtensor(const matter_t &matter, const int ix, const int iy,
     }
 }
 
+//! Coupled sources. Native matter coupling is used unless a caller explicitly
+//! supplies G; extended research models retain coordinate/time dispatch.
+template <class matter_t, class deriv_t>
+[[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE einstein_sources_t
+compute_einstein_sources(const matter_t &matter, int ix, int iy, int iz,
+                         const amrex::Array4<const amrex::Real> &state,
+                         const deriv_t &deriv, const Tensor::Rank2 &h_UU,
+                         const Coordinates &coords, amrex::Real time,
+                         amrex::Real G_Newton, bool use_matter_coupling)
+{
+    if constexpr (requires {
+                      matter.compute_einstein_sources(ix, iy, iz, state, deriv,
+                                                      h_UU);
+                  })
+    {
+        if (use_matter_coupling)
+        {
+            return matter.compute_einstein_sources(ix, iy, iz, state, deriv,
+                                                   h_UU);
+        }
+    }
+    const auto em =
+        compute_emtensor(matter, ix, iy, iz, state, deriv, h_UU, coords, time);
+    const amrex::Real coupling = 8.0 * M_PI * G_Newton;
+    einstein_sources_t source;
+    source.rho = coupling * em.rho;
+    source.trS = coupling * em.trS;
+    FOR (i)
+    {
+        source.j(i) = coupling * em.j(i);
+        FOR (j)
+        {
+            source.S(i, j) = coupling * em.S(i, j);
+        }
+    }
+    return source;
+}
+
 //! Matter-field evolution, using the (coords, time) overload when the matter
 //! class has one.
 template <class matter_t, class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-add_matter_rhs(const matter_t &matter, const int ix, const int iy,
-               const int iz, const amrex::Array4<amrex::Real> &rhs_state,
+add_matter_rhs(const matter_t &matter, const int ix, const int iy, const int iz,
+               const amrex::Array4<amrex::Real> &rhs_state,
                const amrex::Array4<const amrex::Real> &state,
                const deriv_t &a_deriv, const Coordinates &coords,
                const amrex::Real time)

@@ -16,7 +16,7 @@
 /// McLachlan's enforce step does beside its trace-A~ removal.  chi and A~_ij
 /// are left alone: the deviation from unit determinant is a truncation error
 /// of the same order as the rescale, and touching chi would move the physical
-/// metric.  Meant to run immediately before TraceARemoval so the trace is
+/// metric.  Meant to run immediately before AlgebraicConstraintsEnforcer so the trace is
 /// removed against the rescaled metric.  Opt-in from the example (default off).
 class DetHRescale
 {

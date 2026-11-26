@@ -12,7 +12,7 @@ from pathlib import Path
 
 WRAPPER_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(WRAPPER_ROOT / "src"))
-from grteclyn_wrapper.core.site_paths import grtresna_env, openmpi_root, sim_root
+from grteclyn_workflows.evolution.site_paths import grtresna_env, openmpi_root, sim_root
 
 SIM_ROOT = sim_root()
 LOCAL_OPENMPI = openmpi_root()
@@ -57,7 +57,7 @@ def run_case(args: argparse.Namespace, case_dir: Path, support: float) -> dict:
     cmd = [
         sys.executable,
         "-m",
-        "grteclyn_wrapper",
+        "grteclyn_workflows",
         "--example",
         "RotatingWormholeCollapse",
         "--runs-dir",

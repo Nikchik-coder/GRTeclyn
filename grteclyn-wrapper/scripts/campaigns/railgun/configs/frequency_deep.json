@@ -1,0 +1,9 @@
+{
+  "frequencies": [0.70, 0.67],
+  "grids": [[96, 12], [128, 16], [160, 20]],
+  "max_solves": 6,
+  "max_iter": 30,
+  "equation_tol": 1e-8,
+  "tail_tol": 1e-6,
+  "observable_tol": 1e-6
+}

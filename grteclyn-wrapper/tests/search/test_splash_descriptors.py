@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from grteclyn_wrapper.search.qd_search.descriptors import _bin_index, _descriptor_details
+from grteclyn_workflows.search.qd_search.descriptors import _bin_index, _descriptor_details
 
 
 def test_wave_focusing_x_from_central_chromaticity() -> None:

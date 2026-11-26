@@ -1,0 +1,82 @@
+{
+  "stage": "preparing",
+  "source": "results/railgun/studies/ergoregion-max-validate271/finalists/01/accepted.npz",
+  "source_sha256": "dea15224bb7e97be5a1d8528a828886b6ba3e4cbf3c8cae66d88abc8cf4207cd",
+  "selection": "Three-grid accepted shift/lapse 3.720789536602, chosen as the less compact first evolution target.",
+  "frequency": 0.6741001877002323,
+  "base_N": [
+    96,
+    128,
+    192
+  ],
+  "length": 64.0,
+  "max_level": 6,
+  "refinement_radii": [
+    12.0,
+    6.0,
+    3.0,
+    1.5,
+    0.75,
+    0.375
+  ],
+  "initial_cube_lengths": [
+    64.0,
+    48.0,
+    24.0,
+    12.0,
+    6.0,
+    3.0,
+    1.5
+  ],
+  "finest_dx": [
+    0.010416666666666666,
+    0.0078125,
+    0.005208333333333333
+  ],
+  "core": {
+    "radius": 0.08,
+    "degree": 12,
+    "comparison_degree": 14,
+    "tolerance": 1e-08,
+    "join": "C6 Bernstein"
+  },
+  "stop_time": 50.0,
+  "dt_multiplier": 0.02,
+  "comparison_times": [
+    0.0,
+    2.0,
+    10.0,
+    20.0,
+    30.0,
+    40.0,
+    50.0
+  ],
+  "constraint_interior_radius": 0.5,
+  "perturbation": "none",
+  "gpus": {
+    "0": [
+      96,
+      128
+    ],
+    "1": [
+      192
+    ]
+  },
+  "checkpoints": false,
+  "keep_last_plotfiles": 3,
+  "threads_per_job": 4,
+  "host_GiB_per_job": 160,
+  "wall_seconds_per_evolution": 172800,
+  "frames": "All default frames, both complex components and slice caches; retain originals.",
+  "scope": "Unperturbed three-resolution t<=50 evolution, fixed refinement and background-relative outer boundary; stability assessed only within measured convergence.",
+  "approval": "November 3: GPU regressions and one centre certificate on GPU 0, radius 0.08 and degrees 12/14, 0.5 h cap. If accepted, export and evolve N96 then N128 on GPU 0 and N192 on GPU 1 through t=50, L_full=64, max_level=6, four threads and 160 GiB per job, checkpoints OFF, full frames and last three plotfiles. No new stationary solves.",
+  "boundary": {
+    "type": "background-relative Sommerfeld plus quartic KO sponge and background damping",
+    "inner_radius": 24.0,
+    "outer_radius": 32.0,
+    "strength": 4.0,
+    "ramp_power": 4,
+    "drive_strength": 1.0,
+    "scalar_reference": "rotate both scalar and normal momentum with the saved positive-frequency phase"
+  }
+}
