@@ -12,6 +12,7 @@ The latest layout pass preserves the author's expanded text and restores three
 pages from the five-page overflow: 11.5 pt body text, 19 mm side margins and
 4.5 pt paragraph spacing. Body text is fully justified with 1.25 cm first-line
 indents, including paragraphs after headings; table text remains left-aligned.
+All section headings are centered.
 The publication table stays with the main results;
 arXiv identifiers do not split across lines. The continuing-research table uses
 12 pt text to keep its longer descriptions readable and balance the final page.
