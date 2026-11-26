@@ -1,4 +1,4 @@
-# Grant report: 20 May–20 November 2026
+# Grant report: 20 May–26 November 2026
 
 Russian draft for the grant foundation. `report.tex` is the editable source;
 `report.pdf` is the compiled, three-page A4 version. The surrounding documentation
@@ -21,7 +21,7 @@ the author's computing-time figure.
 
 ## Scope and editorial choices
 
-- The reporting interval is 20 May–20 November 2026, as specified by the author.
+- The reporting interval is 20 May–26 November 2026, as specified by the author.
   The grant number, foundation name and signature fields were not supplied.
   Add them if required by the foundation's form.
 - Research is organised into two tables: published preprints with arXiv links,
