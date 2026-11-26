@@ -37,6 +37,9 @@ the author's computing-time figure.
   Russian hyphenation patterns; tables retain left-aligned text.
 - The GitHub repository and the three public preprints from the reporting
   interval have visible, clickable full URLs.
+- Each publication row also links to its research page on the First Interstellar
+  Institute website, labelled as a description with animations. The three pages
+  were checked against their corresponding arXiv papers.
 - The prose was revised against `research/WRITING_STANDARDS.md`: concrete
   statements, standard terminology, defined methods and claims limited to the
   demonstrated results. Grid refinement is described through increased
